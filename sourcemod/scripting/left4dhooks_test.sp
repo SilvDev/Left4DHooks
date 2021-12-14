@@ -33,7 +33,7 @@
 	Change Log:
 
 1.82 (06-Dec-2021)
-	- Added new weapon attributes. Thanks to "iaNanaNanav" for requesting and giving offsets.
+	- Added new weapon attributes. Thanks to "iaNanaNana" for requesting and giving offsets.
 		- L4D2IntWeaponAttributes: "L4D2IWA_Bucket" (both games) and "L4D2IWA_Tier" (L4D2 only).
 		- L4D2FloatWeaponAttributes: "L4D2FWA_VerticalPunch" and "L4D2FWA_HorizontalPunch".
 
