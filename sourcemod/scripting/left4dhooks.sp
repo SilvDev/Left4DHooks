@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.81"
+#define PLUGIN_VERSION		"1.82"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,15 @@
 
 ========================================================================================
 	Change Log:
+
+1.82 (14-Dec-2021)
+	- Added new weapon attributes. Thanks to "iaNanaNanav" for requesting and giving offsets.
+		- L4D2IntWeaponAttributes: "L4D2IWA_Bucket" (both games) and "L4D2IWA_Tier" (L4D2 only).
+		- L4D2FloatWeaponAttributes: "L4D2FWA_VerticalPunch" and "L4D2FWA_HorizontalPunch".
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.81 (30-Nov-2021)
 	- Fixed forward "L4D_OnVomitedUpon" sometimes throwing errors about null pointer. Thanks to "Krufftys Killers" for reporting.
@@ -6627,6 +6636,9 @@ public int Native_GetIntWeaponAttribute(Handle plugin, int numParams)
 	if( attr >= view_as<int>(MAX_SIZE_L4D2IntWeaponAttributes) ) // view_as to avoid tag mismatch from enum "type"
 		ThrowNativeError(SP_ERROR_PARAM, "Invalid attribute id");
 
+	if( !g_bLeft4Dead2 && attr == view_as<int>(L4D2IWA_Tier) )
+		ThrowNativeError(SP_ERROR_PARAM, "Attribute \"L4D2IWA_Tier\" only exists in L4D2.");
+
 	int ptr = GetWeaponPointer();
 	if( ptr != -1 )
 	{
@@ -6658,6 +6670,9 @@ public int Native_SetIntWeaponAttribute(Handle plugin, int numParams)
 	int attr = GetNativeCell(2);
 	if( attr >= view_as<int>(MAX_SIZE_L4D2IntWeaponAttributes) ) // view_as to avoid tag mismatch from enum "type"
 		ThrowNativeError(SP_ERROR_PARAM, "Invalid attribute id");
+
+	if( !g_bLeft4Dead2 && attr == view_as<int>(L4D2IWA_Tier) )
+		ThrowNativeError(SP_ERROR_PARAM, "Attribute \"L4D2IWA_Tier\" only exists in L4D2.");
 
 	int ptr = GetWeaponPointer();
 	if( ptr != -1 )
