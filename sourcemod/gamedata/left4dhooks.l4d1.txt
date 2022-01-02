@@ -2289,8 +2289,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN8Director23RestartScenarioFromVoteEPKc"
-				"windows"	"\x8B\x2A\x2A\x2A\x85\x2A\x56\x8B\x2A\x74\x2A\x6A\x2A\x50"
-				/* 8B ? ? ? 85 ? 56 8B ? 74 ? 6A ? 50 */
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x56\x8B\x2A\x74\x2A\x6A\x2A\x50"
+				/* ? ? ? ? ? ? 56 8B ? 74 ? 6A ? 50 */
 			}
 
 			/*
