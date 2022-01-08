@@ -18,7 +18,7 @@
  * Copyright (C) 2017 "Accelerator74"
  *
  * Left 4 DHooks Direct SourceMod plugin
- * Copyright (C) 2021 "SilverShot" / "Silvers"
+ * Copyright (C) 2022 "SilverShot" / "Silvers"
  *
  * =============================================================================
  *
