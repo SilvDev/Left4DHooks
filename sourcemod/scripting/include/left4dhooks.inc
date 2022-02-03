@@ -497,7 +497,7 @@ native int AnimGetFromActivity(char[] activity);
  * @remarks Only used for bot special spawns (not players)
  * @remarks zombieClass: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
  *
- * @param zombieClass	Zombie class that will be spawned.
+ * @param zombieClass	Zombie class that will be spawned
  * @param vecPos		Vector coordinate where special will be spawned
  * @param vecAng		QAngle where spcial will be facing
  *
@@ -511,8 +511,8 @@ forward Action L4D_OnSpawnSpecial(int &zombieClass, const float vecPos[3], const
  * @remarks Only used for bot special spawns (not players)
  * @remarks zombieClass: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
  *
- * @param client		The client index who spawned
- * @param zombieClass	Zombie class that will be spawned.
+ * @param client		The client index who spawned. Can be 0 if spawning failed
+ * @param zombieClass	Zombie class that will be spawned
  * @param vecPos		Vector coordinate where special will be spawned
  * @param vecAng		QAngle where spcial will be facing
  *
@@ -1350,6 +1350,15 @@ forward Action L4D_OnVomitedUpon(int victim, int &attacker, bool &boomerExplosio
  * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
  */
 forward Action L4D2_OnHitByVomitJar(int victim, int &attacker);
+
+/**
+ * @brief Called when the server changes hibernation status
+ *
+ * @param hibernating		true when hibernating, false when waking up
+ *
+ * @noreturn
+ */
+forward void L4D_OnServerHibernationUpdate(bool hibernating);
 
 /**
  * @brief Called when the client's material system is expecting instructions from the server in regards to addons
@@ -2704,6 +2713,7 @@ enum L4D2FloatWeaponAttributes
 	L4D2FWA_PelletScatterYaw,
 	L4D2FWA_VerticalPunch,
 	L4D2FWA_HorizontalPunch, // Requires "z_gun_horiz_punch" cvar changed to "1".
+	L4D2FWA_GainRange,
 	MAX_SIZE_L4D2FloatWeaponAttributes
 };
 

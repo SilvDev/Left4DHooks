@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.82"
+#define PLUGIN_VERSION		"1.86"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,17 @@
 
 ========================================================================================
 	Change Log:
+
+1.86 (02-Feb-2022)
+	- Added forward "L4D_OnServerHibernationUpdate" to report when server hibernation status changes. Requested by ProjectSky".
+	- Added new weapon attribute. Requested by "A1m".
+		- L4D2FloatWeaponAttributes: "L4D2FWA_GainRange".
+
+	- Fixed broken signatures in L4D1 and L4D2 due to game updates.
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.82 (06-Dec-2021)
 	- Added new weapon attributes. Thanks to "iaNanaNana" for requesting and giving offsets.
@@ -3237,6 +3248,18 @@ public Action L4D2_OnChangeFinaleStage(int &finaleType, const char[] arg)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public void L4D_OnServerHibernationUpdate(bool hibernating)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnServerHibernationUpdate\" %d", hibernating);
+	}
 }
 
 public Action L4D2_OnClientDisableAddons(const char[] SteamID)

@@ -914,6 +914,21 @@
 					}
 				}
 			}
+
+			"L4DD::CServerGameDLL::ServerHibernationUpdate"
+			{
+				"signature"		"CServerGameDLL::ServerHibernationUpdate"
+				"callconv"		"thiscall"
+				"return"		"bool"
+				"this"			"address"
+				"arguments"
+				{
+					"bHibernating"
+					{
+						"type"	"bool"
+					}
+				}
+			}
 		}
 
 
@@ -1266,6 +1281,11 @@
 			{
 				"windows"	"2424"
 				"linux"		"2424"
+			}
+			"L4D2FloatWeapon_GainRange"
+			{
+				"windows"	"2428"
+				"linux"		"2428"
 			}
 			"L4D2FloatWeapon_Range"
 			{
@@ -2168,7 +2188,7 @@
 			"CTerrorPlayer::OnStaggered_Clone"
 			{
 				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer11OnStaggeredEP11CBaseEntityPK6Vector.part.711"
+				"linux"		"@_ZN13CTerrorPlayer11OnStaggeredEP11CBaseEntityPK6Vector.part.712"
 			}
 			
 			/*
@@ -2188,7 +2208,7 @@
 			"CTerrorPlayer::OnShovedBySurvivor_Clone"
 			{
 				"library"	"server"
-				"linux" 	"@_ZN13CTerrorPlayer18OnShovedBySurvivorEPS_RK6Vector.part.822.constprop.1107"
+				"linux" 	"@_ZN13CTerrorPlayer18OnShovedBySurvivorEPS_RK6Vector.part.824.constprop.1109"
 			}
 			
 			/*
@@ -2272,6 +2292,15 @@
 				/* ? ? ? ? ? 83 ? ? 53 55 33 ? 39 ? ? 8B */ // Found by SilverShot.
 				/* Wildcarded to support "Target Patch" plugin */
 				/* Search: "switching to mobile victim" */
+			}
+
+			"CServerGameDLL::ServerHibernationUpdate"
+			{
+				"library" 	"server"
+				"linux"		"@_ZN14CServerGameDLL23ServerHibernationUpdateEb"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x33\x2A\x3A\x2A\x8B\x2A\x88"
+				/* ? ? ? ? ? ? ? 53 56 33 ? 3A ? 8B ? 88 */
+				/* Search: "%s_%s_%d%s" and xref to vtable, function is above this. */
 			}
 
 
