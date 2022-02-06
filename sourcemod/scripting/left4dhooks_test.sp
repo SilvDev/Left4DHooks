@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.86"
+#define PLUGIN_VERSION		"1.87"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,19 @@
 
 ========================================================================================
 	Change Log:
+
+1.87 (05-Feb-2022)
+	- Added native "L4D_LobbyIsReserved" to return if players connected from the lobby and reserved the server.
+	- Added natives "L4D_GetLobbyReservation" and "L4D_SetLobbyReservation" to get and set the lobby reservation ID.
+
+	- Added new weapon attribute. Requested by "vikingo12".
+		- L4D2FloatWeaponAttributes: "L4D2FWA_ReloadDuration".
+
+	- L4D2: now dynamically generates the "CTerrorGameRules::IsRealism" signature to future proof against updates breaking the signature.
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.86 (02-Feb-2022)
 	- Added forward "L4D_OnServerHibernationUpdate" to report when server hibernation status changes. Requested by ProjectSky".
@@ -393,9 +406,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 78;
+		g_iForwardsMax = 79;
 	else
-		g_iForwardsMax = 61;
+		g_iForwardsMax = 62;
 
 	return APLRes_Success;
 }
@@ -1430,6 +1443,10 @@ public Action sm_l4dd(int client, int args)
 	PrintToServer("");
 	PrintToServer("");
 
+	PrintToServer("L4D2_GetFloatWeaponAttribute_A weapon_rifle (MaxPlayerSpeed): %f",		L4D2_GetFloatWeaponAttribute("weapon_rifle", L4D2FWA_ReloadDuration));
+	L4D2_SetFloatWeaponAttribute("weapon_rifle",											L4D2FWA_ReloadDuration, 0.5);
+	PrintToServer("L4D2_SetFloatWeaponAttribute_A weapon_rifle (MaxPlayerSpeed): %f",		L4D2_GetFloatWeaponAttribute("weapon_rifle", L4D2FWA_ReloadDuration));
+
 	PrintToServer("L4D2_GetFloatWeaponAttribute_A weapon_rifle (MaxPlayerSpeed): %f",		L4D2_GetFloatWeaponAttribute("weapon_rifle", L4D2FWA_MaxPlayerSpeed));
 	L4D2_SetFloatWeaponAttribute("weapon_rifle",											L4D2FWA_MaxPlayerSpeed, 300.0);
 	PrintToServer("L4D2_SetFloatWeaponAttribute_A weapon_rifle (MaxPlayerSpeed): %f",		L4D2_GetFloatWeaponAttribute("weapon_rifle", L4D2FWA_MaxPlayerSpeed));
@@ -1561,9 +1578,31 @@ public Action sm_l4dd(int client, int args)
 	PrintToServer("");
 	// */
 
-	//DEPRECATED
-	// L4D_GetCampaignScores
-	// PrintToServer("L4D_LobbyUnreserve %d",					L4D_LobbyUnreserve()); // WORKING
+
+
+	// WORKING
+	/*
+	char sTemp[20];
+	L4D_GetLobbyReservation(sTemp, sizeof(sTemp));
+	PrintToServer("L4D_GetLobbyReservation_A %s", sTemp);
+
+	sTemp = "1BADFAD1337D34D";
+	L4D_SetLobbyReservation(sTemp);
+	PrintToServer("L4D_SetLobbyReservation %s", sTemp);
+
+	L4D_GetLobbyReservation(sTemp, sizeof(sTemp));
+	PrintToServer("L4D_GetLobbyReservation_B %s", sTemp);
+	PrintToServer("L4D_LobbyIsReserved == %d", L4D_LobbyIsReserved());
+
+	ServerCommand("status");
+	ServerExecute();
+
+	// PrintToServer("L4D_LobbyUnreserve_A %d", L4D_LobbyUnreserve()); // Comment this to see "status" output otherwise this triggers before it can execute.
+
+	L4D_GetLobbyReservation(sTemp, sizeof(sTemp));
+	PrintToServer("L4D_GetLobbyReservation_C %s", sTemp);
+	PrintToServer("L4D_LobbyIsReserved_B == %d", L4D_LobbyIsReserved());
+	*/
 
 
 

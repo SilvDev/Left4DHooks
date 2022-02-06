@@ -3,7 +3,7 @@
 	/*
 	 * Many signatures were found or updated by "Silvers".
 	 * Many detours were created by "Silvers".
-	 * Some signatures and detours were created by "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+	 * Some signatures and detours were created by "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 	 * Please credit when using them.
 	 */
 	"left4dead2"
@@ -1326,6 +1326,11 @@
 			{
 				"signature"	"GrenadeLauncher_StrFind"
 			}
+
+			"Realism_StrFind"
+			{
+				"signature"	"Realism_StrFind"
+			}
 		}
 
 
@@ -1364,6 +1369,13 @@
 			{
 				"windows"	"93"
 				"linux"		"85"
+			}
+
+			// Lobby reservation ID
+			"LobbyReservationOffset"
+			{
+				"windows"	"368"
+				"linux"		"364"
 			}
 
 
@@ -1423,6 +1435,11 @@
 			"GrenadeLauncher_OffsetPush"
 			{
 				"windows"	"74"
+			}
+
+			"Realism_OffsetPush"
+			{
+				"windows"	"60"
 			}
 
 			// USING PTR BELOW INSTEAD
@@ -1837,6 +1854,11 @@
 				"windows"	"3080"
 				"linux"		"3080"
 			}
+			"L4D2FloatWeapon_ReloadDuration"
+			{
+				"windows"	"3128"
+				"linux"		"3128"
+			}
 
 			// L4D2BoolMeleeWeapon
 			"L4D2BoolMeleeWeapon_Decapitates"
@@ -2125,7 +2147,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorPlayer::Extinguish()
 			 *
 			 * How to find on Windows:
@@ -2604,7 +2626,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorGameRules::IsGenericCooperativeMode()
 			 *
 			 * How to find on Windows:
@@ -2620,7 +2642,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorGameRules::IsRealismMode()
 			 *
 			 * How to find on Windows:
@@ -2631,12 +2653,19 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules13IsRealismModeEv"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x75\x2A\x32\x2A\xC3\xF7\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\xB8\x2A\x2A\x2A\x2A\xEB\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x85\x2A\x75\x2A\xB8\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x85\x2A\x74\x2A\x2A\x64"
+				// Windows now matching with dynamically generated address to make the signature future proof. 
+				// "windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x75\x2A\x32\x2A\xC3\xF7\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\xB8\x2A\x2A\x2A\x2A\xEB\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x85\x2A\x75\x2A\xB8\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x85\x2A\x74\x2A\x2A\x64"
 				/* ? ? ? ? ? ? 85 ? 75 ? 32 ? C3 F7 ? ? ? ? ? ? ? ? ? 74 ? B8 ? ? ? ? EB ? A1 ? ? ? ? 8B ? ? 85 ? 75 ? B8 ? ? ? ? 8B ? 50 8B ? ? FF ? 85 ? 74 ? ? 64 */ 
+			}
+			"Realism_StrFind"
+			{
+				"library"		"server"
+				"windows"		"realism"
+				/* Search for the literal string to then reverse bytes and search for that address. */
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorPlayer::OnFalling()
 			 *
 			 * How to find on Windows:
@@ -2652,7 +2681,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CDeathFallCamera::Enable(CBasePlayer*)
 			 *
 			 * How to find on Windows:
@@ -2671,7 +2700,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * Tank::EnterStasis()
 			 *
 			 * How to find on Windows:
@@ -2691,7 +2720,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * Tank::LeaveStasis()
 			 *
 			 * How to find on Windows:
@@ -2708,7 +2737,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::SweepFist(Vector const&, Vector const&)
 			 *
 			 * How to find on Windows:
@@ -2728,7 +2757,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::GroundPound()
 			 *
 			 * How to find on Windows:
@@ -2746,7 +2775,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::OnPlayerHit(CTerrorPlayer*, bool)
 			 *
 			 * How to find on Windows:
@@ -2768,7 +2797,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankRock::Detonate()
 			 *
 			 * How to find on Windows:
@@ -2790,7 +2819,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankRock::OnRelease(Vector const&, QAngle const&, Vector const&, Vector const&)
 			 *
 			 * How to find on Windows:
@@ -3940,7 +3969,6 @@
 			// ====================================================================================================
 			// LOBBY RESERVATION
 			// ====================================================================================================
-
 			/*
 			 * CBaseServer::SetReservationCookie(uint64_t, char*, va_list)
 			 * - clear the reservation by setting a cookie of 0

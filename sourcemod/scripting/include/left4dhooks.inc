@@ -59,8 +59,8 @@
 
 
 // Natives:
-// L4D1 = 24 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 44 [silvers - mine!] + 4 [anim] = 126
-// L4D2 = 53 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 79 [silvers - mine!] + 4 [anim] = 212
+// L4D1 = 25 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 46 [silvers - mine!] + 4 [anim] = 128
+// L4D2 = 54 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 81 [silvers - mine!] + 4 [anim] = 215
 
 // Forwards:
 // L4D1 = 61;
@@ -196,6 +196,10 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetMobSpawnTimerDuration");
 	MarkNativeAsOptional("L4D2_ChangeFinaleStage");
 	MarkNativeAsOptional("L4D2_SpawnWitchBride");
+	MarkNativeAsOptional("L4D_LobbyUnreserve");
+	MarkNativeAsOptional("L4D_LobbyIsReserved");
+	MarkNativeAsOptional("L4D_GetLobbyReservation");
+	MarkNativeAsOptional("L4D_SetLobbyReservation");
 
 	// l4d2weapons.inc
 	MarkNativeAsOptional("L4D_GetWeaponID");
@@ -2334,10 +2338,38 @@ native int L4D2_SpawnWitchBride(const float vecPos[3], const float vecAng[3]);
 
 /**
  * @brief Removes lobby reservation from a server
- * @remarks Sets the reservation cookie to 0,
- *			it is safe to call this even if it's unreserved.
+ * @remarks Sets the reservation cookie to 0, it is safe to call this even if it's unreserved.
+ *
+ * @noreturn
  */
 native void L4D_LobbyUnreserve();
+
+/**
+ * @brief Checks if the server is currently reserved for a lobby
+ * @remarks Server is automatically unreserved if it hibernates or if all players leave.
+ *
+ * @return			true if reserved, false if not reserved
+ */
+native bool L4D_LobbyIsReserved();
+
+/**
+ * @brief Returns the lobby reservation ID
+ *
+ * @reservation		String to store the reservation ID to
+ * @maxlength		Maximum length of the string to store to
+ *
+ * @noreturn
+ */
+native void L4D_GetLobbyReservation(char [] reservation, int maxlength);
+
+/**
+ * @brief Sets the lobby reservation ID
+ *
+ * @reservation		The reservation ID to set
+ *
+ * @noreturn
+ */
+native void L4D_SetLobbyReservation(char reservation[20]);
 
 /**
  * @brief Get the current campaign scores stored in the Director
@@ -2354,17 +2386,6 @@ native void L4D_LobbyUnreserve();
 #pragma deprecated Use GetTeamScore and OnClearTeamScores instead
 native int L4D_GetCampaignScores(int &scoreA, int &scoreB);
 
-/**
- * @brief Checks if the server is currently reserved for a lobby
- * @remarks Server is automatically unreserved if it hibernates or
- *			if all players leave.
- *
- * @deprecated This will always return false on L4D2 or on Linux.
- *
- * @return			true if reserved, false if not reserved
- */
-#pragma deprecated This will always return false on L4D2 or on Linux.
-native bool L4D_LobbyIsReserved();
 /**
  * @brief Get the time remaining before the next director horde.
  * @remarks This timer is used for scripted event hordes and natural timed hordes
@@ -2714,6 +2735,7 @@ enum L4D2FloatWeaponAttributes
 	L4D2FWA_VerticalPunch,
 	L4D2FWA_HorizontalPunch, // Requires "z_gun_horiz_punch" cvar changed to "1".
 	L4D2FWA_GainRange,
+	L4D2FWA_ReloadDuration,
 	MAX_SIZE_L4D2FloatWeaponAttributes
 };
 

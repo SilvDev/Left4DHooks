@@ -3,7 +3,7 @@
 	/*
 	 * Many signatures were found or updated by "Silvers".
 	 * Many detours were created by "Silvers".
-	 * Some signatures and detours were created by "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+	 * Some signatures and detours were created by "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 	 * Please credit when using them.
 	 */
 	"left4dead"
@@ -1057,6 +1057,13 @@
 				"linux"		"1"
 			}
 
+			// Lobby reservation ID
+			"LobbyReservationOffset"
+			{
+				"windows"	"368"
+				"linux"		"364"
+			}
+
 
 
 			// VIRTUAL CALLS
@@ -1322,6 +1329,11 @@
 				"windows"	"2348"
 				"linux"		"2348"
 			}
+			"L4D2FloatWeapon_ReloadDuration"
+			{
+				"windows"	"2396"
+				"linux"		"2396"
+			}
 
 
 
@@ -1528,7 +1540,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorPlayer::Extinguish()
 			 *
 			 * How to find on Windows:
@@ -1619,7 +1631,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::DoSwing()
 			 *
 			 * How to find on Windows:
@@ -1637,7 +1649,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::GroundPound()
 			 *
 			 * How to find on Windows:
@@ -1655,7 +1667,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::OnPlayerHit(CTerrorPlayer*, bool)
 			 *
 			 * How to find on Windows:
@@ -1677,7 +1689,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankRock::Detonate()
 			 *
 			 * How to find on Windows:
@@ -1699,7 +1711,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankRock::OnRelease(Vector const&, QAngle const&, Vector const&, Vector const&)
 			 *
 			 * How to find on Windows:
@@ -1715,7 +1727,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CDeathFallCamera::Enable(CBasePlayer*)
 			 *
 			 * How to find on Windows:
@@ -1734,7 +1746,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTerrorPlayer::OnFalling()
 			 *
 			 * How to find on Windows:
@@ -1750,7 +1762,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * Tank::EnterStasis()
 			 *
 			 * How to find on Windows:
@@ -1770,7 +1782,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures/blob/main/gamedata/l4d_signatures.txt
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * Tank::LeaveStasis()
 			 *
 			 * How to find on Windows:

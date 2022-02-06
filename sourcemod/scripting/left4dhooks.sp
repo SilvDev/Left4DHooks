@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.86"
+#define PLUGIN_VERSION		"1.87"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,20 @@
 
 ========================================================================================
 	Change Log:
+
+1.87 (06-Feb-2022)
+	- Added native "L4D_LobbyIsReserved" to return if players connected from the lobby and reserved the server.
+	- Added natives "L4D_GetLobbyReservation" and "L4D_SetLobbyReservation" to get and set the lobby reservation ID.
+	- Setting lobby reservation may not work when L4DToolZ is installed.
+
+	- Added new weapon attribute. Requested by "vikingo12".
+		- L4D2FloatWeaponAttributes: "L4D2FWA_ReloadDuration".
+
+	- L4D2: now dynamically generates the "CTerrorGameRules::IsRealism" signature to future proof against updates breaking the signature.
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.86 (02-Feb-2022)
 	- Added forward "L4D_OnServerHibernationUpdate" to report when server hibernation status changes. Requested by ProjectSky".
@@ -1142,6 +1156,7 @@ int g_iOff_VanillaModeOffset;
 Address g_pVanillaModeAddress;
 
 // Various offsets
+int g_iOff_LobbyReservation;
 int g_iOff_VersusStartTimer;
 int g_iOff_m_rescueCheckTimer;
 int g_iOff_SpawnTimer;
@@ -1181,7 +1196,7 @@ int L4D2IntervalTimer_Offsets[6];
 
 // l4d2weapons.inc
 int L4D2IntWeapon_Offsets[5];
-int L4D2FloatWeapon_Offsets[20];
+int L4D2FloatWeapon_Offsets[21];
 int L4D2BoolMeleeWeapon_Offsets[1];
 int L4D2IntMeleeWeapon_Offsets[2];
 int L4D2FloatMeleeWeapon_Offsets[3];
@@ -1456,8 +1471,10 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	// left4downtown.inc
 	// =========================
 	// CreateNative("L4D_GetCampaignScores",						Native_GetCampaignScores);
-	// CreateNative("L4D_LobbyIsReserved",							Native_LobbyIsReserved);
 	CreateNative("L4D_LobbyUnreserve",				 				Native_CBaseServer_SetReservationCookie);
+	CreateNative("L4D_LobbyIsReserved",								Native_LobbyIsReserved);
+	CreateNative("L4D_GetLobbyReservation",							Native_GetLobbyReservation);
+	CreateNative("L4D_SetLobbyReservation",							Native_SetLobbyReservation);
 	CreateNative("L4D_RestartScenarioFromVote",		 				Native_CDirector_RestartScenarioFromVote);
 	CreateNative("L4D_IsFirstMapInScenario",						Native_CDirector_IsFirstMapInScenario);
 	CreateNative("L4D_IsMissionFinalMap",							Native_CTerrorGameRules_IsMissionFinalMap);
@@ -3246,12 +3263,12 @@ public void OnMapStart()
 			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "cm_CommonLimit",		1);
 
 			// These also exist, required?
-			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalSmokers",			1);
-			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalBoomers",			1);
-			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalHunters",			1);
-			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalSpitter",			1);
+			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalSmokers",		1);
+			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalBoomers",		1);
+			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalHunters",		1);
+			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalSpitter",		1);
 			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalJockey",			1);
-			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalCharger",			1);
+			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalCharger",		1);
 		}
 
 		// Melee weapon IDs - They can change when switching map depending on what melee weapons are enabled
@@ -3572,26 +3589,34 @@ void LoadGameData()
 	// =========================
 
 	// Automatically generate addresses from strings inside the custom temp gamedata used for some natives
+
+	// What this does:
+	// Basically finding a strings memory address by searching for it's literal string.
+	// Then we create a gamedata with the target functions first byte, and add lots of wildcard bytes up to
+	// the strings address which we add in reverse order.
+	// We reverse the string address because that's how computers use them and can be seen in compiled code or in memory.
+	// We also add "0x68" PUSH byte found before the string (not all functions would have this, but that's what occurs with the current ones used here).
 	if( !g_bLinuxOS )
 	{
 		// Search game memory for specific strings
-		#define MAX_HOOKS 3
-		int iMaxHooks = g_bLeft4Dead2 ? 3 : 1;
+		#define MAX_HOOKS 4
+		int iMaxHooks = g_bLeft4Dead2 ? 4 : 1;
 		int offsetPush;
 
 		Address patchAddr;
 		Address patches[MAX_HOOKS];
 
+		// Get memory address where the literal strings are stored
 		patches[0] = GameConfGetAddress(hGameData, "Molotov_StrFind");
 		if( g_bLeft4Dead2 )
 		{
 			patches[1] = GameConfGetAddress(hGameData, "VomitJar_StrFind");
 			patches[2] = GameConfGetAddress(hGameData, "GrenadeLauncher_StrFind");
+			patches[3] = GameConfGetAddress(hGameData, "Realism_StrFind");
 		}
 
 
-
-		// Write custom gamedata with found addresses
+		// Write custom gamedata with found addresses from literal strings
 		BuildPath(Path_SM, sPath, sizeof(sPath), "gamedata/%s.txt", GAMEDATA_TEMP);
 		File hFile = OpenFile(sPath, "w", false);
 
@@ -3642,18 +3667,27 @@ void LoadGameData()
 				FormatEx(sAddress, sizeof(sAddress), "%X", patchAddr);
 				ReverseAddress(sAddress, sHexAddr);
 
-				// First byte of projectile functions is \x55 || \x8B
-				if( g_bLeft4Dead2 )
-					sAddress = "\\x55";
-				else
+				// First byte of projectile functions is 0x55 or 0x8B
+				if( i == 3 ) // For "CTerrorGameRules::IsRealismMode" first byte of function is different
+				{
 					sAddress = "\\x8B";
+				}
+				// Others
+				else
+				{
+					if( g_bLeft4Dead2 )
+						sAddress = "\\x55";
+					else
+						sAddress = "\\x8B";
+				}
 
-				// Offset to the "push" call
+				// Offset to the "push" string call (number of bytes to wildcard, minus the first byte already matched and not including 0x68 PUSH)
 				switch( i )
 				{
 					case 0: offsetPush = hGameData.GetOffset("Molotov_OffsetPush");
 					case 1: offsetPush = hGameData.GetOffset("VomitJar_OffsetPush");
 					case 2: offsetPush = hGameData.GetOffset("GrenadeLauncher_OffsetPush");
+					case 3: offsetPush = hGameData.GetOffset("Realism_OffsetPush");
 				}
 
 				// Add * bytes
@@ -3663,8 +3697,9 @@ void LoadGameData()
 				}
 
 				// Add call X address
-				StrCat(sAddress, sizeof(sAddress), "\\x68"); // Add "push" byte (this is found in the "Molotov", "VomitJar" and "GrenadeLauncher" functions only) - added to match better although not required
+				StrCat(sAddress, sizeof(sAddress), "\\x68"); // Add "push" byte (this is found in the "Molotov", "VomitJar", "GrenadeLauncher" and "IsRealism" functions only) - added to match better although not required
 				StrCat(sAddress, sizeof(sAddress), sHexAddr);
+				if( i == 3 ) StrCat(sAddress, sizeof(sAddress), "\\x68"); // Match byte after for "CTerrorGameRules::IsRealismMode", otherwise its not unique signature
 
 
 				// Write lines
@@ -3678,7 +3713,7 @@ void LoadGameData()
 					hFile.WriteLine("				\"windows\"	\"%s\"", sAddress);
 				}
 
-				// Write wildcard for IDA
+				// Write wildcard for IDA - Doesn't actually find in IDA because the memory addresses in runtime differ from compiled.
 				// ReplaceString(sAddress, sizeof(sAddress), "\\x", " ");
 				// ReplaceString(sAddress, sizeof(sAddress), "2A", "?");
 				// hFile.WriteLine("				/*%s */", sAddress);
@@ -3763,6 +3798,17 @@ void LoadGameData()
 			g_hSDK_CGrenadeLauncher_Projectile_Create = EndPrepSDKCall();
 			if( g_hSDK_CGrenadeLauncher_Projectile_Create == null )
 				LogError("Failed to create SDKCall: \"CGrenadeLauncher_Projectile::Create\" (%s)", g_sSystem);
+		}
+
+		StartPrepSDKCall(SDKCall_GameRules);
+		if( PrepSDKCall_SetFromConf(g_bLinuxOS ? hGameData : hTempGameData, SDKConf_Signature, g_bLinuxOS ? "CTerrorGameRules::IsRealismMode" : "FindAddress_3") == false )
+		{
+			LogError("Failed to find signature: \"CTerrorGameRules::IsRealismMode\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+			g_hSDK_CTerrorGameRules_IsRealismMode = EndPrepSDKCall();
+			if( g_hSDK_CTerrorGameRules_IsRealismMode == null )
+				LogError("Failed to create SDKCall: \"CTerrorGameRules::IsRealismMode\" (%s)", g_sSystem);
 		}
 
 		StartPrepSDKCall(SDKCall_Static);
@@ -4011,17 +4057,6 @@ void LoadGameData()
 			g_hSDK_CDirector_GetGameModeBase = EndPrepSDKCall();
 			if( g_hSDK_CDirector_GetGameModeBase == null )
 				LogError("Failed to create SDKCall: \"CDirector::GetGameModeBase\" (%s)", g_sSystem);
-		}
-
-		StartPrepSDKCall(SDKCall_GameRules);
-		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorGameRules::IsRealismMode") == false )
-		{
-			LogError("Failed to find signature: \"CTerrorGameRules::IsRealismMode\" (%s)", g_sSystem);
-		} else {
-			PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
-			g_hSDK_CTerrorGameRules_IsRealismMode = EndPrepSDKCall();
-			if( g_hSDK_CTerrorGameRules_IsRealismMode == null )
-				LogError("Failed to create SDKCall: \"CTerrorGameRules::IsRealismMode\" (%s)", g_sSystem);
 		}
 
 		StartPrepSDKCall(SDKCall_GameRules);
@@ -4736,6 +4771,7 @@ void LoadGameData()
 		ValidateOffset(g_pScriptedEventManager, "ScriptedEventManagerPtr");
 
 
+
 		// DisableAddons
 		g_pVanillaModeAddress = hGameData.GetAddress("VanillaModeAddress");
 		ValidateAddress(g_pVanillaModeAddress, "VanillaModeAddress", true);
@@ -4776,6 +4812,9 @@ void LoadGameData()
 	// ====================================================================================================
 	//									ADDRESSES
 	// ====================================================================================================
+	g_iOff_LobbyReservation = hGameData.GetOffset("LobbyReservationOffset");
+	ValidateOffset(g_iOff_LobbyReservation, "LobbyReservationOffset");
+
 	g_pDirector = hGameData.GetAddress("CDirector");
 	ValidateAddress(g_pDirector, "CDirector", true);
 
@@ -4994,6 +5033,7 @@ void LoadGameData()
 	L4D2FloatWeapon_Offsets[17] = hGameData.GetOffset("L4D2FloatWeapon_VerticalPunch");
 	L4D2FloatWeapon_Offsets[18] = hGameData.GetOffset("L4D2FloatWeapon_HorizontalPunch");
 	L4D2FloatWeapon_Offsets[19] = hGameData.GetOffset("L4D2FloatWeapon_GainRange");
+	L4D2FloatWeapon_Offsets[20] = hGameData.GetOffset("L4D2FloatWeapon_ReloadDuration");
 
 
 
@@ -6614,12 +6654,75 @@ public int Native_CBaseServer_SetReservationCookie(Handle plugin, int numParams)
 	return 0;
 }
 
-//DEPRECATED
-// public int Native_GetCampaignScores(Handle plugin, int numParams)
-// {}
+public int Native_LobbyIsReserved(Handle plugin, int numParams)
+{
+	int val1 = LoadFromAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), NumberType_Int32);
+	int val2 = LoadFromAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), NumberType_Int32);
+	if( val1 == 0 && val2 == 0 )
+		return false;
+	return true;
+}
+
+public int Native_GetLobbyReservation(Handle plugin, int numParams)
+{
+	int val1 = LoadFromAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), NumberType_Int32);
+	int val2 = LoadFromAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), NumberType_Int32);
+
+	char sTemp[20];
+
+	if( val1 )
+		Format(sTemp, sizeof(sTemp), "%X%08X", val1, val2);
+	else
+		Format(sTemp, sizeof(sTemp), "%X", val2);
+
+	int maxlength = GetNativeCell(2);
+	SetNativeString(1, sTemp, maxlength);
+
+	return 0;
+}
+
+public int Native_SetLobbyReservation(Handle plugin, int numParams)
+{
+	char sTemp[20];
+	GetNativeString(1, sTemp, sizeof(sTemp));
+
+	int val1;
+	int val2;
+
+	int length = strlen(sTemp);
+	if( length > 8 )
+	{
+		val2 = HexStrToInt(sTemp[length - 8]);
+	}
+
+	sTemp[length - 8] = 0;
+	val1 = HexStrToInt(sTemp);
+
+	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), val1, NumberType_Int32);
+	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), val2,  NumberType_Int32);
+}
+
+int HexStrToInt(const char[] sTemp)
+{
+	int i;
+	int res;
+	char c[2];
+	char v[2];
+
+	for( ;; )
+	{
+		strcopy(c, sizeof(c), sTemp[i++]);
+		if( !c[0] ) break;
+
+		v[0] = (c[0] & 0xF) + (c[0] >> 6) | ((c[0] >> 3) & 0x8);
+		res = (res << 4) | v[0];
+	}
+
+	return res;
+}
 
 //DEPRECATED
-// public int Native_LobbyIsReserved(Handle plugin, int numParams)
+// public int Native_GetCampaignScores(Handle plugin, int numParams)
 // {}
 
 
