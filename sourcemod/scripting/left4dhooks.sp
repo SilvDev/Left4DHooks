@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.88"
+#define PLUGIN_VERSION		"1.89"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,10 @@
 
 ========================================================================================
 	Change Log:
+
+1.89 (02-Mar-2022)
+	- Fixed various @ targeting from only selecting 1 player. Thanks to "Eyal282" for reporting.
+	- Changed stock "L4D_ForcePanicEvent" to the "left4dhooks_silver.inc" include file" to fix breaking and in L4D2 trigger under more circumstances. Thanks to "Eyal282" for reporting.
 
 1.88 (01-Mar-2022)
 	- Added forward "L4D2_CGasCan_ShouldStartAction" (L4D2 only) to trigger when someone is about to pour a gascan. Requested by "Eyal282".
@@ -2281,24 +2285,22 @@ public bool FilterRandomH(const char[] pattern, ArrayList clients)
 // =========================
 void MatchVariousClients(ArrayList clients, int index)
 {
-	ArrayList aList = new ArrayList();
-
 	for( int i = 1; i <= MaxClients; i++ )
 	{
 		if( IsClientInGame(i) )
 		{
 			switch( index )
 			{
-				case 1:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 )															aList.Push(i);	// "Dead Survivors (all, bots)"
-				case 2:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 )															aList.Push(i);	// "Dead Special Infected (all, bots)"
-				case 3:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 && !IsFakeClient(i) )										aList.Push(i);	// "Dead Survivors players (no bots)"
-				case 4:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 && !IsFakeClient(i) )										aList.Push(i);	// "Dead Special Infected players (no bots)"
-				case 5:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 && IsFakeClient(i) )											aList.Push(i);	// "Dead Survivors bots (no players)"
-				case 6:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 && IsFakeClient(i) )											aList.Push(i);	// "Dead Special Infected bots (no players)"
-				case 7:			if( GetClientTeam(i) == 2 && !IsFakeClient(i) )																aList.Push(i);	// "Survivors players (no bots)"
-				case 8:			if( GetClientTeam(i) == 3 && !IsFakeClient(i) )																aList.Push(i);	// "Special Infected players (no bots)"
-				case 9:			if( GetClientTeam(i) == 2 && IsFakeClient(i) && GetEntProp(i, Prop_Send, "m_isIncapacitated", 1) )			aList.Push(i);	// "Incapped Survivor Only Bots"
-				case 10:		if( GetClientTeam(i) == 2 && !IsFakeClient(i) && GetEntProp(i, Prop_Send, "m_isIncapacitated", 1) )			aList.Push(i);	// "Incapped Survivor Only Players"
+				case 1:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 )															clients.Push(i);	// "Dead Survivors (all, bots)"
+				case 2:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 )															clients.Push(i);	// "Dead Special Infected (all, bots)"
+				case 3:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 && !IsFakeClient(i) )										clients.Push(i);	// "Dead Survivors players (no bots)"
+				case 4:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 && !IsFakeClient(i) )										clients.Push(i);	// "Dead Special Infected players (no bots)"
+				case 5:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 2 && IsFakeClient(i) )											clients.Push(i);	// "Dead Survivors bots (no players)"
+				case 6:			if( !IsPlayerAlive(i) && GetClientTeam(i) == 3 && IsFakeClient(i) )											clients.Push(i);	// "Dead Special Infected bots (no players)"
+				case 7:			if( GetClientTeam(i) == 2 && !IsFakeClient(i) )																clients.Push(i);	// "Survivors players (no bots)"
+				case 8:			if( GetClientTeam(i) == 3 && !IsFakeClient(i) )																clients.Push(i);	// "Special Infected players (no bots)"
+				case 9:			if( GetClientTeam(i) == 2 && IsFakeClient(i) && GetEntProp(i, Prop_Send, "m_isIncapacitated", 1) )			clients.Push(i);	// "Incapped Survivor Only Bots"
+				case 10:		if( GetClientTeam(i) == 2 && !IsFakeClient(i) && GetEntProp(i, Prop_Send, "m_isIncapacitated", 1) )			clients.Push(i);	// "Incapped Survivor Only Players"
 				// Black and White players on third strike
 				case 11:
 				{
@@ -2306,23 +2308,15 @@ void MatchVariousClients(ArrayList clients, int index)
 					{
 						if( (g_bLeft4Dead2 ? GetEntProp(i, Prop_Send, "m_bIsOnThirdStrike", 1) != 0 : GetEntProp(i, Prop_Send, "m_currentReviveCount") >= g_hCvar_Revives.IntValue) )
 						{
-							aList.Push(i);
+							clients.Push(i);
 						}
 					}
 				}
-				case 12:		if( GetClientTeam(i) == 2 && IsFakeClient(i) )																aList.Push(i);	// Survivor Bots
-				case 13:		if( GetClientTeam(i) == 3 && IsFakeClient(i) )																aList.Push(i);	// Infected Bots
+				case 12:		if( GetClientTeam(i) == 2 && IsFakeClient(i) )																clients.Push(i);	// Survivor Bots
+				case 13:		if( GetClientTeam(i) == 3 && IsFakeClient(i) )																clients.Push(i);	// Infected Bots
 			}
 		}
 	}
-
-	if( aList.Length )
-	{
-		SetRandomSeed(GetGameTickCount());
-		clients.Push(aList.Get(GetRandomInt(0, aList.Length - 1)));
-	}
-
-	delete aList;
 }
 
 public bool FilterDeadA(const char[] pattern, ArrayList clients)

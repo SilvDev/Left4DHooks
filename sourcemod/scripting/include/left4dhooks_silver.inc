@@ -260,13 +260,37 @@ stock int L4D_EntityParent(int entity)
  */
 stock void L4D_ForcePanicEvent()
 {
-	int bits = GetUserFlagBits(client);
-	int flags = GetCommandFlags("director_force_panic_event");
-	SetUserFlagBits(client, ADMFLAG_ROOT);
-	SetCommandFlags("director_force_panic_event", flags & ~FCVAR_CHEAT);
-	ServerCommand("director_force_panic_event");
-	SetCommandFlags("director_force_panic_event", flags);
-	SetUserFlagBits(client, bits);
+	static EngineVersion engine;
+	static int director = INVALID_ENT_REFERENCE;
+
+	if( engine == Engine_Unknown )
+	{
+		engine = GetEngineVersion();
+	}
+
+	if( engine == Engine_Left4Dead2 )
+	{
+		if( director == INVALID_ENT_REFERENCE || EntRefToEntIndex(director) == INVALID_ENT_REFERENCE )
+		{
+			director = FindEntityByClassname(-1, "info_director");
+			if( director != INVALID_ENT_REFERENCE )
+			{
+				director = EntIndexToEntRef(director);
+			}
+		}
+
+		if( director != INVALID_ENT_REFERENCE )
+		{
+			AcceptEntityInput(director, "ForcePanicEvent");
+		}
+	}
+	else
+	{
+		int flags = GetCommandFlags("director_force_panic_event");
+		SetCommandFlags("director_force_panic_event", flags & ~FCVAR_CHEAT);
+		ServerCommand("director_force_panic_event");
+		SetCommandFlags("director_force_panic_event", flags);
+	}
 }
 
 /**
