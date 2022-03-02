@@ -59,17 +59,17 @@
 
 
 // Natives:
-// L4D1 = 25 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 46 [silvers - mine!] + 4 [anim] = 128
-// L4D2 = 54 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 81 [silvers - mine!] + 4 [anim] = 215
+// L4D1 = 25 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 50 [silvers - mine!] + 4 [anim] = 139
+// L4D2 = 54 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 87 [silvers - mine!] + 4 [anim] = 229
 
 // Forwards:
-// L4D1 = 61;
-// L4D2 = 78;
+// L4D1 = 62;
+// L4D2 = 82;
 
-// Stocks: (L4D1 = 106. L4D2 = 149)
-// left4dhooks_silver			37 stocks	(L4D2 = 4,		L4D1 = 0)
-// left4dhooks_stocks			82 stocks	(L4D2 = 39,		L4D1 = 4)
-// left4dhooks_lux_library		34 stocks	(L4D2 = 4,		L4D1 = 0)
+// Stocks: (L4D1 = 107. L4D2 = 152)
+// left4dhooks_silver			39 stocks	(Only: L4D2 = 6,		L4D1 = 0)
+// left4dhooks_stocks			83 stocks	(Only: L4D2 = 39,		L4D1 = 4)
+// left4dhooks_lux_library		34 stocks	(Only: L4D2 = 4,		L4D1 = 0)
 
 
 
@@ -141,6 +141,9 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_AreWanderersAllowed");
 	MarkNativeAsOptional("L4D2_GetCurrentFinaleStage");
 	MarkNativeAsOptional("L4D2_ForceNextStage");
+	MarkNativeAsOptional("L4D_ForceVersusStart");
+	MarkNativeAsOptional("L4D_ForceSurvivalStart");
+	MarkNativeAsOptional("L4D2_ForceScavengeStart");
 	MarkNativeAsOptional("L4D2_IsTankInPlay");
 	MarkNativeAsOptional("L4D2_GetScriptValueInt");
 	MarkNativeAsOptional("L4D2_NavAreaTravelDistance");
@@ -1261,6 +1264,19 @@ forward void L4D_CBreakableProp_Break(int prop, int entity);
 forward void L4D2_CGasCan_EventKilled(int gascan, int inflictor, int attacker);
 
 /**
+ * @brief Called whenever CGasCan::ShouldStartAction() is invoked
+ * @remarks Called when someone is about to pour a gascan into a nozzle
+ *
+ * @param client			the client pouring
+ * @param gascan			the gascan entity index that is being consumed
+ * @param nozzle			the nozzle being poured into
+ *
+ * @return					Plugin_Handled to block adding to Scavenge score (see "Scavenge Score Fix" plugin for more details), Plugin_Continue otherwise
+ */
+ // L4D2 only.
+forward Action L4D2_CGasCan_ShouldStartAction(int client, int gascan);
+
+/**
  * @brief Called whenever CGasCan::OnActionComplete() is invoked
  * @remarks Called when someone completes pouring a gascan into a nozzle
  *
@@ -1407,7 +1423,9 @@ forward void L4D2_OnWaterMove(int client);
  * @remarks You can use the "GAMEMODE_*" enums provided above to match the mode.
  * @remarks Only triggers when the server starts and after when the game mode changes.
  *
- * @return	Current game mode.
+ * @param gamemode		Current game mode.
+ *
+ * @noreturn
  */
 forward void L4D_OnGameModeChange(int gamemode);
 
@@ -1423,6 +1441,20 @@ forward void L4D_OnGameModeChange(int gamemode);
  **/
 // L4D2 only.
 forward Action L4D2_OnPlayerFling(int client, int attacker, float vecDir[3]);
+
+/**
+ * @brief Called when CTerrorPlayer::Fling(Vector const&, PlayerAnimEvent_t, CBaseCombatCharacter*, float) is invoked.
+ * @remarks Called when a player is flung to the ground.
+ * @remarks This will not trigger if the fling is being blocked by other plugins
+ *
+ * @param client		Client index of the player.
+ * @param attacker		Client index of the attacker.
+ * @param vecDir		Vector direction of the fling.
+ *
+ * @noreturn
+ **/
+// L4D2 only.
+forward void L4D2_OnPlayerFling_Post(int client, int attacker, float vecDir[3]);
 
 /**
  * @brief Called when CDeathFallCamera::Enable(CBasePlayer*) is invoked.
@@ -1926,6 +1958,28 @@ native int L4D2_GetCurrentFinaleStage();
  */
 // L4D2 only.
 native void L4D2_ForceNextStage();
+
+/**
+ * @brief Forces the game to start in Versus.
+ *
+ * @noreturn
+ */
+native void L4D_ForceVersusStart();
+
+/**
+ * @brief Forces the game to start in Survival.
+ *
+ * @noreturn
+ */
+native void L4D_ForceSurvivalStart();
+
+/**
+ * @brief Forces the game to start in Scavenge.
+ *
+ * @noreturn
+ */
+// L4D2 only.
+native void L4D2_ForceScavengeStart();
 
 /**
  * @brief Returns true when any tanks are on the map

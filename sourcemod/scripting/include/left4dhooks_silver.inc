@@ -109,6 +109,8 @@ enum // m_spawnflags
 // ====================================================================================================
 // STOCKS
 // ====================================================================================================
+
+// ==================================================
 // ENGINE STOCKS
 // ==================================================
 static EngineVersion g_iEngine;
@@ -258,7 +260,13 @@ stock int L4D_EntityParent(int entity)
  */
 stock void L4D_ForcePanicEvent()
 {
+	int bits = GetUserFlagBits(client);
+	int flags = GetCommandFlags("director_force_panic_event");
+	SetUserFlagBits(client, ADMFLAG_ROOT);
+	SetCommandFlags("director_force_panic_event", flags & ~FCVAR_CHEAT);
 	ServerCommand("director_force_panic_event");
+	SetCommandFlags("director_force_panic_event", flags);
+	SetUserFlagBits(client, bits);
 }
 
 /**
@@ -534,6 +542,9 @@ stock int L4D_GetPinnedInfected(int client)
 
         if( (attacker = GetEntPropEnt(client, Prop_Send, "m_pummelAttacker")) > 0 )
             return attacker;
+
+        if( (attacker = GetEntPropEnt(client, Prop_Send, "m_carryAttacker")) > 0 )
+            return attacker;
     }
 
     return 0;
@@ -617,6 +628,27 @@ stock void L4D_LedgeHangEnable(int client)
 stock void L4D_LedgeHangDisable(int client)
 {
 	AcceptEntityInput(client, "DisableLedgeHang");
+}
+
+/**
+ * @brief Checks if a Survivor is currently staggering
+ *
+ * @param client			Client ID of the player to affect
+ *
+ * @noreturn
+ */
+stock bool L4D_IsPlayerStaggering(int client)
+{
+	static int m_iQueuedStaggerType = -1;
+	if( m_iQueuedStaggerType == -1 )
+		m_iQueuedStaggerType = FindSendPropInfo("CTerrorPlayer", "m_staggerDist") + 4;
+
+	if( GetEntData(client, m_iQueuedStaggerType, 4) == -1 )
+	{
+		return GetEntPropFloat(client, Prop_Send, "m_staggerTimer", 1) >= GetGameTime();
+	}
+
+	return true;
 }
 
 

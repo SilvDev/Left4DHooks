@@ -1065,6 +1065,25 @@
 				}
 			}
 
+			"L4DD::CGasCan::ShouldStartAction"
+			{
+				"signature"		"CGasCan::ShouldStartAction"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"client"
+					{
+						"type"	"cbaseentity"
+					}
+					"entity"
+					{
+						"type"	"cbaseentity"
+					}
+				}
+			}
+
 			"L4DD::CGasCan::OnActionComplete"
 			{
 				"signature"		"CGasCan::OnActionComplete"
@@ -2166,6 +2185,39 @@
 			}
 
 			/*
+			*  Script_ForceVersusStart(void)
+			*/
+			"Script_ForceVersusStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZL23Script_ForceVersusStartv"
+				"windows"	"\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x74\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xE9"
+				/* A1 ? ? ? ? 8B ? ? ? ? ? E8 ? ? ? ? 84 ? 74 ? 8B ? ? ? ? ? 8B ? ? ? ? ? E9 */
+			}
+
+			/*
+			*  Script_ForceSurvivalStart(void)
+			*/
+			"Script_ForceSurvivalStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZL25Script_ForceSurvivalStartv"
+				"windows"	"\xE8\x2A\x2A\x2A\x2A\x84\x2A\x74\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x80\x2A\x00\x75"
+				/* E8 ? ? ? ? 84 ? 74 ? A1 ? ? ? ? 8B ? ? ? ? ? 80 ? 00 75 */
+			}
+
+			/*
+			*  Script_ForceScavengeStart(void)
+			*/
+			"Script_ForceScavengeStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZL25Script_ForceScavengeStartv"
+				"windows"	"\xE8\x2A\x2A\x2A\x2A\x84\x2A\x74\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x80\x2A\x2A\x00\x75\x2A\xE8"
+				/* E8 ? ? ? ? 84 ? 74 ? A1 ? ? ? ? 8B ? ? ? ? ? 80 ? ? 00 75 ? E8 */
+			}
+
+			/*
 			*  ScriptClassDesc_t * GetScriptDesc<CDirector>(CDirector *)
 			*/
 			"CDirector::ForceNextStage"
@@ -3144,6 +3196,18 @@
 				/* Search: "scavenge_gas_can_destroyed" */
 			}
 
+			/*
+			 *  CGasCan::ShouldStartAction(int, int, CTerrorPlayer *, CPointPropUseTarget *)
+			 */
+			"CGasCan::ShouldStartAction"
+			{
+				"library"	"server"
+				"linux"		"@_ZN7CGasCan17ShouldStartActionEN17CBaseBackpackItem22BackpackItemActionTypeEP13CTerrorPlayerP11CBaseEntity"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x75"
+				/* ? ? ? ? ? ? ? 57 8B ? 85 ? 74 ? 8B ? E8 ? ? ? ? 84 ? 75 */
+				/* Search: "gascan_pour_blocked" */
+			}
+	
 			/* CGasCan::OnActionComplete(CGasCan *this, CTerrorPlayer *, CBaseEntity *) */
 			"CGasCan::OnActionComplete"
 			{
@@ -3288,6 +3352,41 @@
 				/* 55 8B ? 8B ? 8B ? ? ? ? ? ? ? 85 ? 74 */
 				/* Search: "Director state change SUSTAIN_PEAK" few calls below */
 				/* Found by "SilverShot" */
+			}
+
+			/**
+			 * CTerrorPlayer::SetShovePenalty(CTerrorPlayer *this, int)
+			 *
+			 * 1. Search for "Claw.Swing" and enter the longer function.
+			 * 2. XRef this function to the VTable.
+			 * 3. Above 2 entries is "CTerrorWeapon::TrySwing" that calls target function.
+			 * 4. Compare with Linux.
+			 **/
+			"CTerrorPlayer::SetShovePenalty"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer15SetShovePenaltyEi"
+				"windows"	"\x55\x8B\xEC\x56\x57\x8B\x2A\x2A\x8B\x2A\x39\x2A\xF0\x2C\x00\x00"
+				/* 55 8B EC 56 57 8B ? ? 8B ? 39 ? F0 2C 00 00 */
+			}
+
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
+			 * CTerrorPlayer::SetNextShoveTime(float)
+			 *
+			 * How to find on Windows:
+			 * 1. Find the function's offsets with asherkin's VTable dump.
+			 * 2. In IDA Pro, go to the ".rdata" section of the Windows binary.
+			 * 3. Search for "CTerrorPlayer::`vftable'" to jump to the "CTerrorPlayer" vtable.
+			 * 4. Compare your dump's offsets with asherkin's dump's offsets to find the target function.
+			 * 5. Look for the target function in the Windows binary.
+			 **/
+			"CTerrorPlayer::SetNextShoveTime"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16SetNextShoveTimeEf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x8B\x2A\x0F\x2F\x2A\x2A\x2A\x2A\x2A\x76\x2A\xF3\x0F\x2A\x2A\x2A\x2A\x2A\x2A\x0F\x2A\x2A\x9F\xF6\x2A\x2A\x7B\x2A\x80\x2A\x2A\x2A\x74\x2A\x80\x2A\x2A\x2A\xF3\x0F\x2A\x2A\x2A\x2A\x2A\x2A\x5E\x5D"
+				/* ? ? ? ? ? ? ? ? 56 8B ? 0F 2F ? ? ? ? ? 76 ? F3 0F ? ? ? ? ? ? 0F ? ? 9F F6 ? ? 7B ? 80 ? ? ? 74 ? 80 ? ? ? F3 0F ? ? ? ? ? ? 5E 5D */
 			}
 
 			/* CDirector::AreWanderersAllowed(void)

@@ -1027,8 +1027,6 @@
 				"signature"	"Molotov_StrFind"
 			}
 
-
-
 			// UNUSED
 			"CTerrorGameRules::ClearTeamScores"
 			{
@@ -1556,6 +1554,32 @@
 				"linux"		"@_ZN13CTerrorPlayer10ExtinguishEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\xB7\x2A\x2A\x2A\x2A\x68"
 				/* ? ? ? ? ? ? 8B ? 8B B7 ? ? ? ? 68 */
+			}
+
+			/*
+			*  Director::ForceVersusStart(Director *this)
+			*/
+			// Naming after L4D2 function:
+			"Script_ForceVersusStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZN8Director16ForceVersusStartEv"
+				"windows"	"\x83\x2A\x2A\x53\x55\x56\x8B\x2A\x57\x89\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B"
+				/* 83 ? ? 53 55 56 8B ? 57 89 ? ? ? E8 ? ? ? ? 8B */
+				/* Search: "Force start the versus game, so PZs can spawn". Function "CMD_ForceVersusStart" few lines below, which calls "Director::ForceVersusStart". */
+			}
+
+			/*
+			*  Director::OnHoldoutStarted(Director::HoldoutTriggerType)
+			*/
+			// Naming after L4D2 function:
+			"Script_ForceSurvivalStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZN8Director16OnHoldoutStartedENS_18HoldoutTriggerTypeE"
+				"windows"	"\xA1\x2A\x2A\x2A\x2A\xD9\x2A\x2A\x56\x83\x2A\x2A\xDD\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x89\x2A\x2A\xB8"
+				/* A1 ? ? ? ? D9 ? ? 56 83 ? ? DD ? ? 68 ? ? ? ? 8B ? FF ? ? ? ? ? 8B ? ? ? 89 ? ? B8 */
+				/* Search: "%3.2f: Director::OnHoldoutStarted: Holdout started." */
 			}
 
 			/*
@@ -2416,6 +2440,39 @@
 				"linux"		"@_ZNK13CTerrorPlayer15GetFlowDistanceEN13TerrorNavArea8FlowTypeE"
 				"windows"	"\x8B\x01\x8B\x90\x2A\x2A\x2A\x2A\xFF\xD2\x85\xC0\x74\x0E\x8B\x4C\x24\x04\xD9\x84\x88\x2A\x2A\x2A\x2A\xC2\x04\x00\xD9\x05\x2A\x2A\x2A\x2A\xC2\x04\x00"
 				/* 8B 01 8B 90 ? ? ? ? FF D2 85 C0 74 0E 8B 4C 24 04 D9 84 88 ? ? ? ? C2 04 00 D9 05 ? ? ? ? C2 04 00 */
+			}
+
+			/**
+			 * CTerrorPlayer::SetShovePenalty(CTerrorPlayer *this, int)
+			 *
+			 * 1. Search for "Weapon.Swing".
+			 * 2. Use VTable XRef to find.
+			 **/
+			"CTerrorPlayer::SetShovePenalty"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorWeapon8TrySwingEfff"
+				"windows"		"\x56\x57\x8B\x2A\x2A\x2A\x39\x2A\x6C\x1A\x00\x00"
+				/* 56 57 8B ? ? ? 39 ? 6C 1A 00 00 */
+			}
+
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
+			 * CTerrorPlayer::SetNextShoveTime(float)
+			 *
+			 * How to find on Windows:
+			 * 1. Find the function's offsets with asherkin's VTable dump.
+			 * 2. In IDA Pro, go to the ".rdata" section of the Windows binary.
+			 * 3. Search for "CTerrorPlayer::`vftable'" to jump to the "CTerrorPlayer" vtable.
+			 * 4. Compare your dump's offsets with asherkin's dump's offsets to find the target function.
+			 * 5. Look for the target function in the Windows binary.
+			 **/
+			"CTerrorPlayer::SetNextShoveTime"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16SetNextShoveTimeEf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\xB1\x2A\x2A\x2A\x2A\xDF\x2A\xF6\x2A\x2A\x75"
+				/* ? ? ? ? ? ? ? ? ? ? ? 8D B1 ? ? ? ? DF ? F6 ? ? 75 */
 			}
 
 			/*
