@@ -260,13 +260,10 @@ stock int L4D_EntityParent(int entity)
  */
 stock void L4D_ForcePanicEvent()
 {
-	int bits = GetUserFlagBits(client);
 	int flags = GetCommandFlags("director_force_panic_event");
-	SetUserFlagBits(client, ADMFLAG_ROOT);
 	SetCommandFlags("director_force_panic_event", flags & ~FCVAR_CHEAT);
 	ServerCommand("director_force_panic_event");
 	SetCommandFlags("director_force_panic_event", flags);
-	SetUserFlagBits(client, bits);
 }
 
 /**
