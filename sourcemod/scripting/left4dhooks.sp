@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.89"
+#define PLUGIN_VERSION		"1.90"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -42,9 +42,22 @@
 ========================================================================================
 	Change Log:
 
+1.90 (20-Mar-2022)
+	- Added forwards "L4D_OnKnockedDown" and "L4D_OnKnockedDown_Post" to trigger when a Survivor is being thrown by a Tank rock or Hunter lung.
+	- Added forwards "L4D2_OnThrowImpactedSurvivor" and "L4D2_OnThrowImpactedSurvivor_Post" to trigger when a Survivor is impacted by a Charger.
+	- Added forwards "L4D2_OnPummelVictim" and "L4D2_OnPummelVictim_Post" to trigger when a Survivor is about to be pummelled by a Charger.
+	- Added native "L4D_EstimateFallingDamage" to check a players estimated falling damage. Requested by "Eyal282".
+	- Added stocks "L4D_GetPinnedSurvivor" and "L4D2_IsMultiCharged" in the "left4dhooks_silver.inc" include file. Requested by "Eyal282".
+	- Changed stock "L4D_IsPlayerStaggering" in the "left4dhooks_silver.inc" include file to add better thanks. Thanks to "HarryPotter" for modifying.
+	- Changed forward "L4D_OnMaterializeFromGhost" from "Action" type to "void". Thanks to "Eyal282" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" and "left4dhooks_silver.inc" Include files.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
+
 1.89 (02-Mar-2022)
 	- Fixed various @ targeting from only selecting 1 player. Thanks to "Eyal282" for reporting.
-	- Changed stock "L4D_ForcePanicEvent" to the "left4dhooks_silver.inc" include file" to fix breaking and in L4D2 trigger under more circumstances. Thanks to "Eyal282" for reporting.
+	- Changed stock "L4D_ForcePanicEvent" in the "left4dhooks_silver.inc" include file to fix breaking and in L4D2 trigger under more circumstances. Thanks to "Eyal282" for reporting.
 
 1.88 (01-Mar-2022)
 	- Added forward "L4D2_CGasCan_ShouldStartAction" (L4D2 only) to trigger when someone is about to pour a gascan. Requested by "Eyal282".
@@ -53,8 +66,8 @@
 	- Added natives "L4D_ForceVersusStart", "L4D_ForceSurvivalStart" and "L4D2_ForceScavengeStart" (L4D2 only). Requested by "ProjectSky".
 	- Thanks to "Lux" for some advice.
 
-	- Added stock "L4D_GetClientTeam" to the "left4dhooks_stocks.inc" include file. Requested by Eyal282".
-	- Added stock "L4D_IsPlayerStaggering" to the "left4dhooks_silver.inc" include file. Thanks to "HarryPotter" for writing.
+	- Added stock "L4D_GetClientTeam" in the "left4dhooks_stocks.inc" include file. Requested by Eyal282".
+	- Added stock "L4D_IsPlayerStaggering" in the "left4dhooks_silver.inc" include file. Thanks to "HarryPotter" for writing.
 	- Changed stock "L4D_ForcePanicEvent" in the "left4dhooks_silver.inc" include file to strip cheat flags when executing the command. Thanks to "Eyal282" for reporting.
 
 	- Fixed stock "L4D_GetPinnedInfected" in the "left4dhooks_silver.inc" include file not returning a Charger carrying someone. Thanks to "Eyal282" for reporting.
@@ -110,7 +123,7 @@
 1.84 (08-Jan-2022)
 	- Fixed forward "L4D_OnTryOfferingTankBot" detour returning the wrong value when using "Plugin_Changed". Thanks to "Nuki" for reporting.
 	- Fixed "Local_GetRandomClient" not processing alive or bots values correctly. Thanks to "Mrs cheng" for reporting.
-	- Now using a random seed when using functions that randomly select players. Requested by  "Mrs cheng".
+	- Now using a random seed when using functions that randomly select players. Requested by "Mrs cheng".
 	- More error messages report the OS, game and plugin version.
 
 	- Updated: Plugin.
@@ -305,7 +318,7 @@
 
 1.63 (15-Oct-2021)
 	- Changed all projectile natives to allow passing 0 (world) instead of a client index. Thanks to "BHaType" for reporting.
-	- Changed forward "L4D_OnGameModeChange" from "Action" type to "Void". Thanks to "Psyk0tik" for reporting.
+	- Changed forward "L4D_OnGameModeChange" from "Action" type to "void". Thanks to "Psyk0tik" for reporting.
 	- Fixed commands "sm_l4dd_detours" and "sm_l4dhooks_detours" not showing all forwards when they have pre and post hooks.
 
 	- Added 11 new forwards to L4D1 and L4D2. Thanks to "Psyk0tik" for the suggestions, signatures and detour functions.
@@ -1068,6 +1081,12 @@ GlobalForward g_hFWD_CInferno_Spread;
 GlobalForward g_hFWD_CTerrorWeapon_OnHit;
 GlobalForward g_hFWD_CTerrorPlayer_OnStaggered;
 GlobalForward g_hFWD_CTerrorPlayer_OnShovedByPounceLanding;
+GlobalForward g_hFWD_CTerrorPlayer_OnKnockedDown;
+GlobalForward g_hFWD_CTerrorPlayer_OnKnockedDown_Post;
+GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim;
+GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim_Post;
+GlobalForward g_hFWD_ThrowImpactedSurvivor;
+GlobalForward g_hFWD_ThrowImpactedSurvivor_Post;
 GlobalForward g_hFWD_CTerrorPlayer_Fling;
 GlobalForward g_hFWD_CTerrorPlayer_Fling_Post;
 GlobalForward g_hFWD_CDeathFallCamera_Enable;
@@ -1093,6 +1112,7 @@ Handle g_hSDK_Music_StopPlaying;
 Handle g_hSDK_CTerrorPlayer_Deafen;
 Handle g_hSDK_CEntityDissolve_Create;
 Handle g_hSDK_CTerrorPlayer_OnITExpired;
+Handle g_hSDK_CTerrorPlayer_EstimateFallingDamage;
 Handle g_hSDK_CBaseEntity_ApplyLocalAngularVelocityImpulse;
 Handle g_hSDK_SurvivorBot_IsReachable;
 Handle g_hSDK_CTerrorGameRules_HasPlayerControlledZombies;
@@ -1377,6 +1397,12 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	g_hFWD_CTerrorPlayer_OnShovedBySurvivor							= new GlobalForward("L4D_OnShovedBySurvivor",					ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CTerrorWeapon_OnHit										= new GlobalForward("L4D2_OnEntityShoved",						ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_Array, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnShovedByPounceLanding					= new GlobalForward("L4D2_OnPounceOrLeapStumble",				ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_OnKnockedDown								= new GlobalForward("L4D_OnKnockedDown",						ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_OnKnockedDown_Post							= new GlobalForward("L4D_OnKnockedDown_Post",					ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_QueuePummelVictim							= new GlobalForward("L4D2_OnPummelVictim",						ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_QueuePummelVictim_Post						= new GlobalForward("L4D2_OnPummelVictim_Post",					ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_ThrowImpactedSurvivor									= new GlobalForward("L4D2_OnThrowImpactedSurvivor",				ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_ThrowImpactedSurvivor_Post								= new GlobalForward("L4D2_OnThrowImpactedSurvivor_Post",		ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_Fling										= new GlobalForward("L4D2_OnPlayerFling",						ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CTerrorPlayer_Fling_Post									= new GlobalForward("L4D2_OnPlayerFling_Post",					ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CDeathFallCamera_Enable									= new GlobalForward("L4D_OnFatalFalling",						ET_Event, Param_Cell, Param_Cell);
@@ -1461,6 +1487,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("L4D_Deafen",		 								Native_CTerrorPlayer_Deafen);
 	CreateNative("L4D_Dissolve",		 							Native_CEntityDissolve_Create);
 	CreateNative("L4D_OnITExpired",		 							Native_CTerrorPlayer_OnITExpired);
+	CreateNative("L4D_EstimateFallingDamage",		 				Native_CTerrorPlayer_EstimateFallingDamage);
 	CreateNative("L4D_AngularVelocity",		 						Native_CBaseEntity_ApplyLocalAngularVelocityImpulse);
 	CreateNative("L4D_GetRandomPZSpawnPosition",		 			Native_ZombieManager_GetRandomPZSpawnPosition);
 	CreateNative("L4D_FindRandomSpot",		 						Native_TerrorNavArea_FindRandomSpot);
@@ -3000,6 +3027,8 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CBreakableProp_Break_Pre,								DTR_CBreakableProp_Break_Post,						"L4DD::CBreakableProp::Break",										"L4D_CBreakableProp_Break");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							INVALID_FUNCTION,									"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnPouncedOnSurvivor,						INVALID_FUNCTION,									"L4DD::CTerrorPlayer::OnPouncedOnSurvivor",							"L4D_OnPouncedOnSurvivor");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnKnockedDown,							DTR_CTerrorPlayer_OnKnockedDown_Post,				"L4DD::CTerrorPlayer::OnKnockedDown",								"L4D_OnKnockedDown");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnKnockedDown,							DTR_CTerrorPlayer_OnKnockedDown_Post,				"L4DD::CTerrorPlayer::OnKnockedDown",								"L4D_OnKnockedDown_Post",				true); // Different forwards, same detour as above - same index.
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GrabVictimWithTongue,						INVALID_FUNCTION,									"L4DD::CTerrorPlayer::GrabVictimWithTongue",						"L4D_OnGrabWithTongue");
 	CreateDetour(hGameData,			DTR_CServerGameDLL_ServerHibernationUpdate,					INVALID_FUNCTION,									"L4DD::CServerGameDLL::ServerHibernationUpdate",					"L4D_OnServerHibernationUpdate");
 
@@ -3027,6 +3056,10 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CGasCan_OnActionComplete,								INVALID_FUNCTION,									"L4DD::CGasCan::OnActionComplete",									"L4D2_CGasCan_ActionComplete");
 		CreateDetour(hGameData,		DTR_CInsectSwarm_CanHarm,									INVALID_FUNCTION,									"L4DD::CInsectSwarm::CanHarm",										"L4D2_CInsectSwarm_CanHarm");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_Fling,									DTR_CTerrorPlayer_Fling_Post,						"L4DD::CTerrorPlayer::Fling",										"L4D2_OnPlayerFling_Post");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_QueuePummelVictim,						DTR_CTerrorPlayer_QueuePummelVictim_Post,			"L4DD::CTerrorPlayer::QueuePummelVictim",							"L4D2_OnPummelVictim");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_QueuePummelVictim,						DTR_CTerrorPlayer_QueuePummelVictim_Post,			"L4DD::CTerrorPlayer::QueuePummelVictim",							"L4D2_OnPummelVictim_Post",				true); // Different forwards, same detour as above - same index.
+		CreateDetour(hGameData,		DTR_ThrowImpactedSurvivor,									DTR_ThrowImpactedSurvivor_Post,						"L4DD::ThrowImpactedSurvivor",										"L4D2_OnThrowImpactedSurvivor");
+		CreateDetour(hGameData,		DTR_ThrowImpactedSurvivor,									DTR_ThrowImpactedSurvivor_Post,						"L4DD::ThrowImpactedSurvivor",										"L4D2_OnThrowImpactedSurvivor_Post",	true); // Different forwards, same detour as above - same index.
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnHitByVomitJar,							INVALID_FUNCTION,									"L4DD::CTerrorPlayer::OnHitByVomitJar",								"L4D2_OnHitByVomitJar");
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,				"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride");
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,				"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_Post",			true); // Different forwards, same detour as above - same index.
@@ -3536,6 +3569,17 @@ void LoadGameData()
 		g_hSDK_CTerrorPlayer_OnITExpired = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_OnITExpired == null )
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::OnITExpired\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Player);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::EstimateFallingDamage") == false )
+	{
+		LogError("Failed to find signature: \"CTerrorPlayer::EstimateFallingDamage\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_SetReturnInfo(SDKType_Float, SDKPass_Plain);
+		g_hSDK_CTerrorPlayer_EstimateFallingDamage = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_EstimateFallingDamage == null )
+			LogError("Failed to create SDKCall: \"CTerrorPlayer::EstimateFallingDamage\" (%s)", g_sSystem);
 	}
 
 	StartPrepSDKCall(SDKCall_Entity);
@@ -5908,6 +5952,16 @@ public int Native_CTerrorPlayer_OnITExpired(Handle plugin, int numParams)
 	return 0;
 }
 
+public any Native_CTerrorPlayer_EstimateFallingDamage(Handle plugin, int numParams)
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_EstimateFallingDamage, "CTerrorPlayer::EstimateFallingDamage");
+
+	int client = GetNativeCell(1);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_EstimateFallingDamage");
+	return SDKCall(g_hSDK_CTerrorPlayer_EstimateFallingDamage, client);
+}
+
 public int Native_CBaseEntity_ApplyLocalAngularVelocityImpulse(Handle plugin, int numParams)
 {
 	ValidateNatives(g_hSDK_CBaseEntity_ApplyLocalAngularVelocityImpulse, "CBaseEntity::ApplyLocalAngularVelocityImpulse");
@@ -6893,7 +6947,9 @@ public int Native_SetLobbyReservation(Handle plugin, int numParams)
 	val1 = HexStrToInt(sTemp);
 
 	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), val1, NumberType_Int32);
-	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), val2,  NumberType_Int32);
+	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), val2, NumberType_Int32);
+
+	return 0;
 }
 
 int HexStrToInt(const char[] sTemp)
@@ -10480,6 +10536,110 @@ public MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding(int pThis, Handle hR
 		DHookSetReturn(hReturn, 0.0);
 		return MRES_Supercede;
 	}
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_OnKnockedDown(int pThis, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_OnKnockedDown");
+	int reason = DHookGetParam(hParams, 1);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnKnockedDown);
+	Call_PushCell(pThis);
+	Call_PushCell(reason);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_OnKnockedDown_Post(int pThis, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_OnKnockedDown_Post");
+	int reason = DHookGetParam(hParams, 1);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnKnockedDown_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(reason);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_QueuePummelVictim(int pThis, Handle hReturn, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_QueuePummelVictim");
+	int victim;
+	if( !DHookIsNullParam(hParams, 1) )
+		victim = DHookGetParam(hParams, 1);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_QueuePummelVictim);
+	Call_PushCell(pThis);
+	Call_PushCell(victim);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		DHookSetReturn(hReturn, 0);
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_QueuePummelVictim_Post(int pThis, Handle hReturn, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_QueuePummelVictim_Post");
+	int victim;
+	if( !DHookIsNullParam(hParams, 1) )
+		victim = DHookGetParam(hParams, 1);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_QueuePummelVictim_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(victim);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_ThrowImpactedSurvivor(Handle hReturn, Handle hParams)
+{
+	//PrintToServer("##### DTR_ThrowImpactedSurvivor");
+	int attacker = DHookGetParam(hParams, 1);
+	int victim = DHookGetParam(hParams, 2);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_ThrowImpactedSurvivor);
+	Call_PushCell(attacker);
+	Call_PushCell(victim);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		DHookSetReturn(hReturn, 0);
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_ThrowImpactedSurvivor_Post(Handle hReturn, Handle hParams)
+{
+	//PrintToServer("##### DTR_ThrowImpactedSurvivor_Post");
+	int attacker = DHookGetParam(hParams, 1);
+	int victim = DHookGetParam(hParams, 2);
+
+	Call_StartForward(g_hFWD_ThrowImpactedSurvivor_Post);
+	Call_PushCell(attacker);
+	Call_PushCell(victim);
+	Call_Finish();
 
 	return MRES_Ignored;
 }

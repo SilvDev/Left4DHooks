@@ -98,6 +98,67 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::OnKnockedDown"
+			{
+				"signature"		"CTerrorPlayer::OnKnockedDown"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"something"
+					{
+						"type"		"int"
+					}
+				}
+			}
+
+			"L4DD::CTerrorPlayer::QueuePummelVictim"
+			{
+				"signature"		"CTerrorPlayer::QueuePummelVictim"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"attacker"
+					{
+						"type"		"cbaseentity"
+					}
+					"something"
+					{
+						"type"		"float"
+					}
+				}
+			}
+
+			"L4DD::ThrowImpactedSurvivor"
+			{
+				"signature"		"ThrowImpactedSurvivor"
+				"callconv"		"cdecl"
+				"return"		"int"
+				"this"			"ignore"
+				"arguments"
+				{
+					"attacker"
+					{
+						"type"		"cbaseentity"
+					}
+					"victim"
+					{
+						"type"		"cbaseentity"
+					}
+					"something"
+					{
+						"type"		"float"
+					}
+					"damage"
+					{
+						"type"		"bool"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::Fling"
 			{
 				"signature"		"CTerrorPlayer::Fling"
@@ -1656,7 +1717,7 @@
 			"m_chapter"
 			{
 				"windows"	"868"
-				"linux"		"876"
+				"linux"		"864"
 				// From "Director::UpdateMapScores" before "CTerrorGameRules::GetTeamScore" call. // v5 = *((_DWORD *)this + 412);
 			}
 
@@ -2026,8 +2087,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules26HasPlayerControlledZombiesEv"
-				"windows"	"\xF7\x05\x2A\x2A\x2A\x2A\x00\x10\x00\x00\x74\x2A\xB8\x2A\x2A\x2A\x2A\xEB\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x40\x24\x85\xC0\x75\x2A\xB8\x2A\x2A\x2A\x2A\x8B\x0D\x2A\x2A\x2A\x2A\x8B\x11\x50\x8B\x42\x10\xFF\xD0\x85\xC0\x74\x2A\x6A\x00\x68\x2A\x2A\x2A\x2A\x8B\xC8\xE8\x2A\x2A\x2A\x2A\x85\xC0\x7E\x2A"
-				/* F7 05 ? ? ? ? 00 10 00 00 74 ? B8 ? ? ? ? EB ? A1 ? ? ? ? 8B 40 24 85 C0 75 ? B8 ? ? ? ? 8B 0D ? ? ? ? 8B 11 50 8B 42 10 FF D0 85 C0 74 ? 6A 00 68 ? ? ? ? 8B C8 E8 ? ? ? ? 85 C0 7E ? */
+				"windows"	"\xF7\x05\x2A\x2A\x2A\x2A\x00\x10\x00\x00\x74\x2A\xB8\x2A\x2A\x2A\x2A\xEB\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x40\x24\x85\xC0\x75\x2A\xB8\x2A\x2A\x2A\x2A\x8B\x0D\x2A\x2A\x2A\x2A\x8B\x11\x50\x8B\x42\x10\xFF\xD0\x85\xC0\x74\x2A\x6A\x00\x68\x2A\x2A\x2A\x2A\x8B\xC8\xE8\x2A\x2A\x2A\x2A\x85\xC0\x7E"
+				/* F7 05 ? ? ? ? 00 10 00 00 74 ? B8 ? ? ? ? EB ? A1 ? ? ? ? 8B 40 24 85 C0 75 ? B8 ? ? ? ? 8B 0D ? ? ? ? 8B 11 50 8B 42 10 FF D0 85 C0 74 ? 6A 00 68 ? ? ? ? 8B C8 E8 ? ? ? ? 85 C0 7E */
 				/* Search "playercontrolledzombies". */
 			}
 
@@ -2730,6 +2791,16 @@
 				"linux"		"@_ZN13CTerrorPlayer9OnFallingEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x53\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x83\x2A\x2A\x0F"
 				/* ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 53 56 57 8B ? E8 ? ? ? ? 83 ? ? 0F */
+			}
+
+			/* CTerrorPlayer::EstimateFallingDamage(CTerrorPlayer *this) */
+			"CTerrorPlayer::EstimateFallingDamage"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer21EstimateFallingDamageEv"
+				"windows"	"\x53\x8B\x2A\x83\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x81\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x56\x57\x8B\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x84"
+				/* 53 8B ? 83 ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 81 ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? 8B ? 8B ? ? ? ? ? ? ? 84  */
+				/* Search "Too many traces, %f damage, %d iterations\n" */
 			}
 
 			/**
@@ -3491,6 +3562,43 @@
 			}
 
 			/*
+			*	CTerrorPlayer::OnKnockedDown(CBasePlayer *a1, int a2)
+			*	Search: "HunterZombie.Pounce.shred". This function contains a sub calling with the param (1).
+			*/
+			"CTerrorPlayer::OnKnockedDown"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer13OnKnockedDownENS_19KnockdownReasonTypeE"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8D\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x04\x2A\x2A\x2A\x2A\x9F\x2A\x2A\x2A\x7B\x2A\x8B\x2A\x2A\x8B\x2A\x8D\x2A\x2A\x57\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\x2A\x2A\x2A\x2A\x74"
+				/* ? ? ? ? ? ? ? 57 8D ? ? ? ? ? 8B ? E8 ? ? ? ? ? ? ? ? ? ? ? ? 04 ? ? ? ? 9F ? ? ? 7B ? 8B ? ? 8B ? 8D ? ? 57 ? ? ? ? ? ? ? ? ? ? ? 8B ? ? ? ? ? ? ? ? 74 ? ? ? ? ? 74 */
+			}
+
+			/*
+			*	CTerrorPlayer::QueuePummelVictim(CTerrorPlayer*)
+			*	int __cdecl CTerrorPlayer::QueuePummelVictim(int a1, int a2, float a3)
+			*	Search: "ChargerZombie.VocalizePummel". xref calls sub_#### ((void *)v2, 0, -1.0);
+			*/
+			"CTerrorPlayer::QueuePummelVictim"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer17QueuePummelVictimEPS_f"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x83\x2A\xFF\x74"
+				/* ? ? ? ? ? ? ? 56 57 8B ? 85 ? 74 ? 8B ? 8B ? ? 8B ? FF ? 8B ? 83 ? FF 74 */
+			}
+
+			/*
+			*	ThrowImpactedSurvivor(CTerrorPlayer *, CTerrorPlayer *, float, bool)
+			*	Search: "charger_impact"
+			*/
+			"ThrowImpactedSurvivor"
+			{
+				"library"		"server"
+				"linux"			"@_Z21ThrowImpactedSurvivorP13CTerrorPlayerS0_fb"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x57\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x2A\x2A\x74\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? 53 56 57 8B ? ? 8B ? ? ? ? ? C1 ? ? ? ? 74 ? ? ? ? ? ? ? ? 8B ? ? ? ? ? 8B */
+			}
+
+			/*
 			 * CTerrorPlayer::Fling(Vector const&,PlayerAnimEvent_t,CBaseCombatCharacter *,float)
 			 *
 			 *	Vector: how target is supposed to fly, Animevent is "76" for chargerbounce, CBasePlayer is attacker, float is Incap Animation time
@@ -4178,7 +4286,7 @@
 			{
 				"library"	"server"
 				// "linux"		"\x7E\x2A\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x2A"
-				/* 7E ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? */
+				/* 7E ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B ? ? 89 ? ? ? 8B */
 				"windows" "\x7C\x2A\x8B\x4D\x2A\x8B\x55\x2A\x50\x57\x68"
 				/* 7C ? 8B 4D ? 8B 55 ? 50 57 68 */
 			}

@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.88"
+#define PLUGIN_VERSION		"1.90"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,19 @@
 
 ========================================================================================
 	Change Log:
+
+1.90 (20-Mar-2022)
+	- Added forwards "L4D_OnKnockedDown" and "L4D_OnKnockedDown_Post" to trigger when a Survivor is being thrown by a Tank rock or Hunter lung.
+	- Added forwards "L4D2_OnThrowImpactedSurvivor" and "L4D2_OnThrowImpactedSurvivor_Post" to trigger when a Survivor is impacted by a Charger.
+	- Added forwards "L4D2_OnPummelVictim" and "L4D2_OnPummelVictim_Post" to trigger when a Survivor is about to be pummelled by a Charger.
+	- Added native "L4D_EstimateFallingDamage" to check a players estimated falling damage. Requested by "Eyal282".
+	- Added stocks "L4D_GetPinnedSurvivor" and "L4D2_IsMultiCharged" in the "left4dhooks_silver.inc" include file. Requested by "Eyal282".
+	- Changed stock "L4D_IsPlayerStaggering" in the "left4dhooks_silver.inc" include file to add better thanks. Thanks to "HarryPotter" for modifying.
+	- Changed forward "L4D_OnMaterializeFromGhost" from "Action" type to "void". Thanks to "Eyal282" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" and "left4dhooks_silver.inc" Include files.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.88 (01-Mar-2022)
 	- Added forward "L4D2_CGasCan_ShouldStartAction" (L4D2 only) to trigger when someone is about to pour a gascan. Requested by "Eyal282".
@@ -439,9 +452,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 82;
+		g_iForwardsMax = 88;
 	else
-		g_iForwardsMax = 62;
+		g_iForwardsMax = 64;
 
 	return APLRes_Success;
 }
@@ -971,6 +984,8 @@ public Action sm_l4dd(int client, int args)
 	// =========================
 	// NATIVES - Mine
 	// =========================
+	// PrintToServer("Fall dmg: %f", L4D_EstimateFallingDamage(client));
+
 	// Version 1.72 tests
 	/*
 	// TEST: L4D_GetPointer
@@ -2956,7 +2971,7 @@ public Action L4D_OnMaterializeFromGhostPre(int client)
 	return Plugin_Continue;
 }
 
-public Action L4D_OnMaterializeFromGhost(int client)
+public void L4D_OnMaterializeFromGhost(int client)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -2966,8 +2981,6 @@ public Action L4D_OnMaterializeFromGhost(int client)
 
 		ForwardCalled("\"L4D_OnMaterializeFromGhost\" %d (%N)", client, client);
 	}
-
-	return Plugin_Continue;
 }
 
 public Action L4D_PipeBombProjectile_Pre(int client, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3])
@@ -3376,6 +3389,105 @@ public void L4D_OnGameModeChange(int gamemode)
 		called++;
 
 		ForwardCalled("\"L4D_OnGameModeChange\" %d", gamemode);
+	}
+}
+
+public Action L4D_OnKnockedDown(int client, int reason)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnKnockedDown\" %d (%N) reason %d", client, client, reason);
+	}
+
+	// To stop player velocity use RequestFrame and set their velocity to 0,0,0 or restore to previous maybe?
+	// RequestFrame(OnFrameResetMove, GetClientUserId(client));
+
+	// WORKS - Block the flung animation, player velocity will still change (L4D2 only?)
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void OnFrameResetMove(int client)
+{
+	client = GetClientOfUserId(client);
+	if( client && IsClientInGame(client) )
+	{
+		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, view_as<float>({ 0.0, 0.0, 0.0 }));
+	}
+}
+
+public void L4D_OnKnockedDown_Post(int client, int reason)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnKnockedDown_Post\" %d (%N) reason %d", client, client, reason);
+	}
+}
+
+public Action L4D2_OnPummelVictim(int attacker, int victim)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnPummelVictim\" %d (%N) pummelled %d (%N)", attacker, attacker, victim, victim);
+	}
+
+	// WORKS - Block being pummelled
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnPummelVictim_Post(int attacker, int victim)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnPummelVictim_Post\" %d (%N) pummelled %d (%N)", attacker, attacker, victim, victim);
+	}
+}
+
+public Action L4D2_OnThrowImpactedSurvivor(int attacker, int victim)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnThrowImpactedSurvivor\" %d (%N) flung %d (%N)", attacker, attacker, victim, victim);
+	}
+
+	// WORKS - Block being flung
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnThrowImpactedSurvivor_Post(int attacker, int victim)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnThrowImpactedSurvivor\" %d (%N) flung %d (%N)", attacker, attacker, victim, victim);
 	}
 }
 
