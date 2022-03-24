@@ -1131,14 +1131,18 @@
 				"signature"		"CGasCan::ShouldStartAction"
 				"callconv"		"thiscall"
 				"return"		"int"
-				"this"			"entity"
+				"this"			"ignore"
 				"arguments"
 				{
+					"a1"
+					{
+						"type"	"int"
+					}
 					"client"
 					{
 						"type"	"cbaseentity"
 					}
-					"entity"
+					"nozzle"
 					{
 						"type"	"cbaseentity"
 					}
@@ -1716,9 +1720,9 @@
 			}
 			"m_chapter"
 			{
-				"windows"	"868"
+				"windows"	"864"
 				"linux"		"864"
-				// From "Director::UpdateMapScores" before "CTerrorGameRules::GetTeamScore" call. // v5 = *((_DWORD *)this + 412);
+				// From "CDirector::GetMapNumber"
 			}
 
 
