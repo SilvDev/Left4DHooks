@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.91"
+#define PLUGIN_VERSION		"1.92"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.92 (24-Mar-2022)
+	- Fixed forward "L4D_OnSpawnSpecial_Post" firing when the client index is -1. Seems the code wasn't copied to the release.
 
 1.91 (24-Mar-2022)
 	- Added post hook forwards:
@@ -9175,12 +9178,13 @@ public MRESReturn DTR_ZombieManager_SpawnSpecial(Handle hReturn, Handle hParams)
 public MRESReturn DTR_ZombieManager_SpawnSpecial_Post(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_ZombieManager_SpawnSpecial_Post");
+	int client = DHookGetReturn(hReturn);
+	if( client == -1 ) return MRES_Ignored;
+
 	float a1[3], a2[3];
 	int class = DHookGetParam(hParams, 1);
 	DHookGetParamVector(hParams, 2, a1);
 	DHookGetParamVector(hParams, 3, a2);
-
-	int client = DHookGetReturn(hReturn);
 
 	Call_StartForward(g_hFWD_ZombieManager_SpawnSpecial_Post);
 	Call_PushCell(client);
@@ -9224,11 +9228,12 @@ public MRESReturn DTR_ZombieManager_SpawnSpecial_Clone(Handle hReturn, Handle hP
 public MRESReturn DTR_ZombieManager_SpawnSpecial_Post_Clone(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_ZombieManager_SpawnSpecial_Post_Clone");
+	int client = DHookGetReturn(hReturn);
+	if( client == -1 ) return MRES_Ignored;
+
 	float a1[3], a2[3];
 	int class = DHookGetParam(hParams, 1);
 	DHookGetParamVector(hParams, 3, a2);
-
-	int client = DHookGetReturn(hReturn);
 
 	Call_StartForward(g_hFWD_ZombieManager_SpawnSpecial_Post);
 	Call_PushCell(client);
@@ -9346,12 +9351,14 @@ MRESReturn Spawn_SmokerBoomerHunter(int zombieClass, Handle hReturn, Handle hPar
 
 MRESReturn Spawn_SmokerBoomerHunter_Post(int zombieClass, Handle hReturn, Handle hParams)
 {
+	//PrintToServer("##### Spawn_SmokerBoomerHunter_Post");
+	int client = DHookGetReturn(hReturn);
+	if( client == -1 ) return MRES_Ignored;
+
 	int class = zombieClass;
 	float a1[3], a2[3];
 	DHookGetParamVector(hParams, 1, a1);
 	DHookGetParamVector(hParams, 2, a2);
-
-	int client = DHookGetReturn(hReturn);
 
 	Call_StartForward(g_hFWD_ZombieManager_SpawnSpecial_Post);
 	Call_PushCell(client);
