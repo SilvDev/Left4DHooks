@@ -499,7 +499,7 @@ native int AnimGetFromActivity(char[] activity);
 
 
 // ====================================================================================================
-// FORWARDS - left4downtown.inc and from Silvers
+// FORWARDS - left4downtown.inc (and new ones by Silvers)
 // ====================================================================================================
 /**
  * @brief Called whenever ZombieManager::SpawnSpecial(ZombieClassType,Vector&,QAngle&) is invoked
@@ -508,7 +508,7 @@ native int AnimGetFromActivity(char[] activity);
  *
  * @param zombieClass	Zombie class that will be spawned
  * @param vecPos		Vector coordinate where special will be spawned
- * @param vecAng		QAngle where spcial will be facing
+ * @param vecAng		QAngle where special will be facing
  *
  * @return				Plugin_Handled to block special from spawning,
  * 						Plugin_Changed to change the zombie class type to spawn, Plugin_Continue otherwise.
@@ -523,7 +523,7 @@ forward Action L4D_OnSpawnSpecial(int &zombieClass, const float vecPos[3], const
  * @param client		The client index who spawned. Can be 0 if spawning failed
  * @param zombieClass	Zombie class that will be spawned
  * @param vecPos		Vector coordinate where special will be spawned
- * @param vecAng		QAngle where spcial will be facing
+ * @param vecAng		QAngle where special will be facing
  *
  * @noreturn
  */

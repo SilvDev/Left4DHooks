@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.92"
+#define PLUGIN_VERSION		"1.93"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.93 (25-Mar-2022)
+	- Fixed forward "L4D_OnVomitedUpon_Post" throwing errors.
 
 1.92 (24-Mar-2022)
 	- Fixed forward "L4D_OnSpawnSpecial_Post" firing when the client index is -1. Seems the code wasn't copied to the release.
@@ -9225,6 +9228,7 @@ public MRESReturn DTR_ZombieManager_SpawnSpecial_Clone(Handle hReturn, Handle hP
 	return MRES_Ignored;
 }
 
+// NOT USED
 public MRESReturn DTR_ZombieManager_SpawnSpecial_Post_Clone(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_ZombieManager_SpawnSpecial_Post_Clone");
@@ -11620,8 +11624,8 @@ public MRESReturn DTR_CTerrorPlayer_OnVomitedUpon_Post(int client, Handle hRetur
 
 	Call_StartForward(g_hFWD_CTerrorPlayer_OnVomitedUpon_Post);
 	Call_PushCell(client);
-	Call_PushCellRef(a1);
-	Call_PushCellRef(a2);
+	Call_PushCell(a1);
+	Call_PushCell(a2);
 	Call_Finish();
 
 	return MRES_Ignored;
