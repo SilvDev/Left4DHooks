@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.90"
+#define PLUGIN_VERSION		"1.94"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,19 @@
 
 ========================================================================================
 	Change Log:
+
+1.94 (29-Mar-2022)
+	- Added natives "L4D_GetReserveAmmo" and "L4D_SetReserveAmmo" to get and set a players weapons reserve ammo.
+
+	- Changed forward "L4D2_CGasCan_ShouldStartAction" swapping the nozzle and gascan params - to keep consistency with "L4D2_CGasCan_ActionComplete". Thanks to "Eyal282" for reporting.
+
+	- Fixed forward "L4D2_OnPlayerFling" not firing. Thanks to "Forgetest" for reporting.
+
+	- The follow forwards will no longer fire their post hook counterparts when blocked in the pre-hook (this allows using the post hooks to guarantee the forwards detoured function is invoked):
+		"L4D2_OnHitByVomitJar", "L4D_OnVomitedUpon", "L4D2_CInsectSwarm_CanHarm", "L4D2_OnStartCarryingVictim", "L4D2_OnStartCarryingVictim", "L4D2_OnJockeyRide", "L4D_OnGrabWithTongue",
+		"L4D2_CGasCan_ActionComplete", "L4D2_CGasCan_ShouldStartAction", "L4D_PipeBombProjectile_Pre", "L4D_OnMaterializeFromGhostPre", "L4D2_OnPlayerFling", "L4D2_OnThrowImpactedSurvivor",
+		"L4D2_OnPummelVictim", "L4D_OnKnockedDown", "L4D2_OnPounceOrLeapStumble", "L4D2_OnEndVersusModeRound", "L4D_OnTryOfferingTankBot", "L4D_TankClaw_OnPlayerHit_Pre", "L4D_OnGetMissionVSBossSpawning",
+		"L4D_OnEnterGhostState", "L4D_OnSpawnMob", "L4D_OnSpawnITMob", "L4D_OnMobRushStart", "L4D_OnFirstSurvivorLeftSafeArea", "L4D_OnSpawnWitch", "L4D2_OnSpawnWitchBride", "L4D_OnSpawnTank" and "L4D_OnSpawnSpecial".
 
 1.91 (24-Mar-2022)
 	- Added post hook forwards:
@@ -1004,8 +1017,6 @@ public Action sm_l4dd(int client, int args)
 	// =========================
 	// NATIVES - Mine
 	// =========================
-	// PrintToServer("Fall dmg: %f", L4D_EstimateFallingDamage(client));
-
 	// Version 1.72 tests
 	/*
 	// TEST: L4D_GetPointer
@@ -1062,6 +1073,13 @@ public Action sm_l4dd(int client, int args)
 
 	/*
 	// WORKS
+	int weapon = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+	PrintToServer("L4D_GetReserveAmmoA %d",					L4D_GetReserveAmmo(client, weapon));
+	L4D_SetReserveAmmo(client, weapon, L4D_GetReserveAmmo(client, weapon) + 20);
+	PrintToServer("L4D_GetReserveAmmoB %d",					L4D_GetReserveAmmo(client, weapon));
+
+	PrintToServer("Fall dmg: %f", L4D_EstimateFallingDamage(client));
+
 	if( g_bLeft4Dead2 )
 	{
 		PrintToServer("L4D2_GetSurvivorSetMap: %d",					L4D2_GetSurvivorSetMap());
@@ -3316,7 +3334,7 @@ public void L4D2_CGasCan_ActionComplete_Post(int client, int gascan, int nozzle)
 	}
 }
 
-public Action L4D2_CGasCan_ShouldStartAction(int client, int nozzle, int gascan)
+public Action L4D2_CGasCan_ShouldStartAction(int client, int gascan, int nozzle)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3333,7 +3351,7 @@ public Action L4D2_CGasCan_ShouldStartAction(int client, int nozzle, int gascan)
 	return Plugin_Continue;
 }
 
-public void L4D2_CGasCan_ShouldStartAction_Post(int client, int nozzle, int gascan)
+public void L4D2_CGasCan_ShouldStartAction_Post(int client, int gascan, int nozzle)
 {
 	static int called;
 	if( called < MAX_CALLS )
