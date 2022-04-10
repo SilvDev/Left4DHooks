@@ -121,6 +121,21 @@
 				"this"			"entity"
 			}
 
+			"L4DD::Witch::SetHarasser"
+			{
+				"signature"		"Witch::SetHarasser"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"victim"
+					{
+						"type"		"cbaseentity"
+					}
+				}
+			}
+
 			"L4DD::Tank::EnterStasis"
 			{
 				"signature"		"Tank::EnterStasis"
@@ -1782,6 +1797,18 @@
 				"linux"		"@_ZN16CDeathFallCamera6EnableEP11CBasePlayer"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\x6A"
 						/* ? ? ? ? ? ? 8B ? 8B ? E8 ? ? ? ? 85 ? 74 ? 6A */
+			}
+
+			/**
+			 *  Witch::SetHarasser(Witch *this, CBaseEntity *)
+			 **/
+			"Witch::SetHarasser"
+			{
+				"library"	"server"
+				"linux"		"@_ZN5Witch11SetHarasserEP11CBaseEntity"
+				"windows"	"\x53\x56\x8B\x2A\x2A\x2A\x85\x2A\x8B\x2A\x74\x2A\x8B"
+				/* 53 56 8B ? ? ? 85 ? 8B ? 74 ? 8B */
+				/* Search: "witchid" and compare to linux, one with strings only related to the event and without other random strings */
 			}
 
 			/**

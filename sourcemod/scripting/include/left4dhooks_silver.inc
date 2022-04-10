@@ -754,9 +754,8 @@ stock bool L4D_IsPlayerStaggering(int client)
 
 		static float fStgDist2;
 		fStgDist2 = GetEntPropFloat(client, Prop_Send, "m_staggerDist");
-		fStgDist2 *= fStgDist2;
 
-		return GetVectorDistance(vStgDist, vOrigin, true) <= fStgDist2;
+		return GetVectorDistance(vStgDist, vOrigin) <= fStgDist2;
 	}
 
 	return true;
@@ -990,7 +989,7 @@ stock int GetAnyRandomClient()
  */
 stock int GetRandomSurvivor(int alive = -1, int bots = -1)
 {
-	return Local_GetRandomClient(2, alive, bots);
+	return GetRandomClient(2, alive, bots);
 }
 
 /**
@@ -1003,16 +1002,25 @@ stock int GetRandomSurvivor(int alive = -1, int bots = -1)
  */
 stock int GetRandomInfected(int alive = -1, int bots = -1)
 {
-	return Local_GetRandomClient(3, alive, bots);
+	return GetRandomClient(3, alive, bots);
 }
 
-stock int Local_GetRandomClient(int team, int alive = -1, int bots = -1)
+/**
+ * @brief Returns a random client in game
+ *
+ * @param team			-1 = Any. 1=Spectators, 2=Survivors, 3=Special Infected, 5=Survivors and Special Infected (team > 1)
+ * @param alive			-1 = Any. 0 = Only dead players. 1 = Only alive players
+ * @param bots			-1 = Any. 0 - Only real players. 1 = Only fake players
+ *
+ * @return Client index or 0 if none
+ */
+stock int GetRandomClient(int team = -1, int alive = -1, int bots = -1)
 {
 	ArrayList aClients = new ArrayList();
 
 	for( int i = 1; i <= MaxClients; i++ )
 	{
-		if( IsClientInGame(i) && GetClientTeam(i) == team && (alive == -1 || IsPlayerAlive(i) == view_as<bool>(alive)) && (bots == -1 || IsFakeClient(i) == view_as<bool>(bots)) )
+		if( IsClientInGame(i) && (team == -1 || (team == 5 && GetClientTeam(i) > 1) || GetClientTeam(i) == team) && (alive == -1 || IsPlayerAlive(i) == view_as<bool>(alive)) && (bots == -1 || IsFakeClient(i) == view_as<bool>(bots)) )
 		{
 			aClients.Push(i);
 		}

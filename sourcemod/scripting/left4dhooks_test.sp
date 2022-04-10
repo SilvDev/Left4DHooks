@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.94"
+#define PLUGIN_VERSION		"1.95"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,22 @@
 
 ========================================================================================
 	Change Log:
+
+1.95 (10-Apr-2022)
+	- Added stock "GetRandomClient" in the "left4dhooks_silver.inc" include file.
+	- Added forward "L4D_OnWitchSetHarasser" to fire when a Witch has been startled. Requested by "ProjectSky".
+	- Added post hook forward "L4D_OnTryOfferingTankBot_Post" to compliment it's related forward "L4D_OnTryOfferingTankBot".
+
+	- Fixed animation hooks not removing the detour when no longer required.
+	- Fixed animation hooks not cleaning up when a client disconnects.
+	- Fixed animation hooks triggering on clients other than those specified. Thanks to "JoinedSenses", "nosoop" and "Impact" for helping.
+	- Fixed forward "L4D2_OnPummelVictim" bugging out the victim when blocking the pummel.
+	- Fixed some description errors in the "left4dhooks.inc" include file. Thanks to "Eyal282" for reporting.
+	- Fixed a compile warning in 1.11 from the "left4dhooks_silver.inc" include file.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" and "left4dhooks_silver.inc" Include files.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.94 (29-Mar-2022)
 	- Added natives "L4D_GetReserveAmmo" and "L4D_SetReserveAmmo" to get and set a players weapons reserve ammo.
@@ -485,9 +501,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 104;
+		g_iForwardsMax = 106;
 	else
-		g_iForwardsMax = 76;
+		g_iForwardsMax = 78;
 
 	return APLRes_Success;
 }
@@ -712,6 +728,41 @@ public Action sm_l4dd(int client, int args)
 
 
 
+
+
+	/*
+	// Method to detonate VomitJar. Must impact the ground, "L4D_DetonateProjectile" will make it detonate but no particles or smoke will appear. Only the affect within the area.
+	float vAng[3], vPos[3];
+	GetClientEyePosition(client, vPos);
+	vPos[2] += 50.0; // Move projectile above player to avoid collision
+	vAng = view_as<float>({ 0.0, 0.0, 500.0 }); // Shoot upwards
+
+	int projectile = L4D2_VomitJarPrj(client, vPos, vAng);
+	CreateTimer(1.0, TimerDetonateVomitjar, EntIndexToEntRef(projectile));
+	// */
+
+	/*
+	float vPos[3], vAng[3];
+
+	GetClientEyeAngles(client, vAng);
+	GetClientEyePosition(client, vPos);
+
+	Handle trace = TR_TraceRayFilterEx(vPos, vAng, MASK_SHOT, RayType_Infinite, TraceFilter, client);
+
+	if( TR_DidHit(trace) )
+	{
+		TR_GetEndPosition(vPos, trace);
+		TR_GetPlaneNormal(trace, vAng);
+		delete trace;
+// "inferno", "insect_swarm", "fire_cracker_blast"
+		int entity = CreateEntityByName("insect_swarm");
+		if( entity != -1 )
+		{
+			PrintToChatAll("Insect_swarm %d", entity);
+			L4D_StartBurning(entity, vPos, vAng, view_as<float>({ 0.0, 0.0, 0.0 }));
+		}
+	}
+	// */
 
 
 	// =========================
@@ -2666,6 +2717,18 @@ public Action L4D_OnTryOfferingTankBot(int tank_index, bool &enterStasis)
 	return Plugin_Continue;
 }
 
+public void L4D_OnTryOfferingTankBot_Post(int tank_index, bool enterStasis)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnTryOfferingTankBot_Post\" %d. %d", tank_index, enterStasis);
+	}
+}
+
 public Action L4D_OnCThrowActivate(int ability)
 {
 	static int called;
@@ -3699,7 +3762,58 @@ public Action L4D2_OnPummelVictim(int attacker, int victim)
 	}
 
 	// WORKS - Block being pummelled
+
+	// Note: when blocking pummel the Survivor will be stuck inside the Charger (eventually teleporting them) and AI chargers cannot move. To fix this uncomment and use the following 4 lines:
+	// DataPack dPack = new DataPack();
+	// dPack.WriteCell(GetClientUserId(attacker));
+	// dPack.WriteCell(GetClientUserId(victim));
+	// RequestFrame(OnPummelTeleport, dPack);
+
+	// To block the stumble animation, uncomment and use the following 2 lines:
+	// AnimHookEnable(victim, OnPummelOnAnimPre, INVALID_FUNCTION);
+	// CreateTimer(0.3, TimerOnPummelResetAnim, victim);
+
 	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+// To fix getting stuck use this:
+public void OnPummelTeleport(DataPack dPack)
+{
+	dPack.Reset();
+	int attacker = dPack.ReadCell();
+	int victim = dPack.ReadCell();
+	delete dPack;
+
+	attacker = GetClientOfUserId(attacker);
+	if( !attacker || !IsClientInGame(attacker) ) return;
+
+	victim = GetClientOfUserId(victim);
+	if( !victim || !IsClientInGame(victim) ) return;
+
+	SetVariantString("!activator");
+	AcceptEntityInput(victim, "SetParent", attacker);
+	TeleportEntity(victim, view_as<float>({ 50.0, 0.0, 0.0 }), NULL_VECTOR, NULL_VECTOR);
+	AcceptEntityInput(victim, "ClearParent");
+}
+
+// To block the stumble animation use the next two functions:
+Action OnPummelOnAnimPre(int client, int &anim)
+{
+	if( anim == L4D2_ACT_TERROR_SLAMMED_WALL || anim == L4D2_ACT_TERROR_SLAMMED_GROUND )
+	{
+		anim = L4D2_ACT_STAND;
+
+		return Plugin_Changed;
+	}
+
+	return Plugin_Continue;
+}
+
+public Action TimerOnPummelResetAnim(Handle timer, any victim) // Don't need client userID since it's not going to be validated just removed
+{
+	AnimHookDisable(victim, OnPummelOnAnimPre);
 
 	return Plugin_Continue;
 }
@@ -3785,7 +3899,7 @@ public Action L4D_OnFatalFalling(int client, int camera)
 		ForwardCalled("\"L4D_OnFatalFalling\" %d %N (cam: %d)", client, client, camera);
 	}
 
-	// WORKS - Block block death fall camera
+	// WORKS - Block death fall camera
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -3800,6 +3914,18 @@ public void L4D_OnFalling(int client)
 		called++;
 
 		ForwardCalled("\"L4D_OnFalling\" %d %N", client, client);
+	}
+}
+
+public void L4D_OnWitchSetHarasser(int witch, int victim)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnWitchSetHarasser\" %d > %d %N", witch, victim, victim);
 	}
 }
 
@@ -3886,10 +4012,19 @@ void ForwardCalled(const char[] format, any ...)
 {
 	if( g_bTestForwards == false ) return;
 
-	char buffer[512];
+	static char buffer[512];
 	VFormat(buffer, sizeof(buffer), format, 2);
+
+	LogAction(0, -1, "Forward %d/%d called %s", g_iForwards, g_iForwardsMax, buffer);
 
 	PrintToServer("----------");
 	PrintToServer("Forward %d/%d called %s", g_iForwards, g_iForwardsMax, buffer);
 	PrintToServer("----------");
+}
+
+public bool TraceFilter(int entity, int contentsMask, any client)
+{
+	if( entity == client )
+		return false;
+	return true;
 }

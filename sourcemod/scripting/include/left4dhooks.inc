@@ -62,12 +62,12 @@
 // L4D1 = 27 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 41 [silvers - mine!] + 4 [anim] = 130
 // L4D2 = 57 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 73 [silvers - mine!] + 4 [anim] = 217
 
-// Forwards: 106
-// L4D1 = 76;
-// L4D2 = 104;
+// Forwards: 108
+// L4D1 = 78;
+// L4D2 = 106;
 
-// Stocks: 156 (L4D1 = 106, L4D2 = 152)
-// left4dhooks_silver			39 stocks	(L4D1 = 32,		L4D2 = 39)
+// Stocks: 157 (L4D1 = 107, L4D2 = 153)
+// left4dhooks_silver			40 stocks	(L4D1 = 33,		L4D2 = 40)
 // left4dhooks_stocks			83 stocks	(L4D1 = 44,		L4D2 = 79)
 // left4dhooks_lux_library		34 stocks	(L4D1 = 30,		L4D2 = 34)
 
@@ -427,6 +427,13 @@ enum
 	FINALE_GAUNTLET_ESCAPE = 17
 }
 
+enum
+{
+	KNOCKDOWN_HUNTER = 1,
+	KNOCKDOWN_TANK = 2,
+	KNOCKDOWN_CHARGER = 3
+}
+
 
 
 
@@ -468,7 +475,7 @@ native bool AnimHookEnable(int client, AnimHookCallback callback, AnimHookCallba
  * @param callback			Callback function for your pre-hook (uses "ACT_*" activity numbers) or INVALID_FUNCTION if not used.
  * @param callbackPost		Callback function for your post-hook (uses "m_nSequence" sequence numbers) or INVALID_FUNCTION if not used.
  *
- * @return					True on success, false if client invalid.
+ * @return					True on success, false if client not hooked.
  */
 native bool AnimHookDisable(int client, AnimHookCallback callback, AnimHookCallback callbackPost = INVALID_FUNCTION);
 
@@ -675,10 +682,22 @@ forward Action L4D_OnSpawnMob(int &amount);
 forward void L4D_OnSpawnMob_Post(int amount);
 
 /**
+ * @brief Called when a witch has been startled by someone
+ *
+ * @param witch			The witch entity index
+ * @param victim		Client who harassed the Witch, will be 0 on spawn
+ *
+ * @noreturn
+ **/
+forward void L4D_OnWitchSetHarasser(int witch, int victim);
+
+/**
  * @brief Called when Tank::EnterStasis() is invoked.
  * @remarks Called when a Tank enters stasis mode in Versus mode.
  *
  * @param tank			Client index of the Tank.
+ *
+ * @noreturn
  **/
 forward void L4D_OnEnterStasis(int tank);
 
@@ -687,6 +706,8 @@ forward void L4D_OnEnterStasis(int tank);
  * @remarks Called when a Tank leaves stasis mode in Versus mode.
  *
  * @param tank				Client index of the Tank.
+ *
+ * @noreturn
  **/
 forward void L4D_OnLeaveStasis(int tank);
 
@@ -707,6 +728,8 @@ forward Action L4D_OnEnterGhostStatePre(int client);
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client		the client that has entered ghost mode
+ *
+ * @noreturn
  */
 forward void L4D_OnEnterGhostState(int client);
 
@@ -1077,6 +1100,17 @@ forward Action L4D_TankRock_OnRelease(int tank, int rock, float vecPos[3], float
 forward Action L4D_OnTryOfferingTankBot(int tank_index, bool &enterStasis);
 
 /**
+ * @brief Called whenever CDirector::TryOfferingTankBot is invoked
+ * @remarks Is used for displaying the "X gets Tank" window and transferring Tank control
+ *
+ * @param tank_index		Client index of the tank
+ * @param enterStasis		Is the tank in stasis
+ *
+ * @noreturn
+ */
+forward void L4D_OnTryOfferingTankBot_Post(int tank_index, bool enterStasis);
+
+/**
  * @brief Called whenever CThrow::ActivateAbility(void) is invoked
  * @remarks Called when a tank throws a rock. Blocking this call will keep the tank from throwing a rock
  *
@@ -1337,7 +1371,8 @@ forward Action L4D_OnKnockedDown(int client, int reason);
 
 /**
  * @brief Called when CTerrorPlayer::OnKnockedDown(CTerrorPlayer*) is invoked.
- * @remarks Called when a player is about to be pummelled by Charger.
+ * @remarks Called when someone is about to be hit by a Tank rock or lunged by a Hunter
+ * @remarks Called multiple times when someone is about to be has been pounced by a Hunter
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim		Client index of the victim.
@@ -1349,7 +1384,7 @@ forward void L4D_OnKnockedDown_Post(int client, int reason);
 
 /**
  * @brief Called when ThrowImpactedSurvivor(CTerrorPlayer *, CTerrorPlayer *, float, bool) is invoked.
- * @remarks Called when a player is about to be flung probably by Charger impact.
+ * @remarks Called when a player is about to be flung by a Charger impact.
  *
  * @param attacker		Client index of the attacker.
  * @param victim		Client index of the victim.
@@ -1512,7 +1547,7 @@ forward void L4D2_OnJockeyRide_Post(int victim, int attacker);
 /**
  * @brief Called whenever CTerrorPlayer::OnStartCarryingVictim() is invoked
  * @remarks Called when a Survivor player is about to be carried by a Charger
- * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * @remarks This forward will not trigger if there's no room to charge when grabbing a survivor, but "L4D2_OnPummelVictim" will trigger
  *
  * @param victim			the client who's being grabbed
  * @param attacker			the Charger picking up someone
@@ -1525,6 +1560,8 @@ forward Action L4D2_OnStartCarryingVictim(int victim, int attacker);
 /**
  * @brief Called whenever CTerrorPlayer::OnStartCarryingVictim() is invoked
  * @remarks Called when a Survivor player is about to be carried by a Charger
+ * @remarks This forward will not trigger if there's no room to charge when grabbing a survivor, but "L4D2_OnPummelVictim" will trigger
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the client who's being grabbed
  * @param attacker			the Charger picking up someone
@@ -1537,7 +1574,8 @@ forward void L4D2_OnStartCarryingVictim_Post(int victim, int attacker);
 /**
  * @brief Called when CTerrorPlayer::QueuePummelVictim is invoked.
  * @remarks Called when a player is about to be pummelled by a Charger.
- * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * @remarks To block the stumble animation and getting stuck inside a Charger see the "L4D2_OnPummelVictim" section for a demonstration in "left4dhooks_test.sp"
+ * @remarks Note: when blocking pummel the Survivor will be stuck inside the Charger (eventually teleporting them) and AI chargers cannot move. See the above demo for a solution.
  *
  * @param attacker		Client index of the attacker.
  * @param victim		Client index of the victim.
@@ -1550,6 +1588,7 @@ forward Action L4D2_OnPummelVictim(int attacker, int victim);
 /**
  * @brief Called when CTerrorPlayer::QueuePummelVictim is invoked.
  * @remarks Called when a player is about to be pummelled by a Charger.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param attacker		Client index of the attacker.
  * @param victim		Client index of the victim.
@@ -1565,6 +1604,7 @@ forward void L4D2_OnPummelVictim_Post(int attacker, int victim);
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
+ * @param boomerExplosion	true if triggered by a boommer explosion
  *
  * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
  */
@@ -1576,6 +1616,7 @@ forward Action L4D_OnVomitedUpon(int victim, int &attacker, bool &boomerExplosio
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
+ * @param boomerExplosion	true if triggered by a boommer explosion
  *
  * @noreturn
  */
@@ -1588,7 +1629,6 @@ forward void L4D_OnVomitedUpon_Post(int victim, int attacker, bool boomerExplosi
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
- * @param boomerExplosion	true if triggered by a boommer explosion
  *
  * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
  */
@@ -1600,7 +1640,6 @@ forward Action L4D2_OnHitByVomitJar(int victim, int &attacker);
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
- * @param boomerExplosion	true if triggered by a boommer explosion
  *
  * @noreturn
  */
@@ -2151,6 +2190,18 @@ native bool L4D_HasPlayerControlledZombies();
  * @noreturn
  */
 native int L4D_DetonateProjectile(int entity);
+
+/**
+ * @brief Detonates an active grenade projectile
+ * @remarks Can detonate in L4D1 & L4D2: "molotov_projectile", "pipebomb_projectile", "tank_rock"
+ * @remarks Can detonate in L4D2: "vomitjar_projectile", "grenadelauncher_projectile", "spitter_projectile"
+ *
+ * @param entity	The projectile entity to detonate
+ *
+ * @noreturn
+ */
+// NOT IMPLEMENTED
+// native int L4D_StartBurning(int entity, float vecPos[3], float vecNorm[3], float vecVel[3]);
 
 /**
  * @brief Creates an activated Tank Rock projectile.

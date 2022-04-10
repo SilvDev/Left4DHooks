@@ -194,6 +194,21 @@
 				"this"			"entity"
 			}
 
+			"L4DD::Witch::SetHarasser"
+			{
+				"signature"		"Witch::SetHarasser"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"victim"
+					{
+						"type"		"cbaseentity"
+					}
+				}
+			}
+
 			"L4DD::Tank::EnterStasis"
 			{
 				"signature"		"Tank::EnterStasis"
@@ -2097,6 +2112,18 @@
 			}
 
 			/*
+			*  CInferno::StartBurning(Vector const&, Vector const&, Vector const&, int)
+			*  Search: ""
+			*/
+			"CInferno::StartBurning"
+			{
+				"library"	"server"
+				"linux"		"@_ZN8CInferno12StartBurningERK6VectorS2_S2_i"
+				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x56\x8B\x2A\x83\x2A\x2A\x2A\x2A\x2A\x2A\x57\x75\x2A\x8B"
+				/* 55 8B ? 83 ? ? 53 56 8B ? 83 ? ? ? ? ? ? 57 75 ? 8B */
+			}
+
+			/*
 			*  CPipeBombProjectile::Create(Vector  const&, QAngle  const&, Vector  const&, Vector  const&, CBaseCombatCharacter *, float)
 			*  Search: "BEEP_CONTEXT"
 			*/
@@ -2824,6 +2851,18 @@
 				"linux"		"@_ZN16CDeathFallCamera6EnableEP11CBasePlayer"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8B\x2A\x8B\x2A\x89\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x85"
 				/* ? ? ? ? ? ? ? ? 57 8B ? 8B ? 89 ? ? E8 ? ? ? ? 85 */
+			}
+
+			/**
+			 *  Witch::SetHarasser(Witch *this, CBaseEntity *)
+			 **/
+			"Witch::SetHarasser"
+			{
+				"library"	"server"
+				"linux"		"@_ZN5Witch11SetHarasserEP11CBaseEntity"
+				"windows"	"\x55\x8B\x2A\x51\x53\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x57\x83\x2A\xFF"
+				/* 55 8B ? 51 53 8B ? 8B ? ? ? ? ? 57 83 ? FF */
+				/* Search: "witchid" and compare to linux, one with strings only related to the event and without other random strings */
 			}
 
 			/**
