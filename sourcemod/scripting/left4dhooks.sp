@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.95"
+#define PLUGIN_VERSION		"1.96"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.96 (11-Apr-2022)
+	- Fixed error on client disconnect. Thanks to "sorallll" for reporting.
 
 1.95 (10-Apr-2022)
 	- Added stock "GetRandomClient" in the "left4dhooks_silver.inc" include file.
@@ -2744,18 +2747,18 @@ public void OnClientDisconnect(int client)
 	}
 
 	// Loop through all anim hooks for specific client
-	int target;
 	int length = g_iAnimationHookedPlugins.Length;
 
 	for( int i = 0; i < length; i++ )
 	{
 		// Get hooked client
-		target = g_iAnimationHookedPlugins.Get(i, 1);
+		index = g_iAnimationHookedPlugins.Get(i, 1);
 
 		// Verify client to unhook
-		if( client == target )
+		if( client == index )
 		{
 			g_iAnimationHookedPlugins.Erase(i);
+			length--;
 		}
 	}
 }
