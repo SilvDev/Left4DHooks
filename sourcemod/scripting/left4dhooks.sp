@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.96"
+#define PLUGIN_VERSION		"1.97"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,11 @@
 
 ========================================================================================
 	Change Log:
+
+1.97 (15-Apr-2022)
+	- Fixed removing animation detours in the same frame as the detour callback, crashing the server. Thanks to "Red Flame" and "fdxx" for reporting and helping.
+	- Fixed not erasing all animation hooks on client disconnect. Thanks to "sorallll" for reporting and fixing.
+	- Fixed not hooking pre hooks when only post forwards were used. Thanks to "Beatles" for reporting.
 
 1.96 (11-Apr-2022)
 	- Fixed error on client disconnect. Thanks to "sorallll" for reporting.
@@ -1037,7 +1042,8 @@ ArrayList g_aForwardNames;					// Stores Forward names
 ArrayList g_aUseLastIndex;					// Use last index
 ArrayList g_aForwardIndex;					// Stores Detour indexes
 ArrayList g_aForceDetours;					// Determines if a detour should be forced on without any forward using it
-int g_iCurrentIndex;						// Index for each detour while created
+int g_iSmallIndex;							// Index for each detour while created
+int g_iLargeIndex;							// Index for each detour while created
 bool g_bCreatedDetours;						// To determine first time creation of detours, or if enabling or disabling
 float g_fLoadTime;							// When the plugin was loaded, to ignore when "AP_OnPluginUpdate" fires
 Handle g_hThisPlugin;						// Ignore checking this plugin
@@ -1047,6 +1053,7 @@ GameData g_hGameData;						// GameData file - to speed up loading
 
 // Animation Hook
 int g_iAnimationDetourIndex;
+bool g_bAnimationRemoveHook;
 ArrayList g_iAnimationHookedClients;
 ArrayList g_iAnimationHookedPlugins;
 ArrayList g_hAnimationActivityList;
@@ -2749,16 +2756,21 @@ public void OnClientDisconnect(int client)
 	// Loop through all anim hooks for specific client
 	int length = g_iAnimationHookedPlugins.Length;
 
-	for( int i = 0; i < length; i++ )
+	int i, target;
+	while( i < length )
 	{
 		// Get hooked client
-		index = g_iAnimationHookedPlugins.Get(i, 1);
+		target = g_iAnimationHookedPlugins.Get(i, 1);
 
 		// Verify client to unhook
-		if( client == index )
+		if( client == target )
 		{
 			g_iAnimationHookedPlugins.Erase(i);
 			length--;
+		}
+		else
+		{
+			i++;
 		}
 	}
 }
@@ -2775,12 +2787,13 @@ public int Native_AnimHookEnable(Handle plugin, int numParams)
 	if( client < 1 || client > MaxClients || !IsClientInGame(client) ) return false;
 
 	// Check if detour enabled, otherwise enable.
-	if( g_aDetoursHooked.Get(g_iAnimationDetourIndex) == 0 )
+	int index = g_aForwardIndex.Get(g_iAnimationDetourIndex);
+	if( g_aDetoursHooked.Get(index) == 0 )
 	{
-		g_aDetoursHooked.Set(g_iAnimationDetourIndex, 1);
+		g_aDetoursHooked.Set(index, 1);
 		g_aForceDetours.Set(g_iAnimationDetourIndex, 1);
 
-		Handle hDetour = g_aDetourHandles.Get(g_iAnimationDetourIndex);
+		Handle hDetour = g_aDetourHandles.Get(index);
 		DHookEnableDetour(hDetour, false, DTR_CBaseAnimating_SelectWeightedSequence_Pre);
 		DHookEnableDetour(hDetour, true, DTR_CBaseAnimating_SelectWeightedSequence_Post);
 	}
@@ -2792,8 +2805,10 @@ public int Native_AnimHookEnable(Handle plugin, int numParams)
 	g_iAnimationHookedClients.Push(client);
 
 	// Add multiple callbacks, validate by client
-	int index = g_iAnimationHookedPlugins.Push(plugin);
+	index = g_iAnimationHookedPlugins.Push(plugin);
 	g_iAnimationHookedPlugins.Set(index, client, 1);
+
+	g_bAnimationRemoveHook = false;
 
 	return true;
 }
@@ -2832,6 +2847,8 @@ public int Native_AnimHookDisable(Handle plugin, int numParams)
 		}
 	}
 
+	int index = g_aForwardIndex.Get(g_iAnimationDetourIndex);
+
 	// Delete callback, client not being hooked from target plugin any more
 	if( !keep )
 	{
@@ -2840,18 +2857,14 @@ public int Native_AnimHookDisable(Handle plugin, int numParams)
 	}
 
 	// Remove detour, no more plugins using it
-	if( length == 0 && g_aDetoursHooked.Get(g_iAnimationDetourIndex) == 1 )
+	if( length == 0 && g_aDetoursHooked.Get(index) == 1 && g_aForceDetours.Get(g_iAnimationDetourIndex) == 1 )
 	{
-		g_aForceDetours.Set(g_iAnimationDetourIndex, 0);
-		g_aDetoursHooked.Set(g_iAnimationDetourIndex, 0);
-
-		Handle hDetour = g_aDetourHandles.Get(g_iAnimationDetourIndex);
-		DHookDisableDetour(hDetour, false, DTR_CBaseAnimating_SelectWeightedSequence_Pre);
-		DHookDisableDetour(hDetour, true, DTR_CBaseAnimating_SelectWeightedSequence_Post);
+		g_bAnimationRemoveHook = true;
+		RequestFrame(OnFrameRemoveDetour);
 	}
 
 	// Remove client from checking array
-	int index = g_iAnimationHookedClients.FindValue(client);
+	index = g_iAnimationHookedClients.FindValue(client);
 	if( index != -1 )
 	{
 		g_iAnimationHookedClients.Erase(index);
@@ -2859,6 +2872,22 @@ public int Native_AnimHookDisable(Handle plugin, int numParams)
 	}
 
 	return false;
+}
+
+public void OnFrameRemoveDetour()
+{
+	if( g_bAnimationRemoveHook )
+	{
+		g_bAnimationRemoveHook = false;
+
+		int index = g_aForwardIndex.Get(g_iAnimationDetourIndex);
+		g_aDetoursHooked.Set(index, 0);
+		g_aForceDetours.Set(g_iAnimationDetourIndex, 0);
+
+		Handle hDetour = g_aDetourHandles.Get(index);
+		DHookDisableDetour(hDetour, false, DTR_CBaseAnimating_SelectWeightedSequence_Pre);
+		DHookDisableDetour(hDetour, true, DTR_CBaseAnimating_SelectWeightedSequence_Post);
+	}
 }
 
 public int Native_AnimGetActivity(Handle plugin, int numParams)
@@ -3107,7 +3136,8 @@ void SetupDetours(GameData hGameData = null)
 		g_aForwardNames = new ArrayList(ByteCountToCells(MAX_FWD_LEN));
 	}
 
-	g_iCurrentIndex = 0;
+	g_iSmallIndex = 0;
+	g_iLargeIndex = 0;
 
 
 
@@ -3130,8 +3160,8 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_ZombieManager_SpawnITMob,								DTR_ZombieManager_SpawnITMob_Post,							"L4DD::ZombieManager::SpawnITMob",									"L4D_OnSpawnITMob_Post",				true);
 	CreateDetour(hGameData,			DTR_ZombieManager_SpawnMob,									DTR_ZombieManager_SpawnMob_Post,							"L4DD::ZombieManager::SpawnMob",									"L4D_OnSpawnMob");
 	CreateDetour(hGameData,			DTR_ZombieManager_SpawnMob,									DTR_ZombieManager_SpawnMob_Post,							"L4DD::ZombieManager::SpawnMob",									"L4D_OnSpawnMob_Post",					true);
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostState");
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostStatePre",				true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostStatePre");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostState",				true);
 	CreateDetour(hGameData,			DTR_CDirector_IsTeamFull,									INVALID_FUNCTION,											"L4DD::CDirector::IsTeamFull",										"L4D_OnIsTeamFull");
 	CreateDetour(hGameData,			DTR_CTerrorGameRules_ClearTeamScores,						INVALID_FUNCTION,											"L4DD::CTerrorGameRules::ClearTeamScores",							"L4D_OnClearTeamScores");
 	CreateDetour(hGameData,			DTR_CTerrorGameRules_SetCampaignScores,						DTR_CTerrorGameRules_SetCampaignScores_Post,				"L4DD::CTerrorGameRules::SetCampaignScores",						"L4D_OnSetCampaignScores");
@@ -3160,9 +3190,9 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTankRock_Detonate,										INVALID_FUNCTION,											"L4DD::CTankRock::Detonate",										"L4D_TankRock_OnDetonate");
 	CreateDetour(hGameData,			DTR_CTankRock_OnRelease,									INVALID_FUNCTION,											"L4DD::CTankRock::OnRelease",										"L4D_TankRock_OnRelease");
 	CreateDetour(hGameData,			DTR_CThrow_ActivateAbililty,								INVALID_FUNCTION,											"L4DD::CThrow::ActivateAbililty",									"L4D_OnCThrowActivate");
-	g_iAnimationDetourIndex = g_iCurrentIndex; // Animation Hook - detour index to enable when required.
-	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttack");						// Animation Hook
-	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttackPre",			true);	// Animation Hook
+	g_iAnimationDetourIndex = g_iLargeIndex; // Animation Hook - detour index to enable when required.
+	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttackPre");					// Animation Hook
+	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttack",				true);	// Animation Hook
 	CreateDetour(hGameData,			DTR_CDirectorVersusMode_EndVersusModeRound_Pre,				DTR_CDirectorVersusMode_EndVersusModeRound_Post,			"L4DD::CDirectorVersusMode::EndVersusModeRound",					"L4D2_OnEndVersusModeRound");
 	CreateDetour(hGameData,			DTR_CDirectorVersusMode_EndVersusModeRound_Pre,				DTR_CDirectorVersusMode_EndVersusModeRound_Post,			"L4DD::CDirectorVersusMode::EndVersusModeRound",					"L4D2_OnEndVersusModeRound_Post",		true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnLedgeGrabbed,							INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnLedgeGrabbed",								"L4D_OnLedgeGrabbed");
@@ -3280,12 +3310,15 @@ void CreateDetour(GameData hGameData, DHookCallback fCallback, DHookCallback fPo
 	{
 		// Set forward names and indexes
 		static int index;
+		if( useLast ) index -= 1;
 
 		g_aGameDataSigs.PushString(sName);
 		g_aForwardNames.PushString(sForward);
 		g_aUseLastIndex.Push(useLast);
 		g_aForwardIndex.Push(index);
 		g_aForceDetours.Push(forceOn);
+
+		index++;
 
 		// Setup detours
 		if( !useLast )
@@ -3296,38 +3329,31 @@ void CreateDetour(GameData hGameData, DHookCallback fCallback, DHookCallback fPo
 			g_aDetoursHooked.Push(0);			// Default disabled
 			g_aDetourHandles.Push(hDetour);		// Store handle
 		}
-		else
-		{
-			g_aDetoursHooked.Push(0);
-			g_aDetourHandles.Push(g_aDetourHandles.Get(index - 1));		// Store handle
-		}
-
-		index++;
 	}
 	else
 	{
 		// Enable detours
 		if( !useLast ) // When using the last index, the pre and post detours are already hooked. Pre is always hooked even when only using post, to avoid crashes from dhooks.
 		{
-			int current = g_aDetoursHooked.Get(g_iCurrentIndex);
+			int current = g_aDetoursHooked.Get(g_iSmallIndex);
 			if( current < 0 )
 			{
-				Handle hDetour = g_aDetourHandles.Get(g_iCurrentIndex);
+				Handle hDetour = g_aDetourHandles.Get(g_iSmallIndex);
 				if( hDetour != null )
 				{
 					if( current == -1 )
 					{
-						g_aDetoursHooked.Set(g_iCurrentIndex, 1);
+						g_aDetoursHooked.Set(g_iSmallIndex, 1);
 						#if DEBUG
-						PrintToServer("Enabling detour %d %s", g_iCurrentIndex, sName);
+						PrintToServer("Enabling detour %d %s", g_iSmallIndex, sName);
 						#endif
 
 						if( fCallback != INVALID_FUNCTION && !DHookEnableDetour(hDetour, false, fCallback) ) LogError("Failed to detour pre \"%s\" (%s).", sName, g_sSystem);
 						if( fPostCallback != INVALID_FUNCTION && !DHookEnableDetour(hDetour, true, fPostCallback) ) LogError("Failed to detour post \"%s\" (%s).", sName, g_sSystem);
 					} else {
-						g_aDetoursHooked.Set(g_iCurrentIndex, 0);
+						g_aDetoursHooked.Set(g_iSmallIndex, 0);
 						#if DEBUG
-						PrintToServer("Disabling detour %d %s", g_iCurrentIndex, sName);
+						PrintToServer("Disabling detour %d %s", g_iSmallIndex, sName);
 						#endif
 
 						if( fCallback != INVALID_FUNCTION && !DHookDisableDetour(hDetour, false, fCallback) ) LogError("Failed to disable detour pre \"%s\" (%s).", sName, g_sSystem);
@@ -3335,9 +3361,11 @@ void CreateDetour(GameData hGameData, DHookCallback fCallback, DHookCallback fPo
 					}
 				}
 			}
+
+			g_iSmallIndex++;
 		}
 
-		g_iCurrentIndex++;
+		g_iLargeIndex++;
 	}
 }
 
@@ -3349,8 +3377,8 @@ void CheckRequiredDetours(int client = 0)
 	#endif
 
 	bool useLast;
-	char signatures[MAX_FWD_LEN];
-	char forwards[MAX_FWD_LEN];
+	char sName[MAX_FWD_LEN];
+	char sForward[MAX_FWD_LEN];
 	ArrayList aHand = new ArrayList();
 	Handle hIter = GetPluginIterator();
 	Handle hPlug;
@@ -3381,8 +3409,8 @@ void CheckRequiredDetours(int client = 0)
 				if( g_aForceDetours.Get(i) )
 				{
 					// Get forward name
-					g_aForwardNames.GetString(i, forwards, sizeof(forwards));
-					g_aGameDataSigs.GetString(i, signatures, sizeof(signatures));
+					g_aForwardNames.GetString(i, sForward, sizeof(sForward));
+					g_aGameDataSigs.GetString(i, sName, sizeof(sName));
 
 					count++;
 
@@ -3394,24 +3422,25 @@ void CheckRequiredDetours(int client = 0)
 					{
 						StopProfiling(g_vProf);
 						g_fProf += GetProfilerTime(g_vProf);
-						PrintToServer("%2d %36s> %32s (%s)", count, (index == g_iAnimationDetourIndex && g_aForceDetours.Get(index)) ? "FORCED ANIM" : "FORCED DETOUR", forwards, signatures[6]);
+
+						PrintToServer("%2d %36s> %32s (%s)", count, (i == g_iAnimationDetourIndex && g_aForceDetours.Get(g_iAnimationDetourIndex)) ? "FORCED ANIM" : "FORCED DETOUR", sForward, sName[6]);
 						StartProfiling(g_vProf);
 					}
 					#endif
 
 					if( client > 0 )
 					{
-						ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, (index == g_iAnimationDetourIndex && g_aForceDetours.Get(index)) ? "FORCED ANIM" : "FORCED DETOUR", forwards, signatures[6]);
+						ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, (i == g_iAnimationDetourIndex && g_aForceDetours.Get(g_iAnimationDetourIndex)) ? "FORCED ANIM" : "FORCED DETOUR", sForward, sName[6]);
 					}
 				}
 				// Check if used
 				else
 				{
 					// Get forward name
-					g_aForwardNames.GetString(i, forwards, sizeof(forwards));
+					g_aForwardNames.GetString(i, sForward, sizeof(sForward));
 
 					#if !DETOUR_ALL
-					if( GetFunctionByName(hPlug, forwards) != INVALID_FUNCTION )
+					if( GetFunctionByName(hPlug, sForward) != INVALID_FUNCTION )
 					#else
 					if( aHand.FindValue(index) == -1 )
 					#endif
@@ -3429,24 +3458,24 @@ void CheckRequiredDetours(int client = 0)
 							GetPluginFilename(hPlug, filename, sizeof(filename));
 							#endif
 
-							g_aGameDataSigs.GetString(i, signatures, sizeof(signatures));
+							g_aGameDataSigs.GetString(i, sName, sizeof(sName));
 
 							StopProfiling(g_vProf);
 							g_fProf += GetProfilerTime(g_vProf);
-							PrintToServer("%2d %36s> %32s (%s)", count, filename, forwards, signatures[6]);
+							PrintToServer("%2d %36s> %32s (%s)", count, filename, sForward, sName[6]);
 							StartProfiling(g_vProf);
 						}
 						#endif
 
 						if( client > 0 )
 						{
-							g_aGameDataSigs.GetString(i, signatures, sizeof(signatures));
+							g_aGameDataSigs.GetString(i, sName, sizeof(sName));
 
 							#if DETOUR_ALL
-							ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, "THIS_PLUGIN_TEST", forwards, signatures[6]);
+							ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, "THIS_PLUGIN_TEST", sForward, sName[6]);
 							#else
 							GetPluginFilename(hPlug, filename, sizeof(filename));
-							ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, filename, forwards, signatures[6]);
+							ReplyToCommand(client - 1, "%2d %36s> %32s (%s)", count, filename, sForward, sName[6]);
 							#endif
 						}
 					}
@@ -3456,11 +3485,12 @@ void CheckRequiredDetours(int client = 0)
 	}
 
 	// Iterate detours - enable and disable as required
+	int current;
 	int len = g_aDetoursHooked.Length;
 	for( int i = 0; i < len; i++ )
 	{
 		// ToDo: When using extra-api.ext - increment or decrement and only enable/disable when required
-		int current = g_aDetoursHooked.Get(i);
+		current = g_aDetoursHooked.Get(i);
 
 		// Detour not required
 		if( aHand.FindValue(i) == -1 )
