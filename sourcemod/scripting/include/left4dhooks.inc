@@ -62,9 +62,9 @@
 // L4D1 = 27 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 41 [silvers - mine!] + 4 [anim] = 130
 // L4D2 = 57 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 73 [silvers - mine!] + 4 [anim] = 217
 
-// Forwards: 108
-// L4D1 = 78;
-// L4D2 = 106;
+// Forwards: 117
+// L4D1 = 85;
+// L4D2 = 115;
 
 // Stocks: 157 (L4D1 = 107, L4D2 = 153)
 // left4dhooks_silver			40 stocks	(L4D1 = 33,		L4D2 = 40)
@@ -629,6 +629,7 @@ forward Action L4D_OnMobRushStart();
  * @remarks called on random hordes, mini and finale hordes, and boomer hordes, causes Zombies to attack
  *			Not called on "z_spawn mob", hook the console command and check arguments to catch plugin mobs
  *			This function is used to reset the Director's natural horde timer.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @noreturn
  */
@@ -648,6 +649,7 @@ forward Action L4D_OnSpawnITMob(int &amount);
 /**
  * @brief Called whenever ZombieManager::SpawnITMob(int) is invoked
  * @remarks called on boomer hordes, increases Zombie Spawn Queue
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param amount		Amount of Zombies to add to Queue
  *
@@ -660,7 +662,6 @@ forward void L4D_OnSpawnITMob_Post(int amount);
  * @remarks called on natural hordes & z_spawn mob, increases Zombie Spawn
  *			Queue, triggers player OnMobSpawned (vocalizations), sets horde
  *			direction, and plays horde music.
- * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param amount		Amount of Zombies to add to Queue
  *
@@ -842,7 +843,7 @@ forward void L4D_OnFirstSurvivorLeftSafeArea_Post(int client);
  * @brief Called whenever CTerrorPlayer::GetCrouchTopSpeed() is invoked
  * @remarks Constantly called to get players max Crouch speed
  *
- * @param target		the client that its being called on (not changible)
+ * @param target		the client that its being called on (not changeable)
  * @param retVal		what to override the return value with
  *
  * @return				Plugin_Handled to override return value, Plugin_Continue otherwise.
@@ -853,7 +854,7 @@ forward Action L4D_OnGetCrouchTopSpeed(int target, float &retVal);
  * @brief Called whenever CTerrorPlayer::GetRunTopSpeed() is invoked
  * @remarks Constantly called to get players max Run speed
  *
- * @param target		the client that its being called on (not changible)
+ * @param target		the client that its being called on (not changeable)
  * @param retVal		what to override the return value with
  *
  * @return				Plugin_Handled to override return value, Plugin_Continue otherwise.
@@ -864,7 +865,7 @@ forward Action L4D_OnGetRunTopSpeed(int target, float &retVal);
  * @brief Called whenever CTerrorPlayer::GetWalkTopSpeed() is invoked
  * @remarks Constantly called to get players max Walk speed
  *
- * @param target		the client that its being called on (not changible)
+ * @param target		the client that its being called on (not changeable)
  * @param retVal		what to override the return value with
  *
  * @return				Plugin_Handled to override return value, Plugin_Continue otherwise.
@@ -1053,6 +1054,7 @@ forward Action L4D_TankClaw_OnPlayerHit_Pre(int tank, int claw, int player);
 /**
  * @brief Called whenever CTankClaw::OnPlayerHit(CTerrorPlayer*, bool) is invoked
  * @remarks When a tank swings and punches a player.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param tank			tank client index
  * @param rock			the claw entity index
@@ -1089,6 +1091,22 @@ forward void L4D_TankRock_OnDetonate(int tank, int rock);
 forward Action L4D_TankRock_OnRelease(int tank, int rock, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3]);
 
 /**
+ * @brief Called whenever CTankRock::OnRelease(Vector const&, QAngle const&, Vector const&, Vector const&) is invoked
+ * @remarks When a tank rock is thrown.
+ * @remarks Forward shows the final values that may have been changed from the relative pre-hook
+ *
+ * @param tank			tank client index (can be -1 if the rock was created by the native "L4D_TankRockPrj" or the "env_rock_launcher" entity)
+ * @param rock			the rock entity index
+ * @param vecPos		the position vector of the rock
+ * @param vecAng		the angle vector of the rock
+ * @param vecVel		the velocity vector of the rock
+ * @param vecRot		the rotation vector of the rock
+ *
+ * @noreturn
+ */
+forward void L4D_TankRock_OnRelease_Post(int tank, int rock, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3]);
+
+/**
  * @brief Called whenever CDirector::TryOfferingTankBot is invoked
  * @remarks Is used for displaying the "X gets Tank" window and transferring Tank control
  *
@@ -1102,6 +1120,7 @@ forward Action L4D_OnTryOfferingTankBot(int tank_index, bool &enterStasis);
 /**
  * @brief Called whenever CDirector::TryOfferingTankBot is invoked
  * @remarks Is used for displaying the "X gets Tank" window and transferring Tank control
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param tank_index		Client index of the tank
  * @param enterStasis		Is the tank in stasis
@@ -1119,6 +1138,17 @@ forward void L4D_OnTryOfferingTankBot_Post(int tank_index, bool enterStasis);
  * @return			Plugin_Handled to block, Plugin_Continue otherwise
  */
 forward Action L4D_OnCThrowActivate(int ability);
+
+/**
+ * @brief Called whenever CThrow::ActivateAbility(void) is invoked
+ * @remarks Called when a tank throws a rock. Blocking this call will keep the tank from throwing a rock
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param ability	ability_throw entity index
+ *
+ * @noreturn
+ */
+forward void L4D_OnCThrowActivate_Post(int ability);
 
 /**
  * @brief Called when CBaseAnimating::SelectWeightedSequence(int Activity) is invoked with tank attack activity
@@ -1177,6 +1207,17 @@ forward Action L4D2_OnSelectTankAttack(int client, int &sequence);
 forward Action L4D_OnStartMeleeSwing(int client, bool boolean);
 
 /**
+ * @brief Called whenever CTerrorMeleeWeapon::StartMeleeSwing(CTerrorPlayer *, bool) is invoked
+ * @remarks Called when a player uses his melee weapons primary attack. This is before the game
+ *			reads the melee weapon data (model etc) and decides if he CAN attack at all.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @noreturn
+ */
+// L4D2 only.
+forward void L4D_OnStartMeleeSwing_Post(int client, bool boolean);
+
+/**
  * @brief Called whenever CTerrorMeleeWeapon::GetDamageForVictim() is invoked
  * @remarks Called to calculate the damage when a melee weapon hits something
  * @remarks A headshot on Common Infected will still kill them.
@@ -1217,6 +1258,21 @@ forward Action L4D2_OnSendInRescueVehicle();
 forward Action L4D2_OnChangeFinaleStage(int &finaleType, const char[] arg);
 
 /**
+ * @brief Called whenever CDirectorScriptedEventManager::ChangeFinaleStage is invoked
+ * @remarks Called when the director stage changes
+ * @remarks some values for FinaleStageType: 1 - Finale Started; 6 - Rescue Vehicle Ready; 7 - Zombie Hordes; 8 - Tank; 10 - Combat Respite (nothing spawns)
+ * @remarks SendInRescueVehicle does not depend on Finale Stage being 6, that only signals endless Hordes/Tanks
+ * @remarks Can use the "FINALE_*" enums (search for them above) for the finaleType value.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param FinaleStageType	integer value
+ *
+ * @noreturn
+ */
+// L4D2 only.
+forward void L4D2_OnChangeFinaleStage_Post(int finaleType, const char[] arg);
+
+/**
  * @brief Called whenever CDirectorVersusMode::EndVersusModeRound(bool) is invoked
  * @remarks Called before score calculations and the scoreboard display
  *
@@ -1249,6 +1305,17 @@ forward void L4D2_OnEndVersusModeRound_Post();
 forward Action L4D_OnLedgeGrabbed(int client);
 
 /**
+ * @brief Called whenever CTerrorPlayer::OnLedgeGrabbed(CTerrorPlayer *this, const Vector *) is invoked
+ * @remarks Called when a player is about to grab a ledge
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client	client grabbing the ledge
+ *
+ * @noreturn
+ */
+forward void L4D_OnLedgeGrabbed_Post(int client);
+
+/**
  * @brief Called when CTerrorPlayer::OnRevived(void) is invoked
  * @remarks Called post-revive so all data values are post-revive status.
  *
@@ -1257,6 +1324,18 @@ forward Action L4D_OnLedgeGrabbed(int client);
  * @noreturn
  */
 forward void L4D2_OnRevived(int client);
+
+/**
+ * @brief Called whenever CTerrorWeapon::OnSwingStart(CTerrorWeapon *this) is invoked
+ * @remarks Called when a Survivor shoves
+ * @remarks Blocking has no effect so this function is void only
+ *
+ * @param client	the client that did the shoving
+ * @param weapon	the weapon being held when shoving
+ *
+ * @noreturn
+ */
+forward void L4D_OnSwingStart(int client, int weapon);
 
 /**
  * @brief Called whenever CTerrorPlayer::OnShovedBySurvivor(CTerrorPlayer, Vector&) is invoked
@@ -1270,6 +1349,21 @@ forward void L4D2_OnRevived(int client);
  * @return			Plugin_Handled to block melee effect (staggering), Plugin_Continue otherwise.
  */
 forward Action L4D_OnShovedBySurvivor(int client, int victim, const float vecDir[3]);
+
+/**
+ * @brief Called whenever CTerrorPlayer::OnShovedBySurvivor(CTerrorPlayer, Vector&) is invoked
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * @remarks L4D2 only uses this on Special Infected
+ * @remarks Blocks hunter dead stop
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client	the client that did the shoving
+ * @param victim	the client that was shoved (CAUTION retrieved from function pointer, don't meddle with it)
+ * @param vecDir	Vector Angle of Shoveforce
+ *
+ * @noreturn
+ */
+forward void L4D_OnShovedBySurvivor_Post(int client, int victim, const float vecDir[3]);
 
 /**
  * @brief Called whenever CTerrorWeapon::OnHit(CGameTrace &, Vector const&, bool) is invoked
@@ -1287,6 +1381,22 @@ forward Action L4D_OnShovedBySurvivor(int client, int victim, const float vecDir
 forward Action L4D2_OnEntityShoved(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce);
 
 /**
+ * @brief Called whenever CTerrorWeapon::OnHit(CGameTrace &, Vector const&, bool) is invoked
+ * @remarks Called for every single shovable and even some of the unshovable entities in the game
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client	survivor who did the shoving
+ * @param entity	entity that is about to get shoved
+ * @param weapon	weapon that has been held while shoving
+ * @param vecDir	stagger direction
+ * @param bIsHighPounce		a boolean to determine if it was a pounce from a height or not; reliable to a certain degree and should only be considered for hunters
+ * @param bIsHighPounce		sometimes reset to 0 when punched before the detour retrieves the information.
+ *
+ * @noreturn
+ */
+forward void L4D2_OnEntityShoved_Post(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce);
+
+/**
  * @brief Called whenever CTerrorPlayer::OnStaggered(CBaseEntity *, Vector const *) is invoked
  * @remarks Source is always null for Charger impacts (Valve)
  *
@@ -1300,6 +1410,7 @@ forward Action L4D2_OnStagger(int target, int source);
 /**
  * @brief Called whenever CTerrorPlayer::OnStaggered(CBaseEntity *, Vector const *) is invoked
  * @remarks Source is always null for Charger impacts (Valve)
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param target	the client that is about to get staggered
  * @param source	the client that is about to stagger the target
@@ -1325,6 +1436,7 @@ forward Action L4D2_OnPlayerFling(int client, int attacker, float vecDir[3]);
  * @brief Called when CTerrorPlayer::Fling(Vector const&, PlayerAnimEvent_t, CBaseCombatCharacter*, float) is invoked.
  * @remarks Called when a player is flung to the ground.
  * @remarks This will not trigger if the fling is being blocked by other plugins
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client		Client index of the player.
  * @param attacker		Client index of the attacker.
@@ -1348,6 +1460,7 @@ forward Action L4D2_OnPounceOrLeapStumble(int victim, int attacker);
 
 /**
  * @brief Called whenever CTerrorPlayer::OnShovedByPounceLanding(CTerrorPlayer*) is invoked
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim	the survivor that is about to get stumbled as a result of "attacker" capping someone in close proximity
  * @param attacker	the SI that is about to cause a stumble as a result of capping someone in close proximity to a survivor
@@ -1488,6 +1601,18 @@ forward Action L4D2_OnChooseVictim(int specialInfected, int &curTarget);
 forward Action L4D_OnPouncedOnSurvivor(int victim, int attacker);
 
 /**
+ * @brief Called whenever CTerrorPlayer::OnPouncedOnSurvivor() is invoked
+ * @remarks Called when a Survivor player is about to be pounced on by a Hunter
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param victim			the client who's being pounced
+ * @param attacker			the Hunter pouncing on someone
+ *
+ * @noreturn
+ */
+forward void L4D_OnPouncedOnSurvivor_Post(int victim, int attacker);
+
+/**
  * @brief Called whenever CTerrorPlayer::Extinguish() is invoked
  * @remarks Called when a player (Survivor or Special Infected) is about to be extinguished
  *
@@ -1511,6 +1636,7 @@ forward Action L4D_OnGrabWithTongue(int victim, int attacker);
 /**
  * @brief Called whenever CTerrorPlayer::GrabVictimWithTongue() is invoked
  * @remarks Called when a Survivor player is grabbed by a Smoker
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the client who's being grabbed
  * @param attacker			the Smoker grabbing someone
@@ -1535,6 +1661,7 @@ forward Action L4D2_OnJockeyRide(int victim, int attacker);
 /**
  * @brief Called whenever CTerrorPlayer::OnLeptOnSurvivor() is invoked
  * @remarks Called when a Survivor player is starting to be ridden by a Jockey
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the client who's being grabbed
  * @param attacker			the Jockey grabbing someone
@@ -1613,6 +1740,7 @@ forward Action L4D_OnVomitedUpon(int victim, int &attacker, bool &boomerExplosio
 /**
  * @brief Called whenever CTerrorPlayer::OnVomitedUpon is invoked
  * @remarks Called when a Survivor player is covered in Boomer bile, or when using "Bile the World" plugin by "AtomicStryker"
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
@@ -1637,6 +1765,7 @@ forward Action L4D2_OnHitByVomitJar(int victim, int &attacker);
 /**
  * @brief Called whenever CTerrorPlayer::OnHitByVomitJar is invoked
  * @remarks Called when a Special Infected is hit from a Bilejar explosion
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the client who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
@@ -1663,6 +1792,7 @@ forward Action L4D_PipeBombProjectile_Pre(int client, float vecPos[3], float vec
 /**
  * @brief Called whenever CPipeBombProjectile::Create is invoked
  * @remarks Called when a PipeBomb projectile has been created
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the client who is throwing the grenade (can be 0)
  * @param projectile		the projectile entity index (can be 0 if blocked in the pre hook)
@@ -1742,6 +1872,7 @@ forward Action L4D2_CGasCan_ShouldStartAction(int client, int gascan, int nozzle
 /**
  * @brief Called whenever CGasCan::ShouldStartAction() is invoked
  * @remarks Called when someone has started to pour a gascan into a nozzle
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the client pouring
  * @param gascan			the gascan entity index that is being consumed

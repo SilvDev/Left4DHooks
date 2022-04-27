@@ -247,7 +247,7 @@
 					}
 					"vecPos"
 					{
-						"type"	"vectorptr"
+						"type"	"int"
 					}
 				}
 			}
@@ -813,6 +813,14 @@
 						"type"	"vectorptr"
 					}
 				}
+			}
+
+			"L4DD::CTerrorWeapon::OnSwingStart"
+			{
+				"signature"		"CTerrorWeapon::OnSwingStart"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
 			}
 
 			"L4DD::CTerrorPlayer::OnShovedBySurvivor"
@@ -2335,7 +2343,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CDirector14ForceNextStageEv"
 				"windows"	"\x8B\x2A\x88\x05\x00\x00\xE9\x2A\x9A\x01\x00"
-				/* 8B ? 88 05 00 00 E9 ? 9A 01 00 */ 
+				/* 8B ? 88 05 00 00 E9 ? 9A 01 00 */
 				/* Search "ForceNextStage" call below of XRef */
 			}
 
@@ -2797,9 +2805,9 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules13IsRealismModeEv"
-				// Windows now matching with dynamically generated address to make the signature future proof. 
+				// Windows now matching with dynamically generated address to make the signature future proof.
 				// "windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x75\x2A\x32\x2A\xC3\xF7\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\xB8\x2A\x2A\x2A\x2A\xEB\x2A\xA1\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x85\x2A\x75\x2A\xB8\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x85\x2A\x74\x2A\x2A\x64"
-				/* ? ? ? ? ? ? 85 ? 75 ? 32 ? C3 F7 ? ? ? ? ? ? ? ? ? 74 ? B8 ? ? ? ? EB ? A1 ? ? ? ? 8B ? ? 85 ? 75 ? B8 ? ? ? ? 8B ? 50 8B ? ? FF ? 85 ? 74 ? ? 64 */ 
+				/* ? ? ? ? ? ? 85 ? 75 ? 32 ? C3 F7 ? ? ? ? ? ? ? ? ? 74 ? B8 ? ? ? ? EB ? A1 ? ? ? ? 8B ? ? 85 ? 75 ? B8 ? ? ? ? 8B ? 50 8B ? ? FF ? 85 ? 74 ? ? 64 */
 			}
 			"Realism_StrFind"
 			{
@@ -3201,6 +3209,18 @@
 			}
 
 			/*
+			 *  CTerrorWeapon::OnSwingStart(CTerrorWeapon *this)
+			 */
+			"CTerrorWeapon::OnSwingStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorWeapon12OnSwingStartEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x85\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? E8 ? ? ? ? 8B ? 85 ? 0F 84 ? ? ? ? 8B ? 8B ? ? ? ? ? 8B */
+				/* Search: "Weapon.Swing" */
+			}
+
+			/*
 			 * CTerrorPlayer::OnShovedBySurvivor(CTerrorPlayer*, Vector const&) - used by L4D2 on Special Infected (got melee'd)
 			 * unique string "jockey_ride" in CTerrorPlayer::OnLeptOnSurvivor(), look up for "JockeyZombie.Ride", look up for var_14, CTerrorPlayer::OnShovedBySurvivor is call after that
 			 */
@@ -3321,7 +3341,7 @@
 				/* ? ? ? ? ? ? ? 57 8B ? 85 ? 74 ? 8B ? E8 ? ? ? ? 84 ? 75 */
 				/* Search: "gascan_pour_blocked" */
 			}
-	
+
 			/* CGasCan::OnActionComplete(CGasCan *this, CTerrorPlayer *, CBaseEntity *) */
 			"CGasCan::OnActionComplete"
 			{
@@ -3666,7 +3686,7 @@
 				"linux"		"@_ZN13CTerrorPlayer13CancelStaggerEv"
 				"windows"	"\x56\x8B\x2A\xF3\x2A\x2A\x2A\x0C\x2A\x2A\x2A\x0F\x2A\x2A\x2A\x2A\x2A\x2A\x57"
 				/* Sig may break, using offsets to make unique */
-				/* 56 8B ? F3 ? ? ? 0C ? ? ? 0F ? ? ? ? ? ? 57 */ 
+				/* 56 8B ? F3 ? ? ? 0C ? ? ? 0F ? ? ? ? ? ? 57 */
 				/* Search "SurvivorWasPounced" - few calls above. */ // Found by "SilverShot" updated by "Crasher_3637".
 			}
 

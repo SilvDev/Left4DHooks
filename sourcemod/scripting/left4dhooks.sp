@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.97"
+#define PLUGIN_VERSION		"1.98"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,18 @@
 
 ========================================================================================
 	Change Log:
+
+1.98 (27-Apr-2022)
+	- Added new forward "L4D_OnSwingStart" to trigger when a Survivor shoves.
+	- Added post hook forward "L4D_OnShovedBySurvivor_Post". Requested by "Eyal282".
+	- Added post hook forwards: "L4D_TankRock_OnRelease_Post, "L4D_OnCThrowActivate_Post", "L4D_OnLedgeGrabbed_Post", "L4D2_OnEntityShoved_Post",
+		"L4D_OnPouncedOnSurvivor_Post", "L4D_OnStartMeleeSwing_Post" and "L4D2_OnChangeFinaleStage_Post"
+
+	- Fixed native "L4D2Direct_SetNextShoveTime" not working when setting the shove time earlier than the current value. Thanks to "Eyal282" for reporting and helping fix.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.97 (15-Apr-2022)
 	- Fixed removing animation detours in the same frame as the detour callback, crashing the server. Thanks to "Red Flame" and "fdxx" for reporting and helping.
@@ -1101,6 +1113,7 @@ GlobalForward g_hFWD_CTankClaw_OnPlayerHit_Pre;
 GlobalForward g_hFWD_CTankClaw_OnPlayerHit_Post;
 GlobalForward g_hFWD_CTankRock_Detonate;
 GlobalForward g_hFWD_CTankRock_OnRelease;
+GlobalForward g_hFWD_CTankRock_OnRelease_Post;
 GlobalForward g_hFWD_CDirector_TryOfferingTankBot;
 GlobalForward g_hFWD_CDirector_TryOfferingTankBot_Post;
 GlobalForward g_hFWD_CDirector_MobRushStart;
@@ -1109,7 +1122,9 @@ GlobalForward g_hFWD_ZombieManager_SpawnITMob;
 GlobalForward g_hFWD_ZombieManager_SpawnITMob_Post;
 GlobalForward g_hFWD_ZombieManager_SpawnMob;
 GlobalForward g_hFWD_ZombieManager_SpawnMob_Post;
+GlobalForward g_hFWD_CTerrorWeapon_OnSwingStart;
 GlobalForward g_hFWD_CTerrorPlayer_OnShovedBySurvivor;
+GlobalForward g_hFWD_CTerrorPlayer_OnShovedBySurvivor_Post;
 GlobalForward g_hFWD_CTerrorPlayer_GetCrouchTopSpeed;
 GlobalForward g_hFWD_CTerrorPlayer_GetRunTopSpeed;
 GlobalForward g_hFWD_CTerrorPlayer_GetWalkTopSpeed;
@@ -1120,15 +1135,19 @@ GlobalForward g_hFWD_CTerrorGameRules_FastGetSurvivorSet;
 GlobalForward g_hFWD_GetMissionVSBossSpawning;
 GlobalForward g_hFWD_GetMissionVSBossSpawning_Post;
 GlobalForward g_hFWD_CThrow_ActivateAbililty;
+GlobalForward g_hFWD_CThrow_ActivateAbililty_Post;
 GlobalForward g_hFWD_StartMeleeSwing;
+GlobalForward g_hFWD_StartMeleeSwing_Post;
 GlobalForward g_hFWD_GetDamageForVictim;
 GlobalForward g_hFWD_CDirectorScriptedEventManager_SendInRescueVehicle;
 GlobalForward g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage;
+GlobalForward g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_Post;
 GlobalForward g_hFWD_CDirectorVersusMode_EndVersusModeRound_Pre;
 GlobalForward g_hFWD_CDirectorVersusMode_EndVersusModeRound_Post;
 GlobalForward g_hFWD_CBaseAnimating_SelectWeightedSequence_Pre;
 GlobalForward g_hFWD_CBaseAnimating_SelectWeightedSequence_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnLedgeGrabbed;
+GlobalForward g_hFWD_CTerrorPlayer_OnLedgeGrabbed_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnRevived_Post;
 GlobalForward g_hFWD_ZombieManager_ReplaceTank;
 GlobalForward g_hFWD_SurvivorBot_UseHealingItems;
@@ -1148,6 +1167,7 @@ GlobalForward g_hFWD_CGasCan_OnActionComplete;
 GlobalForward g_hFWD_CGasCan_OnActionComplete_Post;
 GlobalForward g_hFWD_CServerGameDLL_ServerHibernationUpdate;
 GlobalForward g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor;
+GlobalForward g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_Post;
 GlobalForward g_hFWD_CTerrorPlayer_GrabVictimWithTongue;
 GlobalForward g_hFWD_CTerrorPlayer_GrabVictimWithTongue_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnLeptOnSurvivor;
@@ -1161,6 +1181,7 @@ GlobalForward g_hFWD_CPipeBombProjectile_Create_Post;
 GlobalForward g_hFWD_CTerrorPlayer_Extinguish;
 GlobalForward g_hFWD_CInferno_Spread;
 GlobalForward g_hFWD_CTerrorWeapon_OnHit;
+GlobalForward g_hFWD_CTerrorWeapon_OnHit_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnStaggered;
 GlobalForward g_hFWD_CTerrorPlayer_OnStaggered_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnShovedByPounceLanding;
@@ -1367,6 +1388,7 @@ Address g_pWeaponInfoDatabase;
 
 
 // Other
+int g_iAttackTimer;
 int g_iOffsetAmmo;
 int g_iPrimaryAmmoType;
 int g_iCurrentMode;
@@ -1480,9 +1502,11 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	g_hFWD_CTankClaw_OnPlayerHit_Post									= new GlobalForward("L4D_TankClaw_OnPlayerHit_Post",			ET_Event, Param_Cell, Param_Cell, Param_Cell);
 	g_hFWD_CTankRock_Detonate											= new GlobalForward("L4D_TankRock_OnDetonate",					ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTankRock_OnRelease											= new GlobalForward("L4D_TankRock_OnRelease",					ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
+	g_hFWD_CTankRock_OnRelease_Post										= new GlobalForward("L4D_TankRock_OnRelease_Post",				ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 	g_hFWD_CDirector_TryOfferingTankBot									= new GlobalForward("L4D_OnTryOfferingTankBot",					ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_CDirector_TryOfferingTankBot_Post							= new GlobalForward("L4D_OnTryOfferingTankBot_Post",			ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CThrow_ActivateAbililty										= new GlobalForward("L4D_OnCThrowActivate",						ET_Event, Param_Cell);
+	g_hFWD_CThrow_ActivateAbililty_Post									= new GlobalForward("L4D_OnCThrowActivate_Post",				ET_Event, Param_Cell);
 	g_hFWD_CBaseAnimating_SelectWeightedSequence_Pre					= new GlobalForward("L4D2_OnSelectTankAttackPre",				ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_CBaseAnimating_SelectWeightedSequence_Post					= new GlobalForward("L4D2_OnSelectTankAttack",					ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_CDirectorScriptedEventManager_SendInRescueVehicle			= new GlobalForward("L4D2_OnSendInRescueVehicle",				ET_Event);
@@ -1490,11 +1514,15 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	g_hFWD_CDirectorVersusMode_EndVersusModeRound_Post					= new GlobalForward("L4D2_OnEndVersusModeRound_Post",			ET_Event);
 	g_hFWD_CServerGameDLL_ServerHibernationUpdate						= new GlobalForward("L4D_OnServerHibernationUpdate",			ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnLedgeGrabbed									= new GlobalForward("L4D_OnLedgeGrabbed",						ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_OnLedgeGrabbed_Post							= new GlobalForward("L4D_OnLedgeGrabbed_Post",					ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnRevived_Post									= new GlobalForward("L4D2_OnRevived",							ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnStaggered									= new GlobalForward("L4D2_OnStagger",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnStaggered_Post								= new GlobalForward("L4D2_OnStagger_Post",						ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorWeapon_OnSwingStart									= new GlobalForward("L4D_OnSwingStart",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnShovedBySurvivor								= new GlobalForward("L4D_OnShovedBySurvivor",					ET_Event, Param_Cell, Param_Cell, Param_Array);
+	g_hFWD_CTerrorPlayer_OnShovedBySurvivor_Post						= new GlobalForward("L4D_OnShovedBySurvivor_Post",				ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CTerrorWeapon_OnHit											= new GlobalForward("L4D2_OnEntityShoved",						ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_Array, Param_Cell);
+	g_hFWD_CTerrorWeapon_OnHit_Post										= new GlobalForward("L4D2_OnEntityShoved_Post",					ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_Array, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnShovedByPounceLanding						= new GlobalForward("L4D2_OnPounceOrLeapStumble",				ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnShovedByPounceLanding_Post					= new GlobalForward("L4D2_OnPounceOrLeapStumble_Post",			ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnKnockedDown									= new GlobalForward("L4D_OnKnockedDown",						ET_Event, Param_Cell, Param_Cell);
@@ -1522,6 +1550,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	g_hFWD_CPipeBombProjectile_Create_Post								= new GlobalForward("L4D_PipeBombProjectile_Post",				ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 	g_hFWD_CTerrorPlayer_Extinguish										= new GlobalForward("L4D_PlayerExtinguish",						ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor							= new GlobalForward("L4D_OnPouncedOnSurvivor",					ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_Post						= new GlobalForward("L4D_OnPouncedOnSurvivor_Post",				ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_GrabVictimWithTongue							= new GlobalForward("L4D_OnGrabWithTongue",						ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_GrabVictimWithTongue_Post						= new GlobalForward("L4D_OnGrabWithTongue_Post",				ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CBreakableProp_Break_Post									= new GlobalForward("L4D_CBreakableProp_Break",					ET_Event, Param_Cell, Param_Cell);
@@ -1554,8 +1583,10 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 		g_hFWD_CTerrorGameRules_GetSurvivorSet							= new GlobalForward("L4D_OnGetSurvivorSet",						ET_Event, Param_CellByRef);
 		g_hFWD_CTerrorGameRules_FastGetSurvivorSet						= new GlobalForward("L4D_OnFastGetSurvivorSet",					ET_Event, Param_CellByRef);
 		g_hFWD_StartMeleeSwing											= new GlobalForward("L4D_OnStartMeleeSwing",					ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_StartMeleeSwing_Post										= new GlobalForward("L4D_OnStartMeleeSwing_Post",				ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_GetDamageForVictim										= new GlobalForward("L4D2_MeleeGetDamageForVictim",				ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_FloatByRef);
 		g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage			= new GlobalForward("L4D2_OnChangeFinaleStage",					ET_Event, Param_CellByRef, Param_String);
+		g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_Post		= new GlobalForward("L4D2_OnChangeFinaleStage_Post",			ET_Event, Param_Cell, Param_String);
 		g_hFWD_AddonsDisabler											= new GlobalForward("L4D2_OnClientDisableAddons",				ET_Event, Param_String);
 	}
 
@@ -1849,6 +1880,8 @@ public void OnPluginStart()
 	g_iClassTank = g_bLeft4Dead2 ? 8 : 5;
 	g_fLoadTime = GetEngineTime();
 
+	if( g_bLeft4Dead2 )
+		g_iAttackTimer = FindSendPropInfo("CTerrorWeapon", "m_attackTimer");
 	g_iOffsetAmmo = FindSendPropInfo("CTerrorPlayer", "m_iAmmo");
 	g_iPrimaryAmmoType = FindSendPropInfo("CBaseCombatWeapon", "m_iPrimaryAmmoType");
 
@@ -3188,14 +3221,17 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTankClaw_OnPlayerHit_Pre,								DTR_CTankClaw_OnPlayerHit_Post,								"L4DD::CTankClaw::OnPlayerHit",										"L4D_TankClaw_OnPlayerHit_Pre");
 	CreateDetour(hGameData,			DTR_CTankClaw_OnPlayerHit_Pre,								DTR_CTankClaw_OnPlayerHit_Post,								"L4DD::CTankClaw::OnPlayerHit",										"L4D_TankClaw_OnPlayerHit_Post",		true);
 	CreateDetour(hGameData,			DTR_CTankRock_Detonate,										INVALID_FUNCTION,											"L4DD::CTankRock::Detonate",										"L4D_TankRock_OnDetonate");
-	CreateDetour(hGameData,			DTR_CTankRock_OnRelease,									INVALID_FUNCTION,											"L4DD::CTankRock::OnRelease",										"L4D_TankRock_OnRelease");
-	CreateDetour(hGameData,			DTR_CThrow_ActivateAbililty,								INVALID_FUNCTION,											"L4DD::CThrow::ActivateAbililty",									"L4D_OnCThrowActivate");
+	CreateDetour(hGameData,			DTR_CTankRock_OnRelease,									DTR_CTankRock_OnRelease_Post,								"L4DD::CTankRock::OnRelease",										"L4D_TankRock_OnRelease");
+	CreateDetour(hGameData,			DTR_CTankRock_OnRelease,									DTR_CTankRock_OnRelease_Post,								"L4DD::CTankRock::OnRelease",										"L4D_TankRock_OnRelease_Post",			true);
+	CreateDetour(hGameData,			DTR_CThrow_ActivateAbililty,								DTR_CThrow_ActivateAbililty_Post,							"L4DD::CThrow::ActivateAbililty",									"L4D_OnCThrowActivate");
+	CreateDetour(hGameData,			DTR_CThrow_ActivateAbililty,								DTR_CThrow_ActivateAbililty_Post,							"L4DD::CThrow::ActivateAbililty",									"L4D_OnCThrowActivate_Post",			true);
 	g_iAnimationDetourIndex = g_iLargeIndex; // Animation Hook - detour index to enable when required.
 	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttackPre");					// Animation Hook
 	CreateDetour(hGameData,			DTR_CBaseAnimating_SelectWeightedSequence_Pre,				DTR_CBaseAnimating_SelectWeightedSequence_Post,				"L4DD::CBaseAnimating::SelectWeightedSequence",						"L4D2_OnSelectTankAttack",				true);	// Animation Hook
 	CreateDetour(hGameData,			DTR_CDirectorVersusMode_EndVersusModeRound_Pre,				DTR_CDirectorVersusMode_EndVersusModeRound_Post,			"L4DD::CDirectorVersusMode::EndVersusModeRound",					"L4D2_OnEndVersusModeRound");
 	CreateDetour(hGameData,			DTR_CDirectorVersusMode_EndVersusModeRound_Pre,				DTR_CDirectorVersusMode_EndVersusModeRound_Post,			"L4DD::CDirectorVersusMode::EndVersusModeRound",					"L4D2_OnEndVersusModeRound_Post",		true);
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnLedgeGrabbed,							INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnLedgeGrabbed",								"L4D_OnLedgeGrabbed");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnLedgeGrabbed,							DTR_CTerrorPlayer_OnLedgeGrabbed_Post,						"L4DD::CTerrorPlayer::OnLedgeGrabbed",								"L4D_OnLedgeGrabbed");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnLedgeGrabbed,							DTR_CTerrorPlayer_OnLedgeGrabbed_Post,						"L4DD::CTerrorPlayer::OnLedgeGrabbed",								"L4D_OnLedgeGrabbed_Post",				true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnRevived_Pre,							DTR_CTerrorPlayer_OnRevived_Post,							"L4DD::CTerrorPlayer::OnRevived",									"L4D2_OnRevived");
 
 	if( !g_bLinuxOS ) // Blocked on Linux in L4D1/L4D2 to prevent crashes. Waiting for DHooks update to support object returns.
@@ -3206,7 +3242,9 @@ void SetupDetours(GameData hGameData = null)
 
 	CreateDetour(hGameData,			DTR_CDirector_TryOfferingTankBot,							DTR_CDirector_TryOfferingTankBot_Post,						"L4DD::CDirector::TryOfferingTankBot",								"L4D_OnTryOfferingTankBot");
 	CreateDetour(hGameData,			DTR_CDirector_TryOfferingTankBot,							DTR_CDirector_TryOfferingTankBot_Post,						"L4DD::CDirector::TryOfferingTankBot",								"L4D_OnTryOfferingTankBot_Post",		true);
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedBySurvivor,						INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnShovedBySurvivor",							"L4D_OnShovedBySurvivor");
+	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnSwingStart,								INVALID_FUNCTION,											"L4DD::CTerrorWeapon::OnSwingStart",								"L4D_OnSwingStart");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedBySurvivor,						DTR_CTerrorPlayer_OnShovedBySurvivor_Post,					"L4DD::CTerrorPlayer::OnShovedBySurvivor",							"L4D_OnShovedBySurvivor");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedBySurvivor,						DTR_CTerrorPlayer_OnShovedBySurvivor_Post,					"L4DD::CTerrorPlayer::OnShovedBySurvivor",							"L4D_OnShovedBySurvivor_Post",			true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered,								INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered_Post,							INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger_Post",					true);
 
@@ -3214,12 +3252,14 @@ void SetupDetours(GameData hGameData = null)
 	{
 		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot");
 		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot_Post",		true);
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor_Post",			true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone_Post,					INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger_Post",					true);
 	}
 
-	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnHit,									INVALID_FUNCTION,											"L4DD::CTerrorWeapon::OnHit",										"L4D2_OnEntityShoved");
+	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnHit,									DTR_CTerrorWeapon_OnHit_Post,								"L4DD::CTerrorWeapon::OnHit",										"L4D2_OnEntityShoved");
+	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnHit,									DTR_CTerrorWeapon_OnHit_Post,								"L4DD::CTerrorWeapon::OnHit",										"L4D2_OnEntityShoved_Post",				true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedByPounceLanding,					DTR_CTerrorPlayer_OnShovedByPounceLanding_Post,				"L4DD::CTerrorPlayer::OnShovedByPounceLanding",						"L4D2_OnPounceOrLeapStumble");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedByPounceLanding,					DTR_CTerrorPlayer_OnShovedByPounceLanding_Post,				"L4DD::CTerrorPlayer::OnShovedByPounceLanding",						"L4D2_OnPounceOrLeapStumble_Post",		true);
 	CreateDetour(hGameData,			DTR_CDeathFallCamera_Enable,								INVALID_FUNCTION,											"L4DD::CDeathFallCamera::Enable",									"L4D_OnFatalFalling");
@@ -3238,7 +3278,8 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CBreakableProp_Break_Pre,								DTR_CBreakableProp_Break_Post,								"L4DD::CBreakableProp::Break",										"L4D_CBreakableProp_Break");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							DTR_CTerrorPlayer_OnVomitedUpon_Post,						"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							DTR_CTerrorPlayer_OnVomitedUpon_Post,						"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon_Post",				true);
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnPouncedOnSurvivor,						INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnPouncedOnSurvivor",							"L4D_OnPouncedOnSurvivor");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnPouncedOnSurvivor,						DTR_CTerrorPlayer_OnPouncedOnSurvivor_Post,					"L4DD::CTerrorPlayer::OnPouncedOnSurvivor",							"L4D_OnPouncedOnSurvivor");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnPouncedOnSurvivor,						DTR_CTerrorPlayer_OnPouncedOnSurvivor_Post,					"L4DD::CTerrorPlayer::OnPouncedOnSurvivor",							"L4D_OnPouncedOnSurvivor_Post",			true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnKnockedDown,							DTR_CTerrorPlayer_OnKnockedDown_Post,						"L4DD::CTerrorPlayer::OnKnockedDown",								"L4D_OnKnockedDown");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnKnockedDown,							DTR_CTerrorPlayer_OnKnockedDown_Post,						"L4DD::CTerrorPlayer::OnKnockedDown",								"L4D_OnKnockedDown_Post",				true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GrabVictimWithTongue,						DTR_CTerrorPlayer_GrabVictimWithTongue_Post,				"L4DD::CTerrorPlayer::GrabVictimWithTongue",						"L4D_OnGrabWithTongue");
@@ -3290,9 +3331,11 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting_Post,	"L4DD::CTerrorGameRules::HasConfigurableDifficultySetting",			"L4D_OnHasConfigurableDifficulty_Post",	true);
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_GetSurvivorSet_Pre,					DTR_CTerrorGameRules_GetSurvivorSet,						"L4DD::CTerrorGameRules::GetSurvivorSet",							"L4D_OnGetSurvivorSet");
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_FastGetSurvivorSet_Pre,				DTR_CTerrorGameRules_FastGetSurvivorSet,					"L4DD::CTerrorGameRules::FastGetSurvivorSet",						"L4D_OnFastGetSurvivorSet");
-		CreateDetour(hGameData,		DTR_CTerrorMeleeWeapon_StartMeleeSwing,						INVALID_FUNCTION,											"L4DD::CTerrorMeleeWeapon::StartMeleeSwing",						"L4D_OnStartMeleeSwing");
+		CreateDetour(hGameData,		DTR_CTerrorMeleeWeapon_StartMeleeSwing,						DTR_CTerrorMeleeWeapon_StartMeleeSwing_Post,				"L4DD::CTerrorMeleeWeapon::StartMeleeSwing",						"L4D_OnStartMeleeSwing");
+		CreateDetour(hGameData,		DTR_CTerrorMeleeWeapon_StartMeleeSwing,						DTR_CTerrorMeleeWeapon_StartMeleeSwing_Post,				"L4DD::CTerrorMeleeWeapon::StartMeleeSwing",						"L4D_OnStartMeleeSwing_Post",			true);
 		CreateDetour(hGameData,		DTR_CTerrorMeleeWeapon_GetDamageForVictim_Pre,				DTR_CTerrorMeleeWeapon_GetDamageForVictim_Post,				"L4DD::CTerrorMeleeWeapon::GetDamageForVictim",						"L4D2_MeleeGetDamageForVictim");
-		CreateDetour(hGameData,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage,		INVALID_FUNCTION,											"L4DD::CDirectorScriptedEventManager::ChangeFinaleStage",			"L4D2_OnChangeFinaleStage");
+		CreateDetour(hGameData,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post,	"L4DD::CDirectorScriptedEventManager::ChangeFinaleStage",			"L4D2_OnChangeFinaleStage");
+		CreateDetour(hGameData,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post,	"L4DD::CDirectorScriptedEventManager::ChangeFinaleStage",			"L4D2_OnChangeFinaleStage_Post",		true);
 		CreateDetour(hGameData,		DTR_AddonsDisabler,											INVALID_FUNCTION,											"L4DD::CBaseServer::FillServerInfo",								"L4D2_OnClientDisableAddons",			false,				true); // Force detour to enable.
 	}
 
@@ -8374,22 +8417,33 @@ public any Direct_GetNextShoveTime(Handle plugin, int numParams)
 
 public int Direct_SetNextShoveTime(Handle plugin, int numParams)
 {
-	/* Version before SDKCall method
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
-
-	ValidateAddress(g_iOff_m_fNextShoveTime, "m_fNextShoveTime");
-	*/
-
-	ValidateNatives(g_hSDK_CTerrorPlayer_SetNextShoveTime, "CTerrorPlayer::SetNextShoveTime");
 
 	int client = GetNativeCell(1);
 	if( client < 1 || client > MaxClients )
 		return 0;
 
-	float time = GetNativeCell(2);
+	int weapon = GetEntPropEnt(client, Prop_Data, "m_hActiveWeapon");
+	if( weapon != -1 )
+	{
+		float time = GetNativeCell(2);
 
-	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_SetNextShoveTime");
-	SDKCall(g_hSDK_CTerrorPlayer_SetNextShoveTime , client, time);
+		SetEntData(weapon, g_iAttackTimer + 4, 0.0);
+		SetEntData(weapon, g_iAttackTimer + 8, time);
+
+		SetEntPropFloat(client, Prop_Send, "m_flNextShoveTime", time);
+		SetEntPropFloat(weapon, Prop_Send, "m_flNextSecondaryAttack", time);
+
+		SDKCall(g_hSDK_CTerrorPlayer_SetNextShoveTime , client, time);
+	}
+
+	// SDKCall(g_hSDK_CTerrorPlayer_SetNextShoveTime , client, time);
+
+	/* Version before SDKCall method
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateAddress(g_iOff_m_fNextShoveTime, "m_fNextShoveTime");
+	*/
 
 	/* Version before SDKCall method
 	Address pEntity = GetEntityAddress(client);
@@ -9621,7 +9675,7 @@ public MRESReturn DTR_ZombieManager_SpawnTank(Handle hReturn, Handle hParams)
 
 public MRESReturn DTR_ZombieManager_SpawnTank_Post(Handle hReturn, Handle hParams)
 {
-	//PrintToServer("##### g_hFWD_ZombieManager_SpawnTank_Post");
+	//PrintToServer("##### DTR_ZombieManager_SpawnTank_Post");
 	return Spawn_TankWitch_Post(g_hFWD_ZombieManager_SpawnTank_Post, hReturn, hParams);
 }
 
@@ -10495,6 +10549,33 @@ public MRESReturn DTR_CTankRock_OnRelease(int pThis, Handle hParams)
 	return MRES_Ignored;
 }
 
+public MRESReturn DTR_CTankRock_OnRelease_Post(int pThis, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTankRock_OnRelease_Post");
+	int tank = GetEntPropEnt(pThis, Prop_Data, "m_hThrower");
+
+	float v1[3];
+	float v2[3];
+	float v3[3];
+	float v4[3];
+
+	DHookGetParamVector(hParams, 1, v1); // vPos
+	DHookGetParamVector(hParams, 2, v2); // vAng
+	DHookGetParamVector(hParams, 3, v3); // vVel
+	DHookGetParamVector(hParams, 4, v4); // vRot
+
+	Call_StartForward(g_hFWD_CTankRock_OnRelease_Post);
+	Call_PushCell(tank);
+	Call_PushCell(pThis);
+	Call_PushArray(v1, sizeof(v1));
+	Call_PushArray(v2, sizeof(v2));
+	Call_PushArray(v3, sizeof(v3));
+	Call_PushArray(v4, sizeof(v4));
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
 bool g_bBlock_CDirector_TryOfferingTankBot;
 public MRESReturn DTR_CDirector_TryOfferingTankBot(Handle hReturn, Handle hParams)
 {
@@ -10577,6 +10658,7 @@ public MRESReturn DTR_CDirector_TryOfferingTankBot_Clone(Handle hReturn, Handle 
 	if( aResult == Plugin_Handled )
 	{
 		g_bBlock_CDirector_TryOfferingTankBot = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
@@ -10614,11 +10696,35 @@ public MRESReturn DTR_CDirector_TryOfferingTankBot_Clone_Post(Handle hReturn, Ha
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CThrow_ActivateAbililty;
 public MRESReturn DTR_CThrow_ActivateAbililty(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CThrow_ActivateAbililty");
 	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CThrow_ActivateAbililty);
+	Call_PushCell(pThis);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CThrow_ActivateAbililty = true;
+
+		DHookSetReturn(hReturn, 0);
+		return MRES_Supercede;
+	}
+
+	g_bBlock_CThrow_ActivateAbililty = false;
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CThrow_ActivateAbililty_Post(int pThis, Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CThrow_ActivateAbililty ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CThrow_ActivateAbililty_Post");
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CThrow_ActivateAbililty_Post);
 	Call_PushCell(pThis);
 	Call_Finish(aResult);
 
@@ -10737,6 +10843,7 @@ public MRESReturn DTR_CBaseAnimating_SelectWeightedSequence_Post(int pThis, Hand
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CTerrorMeleeWeapon_StartMeleeSwing_Post;
 public MRESReturn DTR_CTerrorMeleeWeapon_StartMeleeSwing(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorMeleeWeapon_StartMeleeSwing");
@@ -10751,9 +10858,29 @@ public MRESReturn DTR_CTerrorMeleeWeapon_StartMeleeSwing(Handle hReturn, Handle 
 
 	if( aResult == Plugin_Handled )
 	{
+		g_bBlock_CTerrorMeleeWeapon_StartMeleeSwing_Post = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
+
+	g_bBlock_CTerrorMeleeWeapon_StartMeleeSwing_Post = false;
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorMeleeWeapon_StartMeleeSwing_Post(Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorMeleeWeapon_StartMeleeSwing_Post ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CTerrorMeleeWeapon_StartMeleeSwing_Post");
+	int a1 = DHookGetParam(hParams, 1);
+	int a2 = DHookGetParam(hParams, 2);
+
+	Call_StartForward(g_hFWD_StartMeleeSwing_Post);
+	Call_PushCell(a1);
+	Call_PushCell(a2);
+	Call_Finish();
 
 	return MRES_Ignored;
 }
@@ -10816,6 +10943,7 @@ public MRESReturn DTR_CDirectorScriptedEventManager_SendInRescueVehicle(Handle h
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CDirectorScriptedEventManager_ChangeFinaleStage;
 public MRESReturn DTR_CDirectorScriptedEventManager_ChangeFinaleStage(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CDirectorScriptedEventManager_ChangeFinaleStage");
@@ -10833,9 +10961,13 @@ public MRESReturn DTR_CDirectorScriptedEventManager_ChangeFinaleStage(Handle hRe
 
 	if( aResult == Plugin_Handled )
 	{
+		g_bBlock_CDirectorScriptedEventManager_ChangeFinaleStage = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
+
+	g_bBlock_CDirectorScriptedEventManager_ChangeFinaleStage = false;
 
 	if( aResult == Plugin_Changed )
 	{
@@ -10843,6 +10975,25 @@ public MRESReturn DTR_CDirectorScriptedEventManager_ChangeFinaleStage(Handle hRe
 		DHookSetReturn(hReturn, a1);
 		return MRES_ChangedOverride;
 	}
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post(Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CDirectorScriptedEventManager_ChangeFinaleStage ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post");
+	int a1 = DHookGetParam(hParams, 1);
+
+	static char a2[64];
+	if( !DHookIsNullParam(hParams, 2) )
+		DHookGetParamString(hParams, 2, a2, sizeof(a2));
+
+	Call_StartForward(g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_Post);
+	Call_PushCellRef(a1);
+	Call_PushString(a2);
+	Call_Finish();
 
 	return MRES_Ignored;
 }
@@ -10887,6 +11038,7 @@ public MRESReturn DTR_CDirectorVersusMode_EndVersusModeRound_Post(Handle hReturn
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CTerrorPlayer_OnLedgeGrabbed;
 public MRESReturn DTR_CTerrorPlayer_OnLedgeGrabbed(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnLedgeGrabbed");
@@ -10895,7 +11047,27 @@ public MRESReturn DTR_CTerrorPlayer_OnLedgeGrabbed(int pThis, Handle hReturn, Ha
 	Call_PushCell(pThis);
 	Call_Finish(aResult);
 
-	if( aResult == Plugin_Handled ) return MRES_Supercede;
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CTerrorPlayer_OnLedgeGrabbed = true;
+
+		return MRES_Supercede;
+	}
+
+	g_bBlock_CTerrorPlayer_OnLedgeGrabbed = false;
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_OnLedgeGrabbed_Post(int pThis, Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorPlayer_OnLedgeGrabbed ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CTerrorPlayer_OnLedgeGrabbed_Post");
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnLedgeGrabbed_Post);
+	Call_PushCell(pThis);
+	Call_Finish();
+
 	return MRES_Ignored;
 }
 
@@ -11009,6 +11181,21 @@ public MRESReturn DTR_CTerrorPlayer_OnStaggered_Clone_Post(Handle hParams)
 	return MRES_Ignored;
 }
 
+public MRESReturn DTR_CTerrorWeapon_OnSwingStart(int pThis, Handle hReturn, Handle hParams)
+{
+	//PrintToServer("##### DTR_CTerrorWeapon_OnSwingStart");
+	if( pThis == -1 ) return MRES_Ignored;
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwnerEntity");
+
+	Call_StartForward(g_hFWD_CTerrorWeapon_OnSwingStart);
+	Call_PushCell(client);
+	Call_PushCell(pThis);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_CTerrorPlayer_OnShovedBySurvivor;
 public MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor");
@@ -11025,9 +11212,31 @@ public MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, Handle hReturn
 
 	if( aResult == Plugin_Handled )
 	{
+		g_bBlock_CTerrorPlayer_OnShovedBySurvivor = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
+
+	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Post(int pThis, Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorPlayer_OnShovedBySurvivor ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Post");
+	float a2[3];
+	int a1 = DHookGetParam(hParams, 1);
+	DHookGetParamVector(hParams, 2, a2);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnShovedBySurvivor_Post);
+	Call_PushCell(a1);
+	Call_PushCell(pThis);
+	Call_PushArray(a2, sizeof(a2));
+	Call_Finish();
 
 	return MRES_Ignored;
 }
@@ -11049,19 +11258,45 @@ public MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone(Handle hReturn, Han
 
 	if( aResult == Plugin_Handled )
 	{
+		g_bBlock_CTerrorPlayer_OnShovedBySurvivor = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
 
+	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
+
 	return MRES_Ignored;
 }
 
+public MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post(Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorPlayer_OnShovedBySurvivor ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post");
+	float a3[3];
+	int a1 = DHookGetParam(hParams, 1);
+	int a2 = DHookGetParam(hParams, 2);
+	DHookGetParamVector(hParams, 3, a3);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnShovedBySurvivor_Post);
+	Call_PushCell(a2);
+	Call_PushCell(a1);
+	Call_PushArray(a3, sizeof(a3));
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_CTerrorWeapon_OnHit;
 public MRESReturn DTR_CTerrorWeapon_OnHit(int weapon, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorWeapon_OnHit");
 	bool userCall = DHookGetParam(hParams, 3);
 	if( userCall )
 	{
+		g_bBlock_CTerrorWeapon_OnHit = false;
+
 		// CTerrorWeapon::OnHit(CGameTrace &, Vector const&, bool)
 		// Get target from CGameTrace
 		int trace = DHookGetParam(hParams, 1);
@@ -11099,9 +11334,57 @@ public MRESReturn DTR_CTerrorWeapon_OnHit(int weapon, Handle hReturn, Handle hPa
 
 			if( aResult == Plugin_Handled )
 			{
+				g_bBlock_CTerrorWeapon_OnHit = true;
+
 				DHookSetReturn(hReturn, 0);
 				return MRES_Supercede;
 			}
+		}
+	}
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorWeapon_OnHit_Post(int weapon, Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorWeapon_OnHit ) return MRES_Ignored;
+
+	//PrintToServer("##### DTR_CTerrorWeapon_OnHit_Post");
+	bool userCall = DHookGetParam(hParams, 3);
+	if( userCall )
+	{
+		// CTerrorWeapon::OnHit(CGameTrace &, Vector const&, bool)
+		// Get target from CGameTrace
+		int trace = DHookGetParam(hParams, 1);
+		int target = LoadFromAddress(view_as<Address>(trace + 76), NumberType_Int32);
+		if( !target ) return MRES_Ignored;
+
+		// Returns entity address, get entity or client index
+		target = GetEntityFromAddress(target);
+		if( !target ) target = GetClientFromAddress(target);
+		if( !target ) return MRES_Ignored;
+
+		// Verify client hitting
+		int client = GetEntPropEnt(weapon, Prop_Send, "m_hOwnerEntity");
+		if( client > 0 && client <= MaxClients )
+		{
+			// Dead stop option - not always correct but should show if hunter was pouncing while punched
+			int deadStop;
+			if( target > 0 && target <= MaxClients )
+			{
+				// deadStop = LoadFromAddress(view_as<Address>(target + 16024), NumberType_Int32) > 0;
+				deadStop = GetEntProp(target, Prop_Send, "m_isAttemptingToPounce");
+			}
+
+			float vec[3];
+			DHookGetParamVector(hParams, 2, vec);
+
+			Call_StartForward(g_hFWD_CTerrorWeapon_OnHit_Post);
+			Call_PushCell(client);
+			Call_PushCell(target);
+			Call_PushCell(weapon);
+			Call_PushArray(vec, sizeof(vec));
+			Call_PushCell(deadStop);
+			Call_Finish();
 		}
 	}
 	return MRES_Ignored;
@@ -11800,7 +12083,7 @@ public MRESReturn DTR_CGasCan_OnActionComplete_Post(int pThis, Handle hReturn, H
 {
 	if( g_bBlock_CGasCan_OnActionComplete ) return MRES_Ignored;
 
-	//PrintToServer("##### 3_Post");
+	//PrintToServer("##### DTR_CGasCan_OnActionComplete_Post");
 
 	int client;
 	if( !DHookIsNullParam(hParams, 1) )
@@ -11830,6 +12113,7 @@ public MRESReturn DTR_CServerGameDLL_ServerHibernationUpdate(int pThis, Handle h
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CTerrorPlayer_OnPouncedOnSurvivor;
 public MRESReturn DTR_CTerrorPlayer_OnPouncedOnSurvivor(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnPouncedOnSurvivor");
@@ -11846,9 +12130,30 @@ public MRESReturn DTR_CTerrorPlayer_OnPouncedOnSurvivor(int pThis, Handle hRetur
 
 	if( aResult == Plugin_Handled )
 	{
+		g_bBlock_CTerrorPlayer_OnPouncedOnSurvivor = true;
+
 		DHookSetReturn(hReturn, 0);
 		return MRES_Supercede;
 	}
+
+	g_bBlock_CTerrorPlayer_OnPouncedOnSurvivor = false;
+
+	return MRES_Ignored;
+}
+
+public MRESReturn DTR_CTerrorPlayer_OnPouncedOnSurvivor_Post(int pThis, Handle hReturn, Handle hParams)
+{
+	if( g_bBlock_CTerrorPlayer_OnPouncedOnSurvivor ) return MRES_Ignored;
+	//PrintToServer("##### DTR_CTerrorPlayer_OnPouncedOnSurvivor_Post");
+
+	int target;
+	if( !DHookIsNullParam(hParams, 1) )
+		target = DHookGetParam(hParams, 1);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_Post);
+	Call_PushCell(target);
+	Call_PushCell(pThis);
+	Call_Finish();
 
 	return MRES_Ignored;
 }
@@ -11885,7 +12190,7 @@ public MRESReturn DTR_CTerrorPlayer_GrabVictimWithTongue_Post(int pThis, Handle 
 {
 	if( g_bBlock_CTerrorPlayer_GrabVictimWithTongue ) return MRES_Ignored;
 
-	//PrintToServer("##### g_hFWD_CTerrorPlayer_GrabVictimWithTongue_Post");
+	//PrintToServer("##### DTR_CTerrorPlayer_GrabVictimWithTongue_Post");
 
 	int target;
 	if( !DHookIsNullParam(hParams, 1) )
@@ -12170,6 +12475,15 @@ public MRESReturn DTR_ZombieManager_GetRandomPZSpawnPosition(Handle hReturn, Han
 	if( !DHookIsNullParam(hParams, 3) )
 		client = DHookGetParam(hParams, 3);
 
+	// New method works - Thanks to "Forgetest":
+	float vecPos[3];
+	Address ptr = DHookGetParam(hParams, 4);
+	PrintToChatAll("ptrPRE %d", ptr);
+	vecPos[0] = view_as<float>(LoadFromAddress(ptr, NumberType_Int32));
+	vecPos[1] = view_as<float>(LoadFromAddress(ptr + view_as<Address>(4), NumberType_Int32));
+	vecPos[2] = view_as<float>(LoadFromAddress(ptr + view_as<Address>(8), NumberType_Int32));
+
+	// Old method:
 	float vecPos[3];
 	DHookGetParamVector(hParams, 4, vecPos);
 
@@ -12188,13 +12502,16 @@ public MRESReturn DTR_ZombieManager_GetRandomPZSpawnPosition(Handle hReturn, Han
 		if( !DHookIsNullParam(hParams, 3) )
 			DHookSetParam(hParams, 3, client);
 
-		// Nothing worked to fix the bug, even though this is a pre-hook it's using the modified value.;
+		// New method:
+		StoreToAddress(ptr, view_as<int>(vecPos[0]), NumberType_Int32);
+		StoreToAddress(ptr + view_as<Address>(4), view_as<int>(vecPos[1]), NumberType_Int32);
+		StoreToAddress(ptr + view_as<Address>(8), view_as<int>(vecPos[2]), NumberType_Int32);
+
+		// Old method:
+		// Nothing worked to fix the bug, even though this is a pre-hook it's using the modified value.
 		if( vecPos[0] != 0.0 )
 		{
-			// DHookSetParamVector(hParams, 4, vecPos);
-			DHookSetParamVector(hParams, 4, view_as<float>({0.0, 0.0, 0.0}));
-		} else {
-			DHookSetParamVector(hParams, 4, view_as<float>({0.0, 0.0, 0.0}));
+			DHookSetParamVector(hParams, 4, vecPos);
 		}
 
 		return MRES_ChangedHandled;

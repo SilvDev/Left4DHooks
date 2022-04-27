@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.95"
+#define PLUGIN_VERSION		"1.98"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,18 @@
 
 ========================================================================================
 	Change Log:
+
+1.98 (27-Apr-2022)
+	- Added new forward "L4D_OnSwingStart" to trigger when a Survivor shoves.
+	- Added post hook forward "L4D_OnShovedBySurvivor_Post". Requested by "Eyal282".
+	- Added post hook forwards: "L4D_TankRock_OnRelease_Post, "L4D_OnCThrowActivate_Post", "L4D_OnLedgeGrabbed_Post", "L4D2_OnEntityShoved_Post",
+		"L4D_OnPouncedOnSurvivor_Post", "L4D_OnStartMeleeSwing_Post" and "L4D2_OnChangeFinaleStage_Post"
+
+	- Fixed native "L4D2Direct_SetNextShoveTime" not working when setting the shove time earlier than the current value. Thanks to "Eyal282" for reporting and helping fix.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" and "left4dhooks.l4d2.txt" GameData files.
 
 1.95 (10-Apr-2022)
 	- Added stock "GetRandomClient" in the "left4dhooks_silver.inc" include file.
@@ -501,9 +513,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 106;
+		g_iForwardsMax = 115;
 	else
-		g_iForwardsMax = 78;
+		g_iForwardsMax = 85;
 
 	return APLRes_Success;
 }
@@ -2700,6 +2712,18 @@ public Action L4D_TankRock_OnRelease(int tank, int rock, float vecPos[3], float 
 	return Plugin_Continue;
 }
 
+public void L4D_TankRock_OnRelease_Post(int tank, int rock, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3])
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_TankRock_OnRelease_Post\" %d (Rock = %d) pos(%0.1f %0.1f %0.1f) ang(%0.1f %0.1f %0.1f) vel(%0.1f %0.1f %0.1f) rot(%0.1f %0.1f %0.1f)", tank, rock, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2], vecVel[0], vecVel[1], vecVel[2], vecRot[0], vecRot[1], vecRot[2]);
+	}
+}
+
 public Action L4D_OnTryOfferingTankBot(int tank_index, bool &enterStasis)
 {
 	static int called;
@@ -2744,6 +2768,18 @@ public Action L4D_OnCThrowActivate(int ability)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public void L4D_OnCThrowActivate_Post(int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnCThrowActivate_Post\" %d", ability);
+	}
 }
 
 public Action L4D2_OnSelectTankAttackPre(int client, int &sequence)
@@ -2874,6 +2910,18 @@ public Action L4D_OnLedgeGrabbed(int client)
 	return Plugin_Continue;
 }
 
+public void L4D_OnLedgeGrabbed_Post(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnLedgeGrabbed_Post\" %d", client);
+	}
+}
+
 public void L4D2_OnRevived(int client)
 {
 	static int called;
@@ -2915,6 +2963,18 @@ public void L4D2_OnStagger_Post(int target, int source)
 	}
 }
 
+public void L4D_OnSwingStart(int client, int weapon)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnSwingStart\" %N %d", client, weapon);
+	}
+}
+
 public Action L4D_OnShovedBySurvivor(int client, int victim, const float vecDir[3])
 {
 	static int called;
@@ -2932,6 +2992,18 @@ public Action L4D_OnShovedBySurvivor(int client, int victim, const float vecDir[
 	return Plugin_Continue;
 }
 
+public void L4D_OnShovedBySurvivor_Post(int client, int victim, const float vecDir[3])
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnShovedBySurvivor_Post\" %d %d. (%f %f %f)", client, victim, vecDir[0], vecDir[1], vecDir[2]);
+	}
+}
+
 public Action L4D2_OnEntityShoved(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce)
 {
 	static int called;
@@ -2947,6 +3019,18 @@ public Action L4D2_OnEntityShoved(int client, int entity, int weapon, float vecD
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public void L4D2_OnEntityShoved_Post(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnEntityShoved_Post\" %d %d %d (%f %f %f) IsHighPounce=%d", client, entity, weapon, vecDir[0], vecDir[1], vecDir[2], bIsHighPounce);
+	}
 }
 
 public Action L4D2_OnPounceOrLeapStumble(int victim, int attacker)
@@ -3057,6 +3141,18 @@ public Action L4D_OnPouncedOnSurvivor(int victim, int attacker)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public void L4D_OnPouncedOnSurvivor_Post(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnPouncedOnSurvivor_Post\" %d (%N) pouncing %d (%N)", attacker, attacker, victim, victim);
+	}
 }
 
 public Action L4D_OnGrabWithTongue(int victim, int attacker)
@@ -3627,6 +3723,18 @@ public Action L4D_OnStartMeleeSwing(int client, bool boolean)
 	return Plugin_Continue;
 }
 
+public void L4D_OnStartMeleeSwing_Post(int client, bool boolean)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnStartMeleeSwing_Post\" %d. %d", client, boolean);
+	}
+}
+
 public Action L4D2_MeleeGetDamageForVictim(int client, int weapon, int victim, float &damage)
 {
 	static int called;
@@ -3667,6 +3775,18 @@ public Action L4D2_OnChangeFinaleStage(int &finaleType, const char[] arg)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public void L4D2_OnChangeFinaleStage_Post(int finaleType, const char[] arg)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnChangeFinaleStage_Post\" %d. %s", finaleType, arg);
+	}
 }
 
 public void L4D_OnServerHibernationUpdate(bool hibernating)
