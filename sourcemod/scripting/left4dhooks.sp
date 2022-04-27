@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.98"
+#define PLUGIN_VERSION		"1.99"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.99 (27-Apr-2022)
+	- Fixed forward "L4D2_OnStagger_Post" not triggering. Thanks to "Eyal282" for reporting.
 
 1.98 (27-Apr-2022)
 	- Added new forward "L4D_OnSwingStart" to trigger when a Survivor shoves.
@@ -3245,8 +3248,8 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnSwingStart,								INVALID_FUNCTION,											"L4DD::CTerrorWeapon::OnSwingStart",								"L4D_OnSwingStart");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedBySurvivor,						DTR_CTerrorPlayer_OnShovedBySurvivor_Post,					"L4DD::CTerrorPlayer::OnShovedBySurvivor",							"L4D_OnShovedBySurvivor");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedBySurvivor,						DTR_CTerrorPlayer_OnShovedBySurvivor_Post,					"L4DD::CTerrorPlayer::OnShovedBySurvivor",							"L4D_OnShovedBySurvivor_Post",			true);
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered,								INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger");
-	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered_Post,							INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger_Post",					true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered,								DTR_CTerrorPlayer_OnStaggered_Post,							"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnStaggered,								DTR_CTerrorPlayer_OnStaggered_Post,							"L4DD::CTerrorPlayer::OnStaggered",									"L4D2_OnStagger_Post",					true);
 
 	if( !g_bLeft4Dead2 && g_bLinuxOS )
 	{
@@ -3254,8 +3257,8 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot_Post",		true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor_Post",			true);
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger");
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone_Post,					INVALID_FUNCTION,											"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger_Post",					true);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						DTR_CTerrorPlayer_OnStaggered_Clone_Post,					"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						DTR_CTerrorPlayer_OnStaggered_Clone_Post,					"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger_Post",					true);
 	}
 
 	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnHit,									DTR_CTerrorWeapon_OnHit_Post,								"L4DD::CTerrorWeapon::OnHit",										"L4D2_OnEntityShoved");
@@ -9418,6 +9421,7 @@ public MRESReturn DTR_ZombieManager_SpawnSpecial(Handle hReturn, Handle hParams)
 		g_bBlock_ZombieManager_SpawnSpecial = true;
 
 		DHookSetReturn(hReturn, 0);
+		// DHookSetReturn(hReturn, -1); // Update for "SourceMod 1.11" - "DHooks 2.2.0-detours17" and newer
 		return MRES_Supercede;
 	}
 
@@ -9697,6 +9701,7 @@ MRESReturn Spawn_TankWitch(Handle hForward, Handle hReturn, Handle hParams)
 		g_bBlock_Spawn_TankWitch = true; // Signal to block post hook
 
 		DHookSetReturn(hReturn, 0);
+		// DHookSetReturn(hReturn, -1); // Update for "SourceMod 1.11" - "DHooks 2.2.0-detours17" and newer
 		return MRES_Supercede;
 	}
 
@@ -10600,6 +10605,7 @@ public MRESReturn DTR_CDirector_TryOfferingTankBot(Handle hReturn, Handle hParam
 		g_bBlock_CDirector_TryOfferingTankBot = true;
 
 		DHookSetReturn(hReturn, 0);
+		// DHookSetReturn(hReturn, -1); // Update for "SourceMod 1.11" - "DHooks 2.2.0-detours17" and newer
 		return MRES_Supercede;
 	}
 
@@ -11762,6 +11768,7 @@ public MRESReturn DTR_SurvivorBot_FindScavengeItem_Post(int pThis, Handle hRetur
 	if( aResult == Plugin_Handled )
 	{
 		DHookSetReturn(hReturn, 0);
+		// DHookSetReturn(hReturn, -1); // Update for "SourceMod 1.11" - "DHooks 2.2.0-detours17" and newer
 		return MRES_Supercede;
 	}
 
@@ -11878,6 +11885,7 @@ public MRESReturn DTR_CPipeBombProjectile_Create_Pre(Handle hReturn, Handle hPar
 		g_bBlock_CPipeBombProjectile_Create = true;
 
 		DHookSetReturn(hReturn, 0);
+		// DHookSetReturn(hReturn, -1); // Update for "SourceMod 1.11" - "DHooks 2.2.0-detours17" and newer
 		return MRES_Supercede;
 	}
 
