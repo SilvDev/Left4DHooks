@@ -2432,6 +2432,66 @@
 			}
 
 			/*
+			*  TerrorNavMesh::GetInitialCheckpoint(TerrorNavMesh *this)
+			*/
+			"TerrorNavMesh::GetInitialCheckpoint"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavMesh20GetInitialCheckpointEv"
+				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x89\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x75\x2A\x33\x2A\x8B"
+				/* 55 8B ? 83 ? ? 89 ? ? 8B ? ? ? ? ? E8 ? ? ? ? 84 ? 75 ? 33 ? 8B */
+				/* Search "************\nMost gross danger! Cannot find Landmark named %s!\n************" */
+			}
+
+			/*
+			*  TerrorNavMesh::IsInInitialCheckpoint_NoLandmark(TerrorNavArea *)const
+			*/
+			"TerrorNavMesh::IsInInitialCheckpoint_NoLandmark"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavMesh32IsInInitialCheckpoint_NoLandmarkEP13TerrorNavArea"
+				"windows"	"\x55\x8B\x2A\xA1\x2A\x2A\x2A\x2A\x53\x8B\x2A\x2A\x2A\x2A\x2A\x57\x32\x2A\x33\x2A\x85\x2A\x7E\x2A\x8B\x2A\x2A\x56\x8D\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x75"
+				/* 55 8B ? A1 ? ? ? ? 53 8B ? ? ? ? ? 57 32 ? 33 ? 85 ? 7E ? 8B ? ? 56 8D ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 75 */
+				/* Found within "CTerrorGameRules::GetVersusCompletion" (signature for that function is in this GameData) */
+			}
+
+			/*
+			*  TerrorNavMesh::IsInExitCheckpoint_NoLandmark(TerrorNavArea *)const
+			*/
+			"TerrorNavMesh::IsInExitCheckpoint_NoLandmark"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavMesh29IsInExitCheckpoint_NoLandmarkEP13TerrorNavArea"
+				"windows"	"\x55\x8B\x2A\xA1\x2A\x2A\x2A\x2A\x53\x8B\x2A\x2A\x2A\x2A\x2A\x57\x32\x2A\x33\x2A\x85\x2A\x7E\x2A\x8B\x2A\x2A\x56\x8D\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74"
+				/* 55 8B ? A1 ? ? ? ? 53 8B ? ? ? ? ? 57 32 ? 33 ? 85 ? 7E ? 8B ? ? 56 8D ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 74 */
+				/* Found within "CTerrorGameRules::GetVersusCompletion" (signature for that function is in this GameData) */
+			}
+
+			/*
+			*  Checkpoint::ContainsArea(TerrorNavArea *)const
+			*/
+			"Checkpoint::ContainsArea"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK10Checkpoint12ContainsAreaEP13TerrorNavArea"
+				"windows"	"\x55\x8B\x2A\x8B\x2A\x2A\x33\x2A\x56\x85\x2A\x7E\x2A\x8B\x2A\x8B\x2A\x2A\x39\x2A\x74"
+				/* 55 8B ? 8B ? ? 33 ? 56 85 ? 7E ? 8B ? 8B ? ? 39 ? 74 */
+				/* Search "We're leaving the checkpoint to help a teammate" call is near start of function */
+			}
+
+			/*
+			*  TerrorNavMesh::GetLastCheckpoint(TerrorNavMesh *this)
+			*/
+			"TerrorNavMesh::GetLastCheckpoint"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavMesh17GetLastCheckpointEv"
+				"windows"	"\x55\x8B\x2A\x51\x8B\x2A\x2A\x2A\x2A\x2A\x56\x8B\x2A\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\xE8"
+				/* 55 8B ? 51 8B ? ? ? ? ? 56 8B ? ? ? ? ? 85 ? 74 ? E8 */
+				/* Search "No finale radio could be found.\n" - target is first sub call in this function */
+			}
+
+			/*
 			*  CDirector::IsAnySurvivorInExitCheckpoint(CDirector *__hidden this)
 			*/
 			"CDirector::IsAnySurvivorInExitCheckpoint"
