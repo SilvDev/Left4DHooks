@@ -2788,7 +2788,7 @@ native void L4D2_UseAdrenaline(int client, float fTime = 15.0, bool heal = true)
  * @remarks Resets players stats for kills etc.
  * @remarks To preserve stats please view the code in "[L4D1 & L4D2] SM Respawn Improved" plugin by "Dragokas": https://forums.alliedmods.net/showthread.php?t=323220
  *
- * @param client	Client ID of the person to respawn
+ * @param client	Client ID of the person to affect
  *
  * @noreturn
  */
