@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.103"
+#define PLUGIN_VERSION		"1.104"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.104 (28-May-2022)
+	- Fixed the new natives from the last update throwing errors in L4D1.
 
 1.103 (28-May-2022)
 	- L4D2: Added new natives:
@@ -5129,42 +5132,45 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::CancelStagger\" (%s)", g_sSystem);
 	}
 
-	StartPrepSDKCall(SDKCall_Static);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "ThrowImpactedSurvivor") == false )
-		SetFailState("Failed to find signature: ThrowImpactedSurvivor");
-	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
-	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
-	PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
-	PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
-	g_hSDK_ThrowImpactedSurvivor = EndPrepSDKCall();
-	if( g_hSDK_ThrowImpactedSurvivor == null )
-		SetFailState("Failed to create SDKCall: ThrowImpactedSurvivor");
+	if( g_bLeft4Dead2 )
+	{
+		StartPrepSDKCall(SDKCall_Static);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "ThrowImpactedSurvivor") == false )
+			SetFailState("Failed to find signature: ThrowImpactedSurvivor");
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
+		g_hSDK_ThrowImpactedSurvivor = EndPrepSDKCall();
+		if( g_hSDK_ThrowImpactedSurvivor == null )
+			SetFailState("Failed to create SDKCall: ThrowImpactedSurvivor");
 
-	StartPrepSDKCall(SDKCall_Player);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::OnStartCarryingVictim") == false )
-		SetFailState("Failed to find signature: CTerrorPlayer::OnStartCarryingVictim");
-	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
-	g_hSDK_CTerrorPlayer_OnStartCarryingVictim = EndPrepSDKCall();
-	if( g_hSDK_CTerrorPlayer_OnStartCarryingVictim == null )
-		SetFailState("Failed to create SDKCall: CTerrorPlayer::OnStartCarryingVictim");
+		StartPrepSDKCall(SDKCall_Player);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::OnStartCarryingVictim") == false )
+			SetFailState("Failed to find signature: CTerrorPlayer::OnStartCarryingVictim");
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		g_hSDK_CTerrorPlayer_OnStartCarryingVictim = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_OnStartCarryingVictim == null )
+			SetFailState("Failed to create SDKCall: CTerrorPlayer::OnStartCarryingVictim");
 
-	StartPrepSDKCall(SDKCall_Player);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::QueuePummelVictim") == false )
-		SetFailState("Failed to find signature: CTerrorPlayer::QueuePummelVictim");
-	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
-	PrepSDKCall_AddParameter(SDKType_Float, SDKPass_ByValue);
-	g_hSDK_CTerrorPlayer_QueuePummelVictim = EndPrepSDKCall();
-	if( g_hSDK_CTerrorPlayer_QueuePummelVictim == null )
-		SetFailState("Failed to create SDKCall: CTerrorPlayer::QueuePummelVictim");
+		StartPrepSDKCall(SDKCall_Player);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::QueuePummelVictim") == false )
+			SetFailState("Failed to find signature: CTerrorPlayer::QueuePummelVictim");
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_ByValue);
+		g_hSDK_CTerrorPlayer_QueuePummelVictim = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_QueuePummelVictim == null )
+			SetFailState("Failed to create SDKCall: CTerrorPlayer::QueuePummelVictim");
 
-	StartPrepSDKCall(SDKCall_Player);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::OnPummelEnded") == false )
-		SetFailState("Failed to find signature: CTerrorPlayer::OnPummelEnded");
-	PrepSDKCall_AddParameter(SDKType_String, SDKPass_ByRef);
-	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
-	g_hSDK_CTerrorPlayer_OnPummelEnded = EndPrepSDKCall();
-	if( g_hSDK_CTerrorPlayer_OnPummelEnded == null )
-		SetFailState("Failed to create SDKCall: CTerrorPlayer::OnPummelEnded");
+		StartPrepSDKCall(SDKCall_Player);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::OnPummelEnded") == false )
+			SetFailState("Failed to find signature: CTerrorPlayer::OnPummelEnded");
+		PrepSDKCall_AddParameter(SDKType_String, SDKPass_ByRef);
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		g_hSDK_CTerrorPlayer_OnPummelEnded = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_OnPummelEnded == null )
+			SetFailState("Failed to create SDKCall: CTerrorPlayer::OnPummelEnded");
+	}
 
 	StartPrepSDKCall(SDKCall_Player);
 	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::RoundRespawn") == false )
