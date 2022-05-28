@@ -3751,6 +3751,55 @@
 			}
 
 			/*
+			*	ThrowImpactedSurvivor(CTerrorPlayer *, CTerrorPlayer *, float, bool)
+			*	Search: "charger_impact"
+			*/
+			"ThrowImpactedSurvivor"
+			{
+				"library"		"server"
+				"linux"			"@_Z21ThrowImpactedSurvivorP13CTerrorPlayerS0_fb"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x57\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x2A\x2A\x74\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? 53 56 57 8B ? ? 8B ? ? ? ? ? C1 ? ? ? ? 74 ? ? ? ? ? ? ? ? 8B ? ? ? ? ? 8B */
+			}
+
+			/*
+			*	CTerrorPlayer::QueuePummelVictim(CTerrorPlayer*)
+			*	int __cdecl CTerrorPlayer::QueuePummelVictim(int a1, int a2, float a3)
+			*	Search: "ChargerZombie.VocalizePummel". xref calls sub_#### ((void *)v2, 0, -1.0);
+			*/
+			"CTerrorPlayer::QueuePummelVictim"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer17QueuePummelVictimEPS_f"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x83\x2A\xFF\x74"
+				/* ? ? ? ? ? ? ? 56 57 8B ? 85 ? 74 ? 8B ? 8B ? ? 8B ? FF ? 8B ? 83 ? FF 74 */
+			}
+
+			/*
+			*	CTerrorPlayer::OnPummelEnded(bool, CTerrorPlayer*)
+			*	Search: "charger_pummel_end"
+			*/
+			"CTerrorPlayer::OnPummelEnded"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer13OnPummelEndedEbPS_"
+				"windows"		"\x55\x8B\xEC\x8B\x2A\x2A\x2A\x2A\x2A\x53\x56\x8B\xF1\x8B\x2A\x2A\x2A\x2A\x2A\x57"
+				/* 55 8B EC 8B ? ? ? ? ? 53 56 8B F1 8B ? ? ? ? ? 57 */
+			}
+
+			/*
+			*	CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer*)
+			*	Search: "charger_carry_start"
+			*/
+			"CTerrorPlayer::OnStartCarryingVictim"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? 8B ? 8B ? ? ? ? ? 8B ? 8B ? ? 6A 00 6A 00 68 ? ? ? ? FF ? 8B ? 85 ? 74 ? 8B ? ? 8B ? ? ? ? ? 8B ? 50 8B ? ? FF ? 8B ? 50 8B ? ? 68 ? ? ? ? 8B ? FF ? 8B ? ? 8B */
+			}
+
+			/*
 			 * CDirector::CreateRescuableSurvivors(void)
 			 */
 			"CDirector::CreateRescuableSurvivors"

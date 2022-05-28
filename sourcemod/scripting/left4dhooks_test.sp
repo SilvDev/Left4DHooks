@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.102"
+#define PLUGIN_VERSION		"1.103"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,25 @@
 
 ========================================================================================
 	Change Log:
+
+1.103 (28-May-2022)
+	- L4D2: Added new natives:
+		"L4D2_Charger_ThrowImpactedSurvivor" - To throw a Survivor like when they're flung by a Charger impacting nearby.
+		"L4D2_Charger_StartCarryingVictim" - To carry a Survivor by a Charger.
+		"L4D2_Charger_PummelVictim" - To pummel a specific Survivor by a Charger.
+		"L4D2_Charger_EndPummel" - To end pummelling a Survivor by a Charger.
+
+	- Various changes to the "left4dhooks.inc" include file. Thanks to "Vinillia" for fixing.
+		- Added some missing params
+		- Added some const qualifiers
+		- Renamed some brief params
+		- Changed some return types to any to avoid extra casting
+
+	- When recompiling plugins changes maybe required to align with these fixes.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" and "left4dhooks_stocks.inc" Include files.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
 
 1.102 (16-May-2022)
 	- Added various post hook forwards that will trigger even when the relative pre hook has been blocked with return Plugin_Handled. This is since the changes in Left4DHooks version 1.94.
@@ -627,33 +646,33 @@ stock void PrecacheParticle(const char[] sEffectName)
 #if DEMO_ANIM
 bool g_bCrawling;
 
-public void player_spawn(Event event, const char[] name, bool dontBroadcast)
+void player_spawn(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if( client && IsClientInGame(client) )
 		AnimHookEnable(client, OnAnimPre, OnAnimPost);
 }
 
-public void player_incapacitated(Event event, const char[] name, bool dontBroadcast)
+void player_incapacitated(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if( GetClientTeam(client) == 2 )
 		AnimHookEnable(client, OnAnimPre, OnAnimPost);
 }
 
-public void revive_success(Event event, const char[] name, bool dontBroadcast)
+void revive_success(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("subject"));
 	AnimHookDisable(client, OnAnimPre, OnAnimPost);
 }
 
-public void player_death(Event event, const char[] name, bool dontBroadcast)
+void player_death(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("subject"));
 	AnimHookDisable(client, OnAnimPre, OnAnimPost);
 }
 
-public void round_end(Event event, const char[] name, bool dontBroadcast)
+void round_end(Event event, const char[] name, bool dontBroadcast)
 {
 	for( int i = 1; i <= MaxClients; i++ )
 	{
@@ -741,13 +760,13 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 // ====================================================================================================
 // COMMAND TEST
 // ====================================================================================================
-public Action sm_l4df(int client, int args)
+Action sm_l4df(int client, int args)
 {
 	ReplyToCommand(client, "[Left4DHooks] Forwards triggered %d/%d", g_iForwards, g_iForwardsMax);
 	return Plugin_Handled;
 }
 
-public Action sm_l4dd(int client, int args)
+Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default now.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
@@ -791,10 +810,35 @@ public Action sm_l4dd(int client, int args)
 	// */
 
 
+
 	// =========================
 	// STOCKS - left4dhooks_silver
 	// =========================
 	/*
+	// Charger tests
+	int survivor = GetRandomSurvivor(1, 0);
+	if( survivor )
+	{
+		int charger;
+
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsClientInGame(i) && GetClientTeam(i) == 3 && L4D2_GetPlayerZombieClass(i) == L4D2_ZOMBIE_CLASS_CHARGER )
+			{
+				charger = i;
+				break;
+			}
+		}
+
+		if( charger )
+		{
+			L4D2_Charger_StartCarryingVictim(survivor, charger);
+			L4D2_Charger_PummelVictim(survivor, charger);
+			L4D2_Charger_EndPummel(survivor, charger);
+			L4D2_Charger_ThrowImpactedSurvivor(survivor, charger);
+		}
+	}
+
 	PrintToServer("L4D_GetCheckpointFirst = %d", L4D_GetCheckpointFirst());
 	PrintToServer("L4D_GetCheckpointLast = %d", L4D_GetCheckpointLast());
 
@@ -2099,7 +2143,7 @@ public Action sm_l4dd(int client, int args)
 	return Plugin_Handled;
 }
 
-public Action TimerDetonate(Handle timer, any entity)
+stock Action TimerDetonate(Handle timer, any entity)
 {
 	entity = EntRefToEntIndex(entity);
 	if( entity != INVALID_ENT_REFERENCE )
@@ -2110,7 +2154,7 @@ public Action TimerDetonate(Handle timer, any entity)
 	return Plugin_Continue;
 }
 
-public Action TimerDetonateVomitjar(Handle timer, any entity)
+stock Action TimerDetonateVomitjar(Handle timer, any entity)
 {
 	entity = EntRefToEntIndex(entity);
 	if( entity != INVALID_ENT_REFERENCE )
@@ -2149,7 +2193,7 @@ void GetGroundAngles(float vOrigin[3])
 	delete trace;
 }
 
-public bool _TraceFilter(int entity, int contentsMask)
+stock bool _TraceFilter(int entity, int contentsMask)
 {
 	if( !entity || entity <= MaxClients || !IsValidEntity(entity) ) // dont let WORLD, or invalid entities be hit
 		return false;
@@ -2861,7 +2905,7 @@ public Action L4D_TankRock_OnRelease(int tank, int rock, float vecPos[3], float 
 	return Plugin_Continue;
 }
 
-public void L4D_TankRock_OnRelease_Post(int tank, int rock, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3])
+public void L4D_TankRock_OnRelease_Post(int tank, int rock, const float vecPos[3], const float vecAng[3], const float vecVel[3], const float vecRot[3])
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3242,7 +3286,7 @@ public Action L4D2_OnEntityShoved(int client, int entity, int weapon, float vecD
 	return Plugin_Continue;
 }
 
-public void L4D2_OnEntityShoved_Post(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce)
+public void L4D2_OnEntityShoved_Post(int client, int entity, int weapon, const float vecDir[3], bool bIsHighPounce)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3254,7 +3298,7 @@ public void L4D2_OnEntityShoved_Post(int client, int entity, int weapon, float v
 	}
 }
 
-public void L4D2_OnEntityShoved_PostHandled(int client, int entity, int weapon, float vecDir[3], bool bIsHighPounce)
+public void L4D2_OnEntityShoved_PostHandled(int client, int entity, int weapon, const float vecDir[3], bool bIsHighPounce)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3686,7 +3730,7 @@ public Action L4D_PipeBombProjectile_Pre(int client, float vecPos[3], float vecA
 	return Plugin_Continue;
 }
 
-public void L4D_PipeBombProjectile_Post(int client, int projectile, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3])
+public void L4D_PipeBombProjectile_Post(int client, int projectile, const float vecPos[3], const float vecAng[3], const float vecVel[3], const float vecRot[3])
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3698,7 +3742,7 @@ public void L4D_PipeBombProjectile_Post(int client, int projectile, float vecPos
 	}
 }
 
-public void L4D_PipeBombProjectile_PostHandled(int client, int projectile, float vecPos[3], float vecAng[3], float vecVel[3], float vecRot[3])
+public void L4D_PipeBombProjectile_PostHandled(int client, int projectile, const float vecPos[3], const float vecAng[3], const float vecVel[3], const float vecRot[3])
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4154,7 +4198,7 @@ public Action L4D_OnKnockedDown(int client, int reason)
 	return Plugin_Continue;
 }
 
-public void OnFrameResetMove(int client)
+stock void OnFrameResetMove(int client)
 {
 	client = GetClientOfUserId(client);
 	if( client && IsClientInGame(client) )
@@ -4216,7 +4260,7 @@ public Action L4D2_OnPummelVictim(int attacker, int victim)
 }
 
 // To fix getting stuck use this:
-public void OnPummelTeleport(DataPack dPack)
+stock void OnPummelTeleport(DataPack dPack)
 {
 	dPack.Reset();
 	int attacker = dPack.ReadCell();
@@ -4236,7 +4280,7 @@ public void OnPummelTeleport(DataPack dPack)
 }
 
 // To block the stumble animation use the next two functions:
-Action OnPummelOnAnimPre(int client, int &anim)
+stock Action OnPummelOnAnimPre(int client, int &anim)
 {
 	if( anim == L4D2_ACT_TERROR_SLAMMED_WALL || anim == L4D2_ACT_TERROR_SLAMMED_GROUND )
 	{
@@ -4248,7 +4292,7 @@ Action OnPummelOnAnimPre(int client, int &anim)
 	return Plugin_Continue;
 }
 
-public Action TimerOnPummelResetAnim(Handle timer, any victim) // Don't need client userID since it's not going to be validated just removed
+stock Action TimerOnPummelResetAnim(Handle timer, any victim) // Don't need client userID since it's not going to be validated just removed
 {
 	AnimHookDisable(victim, OnPummelOnAnimPre);
 
@@ -4337,7 +4381,7 @@ public Action L4D2_OnPlayerFling(int client, int attacker, float vecDir[3])
 	return Plugin_Continue;
 }
 
-public void L4D2_OnPlayerFling_Post(int client, int attacker, float vecDir[3])
+public void L4D2_OnPlayerFling_Post(int client, int attacker, const float vecDir[3])
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4349,7 +4393,7 @@ public void L4D2_OnPlayerFling_Post(int client, int attacker, float vecDir[3])
 	}
 }
 
-public void L4D2_OnPlayerFling_PostHandled(int client, int attacker, float vecDir[3])
+public void L4D2_OnPlayerFling_PostHandled(int client, int attacker, const float vecDir[3])
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4495,7 +4539,7 @@ void ForwardCalled(const char[] format, any ...)
 	PrintToServer("----------");
 }
 
-public bool TraceFilter(int entity, int contentsMask, any client)
+stock bool TraceFilter(int entity, int contentsMask, any client)
 {
 	if( entity == client )
 		return false;
