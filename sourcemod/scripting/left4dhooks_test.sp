@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.103"
+#define PLUGIN_VERSION		"1.106"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,14 @@
 
 ========================================================================================
 	Change Log:
+
+1.106 (01-Jun-2022)
+	- Plugin now warns if Left4DHooks is already running, to avoid duplicate plugins.
+	- Reverted accidental debug logging from the last update. Thanks to "Hawkins" for reporting.
+	- Added stock "L4D_HasReachedSmoker" to return if a Survivor has reached the Smoker. Requested by "Nuki".
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks_silver.inc" Include files.
 
 1.103 (28-May-2022)
 	- L4D2: Added new natives:
@@ -872,6 +880,7 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_GetAttackerCarry %d",				L4D_GetAttackerCarry(client));
 	PrintToServer("L4D_GetAttackerJockey %d",				L4D_GetAttackerJockey(client));
 	PrintToServer("L4D_GetPinnedInfected %d",				L4D_GetPinnedInfected(client));
+	PrintToServer("L4D_HasReachedSmoker %d",				L4D_HasReachedSmoker(client));
 	PrintToServer("L4D_IsPlayerPinned %d",					L4D_IsPlayerPinned(client));
 	PrintToServer("L4D_IsPlayerHangingFromLedge %d",		L4D_IsPlayerHangingFromLedge(client));
 	PrintToServer("L4D_CanPlayerLedgeHang %d"		,		L4D_CanPlayerLedgeHang(client));

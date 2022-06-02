@@ -67,7 +67,7 @@
 // L4D2 = 142;
 
 // Stocks: 157 (L4D1 = 107, L4D2 = 153)
-// left4dhooks_silver			40 stocks	(L4D1 = 33,		L4D2 = 40)
+// left4dhooks_silver			41 stocks	(L4D1 = 34,		L4D2 = 41)
 // left4dhooks_stocks			83 stocks	(L4D1 = 44,		L4D2 = 79)
 // left4dhooks_lux_library		34 stocks	(L4D1 = 30,		L4D2 = 34)
 

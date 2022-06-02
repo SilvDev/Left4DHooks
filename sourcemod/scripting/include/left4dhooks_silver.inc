@@ -323,8 +323,8 @@ stock int L4D_SpawnCommonInfected(float vPos[3], float vAng[3] = { 0.0, 0.0, 0.0
 	int entity = CreateEntityByName("infected");
 	if( entity != -1 )
 	{
-		DispatchSpawn(entity);
 		TeleportEntity(entity, vPos, vAng, NULL_VECTOR);
+		DispatchSpawn(entity);
 	}
 
 	return entity;
@@ -658,6 +658,19 @@ stock bool L4D2_IsMultiCharged(int victim)
 stock bool L4D_IsPlayerPinned(int client)
 {
 	return L4D_GetPinnedInfected(client) != 0;
+}
+
+/**
+ * @brief Returns if a Survivor is being attacked in the Smokers arms
+ *
+ * @param client			Client ID of the player to check
+ *
+ * @return Returns true if player has reached the Smoker, false otherwise
+ */
+stock bool L4D_HasReachedSmoker(int client)
+{
+	// m_isHangingFromTongue sometimes returns 1 when still being dragged, using this instead
+	return GetEntProp(client, Prop_Send, "m_reachedTongueOwner", 1) == 1;
 }
 
 
