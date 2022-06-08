@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.106"
+#define PLUGIN_VERSION		"1.107"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -41,6 +41,13 @@
 
 ========================================================================================
 	Change Log:
+
+1.107 (08-Jun-2022)
+	- Fixed memory leak when players disconnect. Thanks to "hefiwhfcds2" for reporting.
+	- Fixed forwards "L4D_OnShovedBySurvivor*" from throwing "null pointer" errors. Thanks to "HarryPotter" for reporting.
+	- Fixed native "L4D_TakeOverZombieBot" not always setting the correct zombie type in L4D2. Thanks to "a2121858" for fixing.
+	- Fixed native "L4D2Direct_SetTankTickets" crashing servers. Requires SourceMod 1.11. Thanks to "a2121858" for reporting.
+	- Potentially fixed other server crashes on map change when writing to memory. Requires SourceMod 1.11.
 
 1.106 (02-Jun-2022)
 	- Added stock "L4D_HasReachedSmoker" to return if a Survivor has reached the Smoker. Requested by "Nuki".
@@ -2935,6 +2942,8 @@ public void OnClientDisconnect(int client)
 			g_hAnimationCallbackPre[client].RemoveAllFunctions(hPlug);
 			g_hAnimationCallbackPost[client].RemoveAllFunctions(hPlug);
 		}
+
+		delete hIter;
 	}
 
 	// Loop through all anim hooks for specific client
@@ -3247,7 +3256,11 @@ MRESReturn DTR_AddonsDisabler(int pThis, Handle hReturn, Handle hParams)
 
 			// 1 to tell the client it should use "vanilla mode"--no addons. 0 to enable addons.
 			int bVanillaMode = aResult == Plugin_Handled ? 0 : view_as<int>(!cvar);
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+			StoreToAddress(view_as<Address>(ptr + g_iOff_AddonEclipse2), bVanillaMode, NumberType_Int8, false);
+			#else
 			StoreToAddress(view_as<Address>(ptr + g_iOff_AddonEclipse2), bVanillaMode, NumberType_Int8);
+			#endif
 
 			#if DEBUG
 			PrintToServer("#### AddonCheck VanillaMode for %d [%s] (%N): %d", client, netID, client, bVanillaMode);
@@ -7363,14 +7376,22 @@ int Native_SetVersusMaxCompletionScore(Handle plugin, int numParams)
 
 	if( g_bLeft4Dead2 )
 	{
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(g_pGameRules + view_as<Address>(g_iOff_VersusMaxCompletionScore), value, NumberType_Int32, false);
+		#else
 		StoreToAddress(g_pGameRules + view_as<Address>(g_iOff_VersusMaxCompletionScore), value, NumberType_Int32);
+		#endif
 	}
 	else
 	{
 		ValidateAddress(g_iOff_m_chapter, "m_chapter");
 
 		int chapter = LoadFromAddress(g_pDirector + view_as<Address>(g_iOff_m_chapter), NumberType_Int32);
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(g_pGameRules + view_as<Address>(chapter * 4 + g_iOff_VersusMaxCompletionScore), value, NumberType_Int32, false);
+		#else
 		StoreToAddress(g_pGameRules + view_as<Address>(chapter * 4 + g_iOff_VersusMaxCompletionScore), value, NumberType_Int32);
+		#endif
 	}
 
 	return 0;
@@ -7728,8 +7749,13 @@ int Native_SetLobbyReservation(Handle plugin, int numParams)
 	sTemp[length - 8] = 0;
 	val1 = HexStrToInt(sTemp);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), val1, NumberType_Int32, false);
+	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), val2, NumberType_Int32, false);
+	#else
 	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), val1, NumberType_Int32);
 	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation), val2, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -7908,12 +7934,20 @@ int Native_SetIntWeaponAttribute(Handle plugin, int numParams)
 		if( !g_bLeft4Dead2 && attr == view_as<int>(L4D2FWA_PenetrationNumLayers) )
 		{
 			attr = L4D2IntWeapon_Offsets[attr]; // Offset
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+			StoreToAddress(view_as<Address>(ptr + attr), RoundToCeil(GetNativeCell(3)), NumberType_Int32, false);
+			#else
 			StoreToAddress(view_as<Address>(ptr + attr), RoundToCeil(GetNativeCell(3)), NumberType_Int32);
+			#endif
 		}
 		else
 		{
 			attr = L4D2IntWeapon_Offsets[attr]; // Offset
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+			StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
+			#else
 			StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32);
+			#endif
 		}
 	}
 
@@ -7930,7 +7964,11 @@ int Native_SetFloatWeaponAttribute(Handle plugin, int numParams)
 	if( ptr != -1 )
 	{
 		attr = L4D2FloatWeapon_Offsets[attr]; // Offset
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
+		#else
 		StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32);
+		#endif
 	}
 
 	return ptr;
@@ -8017,7 +8055,11 @@ int Native_SetIntMeleeAttribute(Handle plugin, int numParams)
 	{
 		int value = GetNativeCell(3);
 		attr = L4D2IntMeleeWeapon_Offsets[attr]; // Offset
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int32, false);
+		#else
 		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int32);
+		#endif
 	}
 
 	return 0;
@@ -8036,7 +8078,11 @@ int Native_SetFloatMeleeAttribute(Handle plugin, int numParams)
 	{
 		float value = GetNativeCell(3);
 		attr = L4D2FloatMeleeWeapon_Offsets[attr]; // Offset
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(view_as<Address>(ptr + attr), view_as<int>(value), NumberType_Int32, false);
+		#else
 		StoreToAddress(view_as<Address>(ptr + attr), view_as<int>(value), NumberType_Int32);
+		#endif
 	}
 
 	return 0;
@@ -8055,7 +8101,11 @@ int Native_SetBoolMeleeAttribute(Handle plugin, int numParams)
 	{
 		bool value = GetNativeCell(3);
 		attr = L4D2BoolMeleeWeapon_Offsets[attr]; // Offset
+		#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int32, false);
+		#else
 		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int32);
+		#endif
 	}
 
 	return 0;
@@ -8078,7 +8128,11 @@ int Native_CTimerReset(Handle plugin, int numParams)
 	int off = L4D2CountdownTimer_Offsets[id];
 	float timestamp = GetGameTime();
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8094,8 +8148,13 @@ int Native_CTimerStart(Handle plugin, int numParams)
 	float duration = GetNativeCell(2);
 	float timestamp = GetGameTime() + duration;
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(off + 4), view_as<int>(duration), NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(off + 4), view_as<int>(duration), NumberType_Int32);
 	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8110,7 +8169,11 @@ int Native_CTimerInvalidate(Handle plugin, int numParams)
 	int off = L4D2CountdownTimer_Offsets[id];
 	float timestamp = -1.0;
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(off + 8), view_as<int>(timestamp), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8195,7 +8258,11 @@ int Native_ITimerStart(Handle plugin, int numParams)
 	int off = L4D2IntervalTimer_Offsets[id];
 	float timestamp = GetGameTime();
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(off + 4), view_as<int>(timestamp), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(off + 4), view_as<int>(timestamp), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8210,7 +8277,11 @@ int Native_ITimerInvalidate(Handle plugin, int numParams)
 	int off = L4D2IntervalTimer_Offsets[id];
 	float timestamp = -1.0;
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(off + 4), view_as<int>(timestamp), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(off + 4), view_as<int>(timestamp), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8415,8 +8486,13 @@ int Native_SetVersusCampaignScores(Handle plugin, int numParams)
 
 	int vals[2];
 	GetNativeArray(1, vals, 2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores), vals[0], NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + 4), vals[1], NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores), vals[0], NumberType_Int32);
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + 4), vals[1], NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8445,8 +8521,13 @@ int Native_SetVersusTankFlowPercent(Handle plugin, int numParams)
 
 	float vals[2];
 	GetNativeArray(1, vals, 2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent), view_as<int>(vals[0]), NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent + 4), view_as<int>(vals[1]), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent), view_as<int>(vals[0]), NumberType_Int32);
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent + 4), view_as<int>(vals[1]), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8475,8 +8556,13 @@ int Native_SetVersusWitchFlowPercent(Handle plugin, int numParams)
 
 	float vals[2];
 	GetNativeArray(1, vals, 2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent), view_as<int>(vals[0]), NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent + 4), view_as<int>(vals[1]), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent), view_as<int>(vals[0]), NumberType_Int32);
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent + 4), view_as<int>(vals[1]), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8507,7 +8593,11 @@ int Direct_SetPendingMobCount(Handle plugin, int numParams)
 	ValidateAddress(g_iOff_m_PendingMobCount, "m_PendingMobCount");
 
 	int count = GetNativeCell(1);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(g_pZombieManager + view_as<Address>(g_iOff_m_PendingMobCount), count, NumberType_Int32, false);
+	#else
 	StoreToAddress(g_pZombieManager + view_as<Address>(g_iOff_m_PendingMobCount), count, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8560,7 +8650,11 @@ int Direct_SetTankPassedCount(Handle plugin, int numParams)
 	ValidateAddress(g_pDirector, "m_iTankPassedCount");
 
 	int passes = GetNativeCell(1);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_iTankPassedCount), passes, NumberType_Int32, false);
+	#else
 	StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_iTankPassedCount), passes, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8585,7 +8679,11 @@ int Direct_SetVSCampaignScore(Handle plugin, int numParams)
 	if( team < 0 || team > 1 ) return 0;
 
 	int score = GetNativeCell(2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + (team * 4)), score, NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + (team * 4)), score, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8614,7 +8712,11 @@ int Direct_SetVSTankFlowPercent(Handle plugin, int numParams)
 	int team = round ^ GameRules_GetProp("m_bInSecondHalfOfRound") != GameRules_GetProp("m_bAreTeamsFlipped");
 	float flow = GetNativeCell(2);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent + (team * 4)), view_as<int>(flow), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fTankSpawnFlowPercent + (team * 4)), view_as<int>(flow), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8643,7 +8745,11 @@ int Direct_SetVSTankToSpawnThisRound(Handle plugin, int numParams)
 	int team = round ^ GameRules_GetProp("m_bInSecondHalfOfRound") != GameRules_GetProp("m_bAreTeamsFlipped");
 	bool spawn = GetNativeCell(2);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_bTankThisRound + team), spawn, NumberType_Int8, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_bTankThisRound + team), spawn, NumberType_Int8);
+	#endif
 
 	return 0;
 }
@@ -8672,7 +8778,11 @@ int Direct_SetVSWitchFlowPercent(Handle plugin, int numParams)
 	int team = round ^ GameRules_GetProp("m_bInSecondHalfOfRound") != GameRules_GetProp("m_bAreTeamsFlipped");
 	float flow = GetNativeCell(2);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent + (team * 4)), view_as<int>(flow), NumberType_Int32, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_fWitchSpawnFlowPercent + (team * 4)), view_as<int>(flow), NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8701,7 +8811,11 @@ int Direct_SetVSWitchToSpawnThisRound(Handle plugin, int numParams)
 	int team = round ^ GameRules_GetProp("m_bInSecondHalfOfRound") != GameRules_GetProp("m_bAreTeamsFlipped");
 	bool spawn = GetNativeCell(2);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_bWitchThisRound + team), spawn, NumberType_Int8, false);
+	#else
 	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_bWitchThisRound + team), spawn, NumberType_Int8);
+	#endif
 
 	return 0;
 }
@@ -8811,7 +8925,11 @@ int Direct_SetTankTickets(Handle plugin, int numParams)
 		return 0;
 
 	int tickets = GetNativeCell(2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_iTankTickets), tickets, NumberType_Int32, false);
+	#else
 	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_iTankTickets), tickets, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -8965,7 +9083,11 @@ int Direct_SetPreIncapHealth(Handle plugin, int numParams)
 		return 0;
 
 	int health = GetNativeCell(2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_preIncapacitatedHealth), health, NumberType_Int32, false);
+	#else
 	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_preIncapacitatedHealth), health, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -9002,7 +9124,12 @@ int Direct_SetPreIncapHealthBuffer(Handle plugin, int numParams)
 		return 0;
 
 	int health = GetNativeCell(2);
+
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_preIncapacitatedHealthBuffer), health, NumberType_Int32, false);
+	#else
 	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_preIncapacitatedHealthBuffer), health, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -9035,7 +9162,11 @@ int Direct_SetInfernoMaxFlames(Handle plugin, int numParams)
 		return 0;
 
 	int flames = GetNativeCell(2);
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_maxFlames), flames, NumberType_Int32, false);
+	#else
 	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_maxFlames), flames, NumberType_Int32);
+	#endif
 
 	return 0;
 }
@@ -9149,7 +9280,11 @@ int Direct_SetSurvivorHealthBonus(Handle plugin, int numParams)
 	int health = GetNativeCell(2);
 	bool recompute = GetNativeCell(3);
 
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_iSurvivorHealthBonus), health, NumberType_Int32, false);
+	#else
 	StoreToAddress(pEntity + view_as<Address>(g_iOff_m_iSurvivorHealthBonus), health, NumberType_Int32);
+	#endif
 
 	if( recompute )
 	{
@@ -9678,7 +9813,11 @@ void OnFrameRescue(int count)
 
 void RespawnRescue()
 {
+	#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+	StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_rescueCheckTimer + 8), view_as<int>(0.0), NumberType_Int32, false);
+	#else
 	StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_rescueCheckTimer + 8), view_as<int>(0.0), NumberType_Int32);
+	#endif
 
 	int time = g_hCvar_RescueDeadTime.IntValue;
 	g_hCvar_RescueDeadTime.SetInt(0);
@@ -9745,20 +9884,12 @@ int Native_CTerrorPlayer_TakeOverZombieBot(Handle plugin, int numParams)
 		GetClientTeam(client) == 3 && GetClientTeam(target) == 3 &&
 		IsFakeClient(client) == false && IsFakeClient(target) == true )
 	{
-		if( g_bLeft4Dead2 )
-		{
-			//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_TakeOverZombieBot");
-			SDKCall(g_hSDK_CTerrorPlayer_TakeOverZombieBot, client, target);
-		}
-		else
-		{
-			// Workaround spawning wrong type, you'll hear another special infected type sound when spawning.
-			int zombieClass = GetEntProp(target, Prop_Send, "m_zombieClass");
+		// Workaround spawning wrong type, you'll hear another special infected type sound when spawning.
+		int zombieClass = GetEntProp(target, Prop_Send, "m_zombieClass");
 
-			//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_TakeOverZombieBot");
-			SDKCall(g_hSDK_CTerrorPlayer_TakeOverZombieBot, client, target);
-			SetClass(client, zombieClass);
-		}
+		//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_TakeOverZombieBot");
+		SDKCall(g_hSDK_CTerrorPlayer_TakeOverZombieBot, client, target);
+		SetClass(client, zombieClass);
 	}
 
 	return 0;
@@ -10499,7 +10630,11 @@ MRESReturn DTR_CDirector_OnFirstSurvivorLeftSafeArea(Handle hReturn, Handle hPar
 			// Remove bool that says not to check if they have left
 			ValidateAddress(g_pDirector, "g_pDirector");
 			ValidateAddress(g_iOff_m_bFirstSurvivorLeftStartArea, "m_bFirstSurvivorLeftStartArea");
+			#if SOURCEMOD_V_MAJOR == 1 && SOURCEMOD_V_MINOR >= 11
+			StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_bFirstSurvivorLeftStartArea), 0, NumberType_Int8, false);
+			#else
 			StoreToAddress(g_pDirector + view_as<Address>(g_iOff_m_bFirstSurvivorLeftStartArea), 0, NumberType_Int8);
+			#endif
 		}
 
 		DHookSetReturn(hReturn, 0);
@@ -11769,6 +11904,8 @@ bool g_bBlock_CTerrorPlayer_OnShovedBySurvivor;
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor");
+	if( DHookIsNullParam(hParams, 1) ) return MRES_Ignored;
+
 	float a2[3];
 	int a1 = DHookGetParam(hParams, 1);
 	DHookGetParamVector(hParams, 2, a2);
@@ -11796,6 +11933,8 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, Handle hReturn, Handl
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Post(int pThis, Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Post");
+	if( DHookIsNullParam(hParams, 1) ) return MRES_Ignored;
+
 	float a2[3];
 	int a1 = DHookGetParam(hParams, 1);
 	DHookGetParamVector(hParams, 2, a2);
@@ -11812,6 +11951,8 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Post(int pThis, Handle hReturn, 
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Clone");
+	if( DHookIsNullParam(hParams, 1) ) return MRES_Ignored;
+
 	float a3[3];
 	int a1 = DHookGetParam(hParams, 1);
 	int a2 = DHookGetParam(hParams, 2);
@@ -11840,6 +11981,8 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone(Handle hReturn, Handle hPa
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post(Handle hReturn, Handle hParams)
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post");
+	if( DHookIsNullParam(hParams, 1) ) return MRES_Ignored;
+
 	float a3[3];
 	int a1 = DHookGetParam(hParams, 1);
 	int a2 = DHookGetParam(hParams, 2);
