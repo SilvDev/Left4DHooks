@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.106"
+#define PLUGIN_VERSION		"1.108"
 
 /*=======================================================================================
 	Plugin Info:
@@ -31,6 +31,14 @@
 
 ========================================================================================
 	Change Log:
+
+1.108 (20-Jun-2022)
+	- Added support for the "Updater" plugin by "GoD-Tony" to auto-update Left4DHooks.
+	- L4D2: Added native "L4D2_Jockey_EndRide" to stop a Jockey riding a Survivor. Requested by "Eyal282".
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
 
 1.106 (01-Jun-2022)
 	- Plugin now warns if Left4DHooks is already running, to avoid duplicate plugins.
@@ -822,6 +830,28 @@ Action sm_l4dd(int client, int args)
 	// =========================
 	// STOCKS - left4dhooks_silver
 	// =========================
+	// /*
+	// Jockey tests
+	int survivor = GetRandomSurvivor(1, 0);
+	if( survivor )
+	{
+		int jockey;
+
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsClientInGame(i) && GetClientTeam(i) == 3 && L4D2_GetPlayerZombieClass(i) == L4D2_ZOMBIE_CLASS_JOCKEY )
+			{
+				jockey = i;
+				break;
+			}
+		}
+
+		if( jockey )
+		{
+			L4D2_Jockey_EndRide(survivor, jockey);
+		}
+	}
+
 	/*
 	// Charger tests
 	int survivor = GetRandomSurvivor(1, 0);

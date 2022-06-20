@@ -58,9 +58,9 @@
 
 
 
-// Natives: 226
-// L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 43 [silvers - mine!] + 4 [anim] = 132
-// L4D2 = 59 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 79 [silvers - mine!] + 4 [anim] = 223
+// Natives: 227
+// L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 43 [silvers - mine!] + 4 [anim] = 133
+// L4D2 = 60 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 80 [silvers - mine!] + 4 [anim] = 224
 
 // Forwards: 144
 // L4D1 = 109;
@@ -331,6 +331,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_Charger_StartCarryingVictim");
 	MarkNativeAsOptional("L4D2_Charger_PummelVictim");
 	MarkNativeAsOptional("L4D2_Charger_EndPummel");
+	MarkNativeAsOptional("L4D2_Jockey_EndRide");
 	MarkNativeAsOptional("L4D_CancelStagger");
 	MarkNativeAsOptional("L4D_CreateRescuableSurvivors");
 	MarkNativeAsOptional("L4D_ReviveSurvivor");
@@ -4671,6 +4672,7 @@ native void L4D_CancelStagger(int client);
  *
  * @noreturn
  */
+// L4D2 only.
 native void L4D2_Charger_ThrowImpactedSurvivor(int victim, int attacker);
 
 /**
@@ -4683,6 +4685,7 @@ native void L4D2_Charger_ThrowImpactedSurvivor(int victim, int attacker);
  *
  * @noreturn
  */
+// L4D2 only.
 native void L4D2_Charger_StartCarryingVictim(int victim, int attacker);
 
 /**
@@ -4693,6 +4696,7 @@ native void L4D2_Charger_StartCarryingVictim(int victim, int attacker);
  *
  * @noreturn
  */
+// L4D2 only.
 native void L4D2_Charger_PummelVictim(int victim, int attacker);
 
 /**
@@ -4703,7 +4707,19 @@ native void L4D2_Charger_PummelVictim(int victim, int attacker);
  *
  * @noreturn
  */
+// L4D2 only.
 native void L4D2_Charger_EndPummel(int victim, int attacker);
+
+/**
+ * @brief Makes a Jockey stop riding a Survivor
+ *
+ * @param victim			Client index of the Survivor to affect
+ * @param attacker			Client index of the Jockey riding the Survivor
+ *
+ * @noreturn
+ */
+// L4D2 only.
+native void L4D2_Jockey_EndRide(int victim, int attacker);
 
 /**
  * @brief Spawns all dead survivors in rescuable rooms.

@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.107"
+#define PLUGIN_VERSION		"1.108"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -27,6 +27,8 @@
 // #define DETOUR_ALL		1	// Enable all detours, for testing.
 
 #define KILL_VSCRIPT		0	// 0=Keep VScript entity after using for "GetVScriptOutput". 1=Kill the entity after use (more resourceful to keep recreating, use if you're maxing out entities and reaching the limit regularly).
+
+#define ALLOW_UPDATER		1	// 0=Off. 1=Allow the plugin to auto-update using the "Updater" plugin by "GoD-Tony". 2=Allow updating and reloading after update.
 
 
 
@@ -41,6 +43,14 @@
 
 ========================================================================================
 	Change Log:
+
+1.108 (20-Jun-2022)
+	- Added support for the "Updater" plugin by "GoD-Tony" to auto-update Left4DHooks. Can change the "ALLOW_UPDATER" define value for various options.
+	- L4D2: Added native "L4D2_Jockey_EndRide" to stop a Jockey riding a Survivor. Requested by "Eyal282".
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
 
 1.107 (08-Jun-2022)
 	- Fixed memory leak when players disconnect. Thanks to "hefiwhfcds2" for reporting.
@@ -1029,6 +1039,13 @@
 #include <dhooks>
 #include <left4dhooks>
 
+// ====================================================================================================
+// UPDATER
+#define UPDATE_URL  					  "https://raw.githubusercontent.com/SilvDev/Left4DHooks/main/sourcemod/updater.txt"
+
+native void Updater_AddPlugin(const char[] url);
+// ====================================================================================================
+
 #if DEBUG
 #include <profiler>
 Handle g_vProf;
@@ -1399,6 +1416,7 @@ Handle g_hSDK_ThrowImpactedSurvivor;
 Handle g_hSDK_CTerrorPlayer_OnStartCarryingVictim;
 Handle g_hSDK_CTerrorPlayer_QueuePummelVictim;
 Handle g_hSDK_CTerrorPlayer_OnPummelEnded;
+Handle g_hSDK_CTerrorPlayer_OnRideEnded;
 Handle g_hSDK_CDirector_CreateRescuableSurvivors;
 Handle g_hSDK_CTerrorPlayer_OnRevived;
 Handle g_hSDK_CTerrorGameRules_GetVersusCompletion;
@@ -1548,6 +1566,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 	g_hThisPlugin = myself;
 	RegPluginLibrary("left4dhooks");
+
+
+
+	// ====================================================================================================
+	//									UPDATER
+	// ====================================================================================================
+	MarkNativeAsOptional("Updater_AddPlugin");
 
 
 
@@ -1999,6 +2024,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("L4D2_Charger_StartCarryingVictim",				Native_CTerrorPlayer_OnStartCarryingVictim);
 	CreateNative("L4D2_Charger_PummelVictim",						Native_CTerrorPlayer_QueuePummelVictim);
 	CreateNative("L4D2_Charger_EndPummel",							Native_CTerrorPlayer_OnPummelEnded);
+	CreateNative("L4D2_Jockey_EndRide",								Native_CTerrorPlayer_OnRideEnded);
 	CreateNative("L4D_RespawnPlayer",								Native_CTerrorPlayer_RespawnPlayer);
 	CreateNative("L4D_CreateRescuableSurvivors",					Native_CDirector_CreateRescuableSurvivors);
 	CreateNative("L4D_ReviveSurvivor",								Native_CTerrorPlayer_OnRevived);
@@ -2030,11 +2056,37 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 
+
+
+// ====================================================================================================
+//									UPDATER
+// ====================================================================================================
+#if ALLOW_UPDATER
+public void OnLibraryAdded(const char[] name)
+{
+	if( strcmp(name, "updater") == 0 )
+	{
+		Updater_AddPlugin(UPDATE_URL);
+	}
+}
+#endif
+
+#if ALLOW_UPDATER == 2
+public void Updater_OnPluginUpdated()
+{
+	char filename[64];
+	GetPluginFilename(null, filename, sizeof(filename));
+	ServerCommand("sm plugins reload %s", filename);
+}
+#endif
+
+
+
+// ====================================================================================================
+//									SETUP
+// ====================================================================================================
 public void OnPluginStart()
 {
-	// ====================================================================================================
-	//									SETUP
-	// ====================================================================================================
 	g_iClassTank = g_bLeft4Dead2 ? 8 : 5;
 	g_fLoadTime = GetEngineTime();
 
@@ -2250,7 +2302,8 @@ public void OnPluginStart()
 	// ====================================================================================================
 	//									CVARS
 	// ====================================================================================================
-	CreateConVar("left4dhooks_version", PLUGIN_VERSION,	"Left 4 DHooks Direct plugin version.", FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	ConVar hVersion = CreateConVar("left4dhooks_version", PLUGIN_VERSION,	"Left 4 DHooks Direct plugin version.", FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	hVersion.SetString(PLUGIN_VERSION); // Force version cvar to update if server updates the plugin but doesn't reboot, so it's reporting the current version in use
 
 	if( g_bLeft4Dead2 )
 	{
@@ -3290,7 +3343,7 @@ Action CmdDetours(int client, int args)
 	return Plugin_Handled;
 }
 
-public void AP_OnPluginUpdate(int pre)
+public void AP_OnPluginUpdate(int pre) // From "Autoreload Plugins" by "Dragokas"
 {
 	if( pre == 0 && GetEngineTime() - g_fLoadTime > 5.0 )
 	{
@@ -5205,6 +5258,14 @@ void LoadGameData()
 		g_hSDK_CTerrorPlayer_OnPummelEnded = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_OnPummelEnded == null )
 			SetFailState("Failed to create SDKCall: CTerrorPlayer::OnPummelEnded");
+
+		StartPrepSDKCall(SDKCall_Player);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::OnRideEnded") == false )
+			SetFailState("Failed to find signature: CTerrorPlayer::OnRideEnded");
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		g_hSDK_CTerrorPlayer_OnRideEnded = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_OnRideEnded == null )
+			SetFailState("Failed to create SDKCall: CTerrorPlayer::OnRideEnded");
 	}
 
 	StartPrepSDKCall(SDKCall_Player);
@@ -9770,6 +9831,19 @@ Action TimerFixAnim(Handle t, int target)
 	}
 
 	return Plugin_Continue;
+}
+
+int Native_CTerrorPlayer_OnRideEnded(Handle plugin, int numParams)
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_OnRideEnded, "CTerrorPlayer::OnRideEnded");
+
+	int target = GetNativeCell(1);
+	int client = GetNativeCell(2);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_OnRideEnded");
+	SDKCall(g_hSDK_CTerrorPlayer_OnRideEnded, client, target);
+
+	return 0;
 }
 
 int Native_CTerrorPlayer_RespawnPlayer(Handle plugin, int numParams)

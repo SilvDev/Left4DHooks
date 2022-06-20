@@ -3763,6 +3763,18 @@
 			}
 
 			/*
+			*	CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer*)
+			*	Search: "charger_carry_start"
+			*/
+			"CTerrorPlayer::OnStartCarryingVictim"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? 8B ? 8B ? ? ? ? ? 8B ? 8B ? ? 6A 00 6A 00 68 ? ? ? ? FF ? 8B ? 85 ? 74 ? 8B ? ? 8B ? ? ? ? ? 8B ? 50 8B ? ? FF ? 8B ? 50 8B ? ? 68 ? ? ? ? 8B ? FF ? 8B ? ? 8B */
+			}
+
+			/*
 			*	CTerrorPlayer::QueuePummelVictim(CTerrorPlayer*)
 			*	int __cdecl CTerrorPlayer::QueuePummelVictim(int a1, int a2, float a3)
 			*	Search: "ChargerZombie.VocalizePummel". xref calls sub_#### ((void *)v2, 0, -1.0);
@@ -3788,15 +3800,15 @@
 			}
 
 			/*
-			*	CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer*)
-			*	Search: "charger_carry_start"
-			*/
-			"CTerrorPlayer::OnStartCarryingVictim"
+			 * CTerrorPlayer::OnRideEnded(CTerrorPlayer *this, CTerrorPlayer *)
+			 */
+			"CTerrorPlayer::OnRideEnded"
 			{
-				"library"		"server"
-				"linux"			"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
-				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
-				/* ? ? ? ? ? ? 8B ? 8B ? ? ? ? ? 8B ? 8B ? ? 6A 00 6A 00 68 ? ? ? ? FF ? 8B ? 85 ? 74 ? 8B ? ? 8B ? ? ? ? ? 8B ? 50 8B ? ? FF ? 8B ? 50 8B ? ? 68 ? ? ? ? 8B ? FF ? 8B ? ? 8B */
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer11OnRideEndedEPS_"
+				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x56\x57\x68\x2A\x2A\x2A\x2A\x8B\x2A\xE8"
+				/* 55 8B ? 83 ? ? 53 56 57 68 ? ? ? ? 8B ? E8 */
+				/* Search: "SurvivorJockeyEnded.Ride" */ // Found by "SilverShot".
 			}
 
 			/*
