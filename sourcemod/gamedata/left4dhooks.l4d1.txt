@@ -735,7 +735,7 @@
 				{
 					"a1"
 					{
-						"type"	"int"
+						"type"	"objectptr"
 					}
 					"a2"
 					{

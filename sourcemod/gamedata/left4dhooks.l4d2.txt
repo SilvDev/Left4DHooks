@@ -852,7 +852,7 @@
 				{
 					"a1"
 					{
-						"type"	"int"
+						"type"	"objectptr"
 					}
 					"a2"
 					{
@@ -3748,18 +3748,6 @@
 				/* Sig may break, using offsets to make unique */
 				/* 56 8B ? F3 ? ? ? 0C ? ? ? 0F ? ? ? ? ? ? 57 */
 				/* Search "SurvivorWasPounced" - few calls above. */ // Found by "SilverShot" updated by "Crasher_3637".
-			}
-
-			/*
-			*	ThrowImpactedSurvivor(CTerrorPlayer *, CTerrorPlayer *, float, bool)
-			*	Search: "charger_impact"
-			*/
-			"ThrowImpactedSurvivor"
-			{
-				"library"		"server"
-				"linux"			"@_Z21ThrowImpactedSurvivorP13CTerrorPlayerS0_fb"
-				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x57\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x2A\x2A\x74\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B"
-				/* ? ? ? ? ? ? 53 56 57 8B ? ? 8B ? ? ? ? ? C1 ? ? ? ? 74 ? ? ? ? ? ? ? ? 8B ? ? ? ? ? 8B */
 			}
 
 			/*
