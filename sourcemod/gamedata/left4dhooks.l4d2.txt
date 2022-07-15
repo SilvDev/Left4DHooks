@@ -2242,18 +2242,6 @@
 			}
 
 			/*
-			 * CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer *this, CTerrorPlayer *)
-			 */
-			"CTerrorPlayer::OnStartCarryingVictim"
-			{
-				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
-				/* ? ? ? ? ? ? 8B ? 8B ? ? ? ? ? 8B ? 8B ? ? 6A 00 6A 00 68 ? ? ? ? FF ? 8B ? 85 ? 74 ? 8B ? ? 8B ? ? ? ? ? 8B ? 50 8B ? ? FF ? 8B ? 50 8B ? ? 68 ? ? ? ? 8B ? FF ? 8B ? ? 8B */
-				/* Search: "charger_carry_start" */ // Found by "SilverShot".
-			}
-
-			/*
 			*  CTerrorPlayer::OnAdrenalineUsed(CTerrorPlayer *this, float)
 			*/
 			"CTerrorPlayer::OnAdrenalineUsed"
@@ -3697,19 +3685,6 @@
 			}
 
 			/*
-			*	CTerrorPlayer::QueuePummelVictim(CTerrorPlayer*)
-			*	int __cdecl CTerrorPlayer::QueuePummelVictim(int a1, int a2, float a3)
-			*	Search: "ChargerZombie.VocalizePummel". xref calls sub_#### ((void *)v2, 0, -1.0);
-			*/
-			"CTerrorPlayer::QueuePummelVictim"
-			{
-				"library"		"server"
-				"linux"			"@_ZN13CTerrorPlayer17QueuePummelVictimEPS_f"
-				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x83\x2A\xFF\x74"
-				/* ? ? ? ? ? ? ? 56 57 8B ? 85 ? 74 ? 8B ? 8B ? ? 8B ? FF ? 8B ? 83 ? FF 74 */
-			}
-
-			/*
 			*	ThrowImpactedSurvivor(CTerrorPlayer *, CTerrorPlayer *, float, bool)
 			*	Search: "charger_impact"
 			*/
@@ -3751,15 +3726,15 @@
 			}
 
 			/*
-			*	CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer*)
-			*	Search: "charger_carry_start"
-			*/
+			 * CTerrorPlayer::OnStartCarryingVictim(CTerrorPlayer *this, CTerrorPlayer *)
+			 */
 			"CTerrorPlayer::OnStartCarryingVictim"
 			{
-				"library"		"server"
-				"linux"			"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
-				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer21OnStartCarryingVictimEPS_"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x74\x2A\x8B\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x50\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x50\x8B\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x2A\x8B"
 				/* ? ? ? ? ? ? 8B ? 8B ? ? ? ? ? 8B ? 8B ? ? 6A 00 6A 00 68 ? ? ? ? FF ? 8B ? 85 ? 74 ? 8B ? ? 8B ? ? ? ? ? 8B ? 50 8B ? ? FF ? 8B ? 50 8B ? ? 68 ? ? ? ? 8B ? FF ? 8B ? ? 8B */
+				/* Search: "charger_carry_start" */ // Found by "SilverShot".
 			}
 
 			/*
@@ -4154,6 +4129,18 @@
 				"windows"	"\x55\x8B\x2A\x80\x2A\x2A\x2A\x74\x2A\x8B\x2A\x2A\x85\x2A\x79"
 				/* 55 8B ? 80 ? ? ? 74 ? 8B ? ? 85 ? 79 */ // Found by "SilverShot".
 				/* Search: "BLOCKED_SURVIVOR". Above/below is target. */
+			}
+
+			/*
+			 * NavAreaBuildPath<ShortestPathCost>(CNavArea *a1_CNavArea, CNavArea *a2_CNavArea, int a3__vector, int a4__vector, int a5, int a6, int a7_flMaxPathLength, int a8_teamID, int a9_ignoreNavBlockers)
+			 */
+			"NavAreaBuildPath_ShortestPathCost"
+			{
+				"library"	"server"
+				"linux"		"@_Z16NavAreaBuildPathI16ShortestPathCostEbP8CNavAreaS2_PK6VectorS5_RT_PS2_fib"
+				"windows"	"\x53\x8B\x2A\x83\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x83\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x56\x89"
+				/* 53 8B ? 83 ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 83 ? ? A1 ? ? ? ? 33 ? 56 89 */ // Found by "SilverShot".
+				/* Search: "NavAreaBuildPath". Should be first sub. */
 			}
 
 

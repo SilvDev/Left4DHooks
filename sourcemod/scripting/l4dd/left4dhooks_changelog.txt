@@ -1,3 +1,15 @@
+1.110 (15-Jul-2022)
+	- Added L4D2 native "L4D2_NavAreaBuildPath" to replace the "L4D2_VScriptWrapper_NavAreaBuildPath" native VScript wrapper. Requested by "morzlee". Thanks to "Forgetest" for helping.
+	- Changed native "L4D_GetNearestNavArea" to accept some more parameters. Suggested by "Forgetest".
+
+	- Various minor code changes to adjust for splitting the project (cleaner comments and better error handling when compiling the split project files). Thanks to "Psyk0tik" for some help.
+	- Since adding this native proved how difficult it is jumping around files, I may merge the project again. Or maybe privately and split for release with the batch script I wrote to package the plugin.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: all "/scripting/l4dd/" project files.
+
 1.109 (05-Jul-2022)
 	- Plugin now requires SourceMod 1.11. Utilizing some fixes from the new SourceMod and changed code to use new methodmaps.
 	- Core changes to the source code splitting into multiple files for maintainability. Thanks to "Psyk0tik" for some suggestions.

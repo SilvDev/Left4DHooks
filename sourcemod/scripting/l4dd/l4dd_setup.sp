@@ -25,6 +25,11 @@
 
 
 
+#pragma semicolon 1
+#pragma newdecls required
+
+
+
 void SetupForwardsNatives()
 {
 	// ====================================================================================================
@@ -278,6 +283,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_GetFurthestSurvivorFlow",		 			Native_CDirector_GetFurthestSurvivorFlow);
 	CreateNative("L4D2_GetScriptValueInt",							Native_CDirector_GetScriptValueInt);
 	CreateNative("L4D2_NavAreaTravelDistance",		 				Native_NavAreaTravelDistance);
+	CreateNative("L4D2_NavAreaBuildPath",							Native_NavAreaBuildPath);
 
 	CreateNative("L4D2_VScriptWrapper_GetMapNumber",				Native_VS_GetMapNumber);
 	CreateNative("L4D2_VScriptWrapper_HasEverBeenInjured",			Native_VS_HasEverBeenInjured);

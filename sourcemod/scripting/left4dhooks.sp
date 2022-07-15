@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.109"
+#define PLUGIN_VERSION		"1.110"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -703,7 +703,7 @@ void ConVarChanged_Mode(Handle convar, const char[] oldValue, const char[] newVa
 	GetGameMode();
 }
 
-void GetGameMode()
+void GetGameMode() // Forward "L4D_OnGameModeChange"
 {
 	g_iCurrentMode = 0;
 
@@ -742,12 +742,12 @@ void GetGameMode()
 	}
 }
 
-int Native_Internal_GetGameMode(Handle plugin, int numParams)
+int Native_Internal_GetGameMode(Handle plugin, int numParams) // Native "L4D_GetGameModeType"
 {
 	return g_iCurrentMode;
 }
 
-int Native_CTerrorGameRules_IsGenericCooperativeMode(Handle plugin, int numParams)
+int Native_CTerrorGameRules_IsGenericCooperativeMode(Handle plugin, int numParams) // Native "L4D2_IsGenericCooperativeMode"
 {
 	ValidateAddress(g_pGameRules, "g_pGameRules");
 	ValidateNatives(g_hSDK_CTerrorGameRules_IsGenericCooperativeMode, "CTerrorGameRules::IsGenericCooperativeMode");
@@ -756,12 +756,12 @@ int Native_CTerrorGameRules_IsGenericCooperativeMode(Handle plugin, int numParam
 	return SDKCall(g_hSDK_CTerrorGameRules_IsGenericCooperativeMode, g_pGameRules);
 }
 
-int Native_Internal_IsCoopMode(Handle plugin, int numParams)
+int Native_Internal_IsCoopMode(Handle plugin, int numParams) // Native "L4D_IsCoopMode"
 {
 	return g_iCurrentMode == GAMEMODE_COOP;
 }
 
-int Native_Internal_IsRealismMode(Handle plugin, int numParams)
+int Native_Internal_IsRealismMode(Handle plugin, int numParams) // Native "L4D2_IsRealismMode"
 {
 	ValidateAddress(g_pGameRules, "g_pGameRules");
 	ValidateNatives(g_hSDK_CTerrorGameRules_IsRealismMode, "CTerrorGameRules::IsRealismMode");
@@ -770,17 +770,17 @@ int Native_Internal_IsRealismMode(Handle plugin, int numParams)
 	return SDKCall(g_hSDK_CTerrorGameRules_IsRealismMode, g_pGameRules);
 }
 
-int Native_Internal_IsSurvivalMode(Handle plugin, int numParams)
+int Native_Internal_IsSurvivalMode(Handle plugin, int numParams) // Native "L4D_IsSurvivalMode"
 {
 	return g_iCurrentMode == GAMEMODE_SURVIVAL;
 }
 
-int Native_Internal_IsScavengeMode(Handle plugin, int numParams)
+int Native_Internal_IsScavengeMode(Handle plugin, int numParams) // Native "L4D2_IsScavengeMode"
 {
 	return g_iCurrentMode == GAMEMODE_SCAVENGE;
 }
 
-int Native_Internal_IsVersusMode(Handle plugin, int numParams)
+int Native_Internal_IsVersusMode(Handle plugin, int numParams) // Native "L4D_IsVersusMode"
 {
 	return g_iCurrentMode == GAMEMODE_VERSUS;
 }
@@ -869,7 +869,7 @@ public void OnClientDisconnect(int client)
 // =========================
 // ANIMATION NATIVES
 // =========================
-int Native_AnimHookEnable(Handle plugin, int numParams)
+int Native_AnimHookEnable(Handle plugin, int numParams) // Native "AnimHookEnable"
 {
 	// Validate client
 	int client = GetNativeCell(1);
@@ -902,7 +902,7 @@ int Native_AnimHookEnable(Handle plugin, int numParams)
 	return true;
 }
 
-int Native_AnimHookDisable(Handle plugin, int numParams)
+int Native_AnimHookDisable(Handle plugin, int numParams) // Native "AnimHookDisable"
 {
 	int client = GetNativeCell(1);
 
@@ -979,7 +979,7 @@ void OnFrameRemoveDetour()
 	}
 }
 
-int Native_AnimGetActivity(Handle plugin, int numParams)
+int Native_AnimGetActivity(Handle plugin, int numParams) // Native "AnimGetActivity"
 {
 	int sequence = GetNativeCell(1);
 	int maxlength = GetNativeCell(3);
@@ -994,7 +994,7 @@ int Native_AnimGetActivity(Handle plugin, int numParams)
 	return false;
 }
 
-int Native_AnimGetFromActivity(Handle plugin, int numParams)
+int Native_AnimGetFromActivity(Handle plugin, int numParams) // Native "AnimGetFromActivity"
 {
 	int maxlength;
 	GetNativeStringLength(1, maxlength);
@@ -1113,7 +1113,7 @@ void AddonsDisabler_Unpatch()
 // ====================================================================================================
 //										ADDONS DISABLER DETOUR
 // ====================================================================================================
-MRESReturn DTR_AddonsDisabler(int pThis, Handle hReturn, DHookParam hParams)
+MRESReturn DTR_AddonsDisabler(int pThis, Handle hReturn, DHookParam hParams) // Forward "L4D2_OnClientDisableAddons"
 {
 	// Details on finding offsets can be found here: https://github.com/ProdigySim/left4dhooks/pull/1
 	// Big thanks to "ProdigySim" for updating for The Last Stand update.
@@ -1235,6 +1235,8 @@ public void OnMapStart()
 	g_vProf.Start();
 	#endif
 
+
+
 	// Enable or Disable detours as required.
 	CheckRequiredDetours();
 
@@ -1328,19 +1330,19 @@ public void OnMapStart()
 			int iTable = FindStringTable("meleeweapons");
 			if( iTable == INVALID_STRING_TABLE ) // Default to known IDs
 			{
-				g_aMeleeIDs.SetValue("fireaxe",								0);
-				g_aMeleeIDs.SetValue("frying_pan",							1);
-				g_aMeleeIDs.SetValue("machete",								2);
-				g_aMeleeIDs.SetValue("baseball_bat",						3);
-				g_aMeleeIDs.SetValue("crowbar",								4);
-				g_aMeleeIDs.SetValue("cricket_bat",							5);
-				g_aMeleeIDs.SetValue("tonfa",								6);
-				g_aMeleeIDs.SetValue("katana",								7);
-				g_aMeleeIDs.SetValue("electric_guitar",						8);
-				g_aMeleeIDs.SetValue("knife",								9);
-				g_aMeleeIDs.SetValue("golfclub",							10);
-				g_aMeleeIDs.SetValue("pitchfork",							11);
-				g_aMeleeIDs.SetValue("shovel",								12);
+				g_aMeleeIDs.SetValue("fireaxe",				0);
+				g_aMeleeIDs.SetValue("frying_pan",			1);
+				g_aMeleeIDs.SetValue("machete",				2);
+				g_aMeleeIDs.SetValue("baseball_bat",		3);
+				g_aMeleeIDs.SetValue("crowbar",				4);
+				g_aMeleeIDs.SetValue("cricket_bat",			5);
+				g_aMeleeIDs.SetValue("tonfa",				6);
+				g_aMeleeIDs.SetValue("katana",				7);
+				g_aMeleeIDs.SetValue("electric_guitar",		8);
+				g_aMeleeIDs.SetValue("knife",				9);
+				g_aMeleeIDs.SetValue("golfclub",			10);
+				g_aMeleeIDs.SetValue("pitchfork",			11);
+				g_aMeleeIDs.SetValue("shovel",				12);
 			} else {
 				// Get actual IDs
 				int iNum = GetStringTableNumStrings(iTable);

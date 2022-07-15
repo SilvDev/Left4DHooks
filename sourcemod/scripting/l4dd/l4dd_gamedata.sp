@@ -25,6 +25,9 @@
 
 
 
+#pragma semicolon 1
+#pragma newdecls required
+
 
 
 // ====================================================================================================
@@ -46,10 +49,12 @@ void LoadGameData()
 	GameData hGameData = new GameData(g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
 	if( hGameData == null ) SetFailState("Failed to load \"%s.txt\" gamedata.", g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
 
+	#if defined DEBUG
 	#if DEBUG
 	PrintToServer("");
 	PrintToServer("Left4DHooks loading gamedata: %s", g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
 	PrintToServer("");
+	#endif
 	#endif
 
 	g_bLinuxOS = hGameData.GetOffset("OS") == 1;
@@ -696,6 +701,26 @@ void LoadGameData()
 			g_hSDK_NavAreaTravelDistance = EndPrepSDKCall();
 			if( g_hSDK_NavAreaTravelDistance == null )
 				LogError("Failed to create SDKCall: \"NavAreaTravelDistance\" (%s)", g_sSystem);
+		}
+
+		StartPrepSDKCall(SDKCall_Static);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NavAreaBuildPath_ShortestPathCost") == false )
+		{
+			LogError("Failed to find signature: \"NavAreaBuildPath_ShortestPathCost\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
+			PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+			g_hSDK_NavAreaBuildPath_ShortestPathCost = EndPrepSDKCall();
+			if( g_hSDK_NavAreaBuildPath_ShortestPathCost == null )
+				LogError("Failed to create SDKCall: \"NavAreaBuildPath_ShortestPathCost\" (%s)", g_sSystem);
 		}
 
 		StartPrepSDKCall(SDKCall_Player);
@@ -1629,7 +1654,7 @@ void LoadGameData()
 		}
 	}
 
-	StartPrepSDKCall(SDKCall_Static);
+	StartPrepSDKCall(SDKCall_Static); // Since SM 1.11 can use "SDKCall_Server" (but that crashes the server)
 	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CBaseServer::SetReservationCookie") == false )
 	{
 		LogError("Failed to find signature: \"CBaseServer::SetReservationCookie\" (%s)", g_sSystem);
@@ -1710,6 +1735,7 @@ void LoadGameData()
 		// if( ClearTeamScore_B == -1 ) LogError("Failed to find \"ClearTeamScore_B\" offset (%s)", g_sSystem);
 	}
 
+	#if defined DEBUG
 	#if DEBUG
 	if( g_bLeft4Dead2 )
 	{
@@ -1726,6 +1752,7 @@ void LoadGameData()
 		// PrintToServer("%12d == ClearTeamScore_B", ClearTeamScore_B);
 	}
 	PrintToServer("");
+	#endif
 	#endif
 
 
@@ -1769,6 +1796,7 @@ void LoadGameData()
 		g_pVersusMode = view_as<int>(g_pDirector);
 	}
 
+	#if defined DEBUG
 	#if DEBUG
 	if( g_bLateLoad )
 	{
@@ -1791,6 +1819,7 @@ void LoadGameData()
 	}
 	PrintToServer("");
 	#endif
+	#endif
 
 
 
@@ -1798,8 +1827,10 @@ void LoadGameData()
 	//									OFFSETS
 	// ====================================================================================================
 	// Various
+	#if defined DEBUG
 	#if DEBUG
 	PrintToServer("Various Offsets:");
+	#endif
 	#endif
 
 	g_iOff_m_iCampaignScores = hGameData.GetOffset("m_iCampaignScores");
@@ -1923,8 +1954,10 @@ void LoadGameData()
 		g_iOff_VersusStartTimer = hGameData.GetOffset("VersusStartTimer");
 		ValidateOffset(g_iOff_VersusStartTimer, "VersusStartTimer");
 
+		#if defined DEBUG
 		#if DEBUG
 		PrintToServer("VersusStartTimer = %d", g_iOff_VersusStartTimer);
+		#endif
 		#endif
 	}
 
@@ -1958,6 +1991,7 @@ void LoadGameData()
 
 
 
+	#if defined DEBUG
 	#if DEBUG
 	PrintToServer("m_iCampaignScores = %d", g_iOff_m_iCampaignScores);
 	PrintToServer("m_fTankSpawnFlowPercent = %d", g_iOff_m_fTankSpawnFlowPercent);
@@ -2000,6 +2034,7 @@ void LoadGameData()
 		PrintToServer("m_maxFlames = %d", g_iOff_m_maxFlames);
 		PrintToServer("");
 	}
+	#endif
 	#endif
 
 

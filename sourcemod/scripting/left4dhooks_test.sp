@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.109"
+#define PLUGIN_VERSION		"1.110"
 
 /*=======================================================================================
 	Plugin Info:
@@ -307,6 +307,31 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
 
 
+
+
+
+	/*
+	// Testing SDKCall replacement of native VScript wrapper.
+	// Tested on c1m2_streets
+	float vPos[3];
+	float vEnd[3];
+	vPos = view_as<float>({ 2449.840576, 5027.909179, 448.031250 });	// Saferoom start
+	vEnd = view_as<float>({ -7481.826660, -4701.759277, 384.281250 });	// Saferoom end
+
+	// VScript shows true, sdkcall shows false which is correct and SDKCall returning the expected result
+	// VScript uses "99999.999" as nearest nav area, so it finds a valid one where SDKCall requires you to find nav area
+	// vEnd = view_as<float>({ -17481.826660, -4701.759277, 384.281250 });	// Saferoom end but with -17 instead of -7
+
+	// vEnd = view_as<float>({ 2048.739013, 2895.070556, 718.817260 });	// Invalid position on top of bus
+	// vEnd = view_as<float>({ 1743.588867, 2676.366455, 744.114746 });	// Invalid position on top of tent
+
+	PrintToServer("L4D2_VScriptWrapper_NavAreaBuildPath %b", L4D2_VScriptWrapper_NavAreaBuildPath(vPos, vEnd, 99999.999, false, true, 2, false));
+
+	Address nav1 = L4D_GetNearestNavArea(vPos, 100.0);
+	Address nav2 = L4D_GetNearestNavArea(vEnd, 100.0);
+
+	PrintToServer("L4D2_NavAreaBuildPath %d", L4D2_NavAreaBuildPath(nav1, nav2, 99999.999, 2, false));
+	// */
 
 
 
