@@ -880,11 +880,20 @@ int Native_CNavMesh_GetNearestNavArea(Handle plugin, int numParams) // Native "L
 	float vPos[3];
 	GetNativeArray(1, vPos, sizeof(vPos));
 
-	float flMaxPathLength = GetNativeCell(2);
-	bool anyZ = GetNativeCell(3);
-	bool checkLOS = GetNativeCell(4);
-	bool checkGround = GetNativeCell(5);
-	bool teamID = GetNativeCell(6);
+	float flMaxPathLength = 300.0;
+	bool anyZ = false;
+	bool checkLOS = false;
+	bool checkGround = false;
+	int teamID = 2;
+
+	if( numParams == 6 )
+	{
+		flMaxPathLength = GetNativeCell(2);
+		anyZ = GetNativeCell(3);
+		checkLOS = GetNativeCell(4);
+		checkGround = GetNativeCell(5);
+		teamID = GetNativeCell(6);
+	}
 
 	//PrintToServer("#### CALL Native_CNavMesh_GetNearestNavArea");
 	int result = SDKCall(g_hSDK_CNavMesh_GetNearestNavArea, g_pNavMesh, vPos, anyZ, flMaxPathLength, checkLOS, checkGround, teamID);

@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.110"
+#define PLUGIN_VERSION		"1.111"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -102,6 +102,8 @@
 
 ===================================================================================================*/
 
+
+
 #pragma semicolon 1
 #pragma newdecls required
 
@@ -117,10 +119,16 @@
 native void Updater_AddPlugin(const char[] url);
 // ====================================================================================================
 
+// PROFILER
 #if DEBUG
 #include <profiler>
 Profiler g_vProf;
 float g_fProf;
+#endif
+
+// NEW SOURCEMOD ONLY
+#if SOURCEMOD_V_MINOR < 11
+ #error Plugin "Left 4 DHooks" only supports SourceMod version 1.11 and newer
 #endif
 
 

@@ -1,3 +1,6 @@
+1.111 (30-Jul-2022)
+	- Fixed native "L4D_GetNearestNavArea" additional params not being backwards compatible with plugins compiled against older versions of left4dhooks. Thanks to "Mr. Man" for reporting.
+
 1.110 (15-Jul-2022)
 	- Added L4D2 native "L4D2_NavAreaBuildPath" to replace the "L4D2_VScriptWrapper_NavAreaBuildPath" native VScript wrapper. Requested by "morzlee". Thanks to "Forgetest" for helping.
 	- Changed native "L4D_GetNearestNavArea" to accept some more parameters. Suggested by "Forgetest".

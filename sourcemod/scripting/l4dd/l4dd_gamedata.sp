@@ -219,7 +219,7 @@ void LoadGameData()
 		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
 		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
 		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
-		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
 		PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
 		g_hSDK_CNavMesh_GetNearestNavArea = EndPrepSDKCall();
 		if( g_hSDK_CNavMesh_GetNearestNavArea == null )

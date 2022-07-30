@@ -58,9 +58,9 @@
 
 
 
-// Natives: 228
+// Natives: 227
 // L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 43 [silvers - mine!] + 4 [anim] = 133
-// L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 81 [silvers - mine!] + 4 [anim] = 225
+// L4D2 = 60 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 80 [silvers - mine!] + 4 [anim] = 224
 
 // Forwards: 144
 // L4D1 = 109;
