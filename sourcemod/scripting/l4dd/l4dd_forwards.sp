@@ -1449,9 +1449,8 @@ MRESReturn DTR_CDirector_GetScriptValueFloat(DHookReturn hReturn, DHookParam hPa
 
 	if( aResult == Plugin_Handled )
 	{
-		hParams.Set(2, a2);
 		hReturn.Value = a2;
-		return MRES_ChangedOverride;
+		return MRES_Supercede;
 	}
 
 	return MRES_Ignored;
