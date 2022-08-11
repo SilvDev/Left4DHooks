@@ -810,8 +810,6 @@ void LoadGameData()
 					LogError("Failed to create SDKCall: \"CDirector::GetScriptValueInt\" (%s)", g_sSystem);
 		}
 
-		/*
-		// Only returns default value provided.
 		StartPrepSDKCall(SDKCall_Raw);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::GetScriptValueFloat") == false )
 		{
@@ -825,6 +823,7 @@ void LoadGameData()
 					LogError("Failed to create SDKCall: \"CDirector::GetScriptValueFloat\" (%s)", g_sSystem);
 		}
 
+		/*
 		// Not implemented, request if really required.
 		StartPrepSDKCall(SDKCall_Raw);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::GetScriptValueString") == false )

@@ -68,7 +68,7 @@ Handle g_hSDK_ForceScavengeStart;
 Handle g_hSDK_CDirector_IsTankInPlay;
 Handle g_hSDK_CDirector_GetFurthestSurvivorFlow;
 Handle g_hSDK_CDirector_GetScriptValueInt;
-// Handle g_hSDK_CDirector_GetScriptValueFloat;
+Handle g_hSDK_CDirector_GetScriptValueFloat;
 // Handle g_hSDK_CDirector_GetScriptValueString;
 Handle g_hSDK_ZombieManager_GetRandomPZSpawnPosition;
 Handle g_hSDK_NavAreaBuildPath_ShortestPathCost;
@@ -1550,7 +1550,6 @@ int Native_CDirector_GetScriptValueInt(Handle plugin, int numParams) // Native "
 	return SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, key, value);
 }
 
-/* // Only returns default value provided.
 any Native_CDirector_GetScriptValueFloat(Handle plugin, int numParams) // Native "L4D2_GetScriptValueFloat"
 {
 	ValidateAddress(g_pDirector, "g_pDirector");
@@ -1568,7 +1567,7 @@ any Native_CDirector_GetScriptValueFloat(Handle plugin, int numParams) // Native
 	return SDKCall(g_hSDK_CDirector_GetScriptValueFloat, g_pDirector, key, value);
 }
 
-// Not implemented, request if really required.
+/* // Not implemented, request if really required.
 int Native_CDirector_GetScriptValueString(Handle plugin, int numParams) // Native "L4D2_GetScriptValueString"
 {
 	ValidateAddress(g_pDirector, "g_pDirector");

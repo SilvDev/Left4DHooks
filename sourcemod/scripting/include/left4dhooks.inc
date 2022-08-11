@@ -2922,6 +2922,17 @@ native bool L4D2_IsTankInPlay();
 native int L4D2_GetScriptValueInt(const char[] key, int value);
 
 /**
+ * @brief Returns the value of the specified Director Variable key.
+ *
+ * @param key		Director variable key name to search for
+ * @param value		Default value to use when the variable is not found
+ *
+ * @return			Value of the variable, or provided default value on failure
+ */
+// L4D2 only.
+native float L4D2_GetScriptValueFloat(const char[] key, float value);
+
+/**
  * @brief Returns if there is a configurable difficulty setting.
  * @brief Returns true for Coop/Realism modes.
  *
@@ -2994,9 +3005,6 @@ native bool L4D2_IsScavengeMode();
 native bool L4D_IsVersusMode();
 
 
-
-// // Only returns default value provided.
-// native float L4D2_GetScriptValueFloat(const char[] key, float value);
 
 // Not implemented, request if really required.
 // native void L4D2_GetScriptValueString(const char[] key, const char[] value, char[] retValue, int maxlength);

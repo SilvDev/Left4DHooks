@@ -296,7 +296,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_VScriptWrapper_GetSenseFlags",				Native_VS_GetSenseFlags);
 	CreateNative("L4D2_VScriptWrapper_NavAreaBuildPath",			Native_VS_NavAreaBuildPath);
 	CreateNative("L4D2_VScriptWrapper_NavAreaTravelDistance",		Native_VS_NavAreaTravelDistance);
-	// CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat); // Only returns default value provided.
+	CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat);
 	// CreateNative("L4D2_GetScriptValueString",					Native_CDirector_GetScriptValueString); // Not implemented, probably broken too, request if really required.
 
 
