@@ -515,7 +515,7 @@
 			{
 				"signature"		"CDirector::GetScriptValueFloat"
 				"callconv"		"thiscall"
-				"return"		"int"
+				"return"		"float"
 				"this"			"ignore"
 				"arguments"
 				{
