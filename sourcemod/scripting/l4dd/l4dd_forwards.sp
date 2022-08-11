@@ -407,7 +407,7 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_Post",					true);
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueInt,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueInt",								"L4D_OnGetScriptValueInt");
-		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueFloat,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueFloat",								"L4D_OnGetScriptValueFloat");
+		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueFloat,							DTR_CDirector_GetScriptValueFloat_Post,											"L4DD::CDirector::GetScriptValueFloat",								"L4D_OnGetScriptValueFloat");
 		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueString,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueString",							"L4D_OnGetScriptValueString");
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting_Post,	"L4DD::CTerrorGameRules::HasConfigurableDifficultySetting",			"L4D_OnHasConfigurableDifficulty");
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting_Post,	"L4DD::CTerrorGameRules::HasConfigurableDifficultySetting",			"L4D_OnHasConfigurableDifficulty_Post",			true);
@@ -1435,6 +1435,12 @@ MRESReturn DTR_CDirector_GetScriptValueInt(DHookReturn hReturn, DHookParam hPara
 }
 
 MRESReturn DTR_CDirector_GetScriptValueFloat(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueFloat"
+{
+	//PrintToServer("##### DTR_CDirector_GetScriptValueFloat");
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CDirector_GetScriptValueFloat_Post(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueFloat"
 {
 	//PrintToServer("##### DTR_CDirector_GetScriptValueFloat");
 	static char key[64];
