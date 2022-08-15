@@ -515,7 +515,7 @@
 			{
 				"signature"		"CDirector::GetScriptValueFloat"
 				"callconv"		"thiscall"
-				"return"		"int"
+				"return"		"float"
 				"this"			"ignore"
 				"arguments"
 				{
@@ -530,11 +530,42 @@
 				}
 			}
 
+			"L4DD::CDirector::GetScriptValueVector"
+			{
+				"signature"		"CDirector::GetScriptValueVector"
+				"callconv"		"thiscall"
+				"return"		"vectorptr"
+				"this"			"ignore"
+				"arguments"
+				{
+                    "ret"
+                    {
+                        "type"    "vectorptr"
+                    }
+					"a2"
+					{
+						"type"	"charptr"
+					}
+                    "a3"
+                    {
+                        "type"    "float"
+                    }
+                    "a4"
+                    {
+                        "type"    "float"
+                    }
+                    "a5"
+                    {
+                        "type"    "float"
+                    }
+				}
+			}
+
 			"L4DD::CDirector::GetScriptValueString"
 			{
 				"signature"		"CDirector::GetScriptValueString"
 				"callconv"		"thiscall"
-				"return"		"int"
+				"return"		"charptr"
 				"this"			"ignore"
 				"arguments"
 				{
@@ -2801,6 +2832,18 @@
 			}
 
 			/*
+			 * CDirector::GetScriptValue(char const*, Vector)
+			 * Find with string "PreferredMobDirection"
+			 */
+			"CDirector::GetScriptValueVector"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CDirector14GetScriptValueEPKc6Vector"
+				"windows"	"\x55\x8B\xEC\x8B\x81\x2A\x2A\x2A\x2A\x83\xEC\x10\x83\xF8\xFF\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x45\x2A\x8B\x2A\x2A\x8B"
+				/* 55 8B EC 8B 81 ? ? ? ? 83 EC 10 83 F8 FF ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 8B 45 ? 8B ? ? 8B */
+			}
+
+			/*
 			 * CDirector::GetScriptValue(const char*, const char*, char*, int)
 			 * unique string "OnChangeFinaleMusic", call right after it
 			 */
@@ -3312,7 +3355,7 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN8CInferno6SpreadERK6Vector"
-				"windows" 	"\x53\x8B\x2A\x83\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x81\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x8B\x2A\x2A\x56\x57\x8B\x2A\xF3\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x0F\x2F"
+				"windows" 	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x81\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x8B\x2A\x2A\x56\x57\x8B\x2A\xF3\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x0F\x2F"
 				/* 53 8B ? 83 ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 81 ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 8B ? ? 56 57 8B ? F3 ? ? ? ? ? ? ? 0F 2F */
 				/* Search: "CInferno::InfernoThink (spread)" bit below is target call. */
 			}
@@ -3327,7 +3370,7 @@
 				"library"	"server"
 				"linux"		"@_ZN11SurvivorBot15UseHealingItemsEP6ActionIS_E"
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x56\x57\x8B\x2A\x8D\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x2A\x2A\xE8"
-				/* 55 8B ? 83 ? ? 53 56 57 8B ? 8D ? ? ? ? ? 8D ? ? ? ? ? E8 */
+				/* ? ? ? ? ? ? 53 56 57 8B ? 8D ? ? ? ? ? 8D ? ? ? ? ? E8 */
 				/* Search "Trying to heal a friend" */
 			}
 

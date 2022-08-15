@@ -2400,8 +2400,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN11SurvivorBot15UseHealingItemsEP6ActionIS_E"
-				"windows"	"\x83\x2A\x2A\x56\x57\x8B\x2A\x8D\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xE8"
-				/* 83 ? ? 56 57 8B ? 8D ? ? ? ? ? 8B ? E8 */
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8D\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\xD8\x2A\x2A\xDF\x2A\xF6\x2A\x2A\x74\x2A\x8B\x2A\x2A\x2A\x33"
+				/* ? ? ? ? ? 8B ? 8D ? ? ? ? ? 8B ? E8 ? ? ? ? D8 ? ? DF ? F6 ? ? 74 ? 8B ? ? ? 33 */
 			}
 
 			/*

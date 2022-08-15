@@ -969,8 +969,83 @@ Action sm_l4dd(int client, int args)
 
 	// OTHER NATIVES
 	/*
-	PrintToServer("L4D2_GetScriptValueInt %d",					L4D2_GetScriptValueInt("MaxSpecials", 314)); //WORKING
-	// PrintToServer("L4D2_GetScriptValueFloat %f",				L4D2_GetScriptValueFloat("TempHealthDecayRate", 0.314)); // Only returns default value provided.
+	// These list may be incomplete and the values not 100% accurate, some functions return a different value but this gives an overview of the keys and their related values or cvars.
+
+	// Default value depends on difficulty:
+	// "director_intensity_relax_allow_wanderers_threshold" = "0.3"
+	// "director_intensity_relax_allow_wanderers_threshold_hard" = "0.5"
+	// "director_intensity_relax_allow_wanderers_threshold_expert" = "0.8"
+	PrintToServer("%s = %f", "IntensityRelaxAllowWanderersThreshold", L4D2_GetScriptValueFloat("IntensityRelaxAllowWanderersThreshold", 0.3));
+
+	// Default value depends on difficulty:
+	// "z_mob_spawn_max_interval_easy" = "240"
+	// "z_mob_spawn_max_interval_normal" = "180"
+	// "z_mob_spawn_max_interval_hard" = "180"
+	// "z_mob_spawn_max_interval_expert" = "180"
+	PrintToServer("%s = %f", "MobSpawnMaxTime", L4D2_GetScriptValueFloat("MobSpawnMaxTime", 180.0));
+
+	// Default value depends on difficulty:
+	// "z_mob_spawn_min_interval_easy" = "120"
+	// "z_mob_spawn_min_interval_normal" = "90"
+	// "z_mob_spawn_min_interval_hard" = "90"
+	// "z_mob_spawn_min_interval_expert" = "90"
+	PrintToServer("%s = %f", "MobSpawnMinTime", L4D2_GetScriptValueFloat("MobSpawnMinTime", 90.0));
+
+	PrintToServer("%s = %f", "AddToSpawnTimer", L4D2_GetScriptValueFloat("AddToSpawnTimer", 0.0)); // 0.0
+	PrintToServer("%s = %f", "FarAcquireRange", L4D2_GetScriptValueFloat("FarAcquireRange", 2500.0)); // "z_acquire_far_range" = "2500"
+	PrintToServer("%s = %f", "NearAcquireRange", L4D2_GetScriptValueFloat("NearAcquireRange", 200.0)); // "z_acquire_near_range" = "200"
+	PrintToServer("%s = %f", "FarAcquireTime", L4D2_GetScriptValueFloat("FarAcquireTime", 5.0)); // "z_acquire_far_time" = "5.0"
+	PrintToServer("%s = %f", "NearAcquireTime", L4D2_GetScriptValueFloat("NearAcquireTime", 0.5)); // "z_acquire_near_time" = "0.5"
+	PrintToServer("%s = %f", "GetSpecialSlotCountdownTime", L4D2_GetScriptValueFloat("GetSpecialSlotCountdownTime", 45.0)); // "director_special_respawn_interval" = "45"
+	PrintToServer("%s = %f", "IntensityRelaxThreshold", L4D2_GetScriptValueFloat("IntensityRelaxThreshold", 0.9)); // "director_intensity_relax_threshold" = "0.9"
+	PrintToServer("%s = %f", "MobRechargeRate", L4D2_GetScriptValueFloat("MobRechargeRate", 0.0025)); // "z_mob_recharge_rate" = "0.0025"
+	PrintToServer("%s = %f", "PreferredMobPositionRange", L4D2_GetScriptValueFloat("PreferredMobPositionRange", 0.0)); // 0.0? CDirector + 137 (reads the CDirecors variable stored here)
+	PrintToServer("%s = %f", "RelaxMaxFlowTravel", L4D2_GetScriptValueFloat("RelaxMaxFlowTravel", 3000.0)); // "director_relax_max_flow_travel" = "3000"
+	PrintToServer("%s = %f", "RelaxMaxInterval", L4D2_GetScriptValueFloat("RelaxMaxInterval", 45.0)); // "director_relax_max_interval" = "45"
+	PrintToServer("%s = %f", "RelaxMinInterval", L4D2_GetScriptValueFloat("RelaxMinInterval", 30.0)); // "director_relax_min_interval" = "30"
+	PrintToServer("%s = %f", "SpawnBehindSurvivorsDistance", L4D2_GetScriptValueFloat("SpawnBehindSurvivorsDistance", 0.0)); // "spawn_behind_survivors_distance" = "0"
+	PrintToServer("%s = %f", "SpecialInitialSpawnDelayMax", L4D2_GetScriptValueFloat("SpecialInitialSpawnDelayMax", 60.0)); // "director_special_initial_spawn_delay_max" = "60"
+	PrintToServer("%s = %f", "SpecialInitialSpawnDelayMin", L4D2_GetScriptValueFloat("SpecialInitialSpawnDelayMin", 30.0)); // "director_special_initial_spawn_delay_min" = "30"
+	PrintToServer("%s = %f", "SpecialRespawnInterval", L4D2_GetScriptValueFloat("SpecialRespawnInterval", 45.0)); // "director_special_respawn_interval" = "45"
+	PrintToServer("%s = %f", "SustainPeakMaxTime", L4D2_GetScriptValueFloat("SustainPeakMaxTime", 5.0)); // "director_sustain_peak_max_time" = "5"
+	PrintToServer("%s = %f", "SustainPeakMinTime", L4D2_GetScriptValueFloat("SustainPeakMinTime", 3.0)); // "director_sustain_peak_min_time" = "3"
+	PrintToServer("%s = %f", "TankHitDamageModifierCoop", L4D2_GetScriptValueFloat("TankHitDamageModifierCoop", 1.0)); // 1.0
+	PrintToServer("%s = %f", "TankRunSpawnDelay", L4D2_GetScriptValueFloat("TankRunSpawnDelay", 15.0)); // "tank_run_spawn_delay" = "15"
+	PrintToServer("%s = %f", "TempHealthDecayRate", L4D2_GetScriptValueFloat("TempHealthDecayRate", 0.27)); // "pain_pills_decay_rate" = "0.27"
+	PrintToServer("%s = %f", "WanderingZombieDensityModifier", L4D2_GetScriptValueFloat("WanderingZombieDensityModifier", 0.03)); // "z_wandering_density" = "0.03"
+	PrintToServer("%s = %f", "ZombieSpawnRange", L4D2_GetScriptValueFloat("ZombieSpawnRange", 1500.0)); // "z_spawn_range" = "1500"
+	PrintToServer("%s = %f", "ZombieTankHealth", L4D2_GetScriptValueFloat("ZombieTankHealth", 1.0)); // 1.0
+
+	PrintToServer("%s = %d", "AllowCrescendoEvents", L4D2_GetScriptValueInt("AllowCrescendoEvents", 1)); // 1
+	PrintToServer("%s = %d", "AllowWitchesInCheckpoints", L4D2_GetScriptValueInt("AllowWitchesInCheckpoints", 0)); // 0
+	PrintToServer("%s = %d", "AlwaysAllowWanderers", L4D2_GetScriptValueInt("AlwaysAllowWanderers", 0)); // "director_always_allow_wanderers" = "0"
+	PrintToServer("%s = %d", "BuildUpMinInterval", L4D2_GetScriptValueInt("BuildUpMinInterval", 15)); // "director_build_up_min_interval" = "15"
+	PrintToServer("%s = %d", "ClearedWandererRespawnChance", L4D2_GetScriptValueInt("ClearedWandererRespawnChance", 0)); // "cleared_wanderer_respawn_chance" = "0"
+	PrintToServer("%s = %d", "DisallowThreatType", L4D2_GetScriptValueInt("DisallowThreatType", 0)); // 0
+	PrintToServer("%s = %d", "GasCansOnBacks", L4D2_GetScriptValueInt("GasCansOnBacks", 0)); // 0
+	PrintToServer("%s = %d", "IgnoreNavThreatAreas", L4D2_GetScriptValueInt("IgnoreNavThreatAreas", 0)); // 0
+	PrintToServer("%s = %d", "InfectedFlags", L4D2_GetScriptValueInt("InfectedFlags", 0)); // 0
+	PrintToServer("%s = %d", "LockTempo", L4D2_GetScriptValueInt("LockTempo", 0)); // 0? CDirectorVersusMode + 351
+	PrintToServer("%s = %d", "MusicDynamicMobScanStopSize", L4D2_GetScriptValueInt("MusicDynamicMobScanStopSize", 3)); // "director_music_dynamic_scanmobstop_size" = "3"
+	PrintToServer("%s = %d", "MusicDynamicMobSpawnSize", L4D2_GetScriptValueInt("MusicDynamicMobSpawnSize", 25)); // "director_music_dynamic_mob_size" = "25"
+	PrintToServer("%s = %d", "MusicDynamicMobStopSize", L4D2_GetScriptValueInt("MusicDynamicMobStopSize", 8)); // "director_music_dynamic_mobstop_size" = "8"
+	PrintToServer("%s = %d", "NumReservedWanderers", L4D2_GetScriptValueInt("NumReservedWanderers", 0)); // "director_num_reserved_wanderers" = "0"
+	PrintToServer("%s = %d", "NoMobSpawns", L4D2_GetScriptValueInt("NoMobSpawns", 0)); // 0
+	PrintToServer("%s = %d", "PanicForever", L4D2_GetScriptValueInt("PanicForever", 0)); // "director_panic_forever" = "0"
+	PrintToServer("%s = %d", "PausePanicWhenRelaxing", L4D2_GetScriptValueInt("PausePanicWhenRelaxing", 0)); // 0
+	PrintToServer("%s = %d", "PreferredMobDirection", L4D2_GetScriptValueInt("PreferredMobDirection", -1)); // -1
+	PrintToServer("%s = %d", "PreferredSpecialDirection", L4D2_GetScriptValueInt("PreferredSpecialDirection", -1)); // -1
+	PrintToServer("%s = %d", "ProhibitBosses", L4D2_GetScriptValueInt("ProhibitBosses", 0)); // "director_no_bosses" = "0"
+	PrintToServer("%s = %d", "ShouldAllowMobsWithTank", L4D2_GetScriptValueInt("ShouldAllowMobsWithTank", 0)); // 0
+	PrintToServer("%s = %d", "ShouldAllowSpecialsWithTank", L4D2_GetScriptValueInt("ShouldAllowSpecialsWithTank", 0)); // 0
+	PrintToServer("%s = %d", "ShouldConstrainLargeVolumeSpawn", L4D2_GetScriptValueInt("ShouldConstrainLargeVolumeSpawn", 1)); // 1
+	PrintToServer("%s = %d", "ShouldIgnoreClearStateForSpawn", L4D2_GetScriptValueInt("ShouldIgnoreClearStateForSpawn", 0)); // 0
+	PrintToServer("%s = %d", "SpecialInfectedAssault", L4D2_GetScriptValueInt("SpecialInfectedAssault", 0)); // 0
+	PrintToServer("%s = %d", "SurvivorMaxIncapacitatedCount", L4D2_GetScriptValueInt("SurvivorMaxIncapacitatedCount", 2)); // "survivor_max_incapacitated_count" = "2"
+	PrintToServer("%s = %d", "WaterSlowsMovement", L4D2_GetScriptValueInt("WaterSlowsMovement", 1)); // 1
+	PrintToServer("%s = %d", "ZombieDiscardRange", L4D2_GetScriptValueInt("ZombieDiscardRange", 2500)); // "z_discard_range" = "2500"
+	PrintToServer("%s = %d", "ZombieDontClear", L4D2_GetScriptValueInt("ZombieDontClear", 0)); // "z_dont_clear" = "0"
+	PrintToServer("%s = %d", "ZombieSpawnInFog", L4D2_GetScriptValueInt("ZombieSpawnInFog", 0)); // "z_fog_spawn" = "0"
 
 
 
@@ -3516,12 +3591,23 @@ public Action L4D_OnGetScriptValueInt(const char[] key, int &retVal)
 		ForwardCalled("\"L4D_OnGetScriptValueInt\" %s. %d", key, retVal);
 	}
 
-	// WORKS - map: c4_m*
-	// if( strcmp(key, "GasCansOnBacks") == 0 )
-	// {
-		// retVal = 1;
-		// return Plugin_Handled;
-	// }
+	// WORKS - green gascans on back from map c4m*
+	/*
+	if( strcmp(key, "GasCansOnBacks") == 0 )
+	{
+		retVal = 1;
+		return Plugin_Handled;
+	}
+	// */
+
+	/*
+	// Setting this to test the "L4D_OnGetScriptValueVector" forward and "PreferredMobPosition" key
+	if( strcmp(key, "PreferredMobDirection") == 0 )
+	{
+		retVal = 10;
+		return Plugin_Handled;
+	}
+	// */
 
 	return Plugin_Continue;
 }
@@ -3537,18 +3623,47 @@ public Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal)
 		ForwardCalled("\"L4D_OnGetScriptValueFloat\" %s. %f", key, retVal);
 	}
 
-	// if( strcmp(key, "TempHealthDecayRate") == 0 )
-		// PrintToServer("FWD L4D_OnGetScriptValueFloat %s. %f", key, retVal);
-
 	// WORKS
-	// if( strcmp(key, "TempHealthDecayRate") == 0 )
+	/*
+	if( strcmp(key, "TempHealthDecayRate") == 0 )
+	{
+		retVal = 1.0;
+		return Plugin_Handled;
+	}
+	// */
+
+	return Plugin_Continue;
+}
+
+// Unused, unable to determine if the return value is modified, and potentially different detour setup for linux
+/*
+public Action L4D_OnGetScriptValueVector(const char[] key, float retVal[3])
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnGetScriptValueVector\" %s. %f %f %f", key, retVal[0], retVal[1], retVal[2]);
+	}
+
+	// UNKNOWN - Unable to determine if the return value is modified, and potentially different detour setup for linux
+	// Set "PreferredMobDirection" above to override the value, then "z_spawn mob auto" in console to test the function below
+	// To test, enter this into server console: sm_cvar mp_gamemode dash; changelevel c5m2_park
+	// if( strcmp(key, "PreferredMobPosition") == 0 || strcmp(key, "SpawnSetPosition") == 0 )
 	// {
-		// retVal = 2.0;
+		// retVal = view_as<float>({ 0.0, 0.0, 0.0 });
+		// retVal = view_as<float>({ -6717.444335, 8427.956054, 94.587501 });
+		// retVal = view_as<float>({ -4368.217773, -2205.327636, -255.968750 }); // By first pole // c5m2_park
+		// retVal = view_as<float>({ -7085.283203, -1518.681152, -255.968750 }); // Ahead // c5m2_park
+		// retVal = view_as<float>({ -3945.166503, -1268.468750, -343.968750 }); // Start saferoom // c5m2_park
 		// return Plugin_Handled;
 	// }
 
 	return Plugin_Continue;
 }
+*/
 
 public Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultVal, char retVal[128])
 {
@@ -3558,15 +3673,20 @@ public Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultV
 		if( called == 0 ) g_iForwards++;
 		called++;
 
+		// Some of the returned data:
+		// [A_CustomFinaleMusic5]. []. [Event.FinaleWave4]
+		// [OnChangeFinaleMusic]. []. [FINALE_CUSTOM_DELAY]
+		// [OnChangeFinaleMusic]. []. [Event.TankMidpoint]
+
 		// ForwardCalled("\"L4D_OnGetScriptValueString\" [%s]. [%s]. [%s].", key, defaultVal, retVal); // Because printing random chars can break console printing text or possibly cause a crash?
 		ForwardCalled("\"L4D_OnGetScriptValueString\"");
 	}
 
+	// Don't know if override works
 	// UNKNOWN - MUSIC STRINGS ARE ALWAYS RANDOM CHARS, THIS SEEMS TO BE NORMAL, LOOK AT USERMSG HOOKS ETC.
-	// PrintToServer("\"L4D_OnGetScriptValueString\" [%s]. [%s]. [%s].", key, defaultVal, retVal);
 	// if( strcmp(key, "OnChangeFinaleMusic") == 0 )
 	// {
-		// retVal = "";
+		// retVal = "Event.Tank";
 		// return Plugin_Handled;
 	// }
 

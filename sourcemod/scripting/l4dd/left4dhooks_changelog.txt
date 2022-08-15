@@ -1,3 +1,20 @@
+1.112 (15-Aug-2022)
+	- Added native "L4D2_GetScriptValueFloat" to return the directors float key values. See the left4dhooks.inc include file for details.
+	- Changed forwards "L4D_OnGetScriptValueInt" to read and modify the post hook values.
+	- Probably fixed forward "L4D_OnGetScriptValueString" not modifying the return value when changed.
+	- Initial adding of forward "L4D_OnGetScriptValueVector" to return the directors vector key values. This is unused and commented out in code due to not being tested.
+	- Thanks to "Forgetest" for help coding and testing.
+	- Wildcarded the "SurvivorBot::UseHealingItems" signature to prevent conflicts with other plugins.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.111 (30-Jul-2022)
 	- Fixed native "L4D_GetNearestNavArea" additional params not being backwards compatible with plugins compiled against older versions of left4dhooks. Thanks to "Mr. Man" for reporting.
 

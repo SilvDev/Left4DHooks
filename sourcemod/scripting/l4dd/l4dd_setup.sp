@@ -186,6 +186,7 @@ void SetupForwardsNatives()
 		g_hFWD_CTerrorPlayer_OnHitByVomitJar_PostHandled					= new GlobalForward("L4D2_OnHitByVomitJar_PostHandled",					ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_CDirector_GetScriptValueInt									= new GlobalForward("L4D_OnGetScriptValueInt",							ET_Event, Param_String, Param_CellByRef);
 		g_hFWD_CDirector_GetScriptValueFloat								= new GlobalForward("L4D_OnGetScriptValueFloat",						ET_Event, Param_String, Param_FloatByRef);
+		// g_hFWD_CDirector_GetScriptValueVector								= new GlobalForward("L4D_OnGetScriptValueVector",						ET_Event, Param_String, Param_Array);
 		g_hFWD_CDirector_GetScriptValueString								= new GlobalForward("L4D_OnGetScriptValueString",						ET_Event, Param_String, Param_String, Param_String);
 		g_hFWD_CTerrorGameRules_HasConfigurableDifficultySetting			= new GlobalForward("L4D_OnHasConfigurableDifficulty",					ET_Event, Param_CellByRef);
 		g_hFWD_CTerrorGameRules_HasConfigurableDifficultySetting_Post		= new GlobalForward("L4D_OnHasConfigurableDifficulty_Post",				ET_Event, Param_Cell);
@@ -282,6 +283,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_IsReachable",		 						Native_SurvivorBot_IsReachable);
 	CreateNative("L4D2_GetFurthestSurvivorFlow",		 			Native_CDirector_GetFurthestSurvivorFlow);
 	CreateNative("L4D2_GetScriptValueInt",							Native_CDirector_GetScriptValueInt);
+	CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat);
 	CreateNative("L4D2_NavAreaTravelDistance",		 				Native_NavAreaTravelDistance);
 	CreateNative("L4D2_NavAreaBuildPath",							Native_NavAreaBuildPath);
 
@@ -296,7 +298,6 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_VScriptWrapper_GetSenseFlags",				Native_VS_GetSenseFlags);
 	CreateNative("L4D2_VScriptWrapper_NavAreaBuildPath",			Native_VS_NavAreaBuildPath);
 	CreateNative("L4D2_VScriptWrapper_NavAreaTravelDistance",		Native_VS_NavAreaTravelDistance);
-	// CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat); // Only returns default value provided.
 	// CreateNative("L4D2_GetScriptValueString",					Native_CDirector_GetScriptValueString); // Not implemented, probably broken too, request if really required.
 
 

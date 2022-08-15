@@ -54,6 +54,7 @@ GlobalForward g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_Post;
 GlobalForward g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_PostHandled;
 GlobalForward g_hFWD_CDirector_GetScriptValueInt;
 GlobalForward g_hFWD_CDirector_GetScriptValueFloat;
+// GlobalForward g_hFWD_CDirector_GetScriptValueVector;
 GlobalForward g_hFWD_CDirector_GetScriptValueString;
 GlobalForward g_hFWD_CDirector_IsTeamFull;
 GlobalForward g_hFWD_CTerrorPlayer_EnterGhostState_Pre;
@@ -406,9 +407,10 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride");
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_Post",					true);
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_PostHandled",			true);
-		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueInt,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueInt",								"L4D_OnGetScriptValueInt");
-		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueFloat,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueFloat",								"L4D_OnGetScriptValueFloat");
-		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueString,							INVALID_FUNCTION,											"L4DD::CDirector::GetScriptValueString",							"L4D_OnGetScriptValueString");
+		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueInt_Pre,						DTR_CDirector_GetScriptValueInt,							"L4DD::CDirector::GetScriptValueInt",								"L4D_OnGetScriptValueInt");
+		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueFloat_Pre,						DTR_CDirector_GetScriptValueFloat,							"L4DD::CDirector::GetScriptValueFloat",								"L4D_OnGetScriptValueFloat");
+		// CreateDetour(hGameData,		DTR_CDirector_GetScriptValueVector_Pre,						DTR_CDirector_GetScriptValueVector,							"L4DD::CDirector::GetScriptValueVector",							"L4D_OnGetScriptValueVector");
+		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueString_Pre,						DTR_CDirector_GetScriptValueString,							"L4DD::CDirector::GetScriptValueString",							"L4D_OnGetScriptValueString");
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting_Post,	"L4DD::CTerrorGameRules::HasConfigurableDifficultySetting",			"L4D_OnHasConfigurableDifficulty");
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting,		DTR_CTerrorGameRules_HasConfigurableDifficultySetting_Post,	"L4DD::CTerrorGameRules::HasConfigurableDifficultySetting",			"L4D_OnHasConfigurableDifficulty_Post",			true);
 		CreateDetour(hGameData,		DTR_CTerrorGameRules_GetSurvivorSet_Pre,					DTR_CTerrorGameRules_GetSurvivorSet,						"L4DD::CTerrorGameRules::GetSurvivorSet",							"L4D_OnGetSurvivorSet");
@@ -1411,12 +1413,17 @@ MRESReturn GetSpeed(int pThis, Handle hForward, DHookReturn hReturn)
 	return MRES_Ignored;
 }
 
+MRESReturn DTR_CDirector_GetScriptValueInt_Pre(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueInt"
+{
+	return MRES_Ignored;
+}
+
 MRESReturn DTR_CDirector_GetScriptValueInt(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueInt"
 {
 	//PrintToServer("##### DTR_CDirector_GetScriptValueInt");
 	static char key[64];
 	hParams.GetString(1, key, sizeof(key));
-	int a2 = hParams.Get(2);
+	int a2 = hReturn.Value;
 
 	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CDirector_GetScriptValueInt);
@@ -1426,11 +1433,15 @@ MRESReturn DTR_CDirector_GetScriptValueInt(DHookReturn hReturn, DHookParam hPara
 
 	if( aResult == Plugin_Handled )
 	{
-		hParams.Set(2, a2);
 		hReturn.Value = a2;
-		return MRES_ChangedOverride;
+		return MRES_Supercede;
 	}
 
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CDirector_GetScriptValueFloat_Pre(DHookReturn hReturn, DHookParam hParams)
+{
 	return MRES_Ignored;
 }
 
@@ -1439,7 +1450,7 @@ MRESReturn DTR_CDirector_GetScriptValueFloat(DHookReturn hReturn, DHookParam hPa
 	//PrintToServer("##### DTR_CDirector_GetScriptValueFloat");
 	static char key[64];
 	hParams.GetString(1, key, sizeof(key));
-	float a2 = hParams.Get(2);
+	float a2 = hReturn.Value;
 
 	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CDirector_GetScriptValueFloat);
@@ -1449,11 +1460,50 @@ MRESReturn DTR_CDirector_GetScriptValueFloat(DHookReturn hReturn, DHookParam hPa
 
 	if( aResult == Plugin_Handled )
 	{
-		hParams.Set(2, a2);
 		hReturn.Value = a2;
-		return MRES_ChangedOverride;
+		return MRES_Supercede;
 	}
 
+	return MRES_Ignored;
+}
+
+/*
+MRESReturn DTR_CDirector_GetScriptValueVector_Pre(DHookReturn hReturn, DHookParam hParams)
+{
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CDirector_GetScriptValueVector(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueVector"
+{
+	//PrintToServer("##### DTR_CDirector_GetScriptValueVector");
+	static char key[64];
+	hParams.GetString(2, key, sizeof(key));
+
+	float vVec[3];
+	hReturn.GetVector(vVec);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CDirector_GetScriptValueVector);
+	Call_PushString(key);
+	Call_PushArrayEx(vVec, sizeof(vVec), SM_PARAM_COPYBACK);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		hParams.Set(3, vVec[0]);
+		hParams.Set(4, vVec[1]);
+		hParams.Set(5, vVec[2]);
+		hReturn.SetVector(vVec);
+		hParams.SetVector(1, vVec);
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+*/
+
+MRESReturn DTR_CDirector_GetScriptValueString_Pre(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnGetScriptValueString"
+{
 	return MRES_Ignored;
 }
 
@@ -1462,6 +1512,7 @@ MRESReturn DTR_CDirector_GetScriptValueString(DHookReturn hReturn, DHookParam hP
 	//PrintToServer("##### DTR_CDirector_GetScriptValueString");
 	static char a1[128], a2[128], a3[128]; // Don't know how long they should be
 
+	hReturn.GetString(a1, sizeof(a1));
 	hParams.GetString(1, a1, sizeof(a1));
 
 	if( !hParams.IsNull(2) )
@@ -1474,15 +1525,14 @@ MRESReturn DTR_CDirector_GetScriptValueString(DHookReturn hReturn, DHookParam hP
 	Call_StartForward(g_hFWD_CDirector_GetScriptValueString);
 	Call_PushString(a1);
 	Call_PushString(a2);
-	Call_PushString(a3);
+	Call_PushStringEx(a3, sizeof(a3), SM_PARAM_STRING_COPY, SM_PARAM_COPYBACK);
 	Call_Finish(aResult);
 
-	// UNKNOWN - UNABLE TO TRIGGER FOR TEST
+	// UNKNOWN
 	if( aResult == Plugin_Handled )
 	{
-		hParams.SetString(3, a3);
 		hReturn.SetString(a3);
-		return MRES_ChangedOverride;
+		return MRES_Supercede;
 	}
 
 	return MRES_Ignored;
@@ -3762,12 +3812,9 @@ MRESReturn DTR_CBasePlayer_WaterMove_Post(int pThis, DHookReturn hReturn, DHookP
 	int a1 = hReturn.Value;
 	if( a1 )
 	{
-		Action aResult = Plugin_Continue;
 		Call_StartForward(g_hFWD_OnWaterMove);
 		Call_PushCell(pThis);
-		Call_Finish(aResult);
-
-		if( aResult == Plugin_Handled ) return MRES_Supercede;
+		Call_Finish();
 	}
 
 	return MRES_Ignored;

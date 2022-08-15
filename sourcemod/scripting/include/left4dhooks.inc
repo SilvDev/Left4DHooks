@@ -60,9 +60,9 @@
 
 // Natives: 227
 // L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 43 [silvers - mine!] + 4 [anim] = 133
-// L4D2 = 60 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 80 [silvers - mine!] + 4 [anim] = 224
+// L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 80 [silvers - mine!] + 4 [anim] = 225
 
-// Forwards: 144
+// Forwards: 1454
 // L4D1 = 109;
 // L4D2 = 142;
 
@@ -151,6 +151,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_ForceScavengeStart");
 	MarkNativeAsOptional("L4D2_IsTankInPlay");
 	MarkNativeAsOptional("L4D2_GetScriptValueInt");
+	MarkNativeAsOptional("L4D2_GetScriptValueFloat");
 	MarkNativeAsOptional("L4D2_NavAreaTravelDistance");
 	MarkNativeAsOptional("L4D2_NavAreaBuildPath");
 	MarkNativeAsOptional("L4D2_GetSurvivorSetMod");
@@ -1013,6 +1014,19 @@ forward Action L4D_OnGetScriptValueInt(const char[] key, int &retVal);
  */
 // L4D2 only.
 forward Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal);
+
+/**
+ * @brief Called whenever CDirector::GetScriptValue(const char*, Vector) is invoked
+ * @remarks A script value is map specific
+ *
+ * @param key			the script's key name
+ * @param retVal		what to override the return value with
+ *
+ * @return				Plugin_Handled to override return value, Plugin_Continue otherwise.
+ */
+// L4D2 only.
+// Unused, unable to determine if the return value is modified, and potentially different detour setup for linux
+// forward Action L4D_OnGetScriptValueVector(const char[] key, float retVal[3]);
 
 /**
  * @brief Called whenever CDirector::GetScriptValue(const char*, const char*, char*, int) is invoked
@@ -2912,6 +2926,8 @@ native bool L4D2_IsTankInPlay();
 
 /**
  * @brief Returns the value of the specified Director Variable key.
+ * @remarks You should provide a valid default value to use as the native is likely to return that unless the key value has been modified by a mutation or director script.
+ * @remarks See the "left4dhooks_test.sp" plugin and search for "L4D2_GetScriptValueInt" to see a list of keys and their default values and related cvars.
  *
  * @param key		Director variable key name to search for
  * @param value		Default value to use when the variable is not found
@@ -2920,6 +2936,19 @@ native bool L4D2_IsTankInPlay();
  */
 // L4D2 only.
 native int L4D2_GetScriptValueInt(const char[] key, int value);
+
+/**
+ * @brief Returns the value of the specified Director Variable key.
+ * @remarks You should provide a valid default value to use as the native is likely to return that unless the key value has been modified by a mutation or director script.
+ * @remarks See the "left4dhooks_test.sp" plugin and search for "L4D2_GetScriptValueFloat" to see a list of keys and their default values and related cvars.
+ *
+ * @param key		Director variable key name to search for
+ * @param value		Default value to use when the variable is not found
+ *
+ * @return			Value of the variable, or provided default value on failure
+ */
+// L4D2 only.
+native float L4D2_GetScriptValueFloat(const char[] key, float value);
 
 /**
  * @brief Returns if there is a configurable difficulty setting.
@@ -2992,11 +3021,6 @@ native bool L4D2_IsScavengeMode();
  * @return				True if the current game mode is Versus mode, false otherwise.
  **/
 native bool L4D_IsVersusMode();
-
-
-
-// // Only returns default value provided.
-// native float L4D2_GetScriptValueFloat(const char[] key, float value);
 
 // Not implemented, request if really required.
 // native void L4D2_GetScriptValueString(const char[] key, const char[] value, char[] retValue, int maxlength);
