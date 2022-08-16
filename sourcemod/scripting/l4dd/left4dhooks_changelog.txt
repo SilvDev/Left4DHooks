@@ -1,3 +1,6 @@
+1.113 (16-Aug-2022)
+	- Fixed the natives "L4D_GetCheckpointFirst" and "L4D_GetCheckpointLast" not always finding the saferoom door. Thanks to "azureblue" for reporting.
+
 1.112 (15-Aug-2022)
 	- Added native "L4D2_GetScriptValueFloat" to return the directors float key values. See the left4dhooks.inc include file for details.
 	- Changed forwards "L4D_OnGetScriptValueInt" to read and modify the post hook values.

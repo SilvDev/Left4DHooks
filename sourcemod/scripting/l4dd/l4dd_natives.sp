@@ -1020,7 +1020,7 @@ int Native_GetCheckpointFirst(Handle plugin, int numParams) // Native "L4D_GetCh
 		{
 			GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vPos);
 
-			Address area = view_as<Address>(SDKCall(g_hSDK_CNavMesh_GetNearestNavArea, g_pNavMesh, vPos, 0, 1000.0, 0, 1, 0));
+			Address area = view_as<Address>(SDKCall(g_hSDK_CNavMesh_GetNearestNavArea, g_pNavMesh, vPos, 0, 1000.0, 0, 0, 0));
 			if( area )
 			{
 				val = view_as<float>(LoadFromAddress(area + view_as<Address>(g_iOff_m_flow), NumberType_Int32));
@@ -1069,7 +1069,7 @@ int Native_GetCheckpointLast(Handle plugin, int numParams) // Native "L4D_GetChe
 		{
 			GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vPos);
 
-			Address area = view_as<Address>(SDKCall(g_hSDK_CNavMesh_GetNearestNavArea, g_pNavMesh, vPos, 0, 1000.0, 0, 1, 0));
+			Address area = view_as<Address>(SDKCall(g_hSDK_CNavMesh_GetNearestNavArea, g_pNavMesh, vPos, 0, 1000.0, 0, 0, 0));
 			if( area )
 			{
 				val = view_as<float>(LoadFromAddress(area + view_as<Address>(g_iOff_m_flow), NumberType_Int32));
