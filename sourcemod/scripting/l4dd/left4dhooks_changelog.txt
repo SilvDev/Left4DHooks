@@ -1,3 +1,24 @@
+1.114 (01-Sep-2022)
+	- Added forwards "L4D_OnPlayerCough", "L4D_OnPlayerCough_Post" and "L4D_OnPlayerCough_PostHandled" when a player is coughing from a Smoker Cloud.
+	- Added native "L4D_GoAwayFromKeyboard" to set a client as idle. Requested by "knifeeeee".
+	- Added natives "L4D_GetNavArea_AttributeFlags" and "L4D_SetNavArea_AttributeFlags" to get and set a nav areas attribute flags.
+	- Added natives "L4D_GetNavArea_SpawnAttributes" and "L4D_SetNavArea_SpawnAttributes" to get and set a nav areas spawn attribute flags.
+	- Initial adding of native "L4D2_GetScriptValueString" to return the directors string key values. This crashes when the key has not been set.
+	- Fixed forward "L4D_OnGetScriptValueString" throwing errors.
+
+	- Added missing forwards "L4D2_CInsectSwarm_CanHarm_PostHandled" and "L4D2_OnSpawnWitchBride_PostHandled" to the include file.
+	- Changes to some forwards information in the include file.
+	- Changes to prevent errors throwing from some forwards in the test plugin.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.113 (16-Aug-2022)
 	- Fixed the natives "L4D_GetCheckpointFirst" and "L4D_GetCheckpointLast" not always finding the saferoom door. Thanks to "azureblue" for reporting.
 

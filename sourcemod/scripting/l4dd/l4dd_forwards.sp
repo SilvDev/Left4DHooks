@@ -181,6 +181,9 @@ GlobalForward g_hFWD_CTerrorPlayer_Fling_Post;
 GlobalForward g_hFWD_CTerrorPlayer_Fling_PostHandled;
 GlobalForward g_hFWD_CDeathFallCamera_Enable;
 GlobalForward g_hFWD_CTerrorPlayer_OnFalling_Post;
+GlobalForward g_hFWD_CTerrorPlayer_Cough;
+GlobalForward g_hFWD_CTerrorPlayer_Cough_Post;
+GlobalForward g_hFWD_CTerrorPlayer_Cough_PostHandled;
 GlobalForward g_hFWD_Witch_SetHarasser;
 GlobalForward g_hFWD_Tank_EnterStasis_Post;
 GlobalForward g_hFWD_Tank_LeaveStasis_Post;
@@ -327,6 +330,9 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnShovedByPounceLanding,					DTR_CTerrorPlayer_OnShovedByPounceLanding_Post,				"L4DD::CTerrorPlayer::OnShovedByPounceLanding",						"L4D2_OnPounceOrLeapStumble_PostHandled",		true);
 	CreateDetour(hGameData,			DTR_CDeathFallCamera_Enable,								INVALID_FUNCTION,											"L4DD::CDeathFallCamera::Enable",									"L4D_OnFatalFalling");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnFalling_Pre,							DTR_CTerrorPlayer_OnFalling_Post,							"L4DD::CTerrorPlayer::OnFalling",									"L4D_OnFalling");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_Cough,									DTR_CTerrorPlayer_Cough_Post,								"L4DD::CTerrorPlayer::Cough",										"L4D_OnPlayerCough");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_Cough,									DTR_CTerrorPlayer_Cough_Post,								"L4DD::CTerrorPlayer::Cough",										"L4D_OnPlayerCough_Post",						true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_Cough,									DTR_CTerrorPlayer_Cough_Post,								"L4DD::CTerrorPlayer::Cough",										"L4D_OnPlayerCough_PostHandled",				true);
 	CreateDetour(hGameData,			DTR_Witch_SetHarasser,										INVALID_FUNCTION,											"L4DD::Witch::SetHarasser",											"L4D_OnWitchSetHarasser");
 	CreateDetour(hGameData,			DTR_Tank_EnterStasis_Pre,									DTR_Tank_EnterStasis_Post,									"L4DD::Tank::EnterStasis",											"L4D_OnEnterStasis");
 	CreateDetour(hGameData,			DTR_Tank_LeaveStasis_Pre,									DTR_Tank_LeaveStasis_Post,									"L4DD::Tank::LeaveStasis",											"L4D_OnLeaveStasis");
@@ -1512,7 +1518,6 @@ MRESReturn DTR_CDirector_GetScriptValueString(DHookReturn hReturn, DHookParam hP
 	//PrintToServer("##### DTR_CDirector_GetScriptValueString");
 	static char a1[128], a2[128], a3[128]; // Don't know how long they should be
 
-	hReturn.GetString(a1, sizeof(a1));
 	hParams.GetString(1, a1, sizeof(a1));
 
 	if( !hParams.IsNull(2) )
@@ -2915,6 +2920,50 @@ MRESReturn DTR_CTerrorPlayer_OnFalling_Post(int pThis, DHookReturn hReturn) // F
 	//PrintToServer("##### DTR_CTerrorPlayer_OnFalling_Post");
 	Call_StartForward(g_hFWD_CTerrorPlayer_OnFalling_Post);
 	Call_PushCell(pThis);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_CTerrorPlayer_Cough;
+MRESReturn DTR_CTerrorPlayer_Cough(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnPlayerCough"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_Cough");
+
+	int attacker;
+
+	if( !hParams.IsNull(1) )
+		attacker = hParams.Get(1);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_Cough);
+	Call_PushCell(pThis);
+	Call_PushCell(attacker);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CTerrorPlayer_Cough = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	g_bBlock_CTerrorPlayer_Cough = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_Cough_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnPlayerCough_Post" abd "L4D_OnPlayerCough_PostHandled"
+{
+	int attacker;
+
+	if( !hParams.IsNull(1) )
+		attacker = hParams.Get(1);
+
+	Call_StartForward(g_bBlock_CTerrorPlayer_Cough ? g_hFWD_CTerrorPlayer_Cough_PostHandled : g_hFWD_CTerrorPlayer_Cough_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(attacker);
 	Call_Finish();
 
 	return MRES_Ignored;

@@ -823,8 +823,8 @@ void LoadGameData()
 					LogError("Failed to create SDKCall: \"CDirector::GetScriptValueFloat\" (%s)", g_sSystem);
 		}
 
+		// Crashes when the key has not been set
 		/*
-		// Not implemented, request if really required.
 		StartPrepSDKCall(SDKCall_Raw);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::GetScriptValueString") == false )
 		{
@@ -832,7 +832,10 @@ void LoadGameData()
 		} else {
 			PrepSDKCall_AddParameter(SDKType_String, SDKPass_Pointer);
 			PrepSDKCall_AddParameter(SDKType_String, SDKPass_Pointer);
+			PrepSDKCall_AddParameter(SDKType_String, SDKPass_Pointer);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
 			PrepSDKCall_SetReturnInfo(SDKType_String, SDKPass_Pointer);
+			// PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
 			g_hSDK_CDirector_GetScriptValueString = EndPrepSDKCall();
 			if( g_hSDK_CDirector_GetScriptValueString == null )
 					LogError("Failed to create SDKCall: \"CDirector::GetScriptValueString\" (%s)", g_sSystem);
@@ -1071,6 +1074,17 @@ void LoadGameData()
 		g_hSDK_CTerrorPlayer_CanBecomeGhost = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_CanBecomeGhost == null )
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::CanBecomeGhost\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Player);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::GoAwayFromKeyboard") == false )
+	{
+		LogError("Failed to find signature: \"CTerrorPlayer::GoAwayFromKeyboard\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+		g_hSDK_CTerrorPlayer_GoAwayFromKeyboard = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_GoAwayFromKeyboard == null )
+			LogError("Failed to create SDKCall: \"CTerrorPlayer::GoAwayFromKeyboard\" (%s)", g_sSystem);
 	}
 
 	StartPrepSDKCall(SDKCall_Raw);
@@ -1870,6 +1884,12 @@ void LoadGameData()
 
 	g_iOff_m_chapter = hGameData.GetOffset("m_chapter");
 	ValidateOffset(g_iOff_m_chapter, "m_chapter");
+
+	g_iOff_m_attributeFlags = hGameData.GetOffset("m_attributeFlags");
+	ValidateOffset(g_iOff_m_attributeFlags, "m_attributeFlags");
+
+	g_iOff_m_spawnAttributes = hGameData.GetOffset("m_spawnAttributes");
+	ValidateOffset(g_iOff_m_spawnAttributes, "m_spawnAttributes");
 
 	g_iOff_m_PendingMobCount = hGameData.GetOffset("m_PendingMobCount");
 	ValidateOffset(g_iOff_m_PendingMobCount, "m_PendingMobCount");

@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.110"
+#define PLUGIN_VERSION		"1.114"
 
 /*=======================================================================================
 	Plugin Info:
@@ -303,10 +303,38 @@ Action sm_l4df(int client, int args)
 
 Action sm_l4dd(int client, int args)
 {
-	PrintToServer("Uncomment the things you want to test. All disabled by default now.");
+	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
 
 
+
+
+
+	/*
+	float vPos[3];
+	GetClientAbsOrigin(client, vPos);
+	Address navarea = L4D_GetNearestNavArea(vPos, 100.0);
+	PrintToServer("L4D_GetNavArea_AttributeFlags %d", L4D_GetNavArea_AttributeFlags(navarea));
+	PrintToServer("L4D_GetNavArea_SpawnAttributes %d", L4D_GetNavArea_SpawnAttributes(navarea));
+	*/
+
+
+
+	/*
+	char retValue[64];
+	L4D2_GetScriptValueString("OnChangeFinaleMusic", "", retValue, sizeof(retValue));
+	PrintToServer("L4D2_GetScriptValueString \"OnChangeFinaleMusic\" == \"%s\"", retValue);
+
+	// Map "c10m5_houseboat" test:
+	// L4D2_GetScriptValueString("A_CustomFinale1", "N/A", retValue, sizeof(retValue));
+	// PrintToServer("L4D2_GetScriptValueString \"A_CustomFinale1\" == \"%s\"", retValue);
+	// L4D2_GetScriptValueString("A_CustomFinaleValue1", "N/A", retValue, sizeof(retValue));
+	// PrintToServer("L4D2_GetScriptValueString \"A_CustomFinaleValue1\" == \"%s\"", retValue);
+	// L4D2_GetScriptValueString("A_CustomFinaleValue5", "N/A", retValue, sizeof(retValue));
+	// PrintToServer("L4D2_GetScriptValueString \"A_CustomFinaleValue5\" == \"%s\"", retValue);
+	// L4D2_GetScriptValueString("A_CustomFinaleMusic5", "N/A", retValue, sizeof(retValue));
+	// PrintToServer("L4D2_GetScriptValueString \"A_CustomFinaleMusic5\" == \"%s\"", retValue);
+	*/
 
 
 
@@ -814,6 +842,9 @@ Action sm_l4dd(int client, int args)
 	int bot = GetRandomSurvivor(1, 1);
 	PrintToServer("L4D_SetHumanSpec %d (%d - %N)",					L4D_SetHumanSpec(bot, client), bot, bot);
 	PrintToServer("L4D_TakeOverBot %d (%d - %N)",					L4D_TakeOverBot(client), bot, bot);
+
+	// WORKS
+	PrintToServer("L4D_GoAwayFromKeyboard %d",						L4D_GoAwayFromKeyboard(client));
 
 	// WORKS
 	L4D_RespawnPlayer(client);
@@ -3538,7 +3569,7 @@ public Action L4D2_CInsectSwarm_CanHarm(int acid, int spitter, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm\" %d %N > Acid: %d > Ent: %d", spitter, spitter, acid, entity);
+		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm\" %d %N > Acid: %d > Ent: %d", spitter, spitter != -1 ? spitter : 0, acid, entity);
 	}
 
 	// WORKS
@@ -4135,6 +4166,47 @@ public void L4D_OnFalling(int client)
 		called++;
 
 		ForwardCalled("\"L4D_OnFalling\" %d %N", client, client);
+	}
+}
+
+public Action L4D_OnPlayerCough(int client, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnPlayerCough\" %d %N (caused by %d %N)", client, client, attacker, attacker);
+	}
+
+	// WORKS - Block cough
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_OnPlayerCough_Post(int client, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnPlayerCough_Post\" %d %N (caused by %d %N)", client, client, attacker, attacker);
+	}
+}
+
+public void L4D_OnPlayerCough_PostHandled(int client, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnPlayerCough_PostHandled\" %d %N (caused by %d %N)", client, client, attacker, attacker);
 	}
 }
 

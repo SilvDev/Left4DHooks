@@ -59,6 +59,7 @@ Handle g_hSDK_CTerrorPlayer_RoundRespawn;
 Handle g_hSDK_SurvivorBot_SetHumanSpectator;
 Handle g_hSDK_CTerrorPlayer_TakeOverBot;
 Handle g_hSDK_CTerrorPlayer_CanBecomeGhost;
+Handle g_hSDK_CTerrorPlayer_GoAwayFromKeyboard;
 Handle g_hSDK_CDirector_AreWanderersAllowed;
 Handle g_hSDK_CDirector_IsFinaleEscapeInProgress;
 Handle g_hSDK_CDirector_ForceNextStage;
@@ -1568,7 +1569,7 @@ any Native_CDirector_GetScriptValueFloat(Handle plugin, int numParams) // Native
 }
 
 /*
-// Not implemented, request if really required.
+// Crashes when the key has not been set
 int Native_CDirector_GetScriptValueString(Handle plugin, int numParams) // Native "L4D2_GetScriptValueString"
 {
 	ValidateAddress(g_pDirector, "g_pDirector");
@@ -1590,12 +1591,15 @@ int Native_CDirector_GetScriptValueString(Handle plugin, int numParams) // Nativ
 	// Return val
 	maxlength = GetNativeCell(4);
 	char[] retValue = new char[maxlength];
+	char[] fakeRet = new char[maxlength];
 
-	//PrintToServer("#### CALL g_hSDK_CDirector_GetScriptValueString");
-	SDKCall(g_hSDK_CDirector_GetScriptValueString, g_pDirector, key, value, retValue, maxlength);
-	SetNativeString(3, retValue, maxlength);
+	SDKCall(g_hSDK_CDirector_GetScriptValueString, g_pDirector, retValue, maxlength, key, value, fakeRet, sizeof(fakeRet));
+
+	SetNativeString(3, fakeRet, maxlength);
+
+	return 0;
 }
-*/
+// */
 
 
 
@@ -2606,6 +2610,48 @@ int Native_GetCurrentChapter(Handle plugin, int numParams) // Native "L4D_GetCur
 	return LoadFromAddress(g_pDirector + view_as<Address>(g_iOff_m_chapter), NumberType_Int32) + 1;
 }
 
+int Native_GetTerrorNavArea_Attributes(Handle plugin, int numParams) // Native "L4D_GetNavArea_SpawnAttributes"
+{
+	ValidateAddress(g_iOff_m_spawnAttributes, "m_spawnAttributes");
+
+	int area = GetNativeCell(1);
+
+	return LoadFromAddress(view_as<Address>(area + g_iOff_m_spawnAttributes), NumberType_Int32);
+}
+
+int Native_SetTerrorNavArea_Attributes(Handle plugin, int numParams) // Native "L4D_SetNavArea_SpawnAttributes"
+{
+	ValidateAddress(g_iOff_m_spawnAttributes, "m_spawnAttributes");
+
+	int area = GetNativeCell(1);
+	int flags = GetNativeCell(2);
+
+	StoreToAddress(view_as<Address>(area + g_iOff_m_spawnAttributes), flags, NumberType_Int32);
+
+	return 0;
+}
+
+int Native_GetCNavArea_AttributeFlags(Handle plugin, int numParams) // Native "L4D_GetNavArea_AttributeFlags"
+{
+	ValidateAddress(g_iOff_m_attributeFlags, "m_attributeFlags");
+
+	int area = GetNativeCell(1);
+
+	return LoadFromAddress(view_as<Address>(area + g_iOff_m_attributeFlags), NumberType_Int32);
+}
+
+int Native_SetCNavArea_AttributeFlags(Handle plugin, int numParams) // Native "L4D_SetNavArea_AttributeFlags"
+{
+	ValidateAddress(g_iOff_m_attributeFlags, "m_attributeFlags");
+
+	int area = GetNativeCell(1);
+	int flags = GetNativeCell(2);
+
+	StoreToAddress(view_as<Address>(area + g_iOff_m_attributeFlags), flags, NumberType_Int32);
+
+	return 0;
+}
+
 int Native_CTerrorGameRules_GetNumChaptersForMissionAndMode(Handle plugin, int numParams) // Native "L4D_GetMaxChapters"
 {
 	if( g_bLeft4Dead2 )
@@ -2690,6 +2736,16 @@ int Native_CTerrorPlayer_CanBecomeGhost(Handle plugin, int numParams) // Native 
 
 	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_CanBecomeGhost");
 	return SDKCall(g_hSDK_CTerrorPlayer_CanBecomeGhost, client, true);
+}
+
+int Native_CTerrorPlayer_GoAwayFromKeyboard(Handle plugin, int numParams) // Native "L4D_GoAwayFromKeyboard"
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_GoAwayFromKeyboard, "CTerrorPlayer::GoAwayFromKeyboard");
+
+	int client = GetNativeCell(1);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_GoAwayFromKeyboard");
+	return SDKCall(g_hSDK_CTerrorPlayer_GoAwayFromKeyboard, client);
 }
 
 int Native_CDirector_AreWanderersAllowed(Handle plugin, int numParams) // Native "L4D2_AreWanderersAllowed"

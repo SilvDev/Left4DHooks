@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.113"
+#define PLUGIN_VERSION		"1.114"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -275,6 +275,8 @@ int g_iOff_m_flow;
 int g_iOff_m_PendingMobCount;
 int g_iOff_m_fMapMaxFlowDistance;
 int g_iOff_m_chapter;
+int g_iOff_m_attributeFlags;
+int g_iOff_m_spawnAttributes;
 // int g_iOff_m_iClrRender; // NULL PTR - METHOD (kept for demonstration)
 // int ClearTeamScore_A;
 // int ClearTeamScore_B;
@@ -480,7 +482,35 @@ public void OnPluginStart()
 
 
 
-	// Animation Hook
+	// NULL PTR - METHOD (kept for demonstration)
+	// Null pointer - by Dragokas
+	/*
+	g_iOff_m_iClrRender = FindSendPropInfo("CBaseEntity", "m_clrRender");
+	if( g_iOff_m_iClrRender == -1 )
+	{
+		SetFailState("Error: m_clrRender not found.");
+	}
+	*/
+
+
+
+	// ====================================================================================================
+	//									LOAD GAMEDATA
+	// ====================================================================================================
+	LoadGameData();
+
+
+
+	// ====================================================================================================
+	//									TARGET FILTERS
+	// ====================================================================================================
+	LoadTargetFilters();
+
+
+
+	// ====================================================================================================
+	//									ANIMMATION HOOK
+	// ====================================================================================================
 	g_hAnimationActivityList = new ArrayList(ByteCountToCells(64));
 	ParseActivityConfig();
 
@@ -495,19 +525,9 @@ public void OnPluginStart()
 
 
 
-	// NULL PTR - METHOD (kept for demonstration)
-	// Null pointer - by Dragokas
-	/*
-	g_iOff_m_iClrRender = FindSendPropInfo("CBaseEntity", "m_clrRender");
-	if( g_iOff_m_iClrRender == -1 )
-	{
-		SetFailState("Error: m_clrRender not found.");
-	}
-	*/
-
-
-
-	// Weapon IDs
+	// ====================================================================================================
+	//									WEAPON IDS
+	// ====================================================================================================
 	g_aWeaponPtrs = new StringMap();
 	g_aWeaponIDs = new StringMap();
 
@@ -596,20 +616,6 @@ public void OnPluginStart()
 		g_aMeleeIDs.SetValue("pitchfork",							11);
 		g_aMeleeIDs.SetValue("shovel",								12);
 	}
-
-
-
-	// ====================================================================================================
-	//									GAMEDATA
-	// ====================================================================================================
-	LoadGameData();
-
-
-
-	// ====================================================================================================
-	//									TARGET FILTERS
-	// ====================================================================================================
-	LoadTargetFilters();
 
 
 
@@ -869,6 +875,15 @@ public void OnClientDisconnect(int client)
 		{
 			i++;
 		}
+	}
+}
+
+public void OnNotifyPluginUnloaded(Handle plugin)
+{
+	for( int i = 1; i <= MaxClients; i++ )
+	{
+		g_hAnimationCallbackPre[i].RemoveAllFunctions(plugin);
+		g_hAnimationCallbackPost[i].RemoveAllFunctions(plugin);
 	}
 }
 

@@ -132,6 +132,9 @@ void SetupForwardsNatives()
 	g_hFWD_CTerrorPlayer_Fling_PostHandled									= new GlobalForward("L4D2_OnPlayerFling_PostHandled",					ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CDeathFallCamera_Enable											= new GlobalForward("L4D_OnFatalFalling",								ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnFalling_Post										= new GlobalForward("L4D_OnFalling",									ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_Cough												= new GlobalForward("L4D_OnPlayerCough",								ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_Cough_Post											= new GlobalForward("L4D_OnPlayerCough_Post",							ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_Cough_PostHandled									= new GlobalForward("L4D_OnPlayerCough_PostHandled",					ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_Witch_SetHarasser												= new GlobalForward("L4D_OnWitchSetHarasser",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_Tank_EnterStasis_Post											= new GlobalForward("L4D_OnEnterStasis",								ET_Event, Param_Cell);
 	g_hFWD_Tank_LeaveStasis_Post											= new GlobalForward("L4D_OnLeaveStasis",								ET_Event, Param_Cell);
@@ -284,6 +287,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_GetFurthestSurvivorFlow",		 			Native_CDirector_GetFurthestSurvivorFlow);
 	CreateNative("L4D2_GetScriptValueInt",							Native_CDirector_GetScriptValueInt);
 	CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat);
+	// CreateNative("L4D2_GetScriptValueString",						Native_CDirector_GetScriptValueString); // Crashes when the key has not been set
 	CreateNative("L4D2_NavAreaTravelDistance",		 				Native_NavAreaTravelDistance);
 	CreateNative("L4D2_NavAreaBuildPath",							Native_NavAreaBuildPath);
 
@@ -298,7 +302,6 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_VScriptWrapper_GetSenseFlags",				Native_VS_GetSenseFlags);
 	CreateNative("L4D2_VScriptWrapper_NavAreaBuildPath",			Native_VS_NavAreaBuildPath);
 	CreateNative("L4D2_VScriptWrapper_NavAreaTravelDistance",		Native_VS_NavAreaTravelDistance);
-	// CreateNative("L4D2_GetScriptValueString",					Native_CDirector_GetScriptValueString); // Not implemented, probably broken too, request if really required.
 
 
 
@@ -323,6 +326,10 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_GetTankCount",								Native_GetTankCount);
 	CreateNative("L4D2_GetWitchCount",								Native_GetWitchCount);
 	CreateNative("L4D_GetCurrentChapter",							Native_GetCurrentChapter);
+	CreateNative("L4D_GetNavArea_SpawnAttributes",					Native_GetTerrorNavArea_Attributes);
+	CreateNative("L4D_SetNavArea_SpawnAttributes",					Native_SetTerrorNavArea_Attributes);
+	CreateNative("L4D_GetNavArea_AttributeFlags",					Native_GetCNavArea_AttributeFlags);
+	CreateNative("L4D_SetNavArea_AttributeFlags",					Native_SetCNavArea_AttributeFlags);
 	CreateNative("L4D_GetMaxChapters",								Native_CTerrorGameRules_GetNumChaptersForMissionAndMode);
 	CreateNative("L4D_GetVersusMaxCompletionScore",					Native_GetVersusMaxCompletionScore);
 	CreateNative("L4D_SetVersusMaxCompletionScore",					Native_SetVersusMaxCompletionScore);
@@ -472,6 +479,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_SetClass",									Native_CTerrorPlayer_SetClass);
 	CreateNative("L4D_MaterializeFromGhost",						Native_CTerrorPlayer_MaterializeFromGhost);
 	CreateNative("L4D_BecomeGhost",									Native_CTerrorPlayer_BecomeGhost);
+	CreateNative("L4D_GoAwayFromKeyboard",							Native_CTerrorPlayer_GoAwayFromKeyboard);
 	CreateNative("L4D_State_Transition",							Native_CCSPlayer_State_Transition);
 	CreateNative("L4D_RegisterForbiddenTarget",						Native_CDirector_RegisterForbiddenTarget);
 	CreateNative("L4D_UnRegisterForbiddenTarget",					Native_CDirector_UnregisterForbiddenTarget);
