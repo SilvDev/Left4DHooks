@@ -885,7 +885,7 @@ stock void L4D_StopReviveAction(int client)
 			owner_save = owner;
 		}
 
-		if( target != -1 )
+		if( target > 0 && target <= MaxClients )
 		{
 			SetEntPropEnt(target, Prop_Send, "m_useActionOwner", -1);
 			SetEntPropEnt(target, Prop_Send, "m_useActionTarget", -1);

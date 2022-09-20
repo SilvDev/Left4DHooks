@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.114"
+#define PLUGIN_VERSION		"1.115"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -326,9 +326,27 @@ ConVar g_hCvar_VScriptBuffer;
 ConVar g_hCvar_AddonsEclipse;
 ConVar g_hCvar_RescueDeadTime;
 ConVar g_hCvar_PillsDecay;
-ConVar g_hCvar_PillsHealth;
+// ConVar g_hCvar_PillsHealth;
+ConVar g_hCvar_Adrenaline;
 ConVar g_hCvar_Revives;
 ConVar g_hCvar_MPGameMode;
+
+
+// Spitter acid projectile damage
+bool g_bAcidWatch;
+int g_iAcidEntity[2048];
+
+char g_sAcidSounds[6][] =
+{
+	"player/PZ/hit/zombie_slice_1.wav",
+	"player/PZ/hit/zombie_slice_2.wav",
+	"player/PZ/hit/zombie_slice_3.wav",
+	"player/PZ/hit/zombie_slice_4.wav",
+	"player/PZ/hit/zombie_slice_5.wav",
+	"player/PZ/hit/zombie_slice_6.wav"
+};
+
+
 
 #if DEBUG
 bool g_bLateLoad;
@@ -644,7 +662,8 @@ public void OnPluginStart()
 		AutoExecConfig(true, "left4dhooks");
 		g_hCvar_AddonsEclipse.AddChangeHook(ConVarChanged_Cvars);
 
-		g_hCvar_PillsHealth = FindConVar("pain_pills_health_value");
+		// g_hCvar_PillsHealth = FindConVar("pain_pills_health_value");
+		g_hCvar_Adrenaline = FindConVar("adrenaline_health_buffer");
 	} else {
 		g_hCvar_Revives = FindConVar("survivor_max_incapacitated_count");
 	}
@@ -1285,13 +1304,19 @@ public void OnMapStart()
 		for( int i = 0; i < sizeof(g_sModels1); i++ )
 			PrecacheModel(g_sModels1[i]);
 
+		PrecacheModel(SPRITE_GLOW, true); // Dissolver
+
 		if( g_bLeft4Dead2 )
 		{
 			for( int i = 0; i < sizeof(g_sModels2); i++ )
 				PrecacheModel(g_sModels2[i]);
-		}
 
-		PrecacheModel(SPRITE_GLOW, true); // Dissolver
+			for( int i = 0; i < sizeof(g_sAcidSounds); i++ )
+				PrecacheSound(g_sAcidSounds[i]);
+
+			for( int i = 0; i < 2048; i++ )
+				g_iAcidEntity[i] = 0;
+		}
 
 
 

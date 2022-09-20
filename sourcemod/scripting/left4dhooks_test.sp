@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.114"
+#define PLUGIN_VERSION		"1.115"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 115;
+		g_iForwardsMax = 155;
 	else
-		g_iForwardsMax = 85;
+		g_iForwardsMax = 119;
 
 	return APLRes_Success;
 }
@@ -2345,6 +2345,18 @@ public void L4D_OnFirstSurvivorLeftSafeArea_PostHandled(int client)
 	}
 }
 
+public void L4D_OnForceSurvivorPositions()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnForceSurvivorPositions\"");
+	}
+}
+
 public Action L4D_OnGetCrouchTopSpeed(int target, float &retVal)
 {
 	static int called;
@@ -3441,6 +3453,129 @@ public void L4D_PipeBombProjectile_PostHandled(int client, int projectile, const
 		called++;
 
 		ForwardCalled("\"L4D_PipeBombProjectile_PostHandled\" %d (Grenade = %d) pos(%0.1f %0.1f %0.1f) ang(%0.1f %0.1f %0.1f) vel(%0.1f %0.1f %0.1f) rot(%0.1f %0.1f %0.1f)", client, projectile, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2], vecVel[0], vecVel[1], vecVel[2], vecRot[0], vecRot[1], vecRot[2]);
+	}
+}
+
+public Action L4D_Molotov_Detonate(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+
+	// WORKS - block grenade detonating
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_Molotov_Detonate_Post(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_Molotov_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+}
+
+public void L4D_Molotov_Detonate_PostHandled(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_Molotov_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+}
+
+public Action L4D_PipeBomb_Detonate(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+
+	// WORKS - block grenade detonating
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_PipeBomb_Detonate_Post(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+}
+
+public void L4D_PipeBomb_Detonate_PostHandled(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+}
+
+public Action L4D2_VomitJar_Detonate(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+
+	// WORKS - block grenade detonating
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_VomitJar_Detonate_Post(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_VomitJar_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+	}
+}
+
+public void L4D2_VomitJar_Detonate_PostHandled(int entity, int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_VomitJar_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
 	}
 }
 

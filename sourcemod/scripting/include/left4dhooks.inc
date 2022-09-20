@@ -62,9 +62,9 @@
 // L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 48 [silvers - mine!] + 4 [anim] = 138
 // L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 85 [silvers - mine!] + 4 [anim] = 230
 
-// Forwards: 148
-// L4D1 = 112;
-// L4D2 = 145;
+// Forwards: 158
+// L4D1 = 119;
+// L4D2 = 155;
 
 // Stocks: 157 (L4D1 = 107, L4D2 = 153)
 // left4dhooks_silver			41 stocks	(L4D1 = 34,		L4D2 = 41)
@@ -1039,6 +1039,14 @@ forward void L4D_OnFirstSurvivorLeftSafeArea_Post(int client);
  * @noreturn
  */
 forward void L4D_OnFirstSurvivorLeftSafeArea_PostHandled(int client);
+
+/**
+ * @brief Called whenever CDirector::OnForceSurvivorPositions is invoked
+ * @remarks Triggers after round start when Survivors are forced into starting positions, usually first map and finale escape start, does not trigger on all maps
+ *
+ * @noreturn
+ */
+forward void L4D_OnForceSurvivorPositions();
 
 /**
  * @brief Called whenever CTerrorPlayer::GetCrouchTopSpeed() is invoked
@@ -2287,6 +2295,114 @@ forward void L4D_PipeBombProjectile_Post(int client, int projectile, const float
  * @noreturn
  */
 forward void L4D_PipeBombProjectile_PostHandled(int client, int projectile, const float vecPos[3], const float vecAng[3], const float vecVel[3], const float vecRot[3]);
+
+/**
+ * @brief Called whenever CMolotovProjectile::Detonate is invoked
+ * @remarks Called when a Molotov projectile is about to explode
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+forward Action L4D_Molotov_Detonate(int entity, int client);
+
+/**
+ * @brief Called whenever CMolotovProjectile::Detonate is invoked
+ * @remarks Called when a Molotov projectile is about to explode
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+forward void L4D_Molotov_Detonate_Post(int entity, int client);
+
+/**
+ * @brief Called whenever CMolotovProjectile::Detonate is invoked
+ * @remarks Called when a Molotov projectile is about to explode
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+forward void L4D_Molotov_Detonate_PostHandled(int entity, int client);
+
+/**
+ * @brief Called whenever CPipeBombProjectile::Detonate is invoked
+ * @remarks Called when a PipeBomb projectile is about to explode
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @return					Plugin_Handled to block explosion which will cause the PipeBomb projectile to continue flashing and remain active, Plugin_Continue otherwise
+ */
+forward Action L4D_PipeBomb_Detonate(int entity, int client);
+
+/**
+ * @brief Called whenever CPipeBombProjectile::Detonate is invoked
+ * @remarks Called when a PipeBomb projectile is about to explode
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+forward void L4D_PipeBomb_Detonate_Post(int entity, int client);
+
+/**
+ * @brief Called whenever CPipeBombProjectile::Detonate is invoked
+ * @remarks Called when a PipeBomb projectile is about to explode
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+forward void L4D_PipeBomb_Detonate_PostHandled(int entity, int client);
+
+/**
+ * @brief Called whenever CVomitJarProjectile::Detonate is invoked
+ * @remarks Called when a VomitJar projectile is about to explode
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @return					Plugin_Handled to block explosion which will cause the Vomitjar projectile to bounce and remain active, Plugin_Continue otherwise
+ */
+// L4D2 only.
+forward Action L4D2_VomitJar_Detonate(int entity, int client);
+
+/**
+ * @brief Called whenever CVomitJarProjectile::Detonate is invoked
+ * @remarks Called when a VomitJar projectile is about to explode
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+// L4D2 only.
+forward void L4D2_VomitJar_Detonate_Post(int entity, int client);
+
+/**
+ * @brief Called whenever CVomitJarProjectile::Detonate is invoked
+ * @remarks Called when a VomitJar projectile is about to explode
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param entity			the entity that exploded
+ * @param client			the client who threw the grenade
+ *
+ * @noreturn
+ */
+// L4D2 only.
+forward void L4D2_VomitJar_Detonate_PostHandled(int entity, int client);
 
 /**
  * @brief Called whenever CInsectSwarm::CanHarm() is invoked

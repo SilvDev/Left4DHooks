@@ -1339,7 +1339,74 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 	GetNativeArray(3, vAng, sizeof(vAng));
 
 	//PrintToServer("#### CALL g_hSDK_CSpitterProjectile_Create");
-	return SDKCall(g_hSDK_CSpitterProjectile_Create, vPos, vAng, vAng, vAng, client);
+	int entity = SDKCall(g_hSDK_CSpitterProjectile_Create, vPos, vAng, vAng, vAng, client);
+
+	// Not watching for acid damage
+	if( !g_bAcidWatch )
+	{
+		// Verify client is not team 3, which causes sound bug
+		if( !client || GetClientTeam(client) != 3 )
+		{
+			g_bAcidWatch = true;
+			g_iAcidEntity[entity] = EntIndexToEntRef(entity);
+
+			// Hook clients damage
+			for( int i = 1; i <= MaxClients; i++ )
+			{
+				if( IsClientInGame(i) && IsPlayerAlive(i) )
+				{
+					SDKHook(i, SDKHook_OnTakeDamageAlivePost, OnAcidDamage);
+				}
+			}
+		}
+	}
+
+	return entity;
+}
+
+Action OnAcidDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+{
+	// Emit sound when taking acid damage
+	if( damage > 0 && damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) )
+	{
+		EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], victim);
+	}
+
+	return Plugin_Continue;
+}
+
+// When acid entity is destroyed, and no more active, unhook
+public void OnEntityDestroyed(int entity)
+{
+	// Acid damage watched and destroyed entity was acid damage
+	if( g_bAcidWatch && entity > 0 && EntIndexToEntRef(entity) == g_iAcidEntity[entity] )
+	{
+		g_iAcidEntity[entity] = 0;
+
+		bool reset = true;
+
+		// Check no more acid entities are alive
+		for( int i = MaxClients + 1; i < 2048; i++ )
+		{
+			if( EntRefToEntIndex(g_iAcidEntity[i]) != INVALID_ENT_REFERENCE )
+			{
+				reset = false;
+				break;
+			}
+		}
+
+		// If no acid entities are alive, unhook damage on clients
+		if( reset )
+		{
+			for( int i = 1; i <= MaxClients; i++ )
+			{
+				if( IsClientInGame(i) )
+				{
+					SDKUnhook(i, SDKHook_OnTakeDamageAlivePost, OnAcidDamage);
+				}
+			}
+		}
+	}
 }
 
 int Native_CTerrorPlayer_OnAdrenalineUsed(Handle plugin, int numParams) // Native "L4D2_UseAdrenaline"
@@ -1356,10 +1423,20 @@ int Native_CTerrorPlayer_OnAdrenalineUsed(Handle plugin, int numParams) // Nativ
 	if( heal )
 	{
 		float fHealth = GetTempHealth(client);
-		fHealth += g_hCvar_PillsHealth.FloatValue;
-		if( fHealth > 100.0 ) fHealth = 100.0;
-
-		SetTempHealth(client, fHealth);
+		int iHealth = GetClientHealth(client);
+		float fClientHealth = iHealth + fHealth;
+		if( fClientHealth < 100.0 ) // Some plugin allows survivor HP > 100
+		{
+			fClientHealth = fClientHealth + g_hCvar_Adrenaline.FloatValue;
+			if( fClientHealth > 100.0 )
+			{
+				SetTempHealth(client, 100.0 - iHealth);
+			}
+			else
+			{
+				SetTempHealth(client, fClientHealth - iHealth);
+			}
+		}
 
 		// Event
 		Event hEvent = CreateEvent("adrenaline_used");

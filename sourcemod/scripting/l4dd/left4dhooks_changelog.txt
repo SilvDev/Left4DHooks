@@ -1,3 +1,19 @@
+1.115 (20-Sep-2022)
+	- Added forward "L4D_OnForceSurvivorPositions" Triggers after round start when Survivors are forced into starting positions, usually first map and finale escape start, not all maps. Requested by "gabuch2".
+	- Added forwards "L4D_Molotov_Detonate", "L4D_PipeBomb_Detonate" and "L4D2_VomitJar_Detonate" with their relative "_Post" and "_PostHandled" forwards to trigger when a grenade projectile is about to explode.
+	- L4D2: Fixed native "L4D2_SpitterPrj" not causing damage sounds when the projectile is not connected with a player from the Special Infected team. Thanks to "Marttt" for reporting.
+	- L4D2: Fixed native "L4D2_UseAdrenaline" to use the "adrenaline_health_buffer" cvar value instead of "pain_pills_health_value" for healing and prevent over-healing. Thanks to "HarryPotter" for fixing.
+	- Fixed stock "L4D_StopReviveAction" from "left4dhooks_silver.inc" include file from throwing errors. Thanks to "Red Flame" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks_silver.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.114 (01-Sep-2022)
 	- Added forwards "L4D_OnPlayerCough", "L4D_OnPlayerCough_Post" and "L4D_OnPlayerCough_PostHandled" when a player is coughing from a Smoker Cloud.
 	- Added native "L4D_GoAwayFromKeyboard" to set a client as idle. Requested by "knifeeeee".
@@ -47,7 +63,6 @@
 	- Changed native "L4D_GetNearestNavArea" to accept some more parameters. Suggested by "Forgetest".
 
 	- Various minor code changes to adjust for splitting the project (cleaner comments and better error handling when compiling the split project files). Thanks to "Psyk0tik" for some help.
-	- Since adding this native proved how difficult it is jumping around files, I may merge the project again. Or maybe privately and split for release with the batch script I wrote to package the plugin.
 
 	- Updated: Plugin and test plugin.
 	- Updated: "left4dhooks.inc" Include file.

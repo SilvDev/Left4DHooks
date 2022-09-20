@@ -71,6 +71,7 @@ void SetupForwardsNatives()
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea							= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea",					ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_Post						= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_Post",				ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_PostHandled				= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_PostHandled",		ET_Event, Param_Cell);
+	g_hFWD_CDirector_OnForceSurvivorPositions								= new GlobalForward("L4D_OnForceSurvivorPositions",						ET_Event);
 	g_hFWD_CTerrorPlayer_GetCrouchTopSpeed									= new GlobalForward("L4D_OnGetCrouchTopSpeed",							ET_Event, Param_Cell, Param_FloatByRef);
 	g_hFWD_CTerrorPlayer_GetRunTopSpeed										= new GlobalForward("L4D_OnGetRunTopSpeed",								ET_Event, Param_Cell, Param_FloatByRef);
 	g_hFWD_CTerrorPlayer_GetWalkTopSpeed									= new GlobalForward("L4D_OnGetWalkTopSpeed",							ET_Event, Param_Cell, Param_FloatByRef);
@@ -151,6 +152,12 @@ void SetupForwardsNatives()
 	g_hFWD_CPipeBombProjectile_Create_Pre									= new GlobalForward("L4D_PipeBombProjectile_Pre",						ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 	g_hFWD_CPipeBombProjectile_Create_Post									= new GlobalForward("L4D_PipeBombProjectile_Post",						ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 	g_hFWD_CPipeBombProjectile_Create_PostHandled							= new GlobalForward("L4D_PipeBombProjectile_PostHandled",				ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
+	g_hFWD_CMolotovProjectile_Detonate										= new GlobalForward("L4D_Molotov_Detonate",								ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CMolotovProjectile_Detonate_Post									= new GlobalForward("L4D_Molotov_Detonate_Post",						ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CMolotovProjectile_Detonate_PostHandled							= new GlobalForward("L4D_Molotov_Detonate_PostHandled",					ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CPipeBombProjectile_Detonate										= new GlobalForward("L4D_PipeBomb_Detonate",							ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CPipeBombProjectile_Detonate_Post								= new GlobalForward("L4D_PipeBomb_Detonate_Post",						ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CPipeBombProjectile_Detonate_PostHandled							= new GlobalForward("L4D_PipeBomb_Detonate_PostHandled",				ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_Extinguish											= new GlobalForward("L4D_PlayerExtinguish",								ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor								= new GlobalForward("L4D_OnPouncedOnSurvivor",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_Post							= new GlobalForward("L4D_OnPouncedOnSurvivor_Post",						ET_Event, Param_Cell, Param_Cell);
@@ -165,6 +172,9 @@ void SetupForwardsNatives()
 
 	if( g_bLeft4Dead2 )
 	{
+		g_hFWD_CVomitJarProjectile_Detonate									= new GlobalForward("L4D2_VomitJar_Detonate",							ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_CVomitJarProjectile_Detonate_Post							= new GlobalForward("L4D2_VomitJar_Detonate_Post",						ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_CVomitJarProjectile_Detonate_PostHandled						= new GlobalForward("L4D2_VomitJar_Detonate_PostHandled",				ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_ZombieManager_SpawnWitchBride								= new GlobalForward("L4D2_OnSpawnWitchBride",							ET_Event, Param_Array, Param_Array);
 		g_hFWD_ZombieManager_SpawnWitchBride_Post							= new GlobalForward("L4D2_OnSpawnWitchBride_Post",						ET_Event, Param_Cell, Param_Array, Param_Array);
 		g_hFWD_ZombieManager_SpawnWitchBride_PostHandled					= new GlobalForward("L4D2_OnSpawnWitchBride_PostHandled",				ET_Event, Param_Cell, Param_Array, Param_Array);

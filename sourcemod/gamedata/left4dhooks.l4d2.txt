@@ -483,6 +483,21 @@
 				}
 			}
 
+			"L4DD::CDirector::OnForceSurvivorPositions"
+			{
+				"signature"		"CDirector::OnForceSurvivorPositions"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"objectptr"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::GetCrouchTopSpeed"
 			{
 				"signature"		"CTerrorPlayer::GetCrouchTopSpeed"
@@ -977,6 +992,30 @@
 						"type"		"float"
 					}
 				}
+			}
+
+			"L4DD::CPipeBombProjectile::Detonate"
+			{
+				"signature"		"CPipeBombProjectile::Detonate"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
+			"L4DD::CMolotovProjectile::Detonate"
+			{
+				"signature"		"CMolotovProjectile::Detonate"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
+			"L4DD::CVomitJarProjectile::Detonate"
+			{
+				"signature"		"CVomitJarProjectile::Detonate"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
 			}
 
 			"L4DD::CTerrorPlayer::Extinguish"
@@ -2181,7 +2220,7 @@
 
 			/*
 			*  CInferno::StartBurning(Vector const&, Vector const&, Vector const&, int)
-			*  Search: ""
+			*  Search: "Inferno.StartSweeten"
 			*/
 			"CInferno::StartBurning"
 			{
@@ -2263,6 +2302,42 @@
 				"library"		"server"
 				"windows"		"CGrenadeLauncher_Projectile spawned"
 				/* Search for the literal string to then reverse bytes and search for that address. */
+			}
+
+			/*
+			*  CPipeBombProjectile::Detonate(CPipeBombProjectile *this)
+			*  Search: "weapon_pipebomb_dirt"
+			*/
+			"CPipeBombProjectile::Detonate"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CPipeBombProjectile8DetonateEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x53\x56\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x57\xA8\x2A\x74\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8D"
+				/* ? ? ? ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 53 56 8B ? 8B ? ? ? ? ? C1 ? ? 57 A8 ? 74 ? E8 ? ? ? ? 8B ? ? ? ? ? 8B ? ? ? ? ? 8B ? ? ? ? ? 8D */
+			}
+
+			/*
+			*  CMolotovProjectile::Detonate(CMolotovProjectile *this)
+			*  Search: "hegrenade_detonate" - the function that contains "Molotov.Loop"
+			*/
+			"CMolotovProjectile::Detonate"
+			{
+				"library"	"server"
+				"linux"		"@_ZN18CMolotovProjectile8DetonateEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x81\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\xF6"
+				/* ? ? ? ? ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 81 ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? E8 ? ? ? ? 8B ? F6 */
+			}
+
+			/*
+			*  CVomitJarProjectile::Detonate(CVomitJarProjectile *this)
+			*  Search: "CedaJar.Explode"
+			*/
+			"CVomitJarProjectile::Detonate"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CVomitJarProjectile8DetonateEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\xF6\x2A\x2A\x2A\x0F\x85"
+				/* ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? E8 ? ? ? ? 8B ? F6 ? ? ? 0F 85 */
 			}
 
 			/*
@@ -2796,6 +2871,18 @@
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x8B\x2A\x2A\x57\x8B\x2A\x8B"
 				/* 55 8B ? 83 ? ? 53 8B ? ? 57 8B ? 8B */
 				/* Search: "player_left_start_area" */
+			}
+
+			/*
+			 * CDirector::OnForceSurvivorPositions()
+			 */
+			"CDirector::OnForceSurvivorPositions"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CDirector24OnForceSurvivorPositionsERK10CUtlVectorIP13CTerrorPlayer10CUtlMemoryIS2_iEE"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x33\x2A\x57\x68\x2A\x2A\x2A\x2A\x33"
+				/* ? ? ? ? ? ? 53 56 33 ? 57 68 ? ? ? ? 33 */
+				/* Search "ESCAPED: %s %s\n" bottom of function returns the call to target function. */
 			}
 
 			/*
