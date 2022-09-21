@@ -1353,7 +1353,7 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 			// Hook clients damage
 			for( int i = 1; i <= MaxClients; i++ )
 			{
-				if( IsClientInGame(i) && IsPlayerAlive(i) )
+				if( IsClientInGame(i) )
 				{
 					SDKHook(i, SDKHook_OnTakeDamageAlivePost, OnAcidDamage);
 				}
@@ -1364,15 +1364,13 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 	return entity;
 }
 
-Action OnAcidDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int damagetype)
 {
 	// Emit sound when taking acid damage
 	if( damage > 0 && damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) )
 	{
 		EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], victim);
 	}
-
-	return Plugin_Continue;
 }
 
 // When acid entity is destroyed, and no more active, unhook

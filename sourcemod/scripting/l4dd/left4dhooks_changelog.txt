@@ -1,3 +1,11 @@
+1.116 (21-Sep-2022)
+	- L4D1: Fixed GameData missing the "L4D_Molotov_Detonate" and "L4D_PipeBomb_Detonate" forwards data.
+	- L4D2: Fixed native "L4D2_SpitterPrj" crashing the server when playing damage sounds. Thanks to "Marttt" for fixing.
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+
 1.115 (20-Sep-2022)
 	- Added forward "L4D_OnForceSurvivorPositions" Triggers after round start when Survivors are forced into starting positions, usually first map and finale escape start, not all maps. Requested by "gabuch2".
 	- Added forwards "L4D_Molotov_Detonate", "L4D_PipeBomb_Detonate" and "L4D2_VomitJar_Detonate" with their relative "_Post" and "_PostHandled" forwards to trigger when a grenade projectile is about to explode.
@@ -10,6 +18,7 @@
 	- Updated: "left4dhooks_silver.inc" Include file.
 	- Updated: "left4dhooks.l4d1.txt" GameData file.
 	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
