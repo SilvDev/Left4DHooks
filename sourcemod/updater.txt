@@ -18,7 +18,6 @@
 			"Plugin"	"Path_SM/plugins/left4dhooks.smx"
 			"Plugin"	"Path_SM/scripting/l4dd/left4dhooks_changelog.txt"
 			"Plugin"	"Path_SM/gamedata/left4dhooks.l4d1.txt"
-			"Plugin"	"Path_SM/scripting/l4dd/l4dd_forwards.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_natives.sp"
 			"Source"	"Path_SM/scripting/left4dhooks.sp"
 		}
