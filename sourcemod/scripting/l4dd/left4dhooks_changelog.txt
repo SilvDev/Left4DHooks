@@ -1,3 +1,15 @@
+1.117 (30-Sep-2022)
+	- Added forward "L4D_OnReleaseSurvivorPositions" to trigger after round start when Survivors are released from starting positions, usually first map and finale escape start, not all maps. Requested by "gabuch2".
+	- Added forwards "L4D_OnSpeakResponseConcept_Pre" and "L4D_OnSpeakResponseConcept_Post" to trigger when a talker response is triggered. Requested by "gabuch2".
+	- Added some details for the "*_Detonate*" forwards in the "left4dhooks.inc" include file
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.116 (21-Sep-2022)
 	- L4D1: Fixed GameData missing the "L4D_Molotov_Detonate" and "L4D_PipeBomb_Detonate" forwards data.
 	- L4D2: Fixed native "L4D2_SpitterPrj" crashing the server when playing damage sounds. Thanks to "Marttt" for fixing.

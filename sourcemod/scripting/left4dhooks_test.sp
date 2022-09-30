@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.115"
+#define PLUGIN_VERSION		"1.117"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 155;
+		g_iForwardsMax = 158;
 	else
-		g_iForwardsMax = 119;
+		g_iForwardsMax = 122;
 
 	return APLRes_Success;
 }
@@ -345,6 +345,7 @@ Action sm_l4dd(int client, int args)
 	float vEnd[3];
 	vPos = view_as<float>({ 2449.840576, 5027.909179, 448.031250 });	// Saferoom start
 	vEnd = view_as<float>({ -7481.826660, -4701.759277, 384.281250 });	// Saferoom end
+	vEnd = view_as<float>({ 2860.525634, 4751.391113, 448.031250 });	// Out-of-bounds left of first saferoom exit on c1m2_streets
 
 	// VScript shows true, sdkcall shows false which is correct and SDKCall returning the expected result
 	// VScript uses "99999.999" as nearest nav area, so it finds a valid one where SDKCall requires you to find nav area
@@ -359,6 +360,7 @@ Action sm_l4dd(int client, int args)
 	Address nav2 = L4D_GetNearestNavArea(vEnd, 100.0);
 
 	PrintToServer("L4D2_NavAreaBuildPath %d", L4D2_NavAreaBuildPath(nav1, nav2, 99999.999, 2, false));
+	PrintToServer("L4D2_NavAreaBuildPath2 %d", L4D2_NavAreaBuildPath2(nav1, nav2, 99999.999, 2, false));
 	// */
 
 
@@ -2357,6 +2359,55 @@ public void L4D_OnForceSurvivorPositions()
 	}
 }
 
+public void L4D_OnReleaseSurvivorPositions_Pre()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnReleaseSurvivorPositions_Pre\"");
+	}
+}
+
+public void L4D_OnReleaseSurvivorPositions_Post()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnReleaseSurvivorPositions_Post\"");
+	}
+}
+
+
+public void L4D_OnSpeakResponseConcept_Pre(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnSpeakResponseConcept_Pre\" %N", client);
+	}
+}
+
+public void L4D_OnSpeakResponseConcept_Post(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnSpeakResponseConcept_Post\" %N", client);
+	}
+}
+
 public Action L4D_OnGetCrouchTopSpeed(int target, float &retVal)
 {
 	static int called;
@@ -3464,7 +3515,7 @@ public Action L4D_Molotov_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3481,7 +3532,7 @@ public void L4D_Molotov_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 
@@ -3493,7 +3544,7 @@ public void L4D_Molotov_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 
@@ -3505,7 +3556,7 @@ public Action L4D_PipeBomb_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3522,7 +3573,7 @@ public void L4D_PipeBomb_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 
@@ -3534,7 +3585,7 @@ public void L4D_PipeBomb_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 
@@ -3546,7 +3597,7 @@ public Action L4D2_VomitJar_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3563,7 +3614,7 @@ public void L4D2_VomitJar_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate_Post\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 
@@ -3575,7 +3626,7 @@ public void L4D2_VomitJar_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
 	}
 }
 

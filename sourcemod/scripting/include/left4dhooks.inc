@@ -62,9 +62,9 @@
 // L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 48 [silvers - mine!] + 4 [anim] = 138
 // L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 85 [silvers - mine!] + 4 [anim] = 230
 
-// Forwards: 158
-// L4D1 = 119;
-// L4D2 = 155;
+// Forwards: 161
+// L4D1 = 122;
+// L4D2 = 158;
 
 // Stocks: 157 (L4D1 = 107, L4D2 = 153)
 // left4dhooks_silver			41 stocks	(L4D1 = 34,		L4D2 = 41)
@@ -1047,6 +1047,34 @@ forward void L4D_OnFirstSurvivorLeftSafeArea_PostHandled(int client);
  * @noreturn
  */
 forward void L4D_OnForceSurvivorPositions();
+
+/**
+ * @brief Called whenever CDirector::OnReleaseSurvivorPositions is invoked
+ * @remarks Triggers after round start when Survivors are released from the starting positions, usually first map and finale escape start, does not trigger on all maps
+ *
+ * @noreturn
+ */
+forward void L4D_OnReleaseSurvivorPositions();
+
+/**
+ * @brief Called whenever "SpeakResponseConceptFromEntityIO" is invoked
+ * @remarks Triggers on concept talking
+ *
+ * @param entity		Entity doing the talking (not always client indexes, might be a func_orator)
+ *
+ * @noreturn
+ */
+forward void L4D_OnSpeakResponseConcept_Pre(int entity);
+
+/**
+ * @brief Called whenever "SpeakResponseConceptFromEntityIO" is invoked
+ * @remarks Triggers on concept talking
+ *
+ * @param entity		Entity doing the talking (not always client indexes, might be a func_orator)
+ *
+ * @noreturn
+ */
+forward void L4D_OnSpeakResponseConcept_Post(int entity);
 
 /**
  * @brief Called whenever CTerrorPlayer::GetCrouchTopSpeed() is invoked
@@ -2301,7 +2329,7 @@ forward void L4D_PipeBombProjectile_PostHandled(int client, int projectile, cons
  * @remarks Called when a Molotov projectile is about to explode
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2313,7 +2341,7 @@ forward Action L4D_Molotov_Detonate(int entity, int client);
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2325,7 +2353,7 @@ forward void L4D_Molotov_Detonate_Post(int entity, int client);
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2336,7 +2364,7 @@ forward void L4D_Molotov_Detonate_PostHandled(int entity, int client);
  * @remarks Called when a PipeBomb projectile is about to explode
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @return					Plugin_Handled to block explosion which will cause the PipeBomb projectile to continue flashing and remain active, Plugin_Continue otherwise
  */
@@ -2348,7 +2376,7 @@ forward Action L4D_PipeBomb_Detonate(int entity, int client);
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2360,7 +2388,7 @@ forward void L4D_PipeBomb_Detonate_Post(int entity, int client);
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2371,7 +2399,7 @@ forward void L4D_PipeBomb_Detonate_PostHandled(int entity, int client);
  * @remarks Called when a VomitJar projectile is about to explode
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @return					Plugin_Handled to block explosion which will cause the Vomitjar projectile to bounce and remain active, Plugin_Continue otherwise
  */
@@ -2384,7 +2412,7 @@ forward Action L4D2_VomitJar_Detonate(int entity, int client);
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2397,7 +2425,7 @@ forward void L4D2_VomitJar_Detonate_Post(int entity, int client);
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param entity			the entity that exploded
- * @param client			the client who threw the grenade
+ * @param client			the client who threw the grenade, can be -1
  *
  * @noreturn
  */
@@ -2944,11 +2972,12 @@ native float L4D2_NavAreaTravelDistance(float startPos[3], float endPos[3], bool
 
 /**
  * @brief Test two vector positions if they can be reached (only returns false if a location has no valid NavArea, out-of-bounds can be valid).
+ * @remarks Uses the "ShortestPathCost" system.
  *
  * @param		nav_startPos		The NavArea address start position (can use L4D_GetNearestNavArea)
  * @param		nav_endPos			The NavArea address end position from (can use L4D_GetNearestNavArea)
  * @param		flMaxPathLength		Maximum distance allowed between the two points
- * @param		teamID				Which team to valid date the path for
+ * @param		teamID				Which team to validate the path for
  * @param		ignoreNavBlockers	Should nav blockers be ignored or not
  * @return		Returns true if a path exists, false if not or on script error.
  */

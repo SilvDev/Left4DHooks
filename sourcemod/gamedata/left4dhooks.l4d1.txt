@@ -429,6 +429,44 @@
 				}
 			}
 
+			"L4DD::CDirector::OnReleaseSurvivorPositions"
+			{
+				"signature"		"CDirector::OnReleaseSurvivorPositions"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"objectptr"
+					}
+				}
+			}
+
+			"L4DD::SpeakResponseConceptFromEntityIO"
+			{
+				"signature"		"SpeakResponseConceptFromEntityIO"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"cbaseentity"
+					}
+					"a2"
+					{
+						"type"	"int"
+					}
+					"a3"
+					{
+						"type"	"objectptr"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::GetCrouchTopSpeed"
 			{
 				"signature"		"CTerrorPlayer::GetCrouchTopSpeed"
@@ -2242,6 +2280,30 @@
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x33\x2A\x57\x68\x2A\x2A\x2A\x2A\x33\x2A\x33"
 				/* ? ? ? ? ? ? 33 ? 57 68 ? ? ? ? 33 ? 33 */
 				/* Search "finale_vehicle_leaving" bottom of function returns the call to target function. */
+			}
+
+			/*
+			 * CDirector::OnReleaseSurvivorPositions(CUtlVector<CTerrorPlayer *, CUtlMemory<CTerrorPlayer *, int>> const&)
+			 */
+			"CDirector::OnReleaseSurvivorPositions"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CDirector26OnReleaseSurvivorPositionsERK10CUtlVectorIP13CTerrorPlayer10CUtlMemoryIS2_iEE"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x57\x50\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? ? ? ? 8D ? ? ? 57 50 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? E8 ? ? ? ? 8B */
+				/* Search "ReleaseSurvivorPositions" bellow is target call. */
+			}
+
+			/*
+			 * SpeakResponseConceptFromEntityIO(CBaseEntity *, CAI_Expresser *, inputdata_t)
+			 */
+			"SpeakResponseConceptFromEntityIO"
+			{
+				"library"	"server"
+				"linux"		"@_ZN14CFlexExpresser25InputSpeakResponseConceptER11inputdata_t"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x2A\x57\x8D\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? 53 55 56 8B ? ? ? ? ? ? 83 ? ? ? 57 8D ? ? 8B */
+				/* Search "faulty context k:v pair in entity io %s\n" */
 			}
 
 			/*

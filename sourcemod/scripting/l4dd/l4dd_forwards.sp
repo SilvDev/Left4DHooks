@@ -53,6 +53,9 @@ GlobalForward g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea;
 GlobalForward g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_Post;
 GlobalForward g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_PostHandled;
 GlobalForward g_hFWD_CDirector_OnForceSurvivorPositions;
+GlobalForward g_hFWD_CDirector_OnReleaseSurvivorPositions;
+GlobalForward g_hFWD_SpeakResponseConceptFromEntityIO_Pre;
+GlobalForward g_hFWD_SpeakResponseConceptFromEntityIO_Post;
 GlobalForward g_hFWD_CDirector_GetScriptValueInt;
 GlobalForward g_hFWD_CDirector_GetScriptValueFloat;
 // GlobalForward g_hFWD_CDirector_GetScriptValueVector;
@@ -270,7 +273,11 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CDirector_OnFirstSurvivorLeftSafeArea,					DTR_CDirector_OnFirstSurvivorLeftSafeArea_Post,				"L4DD::CDirector::OnFirstSurvivorLeftSafeArea",						"L4D_OnFirstSurvivorLeftSafeArea");
 	CreateDetour(hGameData,			DTR_CDirector_OnFirstSurvivorLeftSafeArea,					DTR_CDirector_OnFirstSurvivorLeftSafeArea_Post,				"L4DD::CDirector::OnFirstSurvivorLeftSafeArea",						"L4D_OnFirstSurvivorLeftSafeArea_Post",			true);
 	CreateDetour(hGameData,			DTR_CDirector_OnFirstSurvivorLeftSafeArea,					DTR_CDirector_OnFirstSurvivorLeftSafeArea_Post,				"L4DD::CDirector::OnFirstSurvivorLeftSafeArea",						"L4D_OnFirstSurvivorLeftSafeArea_PostHandled",	true);
-	CreateDetour(hGameData,			DTR_CDirector_OnForceSurvivorPositions_Pre,					DTR_CDirector_OnForceSurvivorPositions,						"L4DD::CDirector::OnForceSurvivorPositions",						"L4D_OnForceSurvivorPositions");
+	CreateDetour(hGameData,			DTR_CDirector_OnForceSurvivorPositions_Pre,					DTR_CDirector_OnForceSurvivorPositions_Post,				"L4DD::CDirector::OnForceSurvivorPositions",						"L4D_OnForceSurvivorPositions");
+	CreateDetour(hGameData,			DTR_CDirector_OnReleaseSurvivorPositions_Pre,				DTR_CDirector_OnReleaseSurvivorPositions,					"L4DD::CDirector::OnReleaseSurvivorPositions",						"L4D_OnReleaseSurvivorPositions_Pre");
+	CreateDetour(hGameData,			DTR_CDirector_OnReleaseSurvivorPositions_Pre,				DTR_CDirector_OnReleaseSurvivorPositions,					"L4DD::CDirector::OnReleaseSurvivorPositions",						"L4D_OnReleaseSurvivorPositions_Post",			true);
+	CreateDetour(hGameData,			DTR_SpeakResponseConceptFromEntityIO_Pre,					DTR_SpeakResponseConceptFromEntityIO_Post,					"L4DD::SpeakResponseConceptFromEntityIO",							"L4D_OnSpeakResponseConcept_Pre");
+	CreateDetour(hGameData,			DTR_SpeakResponseConceptFromEntityIO_Pre,					DTR_SpeakResponseConceptFromEntityIO_Post,					"L4DD::SpeakResponseConceptFromEntityIO",							"L4D_OnSpeakResponseConcept_Post",				true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GetCrouchTopSpeed_Pre,					DTR_CTerrorPlayer_GetCrouchTopSpeed_Post,					"L4DD::CTerrorPlayer::GetCrouchTopSpeed",							"L4D_OnGetCrouchTopSpeed");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GetRunTopSpeed_Pre,						DTR_CTerrorPlayer_GetRunTopSpeed_Post,						"L4DD::CTerrorPlayer::GetRunTopSpeed",								"L4D_OnGetRunTopSpeed");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GetWalkTopSpeed_Pre,						DTR_CTerrorPlayer_GetWalkTopSpeed_Post,						"L4DD::CTerrorPlayer::GetWalkTopSpeed",								"L4D_OnGetWalkTopSpeed");
@@ -1221,11 +1228,52 @@ MRESReturn DTR_CDirector_OnForceSurvivorPositions_Pre(DHookReturn hReturn, DHook
 	return MRES_Ignored;
 }
 
-MRESReturn DTR_CDirector_OnForceSurvivorPositions(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnForceSurvivorPositions"
+MRESReturn DTR_CDirector_OnForceSurvivorPositions_Post(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnForceSurvivorPositions"
 {
-	//PrintToServer("##### DTR_CDirector_OnForceSurvivorPositions");
+	//PrintToServer("##### DTR_CDirector_OnForceSurvivorPositions_Post");
 
 	Call_StartForward(g_hFWD_CDirector_OnForceSurvivorPositions);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CDirector_OnReleaseSurvivorPositions_Pre(DHookReturn hReturn, DHookParam hParams)
+{
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CDirector_OnReleaseSurvivorPositions(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnSpeakResponseConcept_Pre"
+{
+	//PrintToServer("##### g_hFWD_CDirector_OnReleaseSurvivorPositions");
+
+	Call_StartForward(g_hFWD_CDirector_OnReleaseSurvivorPositions);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_SpeakResponseConceptFromEntityIO_Pre(DHookReturn hReturn, DHookParam hParams)
+{
+	//PrintToServer("##### g_hFWD_SpeakResponseConceptFromEntityIO_Pre");
+
+	int entity = hParams.Get(1);
+
+	Call_StartForward(g_hFWD_SpeakResponseConceptFromEntityIO_Pre);
+	Call_PushCell(entity);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_SpeakResponseConceptFromEntityIO_Post(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnSpeakResponseConcept_Post"
+{
+	//PrintToServer("##### g_hFWD_SpeakResponseConceptFromEntityIO_Post");
+
+	int entity = hParams.Get(1);
+
+	Call_StartForward(g_hFWD_SpeakResponseConceptFromEntityIO_Post);
+	Call_PushCell(entity);
 	Call_Finish();
 
 	return MRES_Ignored;

@@ -72,6 +72,9 @@ void SetupForwardsNatives()
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_Post						= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_Post",				ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_PostHandled				= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_PostHandled",		ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnForceSurvivorPositions								= new GlobalForward("L4D_OnForceSurvivorPositions",						ET_Event);
+	g_hFWD_CDirector_OnReleaseSurvivorPositions								= new GlobalForward("L4D_OnReleaseSurvivorPositions",					ET_Event);
+	g_hFWD_SpeakResponseConceptFromEntityIO_Pre								= new GlobalForward("L4D_OnSpeakResponseConcept_Pre",					ET_Event, Param_Cell);
+	g_hFWD_SpeakResponseConceptFromEntityIO_Post							= new GlobalForward("L4D_OnSpeakResponseConcept_Post",					ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_GetCrouchTopSpeed									= new GlobalForward("L4D_OnGetCrouchTopSpeed",							ET_Event, Param_Cell, Param_FloatByRef);
 	g_hFWD_CTerrorPlayer_GetRunTopSpeed										= new GlobalForward("L4D_OnGetRunTopSpeed",								ET_Event, Param_Cell, Param_FloatByRef);
 	g_hFWD_CTerrorPlayer_GetWalkTopSpeed									= new GlobalForward("L4D_OnGetWalkTopSpeed",							ET_Event, Param_Cell, Param_FloatByRef);
