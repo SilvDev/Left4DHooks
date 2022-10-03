@@ -1,3 +1,9 @@
+1.118 (03-Oct-2022)
+	- Fixed forward "L4D_OnReleaseSurvivorPositions" not being detected when used. Thanks to "gabuch2" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+
 1.117 (30-Sep-2022)
 	- Added forward "L4D_OnReleaseSurvivorPositions" to trigger after round start when Survivors are released from starting positions, usually first map and finale escape start, not all maps. Requested by "gabuch2".
 	- Added forwards "L4D_OnSpeakResponseConcept_Pre" and "L4D_OnSpeakResponseConcept_Post" to trigger when a talker response is triggered. Requested by "gabuch2".

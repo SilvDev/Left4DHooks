@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.117"
+#define PLUGIN_VERSION		"1.118"
 
 /*=======================================================================================
 	Plugin Info:
@@ -2359,7 +2359,7 @@ public void L4D_OnForceSurvivorPositions()
 	}
 }
 
-public void L4D_OnReleaseSurvivorPositions_Pre()
+public void L4D_OnReleaseSurvivorPositions()
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -2367,11 +2367,11 @@ public void L4D_OnReleaseSurvivorPositions_Pre()
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnReleaseSurvivorPositions_Pre\"");
+		ForwardCalled("\"L4D_OnReleaseSurvivorPositions\"");
 	}
 }
 
-public void L4D_OnReleaseSurvivorPositions_Post()
+public void L4D_OnSpeakResponseConcept_Pre(int entity)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -2379,12 +2379,11 @@ public void L4D_OnReleaseSurvivorPositions_Post()
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnReleaseSurvivorPositions_Post\"");
+		ForwardCalled("\"L4D_OnSpeakResponseConcept_Pre\" %d", entity);
 	}
 }
 
-
-public void L4D_OnSpeakResponseConcept_Pre(int client)
+public void L4D_OnSpeakResponseConcept_Post(int entity)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -2392,19 +2391,7 @@ public void L4D_OnSpeakResponseConcept_Pre(int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnSpeakResponseConcept_Pre\" %N", client);
-	}
-}
-
-public void L4D_OnSpeakResponseConcept_Post(int client)
-{
-	static int called;
-	if( called < MAX_CALLS )
-	{
-		if( called == 0 ) g_iForwards++;
-		called++;
-
-		ForwardCalled("\"L4D_OnSpeakResponseConcept_Post\" %N", client);
+		ForwardCalled("\"L4D_OnSpeakResponseConcept_Post\" %d", entity);
 	}
 }
 
