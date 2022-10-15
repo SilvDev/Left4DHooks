@@ -38,6 +38,17 @@ void LoadGameDataRules(GameData hGameData)
 	// Map changes can modify the address
 	g_pGameRules = hGameData.GetAddress("GameRules");
 	ValidateAddress(g_pGameRules, "g_pGameRules", true);
+
+	if( g_bLeft4Dead2 )
+	{
+		static bool bLoaded;
+		if( !bLoaded )
+		{
+			g_pScriptVM = hGameData.GetAddress("L4DD::ScriptVM");
+			ValidateAddress(g_pScriptVM, "g_pScriptVM", true);
+			bLoaded = true;
+		}
+	}
 }
 
 void LoadGameData()
@@ -1132,7 +1143,6 @@ void LoadGameData()
 	} else {
 		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
 		PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
-		
 		g_hSDK_CTerrorPlayer_SetShovePenalty = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_SetShovePenalty == null )
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::SetShovePenalty\" (%s)", g_sSystem);
@@ -1145,7 +1155,6 @@ void LoadGameData()
 	} else {
 		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
 		PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
-		
 		g_hSDK_CTerrorPlayer_SetNextShoveTime = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_SetNextShoveTime == null )
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::SetNextShoveTime\" (%s)", g_sSystem);
@@ -1454,6 +1463,16 @@ void LoadGameData()
 		g_hSDK_CTerrorPlayer_CullZombie = EndPrepSDKCall();
 		if( g_hSDK_CTerrorPlayer_CullZombie == null )
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::CullZombie\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Player);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::CleanupPlayerState") == false )
+	{
+		LogError("Failed to find signature: \"CTerrorPlayer::CleanupPlayerState\" (%s)", g_sSystem);
+	} else {
+		g_hSDK_CTerrorPlayer_CleanupPlayerState = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_CleanupPlayerState == null )
+			LogError("Failed to create SDKCall: \"CTerrorPlayer::CleanupPlayerState\" (%s)", g_sSystem);
 	}
 
 	StartPrepSDKCall(SDKCall_Player);
@@ -1793,6 +1812,8 @@ void LoadGameData()
 
 	if( g_bLeft4Dead2 )
 	{
+		g_hScriptHook = DynamicHook.FromConf(hGameData, "CSquirrelVM::GetValue");
+
 		g_pMeleeWeaponInfoStore = hGameData.GetAddress("MeleeWeaponInfoStore");
 		ValidateAddress(g_pMeleeWeaponInfoStore, "g_pMeleeWeaponInfoStore", true);
 
@@ -1917,6 +1938,9 @@ void LoadGameData()
 		ValidateOffset(g_iOff_AddonEclipse1, "AddonEclipse1");
 		g_iOff_AddonEclipse2 = hGameData.GetOffset("AddonEclipse2");
 		ValidateOffset(g_iOff_AddonEclipse2, "AddonEclipse2");
+
+		g_iOff_m_iszScriptId = hGameData.GetOffset("m_iszScriptId");
+		ValidateOffset(g_iOff_m_iszScriptId, "m_iszScriptId");
 
 		g_iOff_SpawnTimer = hGameData.GetOffset("SpawnTimer");
 		ValidateOffset(g_iOff_SpawnTimer, "SpawnTimer");
@@ -2043,6 +2067,7 @@ void LoadGameData()
 		PrintToServer("AddonEclipse1 = %d", g_iOff_AddonEclipse1);
 		PrintToServer("AddonEclipse2 = %d", g_iOff_AddonEclipse2);
 		PrintToServer("SpawnTimer = %d", g_iOff_SpawnTimer);
+		PrintToServer("iszScriptId = %d", g_iOff_m_iszScriptId);
 		PrintToServer("OnBeginRoundSetupTime = %d", g_iOff_OnBeginRoundSetupTime);
 		PrintToServer("m_iWitchCount = %d", g_iOff_m_iWitchCount);
 		PrintToServer("OvertimeGraceTimer = %d", g_iOff_OvertimeGraceTimer);
@@ -2055,13 +2080,6 @@ void LoadGameData()
 	}
 	#endif
 	#endif
-
-
-
-	// ====================================================================================================
-	//									DETOURS
-	// ====================================================================================================
-	SetupDetours(hGameData);
 
 
 

@@ -58,16 +58,16 @@
 
 
 
-// Natives: 231
-// L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 48 [silvers - mine!] + 4 [anim] = 138
-// L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 85 [silvers - mine!] + 4 [anim] = 230
+// Natives: 233
+// L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 49 [silvers - mine!] + 4 [anim] = 139
+// L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 87 [silvers - mine!] + 4 [anim] = 232
 
-// Forwards: 161
-// L4D1 = 122;
-// L4D2 = 158;
+// Forwards: 166
+// L4D1 = 123;
+// L4D2 = 163;
 
-// Stocks: 157 (L4D1 = 107, L4D2 = 153)
-// left4dhooks_silver			41 stocks	(L4D1 = 34,		L4D2 = 41)
+// Stocks: 159 (L4D1 = 109, L4D2 = 155)
+// left4dhooks_silver			43 stocks	(L4D1 = 36,		L4D2 = 43)
 // left4dhooks_stocks			83 stocks	(L4D1 = 44,		L4D2 = 79)
 // left4dhooks_lux_library		34 stocks	(L4D1 = 30,		L4D2 = 34)
 
@@ -75,7 +75,7 @@
 
 
 
-public SharedPlugin __pl_l4dh = 
+public SharedPlugin __pl_l4dh =
 {
 	name = "left4dhooks",
 	file = "left4dhooks.smx",
@@ -150,6 +150,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_ForceSurvivalStart");
 	MarkNativeAsOptional("L4D2_ForceScavengeStart");
 	MarkNativeAsOptional("L4D2_IsTankInPlay");
+	MarkNativeAsOptional("L4D2_GetDirectorScriptScope");
 	MarkNativeAsOptional("L4D2_GetScriptValueInt");
 	MarkNativeAsOptional("L4D2_GetScriptValueFloat");
 	// MarkNativeAsOptional("L4D2_GetScriptValueString");
@@ -344,6 +345,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_ReviveSurvivor");
 	MarkNativeAsOptional("L4D_GetHighestFlowSurvivor");
 	MarkNativeAsOptional("L4D_GetInfectedFlowDistance");
+	MarkNativeAsOptional("L4D_CleanupPlayerState");
 	MarkNativeAsOptional("L4D_TakeOverZombieBot");
 	MarkNativeAsOptional("L4D_ReplaceWithBot");
 	MarkNativeAsOptional("L4D_CullZombie");
@@ -397,7 +399,8 @@ enum PointerType
 	POINTER_MELEEINFO		= 7,	// @g_MeleeWeaponInfoStore (L4D2 Only)
 	POINTER_EVENTMANAGER	= 8,	// pScriptedEventManager (L4D2 Only)
 	POINTER_SCAVENGEMODE	= 9,	// pScavengeMode (L4D2 Only)
-	POINTER_VERSUSMODE		= 10	// pVersusMode
+	POINTER_VERSUSMODE		= 10,	// pVersusMode
+	POINTER_SCRIPTVM		= 11	// @g_pScriptVM (L4D2 Only)
 }
 
 // Provided by "BHaType":
@@ -474,7 +477,7 @@ enum
 	NAV_BASE_PLAYERCLIP = 262144,
 	NAV_BASE_BREAKABLEWALL = 524288,
 	NAV_BASE_FLOW_BLOCKED = 134217728,
-	NAV_BASE_OUTSIDE_WORLD  = 268435456,
+	NAV_BASE_OUTSIDE_WORLD = 268435456,
 	NAV_BASE_MOSTLY_FLAT = 536870912,
 	NAV_BASE_HAS_ELEVATOR = 1073741824,
 	NAV_BASE_NAV_BLOCKER = -2147483648
@@ -1046,6 +1049,14 @@ forward void L4D_OnFirstSurvivorLeftSafeArea_PostHandled(int client);
  *
  * @noreturn
  */
+forward void L4D_OnForceSurvivorPositions_Pre();
+
+/**
+ * @brief Called whenever CDirector::OnForceSurvivorPositions is invoked
+ * @remarks Triggers after round start when Survivors are forced into starting positions, usually first map and finale escape start, does not trigger on all maps
+ *
+ * @noreturn
+ */
 forward void L4D_OnForceSurvivorPositions();
 
 /**
@@ -1112,6 +1123,7 @@ forward Action L4D_OnGetWalkTopSpeed(int target, float &retVal);
 /**
  * @brief Called whenever CDirector::GetScriptValue(const char*, int) is invoked
  * @remarks A script value is map specific
+ * @warning This forward may not fire on some keys due to C inline feature. Use L4D2_OnGetScriptValueInt instead to avoid the issue.
  *
  * @param key			the script's key name
  * @param retVal		what to override the return value with
@@ -1124,6 +1136,7 @@ forward Action L4D_OnGetScriptValueInt(const char[] key, int &retVal);
 /**
  * @brief Called whenever CDirector::GetScriptValue(const char*, float) is invoked
  * @remarks A script value is map specific
+ * @warning This forward may not fire on some keys due to C inline feature. Use L4D2_OnGetScriptValueFloat instead to avoid the issue.
  *
  * @param key			the script's key name
  * @param retVal		what to override the return value with
@@ -1136,6 +1149,7 @@ forward Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal);
 /**
  * @brief Called whenever CDirector::GetScriptValue(const char*, Vector) is invoked
  * @remarks A script value is map specific
+ * @warning This forward may not fire on some keys due to C inline feature. Use L4D2_OnGetScriptValueVector instead to avoid the issue.
  *
  * @param key			the script's key name
  * @param retVal		what to override the return value with
@@ -1149,6 +1163,7 @@ forward Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal);
 /**
  * @brief Called whenever CDirector::GetScriptValue(const char*, const char*, char*, int) is invoked
  * @remarks A script value is map specific
+ * @warning This forward may not fire on some keys due to C inline feature. Use L4D2_OnGetScriptValueString instead to avoid the issue.
  *
  * @param key			the script's key name
  * @param defaultVal	default key return, usually empty
@@ -1158,6 +1173,87 @@ forward Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal);
  */
 // L4D2 only.
 forward Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultVal, char retVal[128]);
+
+// These are used for the "L4D2_OnGetScriptValueVoid" forward, and interally for the other "L4D2_OnGetScriptValue*" forwards:
+enum fieldtype_t
+{
+	FIELD_VOID = 0,				// No type or value
+	FIELD_FLOAT = 1,			// Any floating point value
+	FIELD_VECTOR = 3,			// Any vector, QAngle, or AngularImpulse
+	FIELD_INTEGER = 5,			// Any integer or enum
+	FIELD_BOOLEAN = 6,			// boolean, implemented as an int, I may use this as a hint for compression
+	FIELD_CHARACTER = 8,		// a byte
+	FIELD_CSTRING = 31,
+	FIELD_UNSIGNED = 38,
+	FIELD_QANGLE = 40
+};
+
+enum struct VariantBuffer
+{
+	int m_int;
+	float m_float;
+	char m_string[256];
+	float m_vector[3];
+}
+
+/**
+ * @brief Called whenever CSquirrelVM::GetValue() is invoked
+ * @remarks A script value is map specific
+ * @remarks This is called when the searching key is not present in the Script VM.
+ * @remarks "retVal" accepts only 2 formats --- int:12345 or float:123.4
+ *
+ * @param key				the script's key name
+ * @param type				the data type being set in retVal
+ * @param retVal			what to override the return value with
+ * @param hScope			The script scope (table) this was called from
+ *							Use L4D2_GetDirectorScriptScope() if you want to make sure this was called by CDirector
+ *
+ * @return					Plugin_Handled to override return value, Plugin_Continue otherwise.
+ */
+// L4D2 only.
+forward Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, VariantBuffer retVal, int hScope);
+
+/**
+ * @brief Called whenever CSquirrelVM::GetValue() is invoked
+ * @remarks A script value is map specific
+ *
+ * @param key				the script's key name
+ * @param retVal			what to override the return value with
+ * @param hScope			The script scope (table) this was called from
+ *							Use L4D2_GetDirectorScriptScope() if you want to make sure this was called by CDirector
+ *
+ * @return					Plugin_Handled to override return value, Plugin_Continue otherwise.
+ */
+// L4D2 only.
+forward Action L4D2_OnGetScriptValueInt(const char[] key, int &retVal, int hScope);
+
+/**
+ * @brief Called whenever CSquirrelVM::GetValue() is invoked
+ * @remarks A script value is map specific
+ *
+ * @param key				the script's key name
+ * @param retVal			what to override the return value with
+ * @param hScope			The script scope (table) this was called from
+ *							Use L4D2_GetDirectorScriptScope() if you want to make sure this was called by CDirector
+ *
+ * @return					Plugin_Handled to override return value, Plugin_Continue otherwise.
+ */
+// L4D2 only.
+forward Action L4D2_OnGetScriptValueFloat(const char[] key, float &retVal, int hScope);
+
+/**
+ * @brief Called whenever CSquirrelVM::GetValue() is invoked
+ * @remarks A script value is map specific
+ *
+ * @param key				the script's key name
+ * @param retVal			what to override the return value with
+ * @param hScope			The script scope (table) this was called from
+ *							Use L4D2_GetDirectorScriptScope() if you want to make sure this was called by CDirector
+ *
+ * @return					Plugin_Handled to override return value, Plugin_Continue otherwise.
+ */
+// L4D2 only.
+forward Action L4D2_OnGetScriptValueVector(const char[] key, float retVal[3], int hScope);
 
 /**
  * @brief Called whenever CTerrorGameRules::HasConfigurableDifficultySetting() is invoked
@@ -2928,7 +3024,6 @@ native bool L4D_IsInLastCheckpoint(int client);
  * @brief Returns the entity index of the first saferoom door, if available.
  * @remarks This works by checking the saferoom door position against the maps flow distance selecting the door with 2000.0 (DOOR_RANGE_TOLLERANCE define) from map start.
  * @remarks Does not include doors with the DOOR_FLAG_IGNORE_USE flag. This flag is set by the "Safe Door Spam" plugin by Silvers for 0.1 seconds when someone attempts to open the saferoom door.
- 
  *
  * @return			-1 if none exists or entity index of saferoom door
  */
@@ -2938,7 +3033,6 @@ native int L4D_GetCheckpointFirst();
  * @brief Returns the entity index of the last saferoom door, if available.
  * @remarks This works by checking the saferoom door position against the maps flow distance selecting the door with 2000.0 (DOOR_RANGE_TOLLERANCE define) from map end.
  * @remarks Does not include doors with the DOOR_FLAG_IGNORE_USE flag. This flag is set by the "Safe Door Spam" plugin by Silvers for 0.1 seconds when someone attempts to open the saferoom door.
- 
  *
  * @return			-1 if none exists or entity index of saferoom door
  */
@@ -3104,7 +3198,7 @@ native void L4D2_UseAdrenaline(int client, float fTime = 15.0, bool heal = true)
  * @remarks Resets players stats for kills etc.
  * @remarks To preserve stats please view the code in "[L4D1 & L4D2] SM Respawn Improved" plugin by "Dragokas": https://forums.alliedmods.net/showthread.php?t=323220
  *
- * @param client	Client ID of the person to respawn	
+ * @param client	Client ID of the person to respawn
  *
  * @noreturn
  */
@@ -3122,7 +3216,7 @@ native bool L4D_SetHumanSpec(int bot, int client);
 
 /**
  * @brief To takeover a Survivor bot. First use "ChangeClientTeam" and change them to 0. Then call "L4D_SetHumanSpec" then call "L4D_TakeOverBot".
- * 
+ *
  * @param client	Client ID of who should takeover
  *
  * @return			True or false
@@ -3210,6 +3304,22 @@ native void L4D2_ForceScavengeStart();
  */
 // L4D2 only.
 native bool L4D2_IsTankInPlay();
+
+/**
+ * @brief Returns the directors script scope handle
+ * @remarks	Scope level
+ * 0 = DirectorScript
+ * 1 = MapScript
+ * 2 = LocalScript
+ * 3 = ChallengeScript
+ * 4 = DirectorOptionsScope
+ *
+ * @Param level		The scope level
+ *
+ * @return			Value of directors script scope
+ */
+// L4D2 only.
+native int L4D2_GetDirectorScriptScope(int level);
 
 /**
  * @brief Returns the value of the specified Director Variable key.
@@ -3423,7 +3533,7 @@ native bool L4D2_VScriptWrapper_NavAreaBuildPath(const float startPos[3], const 
 /**
  * @brief Compute distance between two areas.
  *
- * @return		-1 if can't reach 'endArea' from 'startArea'. 
+ * @return		-1 if can't reach 'endArea' from 'startArea'.
  */
 // L4D2 only.
 // Added as a demonstration and test, SDKCall is available, use "L4D2_NavAreaTravelDistance" instead.
@@ -5165,6 +5275,16 @@ native void L4D_ReplaceWithBot(int client);
  * @noreturn
  */
 native void L4D_CullZombie(int client);
+
+/**
+ * @brief Resets a players state equivalent to when they die
+ * @remarks does stuff like removing any pounces, stops reviving, stops healing, resets hang lighting, resets heartbeat and other sounds.
+ *
+ * @param client			Client ID to affect
+ *
+ * @noreturn
+ */
+native void L4D_CleanupPlayerState(int client);
 
 /**
  * @brief Sets a players zombie class, special infected can be alive and change!

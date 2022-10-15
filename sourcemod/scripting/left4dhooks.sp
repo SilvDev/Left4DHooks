@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.118"
+#define PLUGIN_VERSION		"1.119"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -114,7 +114,7 @@
 
 // ====================================================================================================
 // UPDATER
-#define UPDATE_URL  					  "https://raw.githubusercontent.com/SilvDev/Left4DHooks/main/sourcemod/updater.txt"
+#define UPDATE_URL					"https://raw.githubusercontent.com/SilvDev/Left4DHooks/main/sourcemod/updater.txt"
 
 native void Updater_AddPlugin(const char[] url);
 // ====================================================================================================
@@ -211,6 +211,8 @@ ArrayList g_aForwardNames;					// Stores Forward names
 ArrayList g_aUseLastIndex;					// Use last index
 ArrayList g_aForwardIndex;					// Stores Detour indexes
 ArrayList g_aForceDetours;					// Determines if a detour should be forced on without any forward using it
+ArrayList g_aDetourHookIDsPre;				// Hook IDs created by DynamicHook type detours
+ArrayList g_aDetourHookIDsPost;				// Hook IDs created by DynamicHook type detours
 int g_iSmallIndex;							// Index for each detour while created
 int g_iLargeIndex;							// Index for each detour while created
 bool g_bCreatedDetours;						// To determine first time creation of detours, or if enabling or disabling
@@ -249,6 +251,7 @@ Address g_pVanillaModeAddress;
 int g_iOff_LobbyReservation;
 int g_iOff_VersusStartTimer;
 int g_iOff_m_rescueCheckTimer;
+int g_iOff_m_iszScriptId;
 int g_iOff_SpawnTimer;
 int g_iOff_MobSpawnTimer;
 int g_iOff_VersusMaxCompletionScore;
@@ -306,6 +309,7 @@ Address g_pNavMesh;
 Address g_pZombieManager;
 Address g_pMeleeWeaponInfoStore;
 Address g_pWeaponInfoDatabase;
+Address g_pScriptVM;
 
 
 
@@ -326,10 +330,10 @@ ConVar g_hCvar_VScriptBuffer;
 ConVar g_hCvar_AddonsEclipse;
 ConVar g_hCvar_RescueDeadTime;
 ConVar g_hCvar_PillsDecay;
-// ConVar g_hCvar_PillsHealth;
 ConVar g_hCvar_Adrenaline;
 ConVar g_hCvar_Revives;
 ConVar g_hCvar_MPGameMode;
+DynamicHook g_hScriptHook;
 
 
 // Spitter acid projectile damage
@@ -662,7 +666,6 @@ public void OnPluginStart()
 		AutoExecConfig(true, "left4dhooks");
 		g_hCvar_AddonsEclipse.AddChangeHook(ConVarChanged_Cvars);
 
-		// g_hCvar_PillsHealth = FindConVar("pain_pills_health_value");
 		g_hCvar_Adrenaline = FindConVar("adrenaline_health_buffer");
 	} else {
 		g_hCvar_Revives = FindConVar("survivor_max_incapacitated_count");
@@ -1270,6 +1273,12 @@ public void OnMapStart()
 
 
 
+	// Load detours, first load from plugin start
+	if( !g_bCreatedDetours )
+		SetupDetours(g_hGameData);
+
+
+
 	// Benchmark
 	#if DEBUG
 	g_vProf = new Profiler();
@@ -1299,6 +1308,8 @@ public void OnMapStart()
 		g_bMapStarted = true;
 
 		GetGameMode(); // Get current game mode
+
+
 
 		// Precache Models, prevent crashing when spawning with SpawnSpecial()
 		for( int i = 0; i < sizeof(g_sModels1); i++ )
@@ -1365,6 +1376,8 @@ public void OnMapStart()
 			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalJockey",			1);
 			SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "TotalCharger",		1);
 		}
+
+
 
 		// Melee weapon IDs - They can change when switching map depending on what melee weapons are enabled
 		if( g_bLeft4Dead2 )

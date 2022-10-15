@@ -2288,7 +2288,7 @@
 			"CDirector::OnReleaseSurvivorPositions"
 			{
 				"library"	"server"
-				"linux"		"@_ZN9CDirector26OnReleaseSurvivorPositionsERK10CUtlVectorIP13CTerrorPlayer10CUtlMemoryIS2_iEE"
+				"linux"		"@_ZN8Director26OnReleaseSurvivorPositionsERK10CUtlVectorIP13CTerrorPlayer10CUtlMemoryIS2_iEE"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x57\x50\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B"
 				/* ? ? ? ? ? ? ? ? ? 8D ? ? ? 57 50 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? E8 ? ? ? ? 8B */
 				/* Search "ReleaseSurvivorPositions" bellow is target call. */
@@ -2952,6 +2952,18 @@
 				"windows"	"\x83\x2A\x2A\x56\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x57\x56"
 				/* 83 ? ? 56 8B ? 8B ? ? ? ? ? 57 56 */ // Found by SilverShot.
 				/* Search: "Tank Count = %d\n" xref easily matched */
+			}
+
+			/*
+			* CTerrorPlayer::CleanupPlayerState(CTerrorPlayer *this)
+			*/
+			"CTerrorPlayer::CleanupPlayerState"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer18CleanupPlayerStateEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x56\xC7\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x2A\x2A\xC7"
+				/* ? ? ? ? ? ? 8B ? 56 C7 ? ? ? ? ? ? ? ? ? 8D ? ? ? ? ? C7 */ // Found by SilverShot.
+				/* Search "Tongue letting go on death." the function with "Player.Heartbeat" at the bottom */
 			}
 
 			"CTerrorPlayer::SetClass"

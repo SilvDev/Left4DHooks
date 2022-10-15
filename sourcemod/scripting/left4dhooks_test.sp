@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.118"
+#define PLUGIN_VERSION		"1.119"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 158;
+		g_iForwardsMax = 163;
 	else
-		g_iForwardsMax = 122;
+		g_iForwardsMax = 123;
 
 	return APLRes_Success;
 }
@@ -311,6 +311,21 @@ Action sm_l4dd(int client, int args)
 
 
 	/*
+	PrintToServer("L4D_CleanupPlayerState", L4D_CleanupPlayerState(client)); // WORKING
+
+	// WORKING
+	PrintToServer("L4D2_GetDirectorScriptScope 0 = %d",L4D2_GetDirectorScriptScope(0));
+	PrintToServer("L4D2_GetDirectorScriptScope 1 = %d",L4D2_GetDirectorScriptScope(1));
+	PrintToServer("L4D2_GetDirectorScriptScope 2 = %d",L4D2_GetDirectorScriptScope(2));
+	PrintToServer("L4D2_GetDirectorScriptScope 3 = %d",L4D2_GetDirectorScriptScope(3));
+	PrintToServer("L4D2_GetDirectorScriptScope 4 = %d",L4D2_GetDirectorScriptScope(4));
+	*/
+
+
+
+
+
+	/*
 	float vPos[3];
 	GetClientAbsOrigin(client, vPos);
 	Address navarea = L4D_GetNearestNavArea(vPos, 100.0);
@@ -405,6 +420,8 @@ Action sm_l4dd(int client, int args)
 	// STOCKS - left4dhooks_silver
 	// =========================
 	/*
+	StopUsingMinigun(client);
+
 	// Jockey tests
 	int survivor = GetRandomSurvivor(1, 0);
 	if( survivor )
@@ -2347,6 +2364,18 @@ public void L4D_OnFirstSurvivorLeftSafeArea_PostHandled(int client)
 	}
 }
 
+public void L4D_OnForceSurvivorPositions_Pre()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnForceSurvivorPositions_Pre\"");
+	}
+}
+
 public void L4D_OnForceSurvivorPositions()
 {
 	static int called;
@@ -3502,7 +3531,7 @@ public Action L4D_Molotov_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3519,7 +3548,7 @@ public void L4D_Molotov_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate_Post\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3531,7 +3560,7 @@ public void L4D_Molotov_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_Molotov_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_Molotov_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3543,7 +3572,7 @@ public Action L4D_PipeBomb_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3560,7 +3589,7 @@ public void L4D_PipeBomb_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3572,7 +3601,7 @@ public void L4D_PipeBomb_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3584,7 +3613,7 @@ public Action L4D2_VomitJar_Detonate(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 
 	// WORKS - block grenade detonating
@@ -3601,7 +3630,7 @@ public void L4D2_VomitJar_Detonate_Post(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate_Post\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate_Post\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3613,7 +3642,7 @@ public void L4D2_VomitJar_Detonate_PostHandled(int entity, int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_VomitJar_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client > 0 ? client : 0, client > 0 ? client : 0, entity);
+		ForwardCalled("\"L4D2_VomitJar_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
 }
 
@@ -3893,6 +3922,89 @@ public Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultV
 		// retVal = "Event.Tank";
 		// return Plugin_Handled;
 	// }
+
+	return Plugin_Continue;
+}
+
+public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, VariantBuffer retVal, int m_iszScriptId)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnGetScriptValueVoid\" %s. m_iszScriptId = %d", key, m_iszScriptId);
+	}
+
+	// WORKS - example setting temporary health decay rate:
+	/*
+	if( strcmp(key, "TempHealthDecayRate") == 0 )
+	{
+		static float ress = -1.0;
+		if( retVal.m_float != ress )
+		{
+			ress = retVal.m_float;
+		}
+
+		// Must specify the type of value being set, see left4dhooks include file for the "fieldtype_t" and "VariantBuffer" lists.
+		type = FIELD_FLOAT;
+		retVal.m_float = 2.0;
+		return Plugin_Handled;
+	}
+	// */
+
+	// WORKS - green gascans on back from map c4m*
+	/*
+	if( strcmp(key, "GasCansOnBacks") == 0 )
+	{
+		type = FIELD_INTEGER;
+		retVal.m_int = 1;
+		return Plugin_Handled;
+	}
+	// */
+
+	return Plugin_Continue;
+}
+
+public Action L4D2_OnGetScriptValueInt(const char[] key, int &retVal, int m_iszScriptId)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnGetScriptValueInt\" %s. %d. m_iszScriptId = %d", key, retVal, m_iszScriptId);
+	}
+
+	return Plugin_Continue;
+}
+
+public Action L4D2_OnGetScriptValueFloat(const char[] key, float &retVal, int m_iszScriptId)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnGetScriptValueFloat\" %s. %f. m_iszScriptId = %d", key, retVal, m_iszScriptId);
+	}
+
+	return Plugin_Continue;
+}
+
+public Action L4D2_OnGetScriptValueVector(const char[] key, float retVal[3], int m_iszScriptId)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnGetScriptValueVector\" %s. %f %f %f. m_iszScriptId = %d", key, retVal[0], retVal[1], retVal[2], m_iszScriptId);
+	}
 
 	return Plugin_Continue;
 }

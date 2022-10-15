@@ -71,6 +71,7 @@ void SetupForwardsNatives()
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea							= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea",					ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_Post						= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_Post",				ET_Event, Param_Cell);
 	g_hFWD_CDirector_OnFirstSurvivorLeftSafeArea_PostHandled				= new GlobalForward("L4D_OnFirstSurvivorLeftSafeArea_PostHandled",		ET_Event, Param_Cell);
+	g_hFWD_CDirector_OnForceSurvivorPositions_Pre							= new GlobalForward("L4D_OnForceSurvivorPositions_Pre",					ET_Event);
 	g_hFWD_CDirector_OnForceSurvivorPositions								= new GlobalForward("L4D_OnForceSurvivorPositions",						ET_Event);
 	g_hFWD_CDirector_OnReleaseSurvivorPositions								= new GlobalForward("L4D_OnReleaseSurvivorPositions",					ET_Event);
 	g_hFWD_SpeakResponseConceptFromEntityIO_Pre								= new GlobalForward("L4D_OnSpeakResponseConcept_Pre",					ET_Event, Param_Cell);
@@ -204,6 +205,10 @@ void SetupForwardsNatives()
 		g_hFWD_CDirector_GetScriptValueFloat								= new GlobalForward("L4D_OnGetScriptValueFloat",						ET_Event, Param_String, Param_FloatByRef);
 		// g_hFWD_CDirector_GetScriptValueVector								= new GlobalForward("L4D_OnGetScriptValueVector",						ET_Event, Param_String, Param_Array);
 		g_hFWD_CDirector_GetScriptValueString								= new GlobalForward("L4D_OnGetScriptValueString",						ET_Event, Param_String, Param_String, Param_String);
+		g_hFWD_CSquirrelVM_GetValue_Void									= new GlobalForward("L4D2_OnGetScriptValueVoid",						ET_Event, Param_String, Param_CellByRef, Param_Array, Param_Cell);
+		g_hFWD_CSquirrelVM_GetValue_Int										= new GlobalForward("L4D2_OnGetScriptValueInt",							ET_Event, Param_String, Param_CellByRef, Param_Cell);
+		g_hFWD_CSquirrelVM_GetValue_Float									= new GlobalForward("L4D2_OnGetScriptValueFloat",						ET_Event, Param_String, Param_FloatByRef, Param_Cell);
+		g_hFWD_CSquirrelVM_GetValue_Vector									= new GlobalForward("L4D2_OnGetScriptValueVector",						ET_Event, Param_String, Param_Array, Param_Cell);
 		g_hFWD_CTerrorGameRules_HasConfigurableDifficultySetting			= new GlobalForward("L4D_OnHasConfigurableDifficulty",					ET_Event, Param_CellByRef);
 		g_hFWD_CTerrorGameRules_HasConfigurableDifficultySetting_Post		= new GlobalForward("L4D_OnHasConfigurableDifficulty_Post",				ET_Event, Param_Cell);
 		g_hFWD_CTerrorGameRules_GetSurvivorSet								= new GlobalForward("L4D_OnGetSurvivorSet",								ET_Event, Param_CellByRef);
@@ -298,6 +303,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_IsTankInPlay",		 						Native_CDirector_IsTankInPlay);
 	CreateNative("L4D2_IsReachable",		 						Native_SurvivorBot_IsReachable);
 	CreateNative("L4D2_GetFurthestSurvivorFlow",		 			Native_CDirector_GetFurthestSurvivorFlow);
+	CreateNative("L4D2_GetDirectorScriptScope",						Native_GetDirectorScriptScope);
 	CreateNative("L4D2_GetScriptValueInt",							Native_CDirector_GetScriptValueInt);
 	CreateNative("L4D2_GetScriptValueFloat",						Native_CDirector_GetScriptValueFloat);
 	// CreateNative("L4D2_GetScriptValueString",						Native_CDirector_GetScriptValueString); // Crashes when the key has not been set
@@ -490,6 +496,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_ReplaceWithBot",								Native_CTerrorPlayer_ReplaceWithBot);
 	CreateNative("L4D_CullZombie",									Native_CTerrorPlayer_CullZombie);
 	CreateNative("L4D_SetClass",									Native_CTerrorPlayer_SetClass);
+	CreateNative("L4D_CleanupPlayerState",							Native_CTerrorPlayer_CleanupPlayerState);
 	CreateNative("L4D_MaterializeFromGhost",						Native_CTerrorPlayer_MaterializeFromGhost);
 	CreateNative("L4D_BecomeGhost",									Native_CTerrorPlayer_BecomeGhost);
 	CreateNative("L4D_GoAwayFromKeyboard",							Native_CTerrorPlayer_GoAwayFromKeyboard);

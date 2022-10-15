@@ -1,3 +1,23 @@
+1.119 (15-Oct-2022)
+	- L4D2: Added a new pointer "POINTER_SCRIPTVM" to the "L4D_GetPointer" native.
+	- L4D2: Added native "L4D2_GetDirectorScriptScope" to get the directors script scope.
+	- L4D2: Added forwards "L4D2_OnGetScriptValueInt", "L4D2_OnGetScriptValueFloat", "L4D2_OnGetScriptValueVector" and "L4D2_OnGetScriptValueVoid" to use a new system of detecting script values. Thanks to "Forgetest" for coding.
+	- L4D2: Added forward "L4D_OnForceSurvivorPositions_Pre" - pre relative to "L4D_OnForceSurvivorPositions" forward. Requested by "gabuch2".
+	- L4D2: Changed native "L4D2_UseAdrenaline" to fire the event even when not healing. Thanks to "HarryPotter" for reporting.
+	- L4D1 Linux: fixed forward "L4D_OnReleaseSurvivorPositions" using the wrong signature. Thanks to "HarryPotter" for reporting.
+	- Added stocks "IsUsingMinigun" and "StopUsingMinigun" in the "left4dhooks_silver.inc" include file. Requested by "knifeeeee".
+	- Added native "L4D_CleanupPlayerState" to clean up a players state. Requested by "knifeeeee".
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks_silver.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.118 (03-Oct-2022)
 	- Fixed forward "L4D_OnReleaseSurvivorPositions" not being detected when used. Thanks to "gabuch2" for reporting.
 

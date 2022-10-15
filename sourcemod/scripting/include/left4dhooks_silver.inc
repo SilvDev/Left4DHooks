@@ -245,6 +245,41 @@ stock int L4D_EntityParent(int entity)
 	return GetEntPropEnt(entity, Prop_Data, "m_pParent");
 }
 
+/**
+ * @brief Checks if a player is using any mounted weapon (minigun or 50cal)
+ *
+ * @param client			Client to check
+ *
+ * @return true if using a mounted weapon, false otherwise
+ */
+stock bool IsUsingMinigun(int client)
+{
+	return ((GetEntProp(client, Prop_Send, "m_usingMountedWeapon") > 0) || (GetEntProp(client, Prop_Send, g_iEngine == Engine_Left4Dead2 ? "m_usingMountedGun" : "m_usingMinigun") > 0));
+}
+
+/**
+ * @brief Stops a client using a mounted weapon
+ *
+ * @param client			Entity index to check
+ *
+ * @return entity index or -1 if none
+ */
+stock void StopUsingMinigun(int client)
+{
+	if( IsUsingMinigun(client) )
+	{
+		int entity = GetEntPropEnt(client, Prop_Send, "m_hUseEntity");
+		if( entity > 0 && entity < 2048 )
+		{
+			SetEntPropEnt(entity, Prop_Send, "m_owner", -1);
+		}
+
+		SetEntProp(client, Prop_Send, g_iEngine == Engine_Left4Dead2 ? "m_usingMountedGun" : "m_usingMinigun", 0);
+		SetEntProp(client, Prop_Send, "m_usingMountedWeapon", 0);
+		SetEntPropEnt(client, Prop_Send, "m_hUseEntity", -1);
+	}
+}
+
 
 
 // ==================================================
