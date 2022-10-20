@@ -311,17 +311,55 @@ Action sm_l4dd(int client, int args)
 
 
 	/*
-	PrintToServer("L4D_CleanupPlayerState", L4D_CleanupPlayerState(client)); // WORKING
+	if( g_bLeft4Dead2 )
+	{
+		int target = GetRandomInfected(1, 1);
+		if( target )
+		{
+			float vPos[3];
+			GetClientEyePosition(target, vPos);
+			PrintToChatAll("L4D2_IsVisibleToPlayer %d", L4D2_IsVisibleToPlayer(client, 2, 3, 0, vPos)); // WORKS
+		}
+	}
+	// */
 
-	// WORKING
-	PrintToServer("L4D2_GetDirectorScriptScope 0 = %d",L4D2_GetDirectorScriptScope(0));
-	PrintToServer("L4D2_GetDirectorScriptScope 1 = %d",L4D2_GetDirectorScriptScope(1));
-	PrintToServer("L4D2_GetDirectorScriptScope 2 = %d",L4D2_GetDirectorScriptScope(2));
-	PrintToServer("L4D2_GetDirectorScriptScope 3 = %d",L4D2_GetDirectorScriptScope(3));
-	PrintToServer("L4D2_GetDirectorScriptScope 4 = %d",L4D2_GetDirectorScriptScope(4));
-	*/
 
 
+	/*
+	if( g_bLeft4Dead2 )
+	{
+		int bot = GetRandomSurvivor(1, 1);
+		int target = GetRandomInfected(1, 1);
+
+		L4D2_CommandABot(bot, 0, BOT_CMD_MOVE, view_as<float>({-3612.902832, 2533.870605, 316.031250})); // WORKS
+
+		L4D2_CommandABot(bot, 0, BOT_CMD_RESET); // WORKS
+		L4D2_CommandABot(bot, target, BOT_CMD_ATTACK); // WORKS
+
+		// Retreat from Tank
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsClientInGame(i) && GetClientTeam(i) == 3 && IsPlayerAlive(i) && L4D2_GetPlayerZombieClass(i) == L4D2_ZOMBIE_CLASS_TANK )
+			{
+				L4D2_CommandABot(bot, target, BOT_CMD_RETREAT); // WORKS
+				break;
+			}
+		}
+
+
+
+		// PrintToServer("L4D_CleanupPlayerState", L4D_CleanupPlayerState(client)); // WORKING
+
+
+
+		// WORKING
+		// PrintToServer("L4D2_GetDirectorScriptScope 0 = %d",L4D2_GetDirectorScriptScope(0));
+		// PrintToServer("L4D2_GetDirectorScriptScope 1 = %d",L4D2_GetDirectorScriptScope(1));
+		// PrintToServer("L4D2_GetDirectorScriptScope 2 = %d",L4D2_GetDirectorScriptScope(2));
+		// PrintToServer("L4D2_GetDirectorScriptScope 3 = %d",L4D2_GetDirectorScriptScope(3));
+		// PrintToServer("L4D2_GetDirectorScriptScope 4 = %d",L4D2_GetDirectorScriptScope(4));
+	}
+	// */
 
 
 
@@ -3926,7 +3964,7 @@ public Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultV
 	return Plugin_Continue;
 }
 
-public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, VariantBuffer retVal, int m_iszScriptId)
+public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, VariantBuffer retVal, int hScope)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3934,7 +3972,7 @@ public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, Var
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnGetScriptValueVoid\" %s. m_iszScriptId = %d", key, m_iszScriptId);
+		ForwardCalled("\"L4D2_OnGetScriptValueVoid\" \"%s\". hScope = %d", key, hScope);
 	}
 
 	// WORKS - example setting temporary health decay rate:
@@ -3967,7 +4005,7 @@ public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, Var
 	return Plugin_Continue;
 }
 
-public Action L4D2_OnGetScriptValueInt(const char[] key, int &retVal, int m_iszScriptId)
+public Action L4D2_OnGetScriptValueInt(const char[] key, int &retVal, int hScope)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3975,13 +4013,13 @@ public Action L4D2_OnGetScriptValueInt(const char[] key, int &retVal, int m_iszS
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnGetScriptValueInt\" %s. %d. m_iszScriptId = %d", key, retVal, m_iszScriptId);
+		ForwardCalled("\"L4D2_OnGetScriptValueInt\" \"%s\" {%d}. hScope = %d", key, retVal, hScope);
 	}
 
 	return Plugin_Continue;
 }
 
-public Action L4D2_OnGetScriptValueFloat(const char[] key, float &retVal, int m_iszScriptId)
+public Action L4D2_OnGetScriptValueFloat(const char[] key, float &retVal, int hScope)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3989,13 +4027,13 @@ public Action L4D2_OnGetScriptValueFloat(const char[] key, float &retVal, int m_
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnGetScriptValueFloat\" %s. %f. m_iszScriptId = %d", key, retVal, m_iszScriptId);
+		ForwardCalled("\"L4D2_OnGetScriptValueFloat\" \"%s\" {%f}. hScope = %d", key, retVal, hScope);
 	}
 
 	return Plugin_Continue;
 }
 
-public Action L4D2_OnGetScriptValueVector(const char[] key, float retVal[3], int m_iszScriptId)
+public Action L4D2_OnGetScriptValueVector(const char[] key, float retVal[3], int hScope)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4003,7 +4041,7 @@ public Action L4D2_OnGetScriptValueVector(const char[] key, float retVal[3], int
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnGetScriptValueVector\" %s. %f %f %f. m_iszScriptId = %d", key, retVal[0], retVal[1], retVal[2], m_iszScriptId);
+		ForwardCalled("\"L4D2_OnGetScriptValueVector\" \"%s\" {%f %f %f}. hScope = %d", key, retVal[0], retVal[1], retVal[2], hScope);
 	}
 
 	return Plugin_Continue;

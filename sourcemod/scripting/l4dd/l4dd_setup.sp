@@ -267,6 +267,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_AngularVelocity",		 						Native_CBaseEntity_ApplyLocalAngularVelocityImpulse);
 	CreateNative("L4D_GetRandomPZSpawnPosition",		 			Native_ZombieManager_GetRandomPZSpawnPosition);
 	CreateNative("L4D_FindRandomSpot",		 						Native_TerrorNavArea_FindRandomSpot);
+	CreateNative("L4D2_IsVisibleToPlayer",		 					Native_IsVisibleToPlayer);
 	CreateNative("L4D_GetNearestNavArea",		 					Native_CNavMesh_GetNearestNavArea);
 	CreateNative("L4D_GetLastKnownArea",		 					Native_CTerrorPlayer_GetLastKnownArea);
 	CreateNative("L4D_HasAnySurvivorLeftSafeArea",		 			Native_CDirector_HasAnySurvivorLeftSafeArea);
@@ -291,6 +292,8 @@ void SetupForwardsNatives()
 
 	// L4D2 only:
 	CreateNative("L4D2_AreWanderersAllowed",						Native_CDirector_AreWanderersAllowed);
+	CreateNative("L4D2_GetScriptScope",								Native_GetScriptScope);
+	CreateNative("L4D2_GetVScriptEntity",							Native_GetVScriptEntity);
 	CreateNative("L4D2_ExecVScriptCode",							Native_ExecVScriptCode);
 	CreateNative("L4D2_GetVScriptOutput",							Native_GetVScriptOutput);
 	CreateNative("L4D2_SpitterPrj",		 							Native_CSpitterProjectile_Create);
@@ -309,6 +312,7 @@ void SetupForwardsNatives()
 	// CreateNative("L4D2_GetScriptValueString",						Native_CDirector_GetScriptValueString); // Crashes when the key has not been set
 	CreateNative("L4D2_NavAreaTravelDistance",		 				Native_NavAreaTravelDistance);
 	CreateNative("L4D2_NavAreaBuildPath",							Native_NavAreaBuildPath);
+	CreateNative("L4D2_CommandABot",								Native_CommandABot);
 
 	CreateNative("L4D2_VScriptWrapper_GetMapNumber",				Native_VS_GetMapNumber);
 	CreateNative("L4D2_VScriptWrapper_HasEverBeenInjured",			Native_VS_HasEverBeenInjured);

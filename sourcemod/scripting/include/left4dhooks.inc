@@ -58,9 +58,9 @@
 
 
 
-// Natives: 233
+// Natives: 237
 // L4D1 = 29 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 49 [silvers - mine!] + 4 [anim] = 139
-// L4D2 = 61 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 87 [silvers - mine!] + 4 [anim] = 232
+// L4D2 = 65 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 91 [silvers - mine!] + 4 [anim] = 236
 
 // Forwards: 166
 // L4D1 = 123;
@@ -114,6 +114,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetLastKnownArea");
 	MarkNativeAsOptional("L4D2_GetFurthestSurvivorFlow");
 	MarkNativeAsOptional("L4D_FindRandomSpot");
+	MarkNativeAsOptional("L4D2_IsVisibleToPlayer");
 	MarkNativeAsOptional("L4D_HasAnySurvivorLeftSafeArea");
 	MarkNativeAsOptional("L4D_IsAnySurvivorInStartArea");
 	MarkNativeAsOptional("L4D_IsAnySurvivorInCheckpoint");
@@ -135,6 +136,8 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetEntityFromAddress");
 	MarkNativeAsOptional("L4D_ReadMemoryString");
 	MarkNativeAsOptional("L4D_GetServerOS");
+	MarkNativeAsOptional("L4D2_GetScriptScope");
+	MarkNativeAsOptional("L4D2_GetVScriptEntity");
 	MarkNativeAsOptional("L4D2_ExecVScriptCode");
 	MarkNativeAsOptional("L4D2_GetVScriptOutput");
 	MarkNativeAsOptional("L4D2_SpitterPrj");
@@ -156,6 +159,7 @@ public void __pl_l4dh_SetNTVOptional()
 	// MarkNativeAsOptional("L4D2_GetScriptValueString");
 	MarkNativeAsOptional("L4D2_NavAreaTravelDistance");
 	MarkNativeAsOptional("L4D2_NavAreaBuildPath");
+	MarkNativeAsOptional("L4D2_CommandABot");
 	MarkNativeAsOptional("L4D2_GetSurvivorSetMod");
 	MarkNativeAsOptional("L4D2_GetSurvivorSetMap");
 	MarkNativeAsOptional("L4D2_HasConfigurableDifficultySetting");
@@ -2764,6 +2768,26 @@ native int L4D_ReadMemoryString(Address addy, char[] buffer, int maxlength);
 native int L4D_GetServerOS();
 
 /**
+* @brief Returns an entities script scope (HSCRIPT)
+*
+* @param	entity		The entity to retrieve it's script scope
+*
+* @return	Script scope or 0 if none.
+*/
+// L4D2 only.
+native int L4D2_GetScriptScope(int entity);
+
+/**
+* @brief Creates or uses an existing "logic_script" entity that is created by Left4DHooks.
+* @remarks Do NOT use entity outputs as this entity is shared by other plugins.
+*
+* @return	VScript "logic_script" entity index
+* @error	0 on error.
+*/
+// L4D2 only.
+native int L4D2_GetVScriptEntity();
+
+/**
 * @brief Runs a specified VScript code.
 * @remarks Saves having to create an entity. The entity can remain alive and used again...
 * @remarks unless the core plugins define KILL_VSCRIPT is changed and the plugin recompiled.
@@ -2982,6 +3006,19 @@ native float L4D2_GetFurthestSurvivorFlow();
 native void L4D_FindRandomSpot(int NavArea, float vecPos[3]);
 
 /**
+ * @brief Checks if a player is visible to a specified position. Should be slightly faster than using TR_TraceRayFilterEx.
+ *
+ * @param client			Client to check visibility from
+ * @param vecPos			The vector position of the target location
+ * @param team				The team of the client, can possibly pass 0 to 3
+ * @param team_target		Target point team, if it is 0, the client's angle will be considered
+ * @param NavArea			NavArea of ​​the target, or 0 to automatically get with GetNearestNavArea
+ *
+ * @return					True if visible, false otherwise
+ */
+native bool L4D2_IsVisibleToPlayer(int client, int team, int team_target, int NavArea, float vecPos[3]);
+
+/**
  * @brief Returns true when any survivor has left the starting area and true in Versus when the saferoom door automatically opens.
  *
  * @return			True if a survivor has left the starting area. False otherwise.
@@ -3073,10 +3110,34 @@ native float L4D2_NavAreaTravelDistance(float startPos[3], float endPos[3], bool
  * @param		flMaxPathLength		Maximum distance allowed between the two points
  * @param		teamID				Which team to validate the path for
  * @param		ignoreNavBlockers	Should nav blockers be ignored or not
+ *
  * @return		Returns true if a path exists, false if not or on script error.
  */
 // L4D2 only.
 native bool L4D2_NavAreaBuildPath(Address nav_startPos, Address nav_endPos, float flMaxPathLength, int teamID, bool ignoreNavBlockers);
+
+// Used by "L4D2_CommandABot" native:
+enum BOT_CMD
+{
+	BOT_CMD_ATTACK = 0,		// Force the bot to attack a specific target, even bypassing CTerrorPlayer::SetSenseFlags (DirectorScript.BOT_CANT_SEE).
+	BOT_CMD_MOVE = 1,		// Force the bot to move to a specific location, which then they will do it unconditionally without performing any other AI behaviours controlled by themselves.
+							// This means that Survivor Bots and most player-controllable Special Infected won't attack anything when commanded, but Common Infected still automatically attack enemies if they close in enough.
+	BOT_CMD_RETREAT = 2,	// Force the bot to retreat from a target entity. Only works when used on Survivor Bots, and if target is a Tank.
+	BOT_CMD_RESET = 3		// Removes the active bot command and lets the AI resume controlling the bot.
+}
+
+/**
+ * @brief Uses the VScript "CommandABot" function to command a bot to attack, move, retreat or reset previous command
+ *
+ * @param		entity			The bot or infected to command
+ * @param		target			The Special Infected to target (used for types "BOT_CMD_ATTACK" and "BOT_CMD_RETREAT")
+ * @param		type			Type of command (see the "BOT_CMD" enum)
+ * @param		vecPos			Move to this location (Used for type "BOT_CMD_MOVE")
+ *
+ * @return		Returns false when unable to perform, true otherwise.
+ */
+// L4D2 only.
+native bool L4D2_CommandABot(int entity, int target, BOT_CMD type, float vecPos[3] = NULL_VECTOR);
 
 /**
  * @brief Returns if players can control infected.
@@ -3489,6 +3550,7 @@ native bool L4D2_VScriptWrapper_IsDying(int client);
  * @return				True on success (does not guarantee effect turned on), false on script error.
  */
 // L4D2 only.
+#pragma deprecated Use L4D2_UseAdrenaline native instead (kept here for speed comparison)
 native bool L4D2_VScriptWrapper_UseAdrenaline(int client, float time);
 
 /**
@@ -3527,7 +3589,7 @@ native any L4D2_VScriptWrapper_GetSenseFlags(int bot);
  * @return		Returns true if a path exists, false if not or on script error.
  */
 // L4D2 only.
-#pragma deprecated Use L4D2_NavAreaBuildPath instead (kept here for speed comparison)
+#pragma deprecated Use L4D2_NavAreaBuildPath native instead (kept here for speed comparison)
 native bool L4D2_VScriptWrapper_NavAreaBuildPath(const float startPos[3], const float endPos[3], float flMaxPathLength, bool checkLOS, bool checkGround, int teamID, bool ignoreNavBlockers);
 
 /**

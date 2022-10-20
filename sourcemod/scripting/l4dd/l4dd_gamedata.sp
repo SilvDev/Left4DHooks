@@ -41,13 +41,12 @@ void LoadGameDataRules(GameData hGameData)
 
 	if( g_bLeft4Dead2 )
 	{
-		static bool bLoaded;
-		if( !bLoaded )
-		{
-			g_pScriptVM = hGameData.GetAddress("L4DD::ScriptVM");
-			ValidateAddress(g_pScriptVM, "g_pScriptVM", true);
-			bLoaded = true;
-		}
+		if( g_iScriptVMDetourIndex )
+			g_aDetoursHooked.Set(g_iScriptVMDetourIndex, 0);
+
+		g_pScriptVM = hGameData.GetAddress("L4DD::ScriptVM");
+
+		ValidateAddress(g_pScriptVM, "g_pScriptVM", true);
 	}
 }
 
@@ -246,6 +245,25 @@ void LoadGameData()
 		g_hSDK_TerrorNavArea_FindRandomSpot = EndPrepSDKCall();
 		if( g_hSDK_TerrorNavArea_FindRandomSpot == null )
 			LogError("Failed to create SDKCall: \"TerrorNavArea::FindRandomSpot\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Static);
+	if( !PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "IsVisibleToPlayer") )
+	{
+		LogError("Failed to find signature: \"IsVisibleToPlayer\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
+		PrepSDKCall_AddParameter(SDKType_CBasePlayer, SDKPass_Pointer);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer);
+		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Pointer);
+		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+		g_hSDK_IsVisibleToPlayer = EndPrepSDKCall();
+		if( g_hSDK_IsVisibleToPlayer == null)
+				LogError("Failed to create SDKCall: \"IsVisibleToPlayer\" (%s)", g_sSystem);
 	}
 
 	StartPrepSDKCall(SDKCall_Raw);

@@ -75,6 +75,7 @@ Handle g_hSDK_ZombieManager_GetRandomPZSpawnPosition;
 Handle g_hSDK_NavAreaBuildPath_ShortestPathCost;
 Handle g_hSDK_CNavMesh_GetNearestNavArea;
 Handle g_hSDK_TerrorNavArea_FindRandomSpot;
+Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
 Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
 // Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
@@ -551,6 +552,29 @@ any Native_VS_NavAreaTravelDistance(Handle plugin, int numParams) // Native "L4D
 // ==================================================
 // VSCRIPT NATIVES
 // ==================================================
+int g_iLogicScript;
+
+int Native_GetScriptScope(Handle plugin, int numParams) // Native "L4D2_GetScriptScope"
+{
+	int entity = GetNativeCell(1);
+
+	Address pEntity = GetEntityAddress(entity);
+	int m_iszScriptId = LoadFromAddress(pEntity + g_pScriptId, NumberType_Int32);
+	if( m_iszScriptId == -1 ) m_iszScriptId = 0;
+
+	return m_iszScriptId;
+}
+
+int Native_GetVScriptEntity(Handle plugin, int numParams) // Native "L4D2_GetVScriptEntity"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	bool success = GetVScriptEntity();
+	if( !success ) return 0;
+
+	return EntRefToEntIndex(g_iLogicScript);
+}
+
 int Native_ExecVScriptCode(Handle plugin, int numParams) // Native "L4D2_ExecVScriptCode"
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
@@ -590,10 +614,10 @@ int Native_GetVScriptOutput(Handle plugin, int numParams) // Native "L4D2_GetVSc
 // ==================================================
 // VSCRIPT - ENTITY / EXEC / OUTPUT
 // ==================================================
-int g_iLogicScript;
-
 bool GetVScriptEntity()
 {
+	if( !g_bMapStarted ) return false;
+
 	if( !g_iLogicScript || EntRefToEntIndex(g_iLogicScript) == INVALID_ENT_REFERENCE )
 	{
 		g_iLogicScript = CreateEntityByName("logic_script");
@@ -925,6 +949,24 @@ int Native_TerrorNavArea_FindRandomSpot(Handle plugin, int numParams) // Native 
 	SetNativeArray(2, vPos, sizeof(vPos));
 
 	return 0;
+}
+
+int Native_IsVisibleToPlayer(Handle plugin, int numParams) // Native "L4D2_IsVisibleToPlayer"
+{
+	ValidateNatives(g_hSDK_IsVisibleToPlayer, "IsVisibleToPlayer");
+
+	float vPos[3];
+	int client = GetNativeCell(1);
+	int team = GetNativeCell(2);
+	int team_target = GetNativeCell(3);
+	int area = GetNativeCell(4);
+	GetNativeArray(5, vPos, sizeof(vPos));
+
+	//PrintToServer("#### CALL g_hSDK_IsVisibleToPlayer");
+	if( SDKCall(g_hSDK_IsVisibleToPlayer, vPos, client, team, team_target, 0.0, 0, area, true) )
+		return true;
+
+	return false;
 }
 
 int Native_CDirector_HasAnySurvivorLeftSafeArea(Handle plugin, int numParams) // Native "L4D_HasAnySurvivorLeftSafeArea"
@@ -1607,6 +1649,47 @@ int Native_NavAreaBuildPath(Handle plugin, int numParams) // Native "L4D2_NavAre
 	}
 
 	return false;
+}
+
+int Native_CommandABot(Handle plugin, int numParams) // Native "L4D2_CommandABot"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	// Params
+	int entity = GetNativeCell(1);
+	int target = GetNativeCell(2);
+	int type = GetNativeCell(3);
+
+	// Set target
+	static char sTemp[128];
+	static char sTarget[32];
+	sTarget[0] = 0;
+
+	if( target > MaxClients )
+		FormatEx(sTarget, sizeof(sTarget), "EntIndexToHScript(%d)", target);
+	else if( target > 0 )
+		FormatEx(sTarget, sizeof(sTarget), "GetPlayerFromUserID(%d)", GetClientUserId(target));
+
+	// Command
+	switch( type )
+	{
+		case 0:	FormatEx(sTemp, sizeof(sTemp), "CommandABot({cmd=0, bot=self, target=%s})", sTarget);
+		case 1:
+		{
+			float vPos[3];
+			GetNativeArray(4, vPos, sizeof(vPos));
+			FormatEx(sTemp, sizeof(sTemp), "CommandABot({cmd=1, bot=self, pos=Vector(%f,%f,%f)})", vPos[0], vPos[1], vPos[2]);
+		}
+		case 2:	FormatEx(sTemp, sizeof(sTemp), "CommandABot({cmd=2, bot=self, target=%s})", sTarget);
+		case 3:	sTemp = "CommandABot({cmd=3, bot=self})";
+		default: return false;
+	}
+
+	// Execute
+	SetVariantString(sTemp);
+	AcceptEntityInput(entity, "RunScriptCode");
+
+	return 0;
 }
 
 int Native_GetDirectorScriptScope(Handle plugin, int numParams) // Native "L4D2_GetDirectorScriptScope"
@@ -3743,8 +3826,8 @@ int Direct_CTimer_SetTimestamp(Handle plugin, int numParams) // Native "CTimer_S
 
 any Direct_ITimer_GetTimestamp(Handle plugin, int numParams) // Native "ITimer_GetTimestamp"
 {
-	CountdownTimer timer = GetNativeCell(1);
-	return Stock_CTimer_GetTimestamp(timer);
+	IntervalTimer timer = GetNativeCell(1);
+	return Stock_ITimer_GetTimestamp(timer);
 }
 
 int Direct_ITimer_SetTimestamp(Handle plugin, int numParams) // Native "ITimer_SetTimestamp"

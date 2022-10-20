@@ -453,6 +453,7 @@ void SetupDetours(GameData hGameData = null)
 		// CreateDetour(hGameData,		DTR_CDirector_GetScriptValueVector_Pre,						DTR_CDirector_GetScriptValueVector,							"L4DD::CDirector::GetScriptValueVector",							"L4D_OnGetScriptValueVector");
 		CreateDetour(hGameData,		DTR_CDirector_GetScriptValueString_Pre,						DTR_CDirector_GetScriptValueString,							"L4DD::CDirector::GetScriptValueString",							"L4D_OnGetScriptValueString");
 
+		g_iScriptVMDetourIndex = g_iSmallIndex;
 		CreateDetour(hGameData,		INVALID_FUNCTION,											DTR_CSquirrelVM_GetValue,									"L4DD::ScriptVM",													"L4D2_OnGetScriptValueInt",						false,				g_hScriptHook,		g_pScriptVM);
 		CreateDetour(hGameData,		INVALID_FUNCTION,											DTR_CSquirrelVM_GetValue,									"L4DD::ScriptVM",													"L4D2_OnGetScriptValueFloat",					true,				g_hScriptHook,		g_pScriptVM);
 		CreateDetour(hGameData,		INVALID_FUNCTION,											DTR_CSquirrelVM_GetValue,									"L4DD::ScriptVM",													"L4D2_OnGetScriptValueVector",					true,				g_hScriptHook,		g_pScriptVM);
@@ -4256,9 +4257,10 @@ methodmap ScriptVariant
 
 	public void GetVector(float vec[3])
 	{
-		vec[0] = LoadFromAddress(this.m_pValue, NumberType_Int32);
-		vec[1] = LoadFromAddress(this.m_pValue + view_as<Address>(4), NumberType_Int32);
-		vec[2] = LoadFromAddress(this.m_pValue + view_as<Address>(8), NumberType_Int32);
+		Address ptr = LoadFromAddress(this.m_pValue, NumberType_Int32);
+		vec[0] = LoadFromAddress(ptr, NumberType_Int32);
+		vec[1] = LoadFromAddress(ptr + view_as<Address>(4), NumberType_Int32);
+		vec[2] = LoadFromAddress(ptr + view_as<Address>(8), NumberType_Int32);
 	}
 
 	property char m_char
@@ -4326,8 +4328,8 @@ Action DispatchScriptGetValueForwards(const char[] key, fieldtype_t &type, Scrip
 			if( pVar.AssignToVector(varBuf.m_vector) )
 			{
 				//PrintToServer("%s : [%f %f %f] (type %i)", key, varBuf.m_vector[0], varBuf.m_vector[1], varBuf.m_vector[2], type);
-				Call_PushString(key);
 				Call_StartForward(g_hFWD_CSquirrelVM_GetValue_Vector);
+				Call_PushString(key);
 				Call_PushArrayEx(varBuf.m_vector, sizeof(varBuf.m_vector), SM_PARAM_COPYBACK);
 				Call_PushCell(m_iszScriptId);
 				Call_Finish(aResult);
@@ -4405,7 +4407,7 @@ MRESReturn DTR_CSquirrelVM_GetValue(DHookReturn hReturn, DHookParam hParams) // 
 			}
 			case FIELD_VECTOR, FIELD_QANGLE:
 			{
-				if( pVar.m_type != FIELD_VECTOR || pVar.m_type != FIELD_QANGLE )
+				if( pVar.m_type != FIELD_VECTOR && pVar.m_type != FIELD_QANGLE )
 					return MRES_Ignored;
 
 				hParams.SetObjectVarVector(3, 0, ObjectValueType_VectorPtr, varBuf.m_vector);

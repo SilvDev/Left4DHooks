@@ -1,3 +1,22 @@
+1.120 (20-Oct-2022)
+	- Update for L4D2.
+
+	- Added native "L4D2_CommandABot" to command a bots actions.
+	- Added native "L4D2_GetScriptScope" to get an entities script ID.
+	- Added native "L4D2_GetVScriptEntity" to get a VScript "logic_script" entity index.
+	- Added native "L4D2_IsVisibleToPlayer" to get a VScript "logic_script" entity index. Requested by "morzlee", thanks to "fdxx" and "Psyk0tik" for the code and gamedata.
+	- Fixed native "ITimer_GetTimestamp" using the wrong stock and returning the wrong values. Thanks to "Forgetest" for reporting.
+	- L4D2: Fixed forward "L4D2_OnGetScriptValueVector" not returning a vector value and not setting the value when changed.
+	- Fixed forwards "L4D2_OnGetScriptValue*" not working after map change. Thanks to "Forgetest" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.119 (15-Oct-2022)
 	- L4D2: Added a new pointer "POINTER_SCRIPTVM" to the "L4D_GetPointer" native.
 	- L4D2: Added native "L4D2_GetDirectorScriptScope" to get the directors script scope.

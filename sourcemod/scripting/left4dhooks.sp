@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.119"
+#define PLUGIN_VERSION		"1.120"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -219,6 +219,7 @@ bool g_bCreatedDetours;						// To determine first time creation of detours, or 
 float g_fLoadTime;							// When the plugin was loaded, to ignore when "AP_OnPluginUpdate" fires
 Handle g_hThisPlugin;						// Ignore checking this plugin
 GameData g_hGameData;						// GameData file - to speed up loading
+int g_iScriptVMDetourIndex;
 
 
 
@@ -314,6 +315,7 @@ Address g_pScriptVM;
 
 
 // Other
+Address g_pScriptId;
 int g_iAttackTimer;
 int g_iOffsetAmmo;
 int g_iPrimaryAmmoType;
@@ -501,7 +503,6 @@ public void OnPluginStart()
 		g_iAttackTimer = FindSendPropInfo("CTerrorWeapon", "m_attackTimer");
 	g_iOffsetAmmo = FindSendPropInfo("CTerrorPlayer", "m_iAmmo");
 	g_iPrimaryAmmoType = FindSendPropInfo("CBaseCombatWeapon", "m_iPrimaryAmmoType");
-
 
 
 	// NULL PTR - METHOD (kept for demonstration)
@@ -1275,7 +1276,11 @@ public void OnMapStart()
 
 	// Load detours, first load from plugin start
 	if( !g_bCreatedDetours )
+	{
+		g_pScriptId = view_as<Address>(FindDataMapInfo(0, "m_iszScriptId") - 16);
+
 		SetupDetours(g_hGameData);
+	}
 
 
 
