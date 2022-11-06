@@ -1,3 +1,21 @@
+1.121 (06-Nov-2022)
+	- Added native "L4D_AreAllSurvivorsInFinaleArea". Requested by "Eärendil".
+	- Fixed native "L4D2_SpitterPrj" to not emit duplicate sounds from regular Spitter projectiles and playback at about the same volume as default.
+	- L4D2: Added forwards "L4D2_OnSlammedSurvivor" and "L4D2_OnSlammedSurvivor_Post" when a Survivor is carried by a Charger and slammed into a wall. Thanks to "Forgetest" for adding.
+	- L4D2: Added stocks "L4D2_GetQueuedPummelStartTime", "L4D2_IsInQueuedPummel", "L4D2_GetQueuedPummelAttacker" and "L4D2_GetQueuedPummelVictim" to the "left4dhooks_silver.inc" include file.
+	- L4D1: Fixed trying to load the "IsVisibleToPlayer" signature. Thanks to "HarryPotter" for reporting.
+	- Fixed stocks "IsUsingMinigun" and "StopUsingMinigun" throwing errors from the "left4dhooks_silver.inc" include file. Plugins must recompile to fix this error. Thanks to "HarryPotter" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks_silver.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.120 (20-Oct-2022)
 	- Update for L4D2.
 

@@ -188,6 +188,8 @@ GlobalForward g_hFWD_CTerrorPlayer_OnShovedByPounceLanding_PostHandled;
 GlobalForward g_hFWD_CTerrorPlayer_OnKnockedDown;
 GlobalForward g_hFWD_CTerrorPlayer_OnKnockedDown_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnKnockedDown_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_OnSlammedSurvivor;
+GlobalForward g_hFWD_CTerrorPlayer_OnSlammedSurvivor_Post;
 GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim;
 GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim_Post;
 GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim_PostHandled;
@@ -436,6 +438,8 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_Fling,									DTR_CTerrorPlayer_Fling_Post,								"L4DD::CTerrorPlayer::Fling",										"L4D2_OnPlayerFling");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_Fling,									DTR_CTerrorPlayer_Fling_Post,								"L4DD::CTerrorPlayer::Fling",										"L4D2_OnPlayerFling_Post",						true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_Fling,									DTR_CTerrorPlayer_Fling_Post,								"L4DD::CTerrorPlayer::Fling",										"L4D2_OnPlayerFling_PostHandled",				true);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnSlammedSurvivor,						DTR_CTerrorPlayer_OnSlammedSurvivor_Post,					"L4DD::CTerrorPlayer::OnSlammedSurvivor",							"L4D2_OnSlammedSurvivor");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnSlammedSurvivor,						DTR_CTerrorPlayer_OnSlammedSurvivor_Post,					"L4DD::CTerrorPlayer::OnSlammedSurvivor",							"L4D2_OnSlammedSurvivor_Post",					true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_QueuePummelVictim,						DTR_CTerrorPlayer_QueuePummelVictim_Post,					"L4DD::CTerrorPlayer::QueuePummelVictim",							"L4D2_OnPummelVictim");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_QueuePummelVictim,						DTR_CTerrorPlayer_QueuePummelVictim_Post,					"L4DD::CTerrorPlayer::QueuePummelVictim",							"L4D2_OnPummelVictim_Post",						true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_QueuePummelVictim,						DTR_CTerrorPlayer_QueuePummelVictim_Post,					"L4DD::CTerrorPlayer::QueuePummelVictim",							"L4D2_OnPummelVictim_PostHandled",				true);
@@ -2806,6 +2810,53 @@ MRESReturn DTR_CTerrorPlayer_OnKnockedDown_Post(int pThis, DHookParam hParams) /
 	Call_StartForward(g_bBlock_CTerrorPlayer_OnKnockedDown ? g_hFWD_CTerrorPlayer_OnKnockedDown_PostHandled : g_hFWD_CTerrorPlayer_OnKnockedDown_Post);
 	Call_PushCell(pThis);
 	Call_PushCell(reason);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_OnSlammedSurvivor(int pThis, DHookParam hParams) // Forward "L4D2_OnSlammedSurvivor"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_OnSlammedSurvivor");
+	if( hParams.IsNull(1) ) return MRES_Ignored;
+
+	int victim = hParams.Get(1);
+	bool bWall = hParams.Get(2);
+	bool bDeadly = hParams.Get(3);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnSlammedSurvivor);
+	Call_PushCell(victim);
+	Call_PushCell(pThis);
+	Call_PushCellRef(bWall);
+	Call_PushCellRef(bDeadly);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Changed )
+	{
+		hParams.Set(2, bWall);
+		hParams.Set(3, bDeadly);
+		return MRES_ChangedHandled;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_OnSlammedSurvivor_Post(int pThis, DHookParam hParams) // Forward "L4D2_OnSlammedSurvivor_Post"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_OnSlammedSurvivor_Post");
+	int victim;
+	if( !hParams.IsNull(1) )
+		victim = hParams.Get(1);
+
+	bool bWall = hParams.Get(2);
+	bool bDeadly = hParams.Get(3);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_OnSlammedSurvivor_Post);
+	Call_PushCell(victim);
+	Call_PushCell(pThis);
+	Call_PushCell(bWall);
+	Call_PushCell(bDeadly);
 	Call_Finish();
 
 	return MRES_Ignored;

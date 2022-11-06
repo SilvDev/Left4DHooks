@@ -78,6 +78,7 @@ Handle g_hSDK_TerrorNavArea_FindRandomSpot;
 Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
 Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
+Handle g_hSDK_CDirector_AreAllSurvivorsInFinaleArea;
 // Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
 // Handle g_hSDK_TerrorNavMesh_GetLastCheckpoint;
 // Handle g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark;
@@ -1009,6 +1010,15 @@ int Native_CDirector_IsAnySurvivorInExitCheckpoint(Handle plugin, int numParams)
 	return SDKCall(g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint, g_pDirector);
 }
 
+int Native_CDirector_AreAllSurvivorsInFinaleArea(Handle plugin, int numParams) // Native "L4D_AreAllSurvivorsInFinaleArea"
+{
+	ValidateAddress(g_pDirector, "g_pDirector");
+	ValidateNatives(g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint, "CDirector::AreAllSurvivorsInFinaleArea");
+
+	//PrintToServer("#### CALL g_hSDK_CDirector_AreAllSurvivorsInFinaleArea");
+	return SDKCall(g_hSDK_CDirector_AreAllSurvivorsInFinaleArea, g_pDirector);
+}
+
 int Native_IsInFirstCheckpoint(Handle plugin, int numParams) // Native "L4D_IsInFirstCheckpoint"
 {
 	int client = GetNativeCell(1);
@@ -1411,10 +1421,13 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int damagetype)
 {
 	// Emit sound when taking acid damage
-	if( damage > 0 && damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) )
+	if( damage > 0 && damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) && attacker > 0 && attacker < MaxClients && IsClientInGame(attacker) && GetClientTeam(attacker) != 3 )
 	{
-		EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], victim);
+		float vPos[3];
+		GetClientAbsOrigin(victim, vPos);
+		EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], _, SNDCHAN_AUTO, 85, _, 0.55, GetRandomInt(95, 105), _, vPos);
 	}
+	
 }
 
 // When acid entity is destroyed, and no more active, unhook

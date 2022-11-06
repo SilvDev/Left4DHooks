@@ -128,6 +128,29 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::OnSlammedSurvivor"
+			{
+				"signature"		"CTerrorPlayer::OnSlammedSurvivor"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"pVictim"
+					{
+						"type"	"cbaseentity"
+					}
+					"bWallSlam"
+					{
+						"type"	"bool"
+					}
+					"bDeadlyCharge"
+					{
+						"type"	"bool"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::QueuePummelVictim"
 			{
 				"signature"		"CTerrorPlayer::QueuePummelVictim"
@@ -606,26 +629,26 @@
 				"this"			"ignore"
 				"arguments"
 				{
-                    "ret"
-                    {
-                        "type"    "vectorptr"
-                    }
+					"ret"
+					{
+						"type"	"vectorptr"
+					}
 					"a2"
 					{
 						"type"	"charptr"
 					}
-                    "a3"
-                    {
-                        "type"    "float"
-                    }
-                    "a4"
-                    {
-                        "type"    "float"
-                    }
-                    "a5"
-                    {
-                        "type"    "float"
-                    }
+					"a3"
+					{
+						"type"	"float"
+					}
+					"a4"
+					{
+						"type"	"float"
+					}
+					"a5"
+					{
+						"type"	"float"
+					}
 				}
 			}
 
@@ -2733,6 +2756,18 @@
 			}
 
 			/*
+			 * CDirector::AreAllSurvivorsInFinaleArea(CDirector *__hidden this)
+			 */
+			"CDirector::AreAllSurvivorsInFinaleArea"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK9CDirector27AreAllSurvivorsInFinaleAreaEv"
+				"windows"	"\x55\x8B\x2A\x51\x8D\x2A\x2A\x50\x66\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\x2A\x2A\x8B"
+				/* 55 8B ? 51 8D ? ? 50 66 ? ? ? ? ? E8 ? ? ? ? 83 ? ? 8B */
+				/* Search "AreAllSurvivorsInFinaleArea" target call is below */
+			}
+
+			/*
 			*  SurvivorBot::IsReachable(SurvivorBot *this, const Vector *)
 			*/
 			"SurvivorBot::IsReachable"
@@ -4057,6 +4092,15 @@
 				/* Search: "charger_carry_start" */ // Found by "SilverShot".
 			}
 
+			"CTerrorPlayer::OnSlammedSurvivor"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13CTerrorPlayer17OnSlammedSurvivorEPS_bb"
+				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\xD9\xEE\x56\x57\x6A\x00\x51\xD9\x2A\x24\x68\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\xF3\x0F"
+				/* ? ? ? ? ? ? D9 EE 56 57 6A 00 51 D9 ? 24 68 ? ? ? ? 8B ? E8 ? ? ? ? F3 0F */
+				/* Search "ChargerZombie.ImpactHard" */ // Found by "Forgetest"
+			}
+
 			/*
 			*	CTerrorPlayer::QueuePummelVictim(CTerrorPlayer*)
 			*	int __cdecl CTerrorPlayer::QueuePummelVictim(int a1, int a2, float a3)
@@ -4360,18 +4404,6 @@
 
 
 			// UNUSED / BROKEN
-
-			/*
-			 * CTerrorPlayer::OnSlammedSurvivor(CTerrorPlayer*, bool, bool) - Charger hit Survivor function call
-			 */
-			"CTerrorPlayer::OnSlammedSurvivor"
-			{
-				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer17OnSlammedSurvivorEPS_bb"
-				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\xD9\x2A\x56\x57\x6A\x2A\x51\xD9\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\xF3"
-				/* 55 8B ? 83 ? ? D9 ? 56 57 6A ? 51 D9 ? ? 68 ? ? ? ? 8B ? E8 ? ? ? ? F3 */ // Found by "SilverShot".
-				/* Search "ChargerZombie.ImpactHard" */
-			}
 
 			/*
 			 * CTerrorGameRules::ClearScavengeScores(bool)

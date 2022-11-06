@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.120"
+#define PLUGIN_VERSION		"1.121"
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -503,6 +503,7 @@ public void OnPluginStart()
 		g_iAttackTimer = FindSendPropInfo("CTerrorWeapon", "m_attackTimer");
 	g_iOffsetAmmo = FindSendPropInfo("CTerrorPlayer", "m_iAmmo");
 	g_iPrimaryAmmoType = FindSendPropInfo("CBaseCombatWeapon", "m_iPrimaryAmmoType");
+
 
 
 	// NULL PTR - METHOD (kept for demonstration)

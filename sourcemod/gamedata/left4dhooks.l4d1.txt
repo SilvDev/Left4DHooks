@@ -1144,6 +1144,19 @@
 			}
 
 			// Used for dynamic searching of memory address for SDKCall
+			"CDirector::AreAllSurvivorsInFinaleArea"
+			{
+				"windows"
+				{
+					"signature" "CDirector::AreAllSurvivorsInFinaleArea"
+					"read" "258"
+				}
+				"linux"
+				{
+					"signature" "CDirector::AreAllSurvivorsInFinaleArea"
+				}
+			}
+
 			"Molotov_StrFind"
 			{
 				"signature"	"Molotov_StrFind"
@@ -1848,6 +1861,23 @@
 				"windows"	"\x51\x8D\x2A\x2A\x50\xC6\x2A\x2A\x2A\x2A\xC6"
 				/* 51 8D ? ? 50 C6 ? ? ? ? C6 */
 				/* Search "tank_frustrated", below "HasAnySurvivorLeftSafeArea" call */
+			}
+
+			/*
+			 * Director::AreAllSurvivorsInFinaleArea(Director *__hidden this)
+			 */
+			"CDirector::AreAllSurvivorsInFinaleArea"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK8Director27AreAllSurvivorsInFinaleAreaEv"
+				"windows"	"\x56\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x0F\x85\x2A\x2A\x2A\x2A\x53\x8B"
+				/* 56 8B ? 80 ? ? ? ? ? ? 0F 85 ? ? ? ? 53 8B */
+				/*
+				*	1. Search "(MOB) %3.2f: MOB SPAWN ERROR: Empty spawn area set, switching to ANYWHERE\n" target call is above and below
+				*	3. Rename function to make it easier to see.
+				*	4. Search: "waiting_checkpoint_button_used" to get into "CFinaleTrigger::Use"
+				*	5. Using this function and offset to our call to obtain target function (since it's bytes are too short and not unique)
+				*/
 			}
 
 			/**

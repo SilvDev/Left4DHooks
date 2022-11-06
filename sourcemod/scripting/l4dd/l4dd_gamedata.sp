@@ -247,23 +247,26 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"TerrorNavArea::FindRandomSpot\" (%s)", g_sSystem);
 	}
 
-	StartPrepSDKCall(SDKCall_Static);
-	if( !PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "IsVisibleToPlayer") )
+	if( g_bLeft4Dead2 )
 	{
-		LogError("Failed to find signature: \"IsVisibleToPlayer\" (%s)", g_sSystem);
-	} else {
-		PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
-		PrepSDKCall_AddParameter(SDKType_CBasePlayer, SDKPass_Pointer);
-		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
-		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer);
-		PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Pointer);
-		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
-		g_hSDK_IsVisibleToPlayer = EndPrepSDKCall();
-		if( g_hSDK_IsVisibleToPlayer == null)
-				LogError("Failed to create SDKCall: \"IsVisibleToPlayer\" (%s)", g_sSystem);
+		StartPrepSDKCall(SDKCall_Static);
+		if( !PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "IsVisibleToPlayer") )
+		{
+			LogError("Failed to find signature: \"IsVisibleToPlayer\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
+			PrepSDKCall_AddParameter(SDKType_CBasePlayer, SDKPass_Pointer);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer);
+			PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Pointer);
+			PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+			g_hSDK_IsVisibleToPlayer = EndPrepSDKCall();
+			if( g_hSDK_IsVisibleToPlayer == null)
+					LogError("Failed to create SDKCall: \"IsVisibleToPlayer\" (%s)", g_sSystem);
+		}
 	}
 
 	StartPrepSDKCall(SDKCall_Raw);
@@ -297,6 +300,17 @@ void LoadGameData()
 		g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint = EndPrepSDKCall();
 		if( g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint == null )
 			LogError("Failed to create SDKCall: \"CDirector::IsAnySurvivorInExitCheckpoint\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Raw);
+	if( PrepSDKCall_SetFromConf(hGameData, g_bLeft4Dead2 ?  SDKConf_Signature : SDKConf_Address, "CDirector::AreAllSurvivorsInFinaleArea") == false )
+	{
+		LogError("Failed to find signature: \"CDirector::AreAllSurvivorsInFinaleArea\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+		g_hSDK_CDirector_AreAllSurvivorsInFinaleArea = EndPrepSDKCall();
+		if( g_hSDK_CDirector_AreAllSurvivorsInFinaleArea == null )
+			LogError("Failed to create SDKCall: \"CDirector::AreAllSurvivorsInFinaleArea\" (%s)", g_sSystem);
 	}
 
 	/*
