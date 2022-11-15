@@ -244,6 +244,11 @@ int Native_GetServerOS(Handle plugin, int numParams) // Native "L4D_GetServerOS"
 	return g_bLinuxOS;
 }
 
+int Native_Left4DHooks_Version(Handle plugin, int numParams) // Native "Left4DHooks_Version"
+{
+	return PLUGIN_VERLONG;
+}
+
 
 
 // ==================================================
@@ -1226,11 +1231,26 @@ int Native_CBaseGrenade_Detonate(Handle plugin, int numParams) // Native "L4D_De
 
 	int entity = GetNativeCell(1);
 
-	//PrintToServer("#### CALL g_hSDK_CBaseGrenade_Detonate");
+	//PrintToServer("#### CALL g_hSDK_CBaseGrenade_Detonate 1");
+	// if( GetEntPropFloat(entity, Prop_Data, "m_flCreateTime") == GetGameTime() )
+		// RequestFrame(OnFrameDetonate, EntIndexToEntRef(entity));
+	// else
 	SDKCall(g_hSDK_CBaseGrenade_Detonate, entity);
 
 	return 0;
 }
+
+/*
+void OnFrameDetonate(int entity)
+{
+	entity = EntRefToEntIndex(entity);
+	if( entity != -1 )
+	{
+		//PrintToServer("#### CALL g_hSDK_CBaseGrenade_Detonate 2");
+		SDKCall(g_hSDK_CBaseGrenade_Detonate, entity);
+	}
+}
+// */
 
 /*
 int Native_CInferno_StartBurning(Handle plugin, int numParams) // Native "L4D_StartBurning"
@@ -1340,6 +1360,10 @@ int Native_CPipeBombProjectile_Create(Handle plugin, int numParams) // Native "L
 
 	//PrintToServer("#### CALL g_hSDK_CPipeBombProjectile_Create");
 	return SDKCall(g_hSDK_CPipeBombProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+
+	// int entity = SDKCall(g_hSDK_CPipeBombProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
+	// return entity;
 }
 
 int Native_CMolotovProjectile_Create(Handle plugin, int numParams) // Native "L4D_MolotovPrj"
@@ -1353,6 +1377,10 @@ int Native_CMolotovProjectile_Create(Handle plugin, int numParams) // Native "L4
 
 	//PrintToServer("#### CALL g_hSDK_CMolotovProjectile_Create");
 	return SDKCall(g_hSDK_CMolotovProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+
+	// int entity = SDKCall(g_hSDK_CMolotovProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
+	// return entity;
 }
 
 int Native_CVomitJarProjectile_Create(Handle plugin, int numParams) // Native "L4D2_VomitJarPrj"
@@ -1366,6 +1394,10 @@ int Native_CVomitJarProjectile_Create(Handle plugin, int numParams) // Native "L
 
 	//PrintToServer("#### CALL g_hSDK_CVomitJarProjectile_Create");
 	return SDKCall(g_hSDK_CVomitJarProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+
+	// int entity = SDKCall(g_hSDK_CVomitJarProjectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
+	// return entity;
 }
 
 int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // Native "L4D2_GrenadeLauncherPrj"
@@ -1379,6 +1411,10 @@ int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // N
 
 	//PrintToServer("#### CALL g_hSDK_CGrenadeLauncher_Projectile_Create");
 	return SDKCall(g_hSDK_CGrenadeLauncher_Projectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+
+	// int entity = SDKCall(g_hSDK_CGrenadeLauncher_Projectile_Create, vPos, vAng, vAng, vAng, client, 2.0);
+	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
+	// return entity;
 }
 
 int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4D2_SpitterPrj"
@@ -1394,6 +1430,7 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 
 	//PrintToServer("#### CALL g_hSDK_CSpitterProjectile_Create");
 	int entity = SDKCall(g_hSDK_CSpitterProjectile_Create, vPos, vAng, vAng, vAng, client);
+	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
 
 	// Not watching for acid damage
 	if( !g_bAcidWatch )
@@ -1421,11 +1458,14 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int damagetype)
 {
 	// Emit sound when taking acid damage
-	if( damage > 0 && damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) && attacker > 0 && attacker < MaxClients && IsClientInGame(attacker) && GetClientTeam(attacker) != 3 )
+	if( damage > 0 )
 	{
-		float vPos[3];
-		GetClientAbsOrigin(victim, vPos);
-		EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], _, SNDCHAN_AUTO, 85, _, 0.55, GetRandomInt(95, 105), _, vPos);
+		if( ((damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) && attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) && GetClientTeam(attacker) != 3)) || (damagetype == (DMG_ENERGYBEAM|DMG_RADIATION|DMG_PREVENT_PHYSICS_FORCE) && attacker > MaxClients) )
+		{
+			float vPos[3];
+			GetClientAbsOrigin(victim, vPos);
+			EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], _, SNDCHAN_AUTO, 85, _, 0.55, GetRandomInt(95, 105), _, vPos);
+		}
 	}
 	
 }

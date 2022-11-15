@@ -1578,18 +1578,21 @@ MRESReturn DTR_CTerrorPlayer_GetWalkTopSpeed_Post(int pThis, DHookReturn hReturn
 
 MRESReturn GetSpeed(int pThis, Handle hForward, DHookReturn hReturn)
 {
-	float a2 = hReturn.Value;
-
-	Action aResult = Plugin_Continue;
-	Call_StartForward(hForward);
-	Call_PushCell(pThis);
-	Call_PushFloatRef(a2);
-	Call_Finish(aResult);
-
-	if( aResult == Plugin_Handled )
+	if( IsClientInGame(pThis) )
 	{
-		hReturn.Value = a2;
-		return MRES_Supercede;
+		float a2 = hReturn.Value;
+
+		Action aResult = Plugin_Continue;
+		Call_StartForward(hForward);
+		Call_PushCell(pThis);
+		Call_PushFloatRef(a2);
+		Call_Finish(aResult);
+
+		if( aResult == Plugin_Handled )
+		{
+			hReturn.Value = a2;
+			return MRES_Supercede;
+		}
 	}
 
 	return MRES_Ignored;

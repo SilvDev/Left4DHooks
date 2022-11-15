@@ -18,7 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.121"
+#define PLUGIN_VERSION		"1.122"
+#define PLUGIN_VERLONG		1122
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -421,7 +422,6 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 
 	g_hThisPlugin = myself;
-	RegPluginLibrary("left4dhooks");
 
 
 
@@ -435,7 +435,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	// ====================================================================================================
 	//									DUPLICATE PLUGIN RUNNING
 	// ====================================================================================================
-	if( GetFeatureStatus(FeatureType_Native, "L4D_GetPointer") != FeatureStatus_Unknown )
+	if( GetFeatureStatus(FeatureType_Native, "L4D_BecomeGhost") != FeatureStatus_Unknown )
 	{
 		strcopy(error, err_max, "\n====================\nPlugin \"Left 4 DHooks\" is already running. Please remove the duplicate plugin.\n====================");
 		return APLRes_SilentFailure;
@@ -458,6 +458,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	//									SETUP FORWARDS AND NATIVES
 	// ====================================================================================================
 	SetupForwardsNatives(); // From: "l4dd/l4dd_setup.sp"
+
+
+
+	// ====================================================================================================
+	//									END SETUP
+	// ====================================================================================================
+	RegPluginLibrary("left4dhooks");
 
 
 

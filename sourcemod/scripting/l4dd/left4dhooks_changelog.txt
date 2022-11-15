@@ -1,3 +1,14 @@
+1.122 (15-Nov-2022)
+	- Added native "Left4DHooks_Version" to get the Left4DHooks plugin version.
+	- Fixed native "L4D2_SpitterPrj" not playing any acid damage sounds if the attacker index was 0.
+	- Fixed forwards "L4D_OnGetCrouchTopSpeed", "L4D_OnGetWalkTopSpeed" and "L4D_OnGetRunTopSpeed" from throwing client not in game errors. Thanks to "Eärendil" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.121 (06-Nov-2022)
 	- Added native "L4D_AreAllSurvivorsInFinaleArea". Requested by "Eärendil".
 	- Fixed native "L4D2_SpitterPrj" to not emit duplicate sounds from regular Spitter projectiles and playback at about the same volume as default.

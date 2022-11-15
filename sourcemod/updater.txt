@@ -4,8 +4,8 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.121"
-			"Previous"	"1.120"
+			"Latest"	"1.122"
+			"Previous"	"1.121"
 		}
 
 		"Notes"	"Full changelog @ https://forums.alliedmods.net/showthread.php?t=321696"
@@ -15,20 +15,17 @@
 	{
 		"Patch"
 		{
-			"Plugin"	"Path_SM/plugins/left4dhooks.smx"
-			"Plugin"	"Path_SM/gamedata/left4dhooks.l4d1.txt"
-			"Plugin"	"Path_SM/gamedata/left4dhooks.l4d2.txt"
-			"Plugin"	"Path_SM/scripting/left4dhooks_test.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/left4dhooks_changelog.txt"
+			"Plugin"	"Path_SM/plugins/left4dhooks.smx"
+			"Plugin"	"Path_SM/scripting/left4dhooks_test.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_forwards.sp"
-			"Plugin"	"Path_SM/scripting/l4dd/l4dd_gamedata.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_natives.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_setup.sp"
 			"Plugin"	"Path_SM/scripting/include/left4dhooks.inc"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks_silver.inc"
 			"Source"	"Path_SM/scripting/left4dhooks.sp"
 		}
 
+		"Plugin"	"Path_SM/scripting/l4dd/left4dhooks_changelog.txt"
 		"Plugin"	"Path_SM/data/left4dhooks.l4d1.cfg"
 		"Plugin"	"Path_SM/data/left4dhooks.l4d2.cfg"
 		"Plugin"	"Path_SM/gamedata/left4dhooks.l4d1.txt"
@@ -46,7 +43,6 @@
 		"Plugin"	"Path_SM/scripting/include/left4dhooks_lux_library.inc"
 		"Plugin"	"Path_SM/scripting/include/left4dhooks_silver.inc"
 		"Plugin"	"Path_SM/scripting/include/left4dhooks_stocks.inc"
-		"Plugin"	"Path_SM/scripting/l4dd/left4dhooks_changelog.txt"
 
 		"Source"	"Path_SM/scripting/left4dhooks.sp"
 	}

@@ -301,12 +301,22 @@ Action sm_l4df(int client, int args)
 	return Plugin_Handled;
 }
 
+native int Heartbeat_GetRevives(int client);
 Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
 
 
+
+
+
+	/*
+	if( GetFeatureStatus(FeatureType_Native, "Left4DHooks_Version") == FeatureStatus_Available )
+		PrintToServer("Left4DHooks_Version = %d", Left4DHooks_Version());
+	else
+		PrintToServer("Left4DHooks_Version = Unable to determine, could break down version cvar instead.", Left4DHooks_Version());
+	*/
 
 
 
@@ -3839,7 +3849,7 @@ public Action L4D2_CInsectSwarm_CanHarm(int acid, int spitter, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm\" %d %N > Acid: %d > Ent: %d", spitter, spitter != -1 ? spitter : 0, acid, entity);
+		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm\" %d %N > Acid: %d > Ent: %d", spitter, spitter < 1 ? 0 : spitter, acid, entity);
 	}
 
 	// WORKS
@@ -3856,7 +3866,7 @@ public void L4D2_CInsectSwarm_CanHarm_Post(int acid, int spitter, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm_Post\" %d %N > Acid: %d > Ent: %d", spitter, spitter, acid, entity);
+		ForwardCalled("\"L4D2_CInsectSwarm_CanHarm_Post\" %d %N > Acid: %d > Ent: %d", spitter, spitter < 1 ? 0 : spitter, acid, entity);
 	}
 }
 
