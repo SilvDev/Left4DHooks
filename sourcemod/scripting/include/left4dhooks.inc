@@ -58,9 +58,9 @@
 
 
 
-// Natives: 239
-// L4D1 = 30 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 51 [silvers - mine!] + 4 [anim] = 141
-// L4D2 = 66 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 93 [silvers - mine!] + 4 [anim] = 238
+// Natives: 240
+// L4D1 = 30 [left4downtown] + 47 [l4d_direct] + 15 [l4d2addresses] + 52 [silvers - mine!] + 4 [anim] = 142
+// L4D2 = 66 [left4downtown] + 61 [l4d_direct] + 26 [l4d2addresses] + 94 [silvers - mine!] + 4 [anim] = 239
 
 // Forwards: 168
 // L4D1 = 123;
@@ -148,6 +148,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_SetHumanSpec");
 	MarkNativeAsOptional("L4D_TakeOverBot");
 	MarkNativeAsOptional("L4D_CanBecomeGhost");
+	MarkNativeAsOptional("L4D_SetBecomeGhostAt");
 	MarkNativeAsOptional("L4D2_AreWanderersAllowed");
 	MarkNativeAsOptional("L4D2_GetCurrentFinaleStage");
 	MarkNativeAsOptional("L4D2_ForceNextStage");
@@ -2810,6 +2811,9 @@ native int L4D_GetServerOS();
  * @remarks Then run this code to determine the version:
  * @remarks if( GetFeatureStatus(FeatureType_Native, "Left4DHooks_Version") == FeatureStatus_Available && Left4DHooks_Version() >= 1122 )
  *
+ * @remarks Alternatively, to support all versions, it would be better to use the "left4dhooks_version" convar, retrieve as a float and check.
+ * @remarks For example: FindConVar("left4dhooks_version").FloatValue >= 1.122
+ *
  * @return	Version number
  */
 native int Left4DHooks_Version();
@@ -3346,6 +3350,15 @@ native bool L4D_TakeOverBot(int client);
  * @return			True or false
  */
 native bool L4D_CanBecomeGhost(int client);
+
+/**
+ * @brief Set a dead Special Infected players time until they transition into ghost state. Can be used when the "ghost_spawn_time" event triggers.
+ *
+ * @param client	Client ID to check
+ *
+ * @return			True or false
+ */
+native void L4D_SetBecomeGhostAt(int client, float time);
 
 /**
  * @brief Sets a client as idle, afk - away from keyboard.

@@ -1,3 +1,15 @@
+1.123 (03-Dec-2022)
+	- Added native "L4D_SetBecomeGhostAt" to set when a dead Special Infected player will transition into ghost state. Requested by "sorallll".
+	- L4D2: Fixed native "L4D_GetPlayerSpawnTime" on Windows reporting the wrong value.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.122 (15-Nov-2022)
 	- Added native "Left4DHooks_Version" to get the Left4DHooks plugin version.
 	- Fixed native "L4D2_SpitterPrj" not playing any acid damage sounds if the attacker index was 0.

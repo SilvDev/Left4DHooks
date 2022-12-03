@@ -292,6 +292,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_SetHumanSpec",								Native_SurvivorBot_SetHumanSpectator);
 	CreateNative("L4D_TakeOverBot",									Native_CTerrorPlayer_TakeOverBot);
 	CreateNative("L4D_CanBecomeGhost",								Native_CTerrorPlayer_CanBecomeGhost);
+	CreateNative("L4D_SetBecomeGhostAt",							Native_CTerrorPlayer_SetBecomeGhostAt);
 	CreateNative("L4D_IsFinaleEscapeInProgress",					Native_CDirector_IsFinaleEscapeInProgress);
 
 	// L4D2 only:

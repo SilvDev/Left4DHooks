@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.121"
+#define PLUGIN_VERSION		"1.123"
 
 /*=======================================================================================
 	Plugin Info:
@@ -301,13 +301,16 @@ Action sm_l4df(int client, int args)
 	return Plugin_Handled;
 }
 
-native int Heartbeat_GetRevives(int client);
 Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
 
 
+
+
+
+	// L4D_SetBecomeGhostAt(client, GetGameTime() + 15.0); // Working
 
 
 
@@ -955,7 +958,6 @@ Action sm_l4dd(int client, int args)
 
 	// WORKS
 	PrintToServer("L4D_IsFinaleEscapeInProgress %d",				L4D_IsFinaleEscapeInProgress());
-	PrintToChatAll("L4D_IsFinaleEscapeInProgress %d",				L4D_IsFinaleEscapeInProgress());
 	// */
 
 
@@ -1974,7 +1976,7 @@ void GetGroundAngles(float vOrigin[3])
 	if( TR_DidHit(trace) )
 	{
 		TR_GetEndPosition(vOrigin, trace); // retrieve our trace endpoint
-		PrintToChatAll("trace B (%0.0f %0.0f %0.0f)", vOrigin[0], vOrigin[1], vOrigin[2]);
+		PrintToChatAll("Trace (%0.0f %0.0f %0.0f)", vOrigin[0], vOrigin[1], vOrigin[2]);
 	}
 
 	delete trace;

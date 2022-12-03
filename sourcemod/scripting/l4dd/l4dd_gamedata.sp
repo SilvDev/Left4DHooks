@@ -1120,6 +1120,18 @@ void LoadGameData()
 	}
 
 	StartPrepSDKCall(SDKCall_Player);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::SetBecomeGhostAt") == false )
+	{
+		LogError("Failed to find signature: \"CTerrorPlayer::SetBecomeGhostAt\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+		PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+		g_hSDK_CTerrorPlayer_SetBecomeGhostAt = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_SetBecomeGhostAt == null )
+			LogError("Failed to create SDKCall: \"CTerrorPlayer::SetBecomeGhostAt\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Player);
 	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::GoAwayFromKeyboard") == false )
 	{
 		LogError("Failed to find signature: \"CTerrorPlayer::GoAwayFromKeyboard\" (%s)", g_sSystem);
@@ -1961,6 +1973,39 @@ void LoadGameData()
 
 	g_iOff_MobSpawnTimer = hGameData.GetOffset("MobSpawnTimer");
 	ValidateOffset(g_iOff_MobSpawnTimer, "MobSpawnTimer");
+
+
+
+	// ====================
+	// Patch to allow "L4D_SetBecomeGhostAt" to work. Thanks to "sorallll" for this method.
+	// ====================
+	// Address to function
+	g_pCTerrorPlayer_CanBecomeGhost = hGameData.GetAddress("CTerrorPlayer::CanBecomeGhost::Address");
+	ValidateAddress(g_pCTerrorPlayer_CanBecomeGhost, "CTerrorPlayer::CanBecomeGhost::Address", true);
+
+	// Offset to patch
+	g_iCanBecomeGhostOffset = hGameData.GetOffset("CTerrorPlayer::CanBecomeGhost::Offset");
+	ValidateOffset(g_iCanBecomeGhostOffset, "CTerrorPlayer::CanBecomeGhost::Offset");
+
+	// Patch count and byte match
+	int bytes = hGameData.GetOffset("CTerrorPlayer::CanBecomeGhost::Bytes");
+	int count = hGameData.GetOffset("CTerrorPlayer::CanBecomeGhost::Count");
+
+	// Verify bytes and patch
+	int byte = LoadFromAddress(g_pCTerrorPlayer_CanBecomeGhost + view_as<Address>(g_iCanBecomeGhostOffset), NumberType_Int8);
+	if( byte == bytes )
+	{
+		for( int i = 0; i < count; i++ )
+		{
+			g_hCanBecomeGhost.Push(LoadFromAddress(g_pCTerrorPlayer_CanBecomeGhost + view_as<Address>(g_iCanBecomeGhostOffset), NumberType_Int8));
+			StoreToAddress(g_pCTerrorPlayer_CanBecomeGhost + view_as<Address>(g_iCanBecomeGhostOffset + i), 0x90, NumberType_Int8, true);
+		}
+	}
+	else if( byte != 0x90 )
+	{
+		LogError("CTerrorPlayer::CanBecomeGhost patch: byte mis-match. %X", LoadFromAddress(g_pCTerrorPlayer_CanBecomeGhost + view_as<Address>(g_iCanBecomeGhostOffset), NumberType_Int8));
+	}
+	// ====================
 
 
 

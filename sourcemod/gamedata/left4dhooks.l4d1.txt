@@ -1174,6 +1174,18 @@
 					"signature" "ClearTeamScores_Director"
 				}
 			}
+
+			"CTerrorPlayer::CanBecomeGhost::Address"
+			{
+				"windows"
+				{
+					"signature" "CTerrorPlayer::CanBecomeGhost"
+				}
+				"linux"
+				{
+					"signature" "CTerrorPlayer::CanBecomeGhost"
+				}
+			}
 		}
 
 
@@ -1254,6 +1266,21 @@
 			{
 				"windows"	"652"
 				"linux"		"648"
+			}
+			"CTerrorPlayer::CanBecomeGhost::Offset"
+			{
+				"windows"	"1466"
+				"linux"		"1647"
+			}
+			"CTerrorPlayer::CanBecomeGhost::Bytes"
+			{
+				"windows"	"137" // 0x89
+				"linux"		"137" // 0x89
+			}
+			"CTerrorPlayer::CanBecomeGhost::Count"
+			{
+				"windows"	"11"
+				"linux"		"8"
 			}
 			"m_PendingMobCount"
 			{
@@ -2861,6 +2888,19 @@
 				"library"	"server"
 				"linux"   "@_ZN11SurvivorBot17SetHumanSpectatorEP13CTerrorPlayer"
 				"windows" "\x53\x8B\xD9\x83\x2A\x2A\x2A\x2A\x2A\x2A\x56\x8D\x2A\x2A\x2A\x2A\x2A\x7E\x07\x5E\x32\xC0\x5B\xC2\x04\x00"
+			}
+
+			/*
+			 * CTerrorPlayer::SetBecomeGhostAt(CTerrorPlayer *this, float s2)
+			 * unique string "ghost_spawn_time"
+			 */
+			"CTerrorPlayer::SetBecomeGhostAt"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16SetBecomeGhostAtEf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\x68\x2A\x2A\x2A\x2A\xD9\x2A\x2A\x2A\x2A\x2A\xA1"
+				/* ? ? ? ? ? ? ? 68 ? ? ? ? 8B ? 68 ? ? ? ? D9 ? ? ? ? ? A1 */
+				/* Search: "ghost_spawn_time" target is called is above */
 			}
 
 

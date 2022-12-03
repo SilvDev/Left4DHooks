@@ -1601,6 +1601,18 @@
 				}
 			}
 
+			"CTerrorPlayer::CanBecomeGhost::Address"
+			{
+				"windows"
+				{
+					"signature" "CTerrorPlayer::CanBecomeGhost"
+				}
+				"linux"
+				{
+					"signature" "CTerrorPlayer::CanBecomeGhost"
+				}
+			}
+
 			// Used for dynamic searching of memory address for SDKCall
 			"Molotov_StrFind"
 			{
@@ -1763,12 +1775,11 @@
 				"linux"		"36"
 			}
 
-			/* Offset into CTerrorPlayer
-			 * Is this right? How do we find it?
-			 */
+			// Can be found in "CTerrorPlayer::SetBecomeGhostAt": *((float *)this + 2816) = s2;
+			// 2816 * 4 - 8
 			"SpawnTimer"
 			{
-				"windows"	"11308"
+				"windows"	"11276"
 				"linux"		"11256"
 			}
 
@@ -1789,6 +1800,22 @@
 			{
 				"windows"	"528"
 				"linux"		"528"
+			}
+
+			"CTerrorPlayer::CanBecomeGhost::Offset"
+			{
+				"windows"	"2375"
+				"linux"		"1585"
+			}
+			"CTerrorPlayer::CanBecomeGhost::Bytes"
+			{
+				"windows"	"232" // 0xE8
+				"linux"		"232" // 0xE8
+			}
+			"CTerrorPlayer::CanBecomeGhost::Count"
+			{
+				"windows"	"5"
+				"linux"		"5"
 			}
 
 			"MobSpawnTimer"
@@ -3964,6 +3991,19 @@
 			}
 
 			/*
+			 * CTerrorPlayer::SetBecomeGhostAt(CTerrorPlayer *this, float s2)
+			 * unique string "ghost_spawn_time"
+			 */
+			"CTerrorPlayer::SetBecomeGhostAt"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16SetBecomeGhostAtEf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x6A\x2A\x68\x2A\x2A\x2A\x2A\x8B\x2A\x68\x2A\x2A\x2A\x2A\xF3"
+				/* ? ? ? ? ? ? ? ? 56 6A ? 68 ? ? ? ? 8B ? 68 ? ? ? ? F3 */
+				/* Search: "ghost_spawn_time" target is called is above */
+			}
+
+			/*
 			 * CTerrorPlayer::CanBecomeGhost(bool areSpawnsDisabled)
 			 * unique string "ghost_spawn_time"
 			 */
@@ -3971,8 +4011,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer14CanBecomeGhostEb"
-				"windows"	"\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x83\xEC\x78\x56\x57\x8B\xF1"
-				/* 53 8B DC 83 EC ? 83 E4 F0 83 C4 ? 55 8B 6B 04 89 6C 24 ? 8B EC 83 EC 78 56 57 8B F1 */
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x83\xEC\x78\x56\x57\x8B\xF1"
+				/* ? ? ? ? ? ? 83 E4 F0 83 C4 ? 55 8B 6B 04 89 6C 24 ? 8B EC 83 EC 78 56 57 8B F1 */
 			}
 
 			/*

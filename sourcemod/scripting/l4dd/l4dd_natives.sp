@@ -59,6 +59,7 @@ Handle g_hSDK_CTerrorPlayer_RoundRespawn;
 Handle g_hSDK_SurvivorBot_SetHumanSpectator;
 Handle g_hSDK_CTerrorPlayer_TakeOverBot;
 Handle g_hSDK_CTerrorPlayer_CanBecomeGhost;
+Handle g_hSDK_CTerrorPlayer_SetBecomeGhostAt;
 Handle g_hSDK_CTerrorPlayer_GoAwayFromKeyboard;
 Handle g_hSDK_CDirector_AreWanderersAllowed;
 Handle g_hSDK_CDirector_IsFinaleEscapeInProgress;
@@ -2958,6 +2959,19 @@ int Native_CTerrorPlayer_CanBecomeGhost(Handle plugin, int numParams) // Native 
 
 	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_CanBecomeGhost");
 	return SDKCall(g_hSDK_CTerrorPlayer_CanBecomeGhost, client, true);
+}
+
+int Native_CTerrorPlayer_SetBecomeGhostAt(Handle plugin, int numParams) // Native "L4D_SetBecomeGhostAt"
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_SetBecomeGhostAt, "CTerrorPlayer::SetBecomeGhostAt");
+
+	int client = GetNativeCell(1);
+	float time = GetNativeCell(2);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_SetBecomeGhostAt");
+	SDKCall(g_hSDK_CTerrorPlayer_SetBecomeGhostAt, client, time);
+
+	return 0;
 }
 
 int Native_CTerrorPlayer_GoAwayFromKeyboard(Handle plugin, int numParams) // Native "L4D_GoAwayFromKeyboard"
