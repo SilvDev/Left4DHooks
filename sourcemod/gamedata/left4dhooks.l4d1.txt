@@ -1269,12 +1269,12 @@
 			}
 			"CTerrorPlayer::CanBecomeGhost::Offset"
 			{
-				"windows"	"1466"
-				"linux"		"1647"
+				"windows"	"1460"
+				"linux"		"1644"
 			}
 			"CTerrorPlayer::CanBecomeGhost::Bytes"
 			{
-				"windows"	"137" // 0x89
+				"windows"	"81" // 0x51
 				"linux"		"137" // 0x89
 			}
 			"CTerrorPlayer::CanBecomeGhost::Count"

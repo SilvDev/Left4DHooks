@@ -1,3 +1,13 @@
+1.125 (07-Dec-2022)
+	- Fixed update 1.124 breaking "L4D2_OnEndVersusModeRound". Thanks to "Forgetest" for reporting.
+	- Fixed update 1.124 errors on Windows L4D1. Thanks to "HarryPotter" for reporting.
+	- Fixed native "L4D_SetBecomeGhostAt" not working on Windows L4D1.
+
+	- Updated: Plugin.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+
 1.124 (07-Dec-2022)
 	- Fixed natives "L4D2_SetIntMeleeAttribute" and "L4D2_GetIntMeleeAttribute" using Int32 instead of Int16. Thanks to "NoroHime" for reporting.
 	- Fixed natives "L4D_IsInFirstCheckpoint" and "L4D_IsInLastCheckpoint" to use SDKCalls for accuracy instead of events. Thanks to "BHaType" for reporting.

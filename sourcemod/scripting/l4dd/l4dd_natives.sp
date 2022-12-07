@@ -1001,7 +1001,7 @@ int Native_CDirector_IsAnySurvivorInStartArea(Handle plugin, int numParams) // N
 	{
 		for( int i = 1; i <= MaxClients; i++ )
 		{
-			if( IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) && GetEntProp(i, Prop_Send, "m_isInMissionStartArea") )
+			if( g_bCheckpointFirst[i] && IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) )
 			{
 				return true;
 			}
@@ -1074,18 +1074,25 @@ int Native_IsInFirstCheckpoint(Handle plugin, int numParams) // Native "L4D_IsIn
 
 bool IsInFirstCheckpoint(int client)
 {
-	int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
-	if( area == 0 ) return false;
-
-	int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetInitialCheckpoint, g_pNavMesh);
-	if( nav1 )
+	if( g_bLeft4Dead2 )
 	{
-		if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+		int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
+		if( area == 0 ) return false;
+
+		int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetInitialCheckpoint, g_pNavMesh);
+		if( nav1 )
+		{
+			if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+				return true;
+		}
+
+		if( SDKCall(g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark, g_pNavMesh, area) )
 			return true;
 	}
-
-	if( SDKCall(g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark, g_pNavMesh, area) )
-		return true;
+	else
+	{
+		return g_bCheckpointFirst[client];
+	}
 
 	return false;
 }
@@ -1098,19 +1105,25 @@ int Native_IsInLastCheckpoint(Handle plugin, int numParams) // Native "L4D_IsInL
 
 bool IsInLastCheckpoint(int client)
 {
-	int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
-	if( area == 0 ) return false;
-
-	int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetLastCheckpoint, g_pNavMesh);
-	if( nav1 )
+	if( g_bLeft4Dead2 )
 	{
-		if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+		int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
+		if( area == 0 ) return false;
+
+		int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetLastCheckpoint, g_pNavMesh);
+		if( nav1 )
+		{
+			if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+				return true;
+		}
+
+		if( SDKCall(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, g_pNavMesh, area) )
 			return true;
 	}
-
-	if( SDKCall(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, g_pNavMesh, area) )
-		return true;
-
+	else
+	{
+		return g_bCheckpointLast[client];
+	}
 
 	return false;
 }
@@ -1118,6 +1131,11 @@ bool IsInLastCheckpoint(int client)
 #define DOOR_RANGE_TOLLERANCE 2000.0
 
 int Native_GetCheckpointFirst(Handle plugin, int numParams) // Native "L4D_GetCheckpointFirst"
+{
+	return GetCheckpointFirst();
+}
+
+int GetCheckpointFirst()
 {
 	// Cache
 	static int door;
@@ -1164,6 +1182,11 @@ int Native_GetCheckpointFirst(Handle plugin, int numParams) // Native "L4D_GetCh
 }
 
 int Native_GetCheckpointLast(Handle plugin, int numParams) // Native "L4D_GetCheckpointLast"
+{
+	return GetCheckpointLast();
+}
+
+int GetCheckpointLast()
 {
 	// Cache
 	static int door;

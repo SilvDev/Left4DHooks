@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.124"
-#define PLUGIN_VERLONG		1124
+#define PLUGIN_VERSION		"1.125"
+#define PLUGIN_VERLONG		1125
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -335,6 +335,8 @@ bool g_bLinuxOS;
 bool g_bLeft4Dead2;
 bool g_bMapStarted;
 bool g_bRoundEnded;
+bool g_bCheckpointFirst[MAXPLAYERS+1];
+bool g_bCheckpointLast[MAXPLAYERS+1];
 ConVar g_hCvar_VScriptBuffer;
 ConVar g_hCvar_AddonsEclipse;
 ConVar g_hCvar_RescueDeadTime;
@@ -693,6 +695,88 @@ public void OnPluginStart()
 	g_hCvar_RescueDeadTime = FindConVar("rescue_min_dead_time");
 	g_hCvar_MPGameMode = FindConVar("mp_gamemode");
 	g_hCvar_MPGameMode.AddChangeHook(ConVarChanged_Mode);
+
+
+
+	// ====================================================================================================
+	//									EVENTS
+	// ====================================================================================================
+	HookEvent("round_start",					Event_RoundStart);
+
+	if( !g_bLeft4Dead2 )
+	{
+		HookEvent("round_end",						Event_RoundEnd);
+		HookEvent("player_entered_start_area",		Event_EnteredStartArea);
+		HookEvent("player_left_start_area",			Event_LeftStartArea);
+		HookEvent("player_left_checkpoint",			Event_LeftCheckpoint);
+		HookEvent("player_entered_checkpoint",		Event_EnteredCheckpoint);
+	}
+}
+
+void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
+{
+	g_bRoundEnded = false;
+}
+
+void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
+{
+	// Reset checkpoints
+	if( !g_bLeft4Dead2 )
+	{
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			g_bCheckpointFirst[i] = false;
+			g_bCheckpointLast[i] = false;
+		}
+	}
+}
+
+void Event_EnteredStartArea(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(event.GetInt("userid"));
+	g_bCheckpointFirst[client] = true;
+}
+
+void Event_LeftStartArea(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(event.GetInt("userid"));
+	g_bCheckpointFirst[client] = false;
+}
+
+void Event_EnteredCheckpoint(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = event.GetInt("userid");
+	if( client )
+	{
+		client = GetClientOfUserId(client);
+		if( client )
+		{
+			int door = event.GetInt("door");
+
+			if( door == GetCheckpointFirst() )
+			{
+				g_bCheckpointFirst[client] = true;
+			}
+			else if( door == GetCheckpointLast() )
+			{
+				g_bCheckpointLast[client] = true;
+			}
+		}
+	}
+}
+
+void Event_LeftCheckpoint(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = event.GetInt("userid");
+	if( client )
+	{
+		client = GetClientOfUserId(client);
+		if( client )
+		{
+			g_bCheckpointFirst[client] = false;
+			g_bCheckpointLast[client] = false;
+		}
+	}
 }
 
 
@@ -824,6 +908,16 @@ public void OnMapEnd()
 	g_bMapStarted = false;
 	g_iMaxChapters = 0;
 
+	// Reset checkpoints
+	if( !g_bLeft4Dead2 )
+	{
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			g_bCheckpointFirst[i] = false;
+			g_bCheckpointLast[i] = false;
+		}
+	}
+
 	// Reset hooks
 	g_iAnimationHookedClients.Clear();
 	g_iAnimationHookedPlugins.Clear();
@@ -849,6 +943,9 @@ public void OnMapEnd()
 
 public void OnClientDisconnect(int client)
 {
+	g_bCheckpointFirst[client] = false;
+	g_bCheckpointLast[client] = false;
+
 	// Remove client from hooked list
 	int index = g_iAnimationHookedClients.FindValue(client);
 	if( index != -1 )
