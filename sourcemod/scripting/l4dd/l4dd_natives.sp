@@ -78,14 +78,14 @@ Handle g_hSDK_CNavMesh_GetNearestNavArea;
 Handle g_hSDK_TerrorNavArea_FindRandomSpot;
 Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
-Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
+// Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
 Handle g_hSDK_CDirector_AreAllSurvivorsInFinaleArea;
-// Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
-// Handle g_hSDK_TerrorNavMesh_GetLastCheckpoint;
-// Handle g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark;
-// Handle g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark;
-// Handle g_hSDK_Checkpoint_ContainsArea;
-Handle g_hSDK_CDirector_IsAnySurvivorInStartArea;
+Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
+Handle g_hSDK_TerrorNavMesh_GetLastCheckpoint;
+Handle g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark;
+Handle g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark;
+Handle g_hSDK_Checkpoint_ContainsArea;
+// Handle g_hSDK_CDirector_IsAnySurvivorInStartArea;
 Handle g_hSDK_CTerrorGameRules_GetNumChaptersForMissionAndMode;
 Handle g_hSDK_CDirector_GetGameModeBase;
 Handle g_hSDK_KeyValues_GetString;
@@ -989,6 +989,31 @@ int Native_CDirector_IsAnySurvivorInStartArea(Handle plugin, int numParams) // N
 {
 	if( g_bLeft4Dead2 )
 	{
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) && IsInFirstCheckpoint(i) )
+			{
+				return true;
+			}
+		}
+	}
+	else
+	{
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) && GetEntProp(i, Prop_Send, "m_isInMissionStartArea") )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+
+	/*
+	// Removed this due to not always reporting true
+	if( g_bLeft4Dead2 )
+	{
 		ValidateAddress(g_pDirector, "g_pDirector");
 		ValidateNatives(g_hSDK_CDirector_IsAnySurvivorInStartArea, "CDirector::IsAnySurvivorInStartArea");
 
@@ -1005,9 +1030,24 @@ int Native_CDirector_IsAnySurvivorInStartArea(Handle plugin, int numParams) // N
 
 		return false;
 	}
+	*/
 }
 
-int Native_CDirector_IsAnySurvivorInExitCheckpoint(Handle plugin, int numParams) // Native "L4D_IsAnySurvivorInCheckpoint"
+int Native_CDirector_IsAnySurvivorInCheckpoint(Handle plugin, int numParams) // Native "L4D_IsAnySurvivorInCheckpoint"
+{
+	for( int i = 1; i <= MaxClients; i++ )
+	{
+		if( IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) && (IsInFirstCheckpoint(i) || IsInLastCheckpoint(i)) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
+int Native_CDirector_IsAnySurvivorInExitCheckpoint(Handle plugin, int numParams) // Native "L4D_IsAnySurvivorInExitCheckpoint"
 {
 	ValidateAddress(g_pDirector, "g_pDirector");
 	ValidateNatives(g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint, "CDirector::IsAnySurvivorInExitCheckpoint");
@@ -1015,11 +1055,12 @@ int Native_CDirector_IsAnySurvivorInExitCheckpoint(Handle plugin, int numParams)
 	//PrintToServer("#### CALL g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint");
 	return SDKCall(g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint, g_pDirector);
 }
+// */
 
 int Native_CDirector_AreAllSurvivorsInFinaleArea(Handle plugin, int numParams) // Native "L4D_AreAllSurvivorsInFinaleArea"
 {
 	ValidateAddress(g_pDirector, "g_pDirector");
-	ValidateNatives(g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint, "CDirector::AreAllSurvivorsInFinaleArea");
+	ValidateNatives(g_hSDK_CDirector_AreAllSurvivorsInFinaleArea, "CDirector::AreAllSurvivorsInFinaleArea");
 
 	//PrintToServer("#### CALL g_hSDK_CDirector_AreAllSurvivorsInFinaleArea");
 	return SDKCall(g_hSDK_CDirector_AreAllSurvivorsInFinaleArea, g_pDirector);
@@ -1028,29 +1069,48 @@ int Native_CDirector_AreAllSurvivorsInFinaleArea(Handle plugin, int numParams) /
 int Native_IsInFirstCheckpoint(Handle plugin, int numParams) // Native "L4D_IsInFirstCheckpoint"
 {
 	int client = GetNativeCell(1);
-	return InCheckpoint(client, true);
+	return IsInFirstCheckpoint(client);
+}
+
+bool IsInFirstCheckpoint(int client)
+{
+	int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
+	if( area == 0 ) return false;
+
+	int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetInitialCheckpoint, g_pNavMesh);
+	if( nav1 )
+	{
+		if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+			return true;
+	}
+
+	if( SDKCall(g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark, g_pNavMesh, area) )
+		return true;
+
+	return false;
 }
 
 int Native_IsInLastCheckpoint(Handle plugin, int numParams) // Native "L4D_IsInLastCheckpoint"
 {
 	int client = GetNativeCell(1);
-	return InCheckpoint(client, false);
+	return IsInLastCheckpoint(client);
 }
 
-bool InCheckpoint(int client, bool start)
+bool IsInLastCheckpoint(int client)
 {
-	if( g_bCheckpoint[client] )
+	int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
+	if( area == 0 ) return false;
+
+	int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetLastCheckpoint, g_pNavMesh);
+	if( nav1 )
 	{
-		ValidateAddress(g_iOff_m_flow, "m_flow");
-		ValidateNatives(g_hSDK_CTerrorPlayer_GetLastKnownArea, "CTerrorPlayer::GetLastKnownArea");
-
-		//PrintToServer("#### CALL InCheckpoint %d g_hSDK_CTerrorPlayer_GetLastKnownArea", start);
-		int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
-		if( area == 0 ) return false;
-
-		float flow = view_as<float>(LoadFromAddress(view_as<Address>(area + g_iOff_m_flow), NumberType_Int32));
-		return (start ? flow < 3000.0 : flow > 3000.0);
+		if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+			return true;
 	}
+
+	if( SDKCall(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, g_pNavMesh, area) )
+		return true;
+
 
 	return false;
 }
@@ -2501,7 +2561,7 @@ int Native_GetIntMeleeAttribute(Handle plugin, int numParams) // Native "L4D2_Ge
 	if( ptr != -1 )
 	{
 		attr = L4D2IntMeleeWeapon_Offsets[attr]; // Offset
-		ptr = LoadFromAddress(view_as<Address>(ptr + attr), NumberType_Int32);
+		ptr = LoadFromAddress(view_as<Address>(ptr + attr), NumberType_Int16);
 	}
 
 	return ptr;
@@ -2556,7 +2616,7 @@ int Native_SetIntMeleeAttribute(Handle plugin, int numParams) // Native "L4D2_Se
 	{
 		int value = GetNativeCell(3);
 		attr = L4D2IntMeleeWeapon_Offsets[attr]; // Offset
-		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int32, false);
+		StoreToAddress(view_as<Address>(ptr + attr), value, NumberType_Int16, false);
 	}
 
 	return 0;

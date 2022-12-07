@@ -275,7 +275,8 @@ void SetupForwardsNatives()
 	CreateNative("L4D_GetLastKnownArea",		 					Native_CTerrorPlayer_GetLastKnownArea);
 	CreateNative("L4D_HasAnySurvivorLeftSafeArea",		 			Native_CDirector_HasAnySurvivorLeftSafeArea);
 	CreateNative("L4D_IsAnySurvivorInStartArea",		 			Native_CDirector_IsAnySurvivorInStartArea);
-	CreateNative("L4D_IsAnySurvivorInCheckpoint",		 			Native_CDirector_IsAnySurvivorInExitCheckpoint);
+	CreateNative("L4D_IsAnySurvivorInCheckpoint",		 			Native_CDirector_IsAnySurvivorInCheckpoint);
+	// CreateNative("L4D_IsAnySurvivorInExitCheckpoint",		 		Native_CDirector_IsAnySurvivorInCheckpoint);
 	CreateNative("L4D_AreAllSurvivorsInFinaleArea",		 			Native_CDirector_AreAllSurvivorsInFinaleArea);
 	CreateNative("L4D_IsInFirstCheckpoint",		 					Native_IsInFirstCheckpoint);
 	CreateNative("L4D_IsInLastCheckpoint",		 					Native_IsInLastCheckpoint);

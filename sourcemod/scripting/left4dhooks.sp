@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.123"
-#define PLUGIN_VERLONG		1123
+#define PLUGIN_VERSION		"1.124"
+#define PLUGIN_VERLONG		1124
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -311,8 +311,8 @@ Address g_pNavMesh;
 Address g_pZombieManager;
 Address g_pMeleeWeaponInfoStore;
 Address g_pWeaponInfoDatabase;
-Address g_pCTerrorPlayer_CanBecomeGhost;
 Address g_pScriptVM;
+Address g_pCTerrorPlayer_CanBecomeGhost;
 
 
 
@@ -335,7 +335,6 @@ bool g_bLinuxOS;
 bool g_bLeft4Dead2;
 bool g_bMapStarted;
 bool g_bRoundEnded;
-bool g_bCheckpoint[MAXPLAYERS+1];
 ConVar g_hCvar_VScriptBuffer;
 ConVar g_hCvar_AddonsEclipse;
 ConVar g_hCvar_RescueDeadTime;
@@ -694,40 +693,6 @@ public void OnPluginStart()
 	g_hCvar_RescueDeadTime = FindConVar("rescue_min_dead_time");
 	g_hCvar_MPGameMode = FindConVar("mp_gamemode");
 	g_hCvar_MPGameMode.AddChangeHook(ConVarChanged_Mode);
-
-
-
-	// ====================================================================================================
-	//									EVENTS
-	// ====================================================================================================
-	HookEvent("round_start",					Event_RoundStart);
-	HookEvent("player_left_checkpoint",			Event_LeftCheckpoint);
-	HookEvent("player_entered_checkpoint",		Event_EnteredCheckpoint);
-	if( !g_bLeft4Dead2 )
-		HookEvent("player_entered_start_area",	Event_EnteredCheckpoint);
-}
-
-void Event_EnteredCheckpoint(Event event, const char[] name, bool dontBroadcast)
-{
-	g_bCheckpoint[GetClientOfUserId(event.GetInt("userid"))] = true;
-}
-
-void Event_LeftCheckpoint(Event event, const char[] name, bool dontBroadcast)
-{
-	g_bCheckpoint[GetClientOfUserId(event.GetInt("userid"))] = false;
-}
-
-void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
-{
-	g_bRoundEnded = false;
-
-	for( int i = 1; i <= MaxClients; i++ )
-	{
-		if( IsClientInGame(i) && GetClientTeam(i) == 2 )
-			g_bCheckpoint[i] = true;
-		else
-			g_bCheckpoint[i] = false;
-	}
 }
 
 
