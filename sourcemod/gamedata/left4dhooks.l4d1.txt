@@ -128,6 +128,29 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::CancelStagger"
+			{
+				"signature"		"CTerrorPlayer::CancelStagger"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+			}
+
+			"L4DD::CTerrorPlayer::IsMotionControlledXY"
+			{
+				"signature"		"CTerrorPlayer::IsMotionControlledXY"
+				"callconv"		"thiscall"
+				"return"		"bool"
+				"this"			"entity"
+				"arguments"
+				{
+					"activity"
+					{
+						"type"		"int"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::OnFalling"
 			{
 				"signature"		"CTerrorPlayer::OnFalling"
@@ -1242,6 +1265,15 @@
 				"linux"		"310"
 			}
 
+			/*
+			* CBaseEntity::WorldSpaceCenter(CBaseEntity *this)
+			*/
+			"CBaseEntity::WorldSpaceCenter"
+			{
+				"windows"	"147"
+				"linux"		"148"
+			}
+
 
 
 			// VARIOUS OFFSETS
@@ -1395,6 +1427,11 @@
 			{
 				"windows"	"352"
 				"linux"		"352"
+			}
+			"L4D2IntWeapon_DefaultSize"
+			{
+				"windows"	"360"
+				"linux"		"360"
 			}
 			"L4D2IntWeapon_Bucket"
 			{
@@ -1636,6 +1673,19 @@
 				"windows"		"\xD9\x05\x2A\x2A\x2A\x2A\x56\x57\x8B\xF9\xD8\x9F\x2A\x2A\x00\x00\x8D\xB7\x2A\x2A\x00\x00\xDF\xE0\xF6\xC4\x2A\x7B\x13\x8B\x46\xF8\x8B\x10\x8D\x4E\xF8\x56\xFF\xD2\xD9\x2A\x2A\x2A\x2A\x2A\xD9\x1E\x8B\x37\x6A"
 				/* D9 05 ? ? ? ? 56 57 8B F9 D8 9F ? ? 00 00 8D B7 ? ? 00 00 DF E0 F6 C4 ? 7B 13 8B 46 F8 8B 10 8D 4E F8 56 FF D2 D9 ? ? ? ? ? D9 1E 8B 37 6A */
 				/* Search: "PlayerVomitExpired" */
+			}
+
+			/*
+			 * CBaseEntity::WorldSpaceCenter(CBaseEntity *this)
+			 */
+			"CBaseEntity::WorldSpaceCenter"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK11CBaseEntity16WorldSpaceCenterEv"
+				"windows"	"\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\xD9\x2A\x2A\xD8\x2A\x2A\x57"
+				/* 56 57 8B ? E8 ? ? ? ? 8B ? E8 ? ? ? ? D9 ? ? D8 ? ? 57 */
+				// Windows signature is wrong? Crashes on call
+				/* Search: "removing %d (%d): %s : %5.3f (%.3f)\n" use VTable to count up (about 40 entries). */
 			}
 
 			/*
@@ -2346,8 +2396,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN8Director26OnReleaseSurvivorPositionsERK10CUtlVectorIP13CTerrorPlayer10CUtlMemoryIS2_iEE"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x57\x50\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B"
-				/* ? ? ? ? ? ? ? ? ? 8D ? ? ? 57 50 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? E8 ? ? ? ? 8B */
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x57\x50\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\x89\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? ? 8D ? ? ? 57 50 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? 89 ? ? ? E8 ? ? ? ? 8B */
 				/* Search "ReleaseSurvivorPositions" bellow is target call. */
 			}
 
@@ -2939,10 +2989,22 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer13CancelStaggerEv"
-				"windows"	"\xD9\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\xD8\x2A\x78\x2A\x2A\x2A\x8D"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\xD8\x2A\x78\x2A\x2A\x2A\x8D"
 				/* Sig may break, using offsets to make unique */
-				/* D9 ? ? ? ? ? 56 57 8B ? D8 ? 78 ? ? ? 8D */
+				/* ? ? ? ? ? ? 56 57 8B ? D8 ? 78 ? ? ? 8D */
 				/* Search "SurvivorWasPounced" - few calls above. */ // Found by SilverShot.
+			}
+
+			/*
+			 * CTerrorPlayer::IsMotionControlledXY(Activity)const
+			 */
+			"CTerrorPlayer::IsMotionControlledXY"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13CTerrorPlayer20IsMotionControlledXYE8Activity"
+				"windows"	"\x8B\x2A\x2A\x2A\x05\x2A\x2A\x2A\x2A\x3D\x2A\x2A\x2A\x2A\x77"
+				/* 8B ? ? ? 05 ? ? ? ? 3D ? ? ? ? 77 */
+				/* Search "Motion controlled animation" - few calls above. */ // Found by "SilverShot"
 			}
 
 			/*

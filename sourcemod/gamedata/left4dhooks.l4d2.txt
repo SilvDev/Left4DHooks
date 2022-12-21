@@ -197,6 +197,29 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::CancelStagger"
+			{
+				"signature"		"CTerrorPlayer::CancelStagger"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+			}
+
+			"L4DD::CTerrorPlayer::IsMotionControlledXY"
+			{
+				"signature"		"CTerrorPlayer::IsMotionControlledXY"
+				"callconv"		"thiscall"
+				"return"		"bool"
+				"this"			"entity"
+				"arguments"
+				{
+					"activity"
+					{
+						"type"		"int"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::Fling"
 			{
 				"signature"		"CTerrorPlayer::Fling"
@@ -2086,6 +2109,11 @@
 				"windows"	"352"
 				"linux"		"352"
 			}
+			"L4D2IntWeapon_DefaultSize"
+			{
+				"windows"	"360"
+				"linux"		"360"
+			}
 			"L4D2IntWeapon_Bucket"
 			{
 				"windows"	"344"
@@ -2330,6 +2358,18 @@
 				/* 56 57 8B ? F3 ? ? ? ? ? ? ? 0F ? ? ? ? ? ? 8D ? ? ? ? ? 9F F6 ? ? 7B ? 8B ? ? 8B ? 8D ? ? 56 FF ? F3 ? ? ? ? ? ? ? F3 ? ? ? 8B ? 6A */
 				/* Search: "PlayerVomitExpired" */
 				// Search: "Spitter projectile spawned at %f %f %f, velocity %f %f %f"
+			}
+
+			/*
+			 * CBaseEntity::WorldSpaceCenter(CBaseEntity *this)
+			 */
+			"CBaseEntity::WorldSpaceCenter"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK11CBaseEntity16WorldSpaceCenterEv"
+				"windows"	"\x56\x57\x8D\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\xF3"
+				/* 56 57 8D ? ? ? ? ? E8 ? ? ? ? 8B ? E8 ? ? ? ? F3 */
+				/* Search: "%sCallChain <- CSimpleCallChainer(\"%s\", self.GetScriptScope().weakref(), true)" use VTable to count up (about 38 entries). */
 			}
 
 			/*
@@ -4114,10 +4154,22 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer13CancelStaggerEv"
-				"windows"	"\x56\x8B\x2A\xF3\x2A\x2A\x2A\x0C\x2A\x2A\x2A\x0F\x2A\x2A\x2A\x2A\x2A\x2A\x57"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x0C\x2A\x2A\x2A\x0F\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8D"
 				/* Sig may break, using offsets to make unique */
-				/* 56 8B ? F3 ? ? ? 0C ? ? ? 0F ? ? ? ? ? ? 57 */
+				/* ? ? ? ? ? ? ? 0C ? ? ? 0F ? ? ? ? ? ? 57 8D */
 				/* Search "SurvivorWasPounced" - few calls above. */ // Found by "SilverShot" updated by "Crasher_3637".
+			}
+
+			/*
+			 * CTerrorPlayer::IsMotionControlledXY(Activity)const
+			 */
+			"CTerrorPlayer::IsMotionControlledXY"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13CTerrorPlayer20IsMotionControlledXYE8Activity"
+				"windows"	"\x55\x8B\x2A\x8B\x2A\x2A\x05\x2A\x2A\x2A\x2A\x3D\x2A\x2A\x2A\x2A\x77"
+				/* 55 8B ? 8B ? ? 05 ? ? ? ? 3D ? ? ? ? 77 */
+				/* Search "Motion controlled animation" - few calls above. */ // Found by "SilverShot"
 			}
 
 			/*

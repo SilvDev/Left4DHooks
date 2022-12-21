@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.125"
-#define PLUGIN_VERLONG		1125
+#define PLUGIN_VERSION		"1.126"
+#define PLUGIN_VERLONG		1126
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
@@ -271,8 +271,8 @@ int g_iOff_InvulnerabilityTimer;
 int g_iOff_m_iTankTickets;
 int g_iOff_m_iSurvivorHealthBonus;
 int g_iOff_m_bFirstSurvivorLeftStartArea;
-int g_iOff_m_iShovePenalty;
-int g_iOff_m_fNextShoveTime;
+// int g_iOff_m_iShovePenalty;
+// int g_iOff_m_fNextShoveTime;
 int g_iOff_m_preIncapacitatedHealth;
 int g_iOff_m_preIncapacitatedHealthBuffer;
 int g_iOff_m_maxFlames;
@@ -292,7 +292,7 @@ int L4D2CountdownTimer_Offsets[9];
 int L4D2IntervalTimer_Offsets[6];
 
 // l4d2weapons.inc
-int L4D2IntWeapon_Offsets[5];
+int L4D2IntWeapon_Offsets[6];
 int L4D2FloatWeapon_Offsets[21];
 int L4D2BoolMeleeWeapon_Offsets[1];
 int L4D2IntMeleeWeapon_Offsets[2];

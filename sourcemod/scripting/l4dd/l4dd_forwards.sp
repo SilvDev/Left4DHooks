@@ -196,9 +196,13 @@ GlobalForward g_hFWD_CTerrorPlayer_QueuePummelVictim_PostHandled;
 GlobalForward g_hFWD_ThrowImpactedSurvivor;
 GlobalForward g_hFWD_ThrowImpactedSurvivor_Post;
 GlobalForward g_hFWD_ThrowImpactedSurvivor_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_CancelStagger;
+GlobalForward g_hFWD_CTerrorPlayer_CancelStagger_Post;
+GlobalForward g_hFWD_CTerrorPlayer_CancelStagger_PostHandled;
 GlobalForward g_hFWD_CTerrorPlayer_Fling;
 GlobalForward g_hFWD_CTerrorPlayer_Fling_Post;
 GlobalForward g_hFWD_CTerrorPlayer_Fling_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_IsMotionControlledXY;
 GlobalForward g_hFWD_CDeathFallCamera_Enable;
 GlobalForward g_hFWD_CTerrorPlayer_OnFalling_Post;
 GlobalForward g_hFWD_CTerrorPlayer_Cough;
@@ -285,7 +289,6 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CDirector_OnForceSurvivorPositions_Pre,					DTR_CDirector_OnForceSurvivorPositions_Post,				"L4DD::CDirector::OnForceSurvivorPositions",						"L4D_OnForceSurvivorPositions_Pre");
 	CreateDetour(hGameData,			DTR_CDirector_OnForceSurvivorPositions_Pre,					DTR_CDirector_OnForceSurvivorPositions_Post,				"L4DD::CDirector::OnForceSurvivorPositions",						"L4D_OnForceSurvivorPositions",					true);
 	CreateDetour(hGameData,			DTR_CDirector_OnReleaseSurvivorPositions_Pre,				DTR_CDirector_OnReleaseSurvivorPositions,					"L4DD::CDirector::OnReleaseSurvivorPositions",						"L4D_OnReleaseSurvivorPositions");
-	CreateDetour(hGameData,			DTR_CDirector_OnReleaseSurvivorPositions_Pre,				DTR_CDirector_OnReleaseSurvivorPositions,					"L4DD::CDirector::OnReleaseSurvivorPositions",						"L4D_OnReleaseSurvivorPositions",				true);
 	CreateDetour(hGameData,			DTR_SpeakResponseConceptFromEntityIO_Pre,					DTR_SpeakResponseConceptFromEntityIO_Post,					"L4DD::SpeakResponseConceptFromEntityIO",							"L4D_OnSpeakResponseConcept_Pre");
 	CreateDetour(hGameData,			DTR_SpeakResponseConceptFromEntityIO_Pre,					DTR_SpeakResponseConceptFromEntityIO_Post,					"L4DD::SpeakResponseConceptFromEntityIO",							"L4D_OnSpeakResponseConcept_Post",				true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GetCrouchTopSpeed_Pre,					DTR_CTerrorPlayer_GetCrouchTopSpeed_Post,					"L4DD::CTerrorPlayer::GetCrouchTopSpeed",							"L4D_OnGetCrouchTopSpeed");
@@ -393,6 +396,10 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GrabVictimWithTongue,						DTR_CTerrorPlayer_GrabVictimWithTongue_Post,				"L4DD::CTerrorPlayer::GrabVictimWithTongue",						"L4D_OnGrabWithTongue_Post",					true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_GrabVictimWithTongue,						DTR_CTerrorPlayer_GrabVictimWithTongue_Post,				"L4DD::CTerrorPlayer::GrabVictimWithTongue",						"L4D_OnGrabWithTongue_PostHandled",				true);
 	CreateDetour(hGameData,			DTR_CServerGameDLL_ServerHibernationUpdate,					INVALID_FUNCTION,											"L4DD::CServerGameDLL::ServerHibernationUpdate",					"L4D_OnServerHibernationUpdate");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_IsMotionControlledXY,						INVALID_FUNCTION,											"L4DD::CTerrorPlayer::IsMotionControlledXY",						"L4D_OnMotionControlledXY");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger_Post",						true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger_PostHandled",				true);
 
 	if( !g_bLeft4Dead2 )
 	{
@@ -1335,7 +1342,7 @@ MRESReturn DTR_CDirector_OnReleaseSurvivorPositions_Pre(DHookReturn hReturn, DHo
 	return MRES_Ignored;
 }
 
-MRESReturn DTR_CDirector_OnReleaseSurvivorPositions(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnSpeakResponseConcept_Pre"
+MRESReturn DTR_CDirector_OnReleaseSurvivorPositions(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnSpeakResponseConcept"
 {
 	//PrintToServer("##### g_hFWD_CDirector_OnReleaseSurvivorPositions");
 
@@ -2949,6 +2956,37 @@ MRESReturn DTR_ThrowImpactedSurvivor_Post(DHookReturn hReturn, DHookParam hParam
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CTerrorPlayer_CancelStagger;
+MRESReturn DTR_CTerrorPlayer_CancelStagger(int pThis, DHookParam hParams) // Forward "L4D_OnCancelStagger"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_CancelStagger");
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_CancelStagger);
+	Call_PushCell(pThis);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CTerrorPlayer_CancelStagger = true;
+
+		return MRES_Supercede;
+	}
+
+	g_bBlock_CTerrorPlayer_CancelStagger = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_CancelStagger_Post(int pThis, DHookParam hParams) // Forward "L4D_OnCancelStagger_Post" and "L4D_OnCancelStagger_PostHandled"
+{
+	Call_StartForward(g_bBlock_CTerrorPlayer_CancelStagger ? g_hFWD_CTerrorPlayer_CancelStagger_PostHandled : g_hFWD_CTerrorPlayer_CancelStagger_Post);
+	Call_PushCell(pThis);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
 bool g_bBlock_CTerrorPlayer_Fling;
 MRESReturn DTR_CTerrorPlayer_Fling(int pThis, DHookParam hParams) // Forward "L4D2_OnPlayerFling"
 {
@@ -2988,6 +3026,78 @@ MRESReturn DTR_CTerrorPlayer_Fling_Post(int pThis, DHookParam hParams) // Forwar
 	Call_PushCell(attacker);
 	Call_PushArray(vPos, sizeof(vPos));
 	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_IsMotionControlledXY(int client, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnMotionControlledXY"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_IsMotionControlledXY");
+	int activity = hParams.Get(1);
+
+	if( g_bLeft4Dead2 )
+	{
+		switch( activity )
+		{
+			case
+				L4D2_ACT_TERROR_SHOVED_FORWARD,
+				L4D2_ACT_TERROR_SHOVED_BACKWARD,
+				L4D2_ACT_TERROR_SHOVED_LEFTWARD,
+				L4D2_ACT_TERROR_SHOVED_RIGHTWARD,
+				L4D2_ACT_TERROR_SHOVED_FORWARD_CHAINSAW,
+				L4D2_ACT_TERROR_SHOVED_BACKWARD_CHAINSAW,
+				L4D2_ACT_TERROR_SHOVED_LEFTWARD_CHAINSAW,
+				L4D2_ACT_TERROR_SHOVED_RIGHTWARD_CHAINSAW,
+				L4D2_ACT_TERROR_SHOVED_FORWARD_BAT,
+				L4D2_ACT_TERROR_SHOVED_BACKWARD_BAT,
+				L4D2_ACT_TERROR_SHOVED_LEFTWARD_BAT,
+				L4D2_ACT_TERROR_SHOVED_RIGHTWARD_BAT,
+				L4D2_ACT_TERROR_SHOVED_FORWARD_MELEE,
+				L4D2_ACT_TERROR_SHOVED_BACKWARD_MELEE,
+				L4D2_ACT_TERROR_SHOVED_LEFTWARD_MELEE,
+				L4D2_ACT_TERROR_SHOVED_RIGHTWARD_MELEE,
+				L4D2_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_L,
+				L4D2_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_R,
+				L4D2_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_BACKWARD,
+				L4D2_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_FORWARD:
+			{
+			}
+			default: return MRES_Ignored;
+		}
+	}
+	else
+	{
+		switch( activity )
+		{
+			case
+				L4D1_ACT_TERROR_SHOVED_FORWARD,
+				L4D1_ACT_TERROR_SHOVED_BACKWARD,
+				L4D1_ACT_TERROR_SHOVED_LEFTWARD,
+				L4D1_ACT_TERROR_SHOVED_RIGHTWARD,
+				L4D1_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_L,
+				L4D1_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_R,
+				L4D1_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_BACKWARD,
+				L4D1_ACT_TERROR_HUNTER_POUNCE_KNOCKOFF_FORWARD:
+			{
+			}
+			default: return MRES_Ignored;
+		}
+	}
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_IsMotionControlledXY);
+	Call_PushCell(client);
+	Call_PushCell(activity);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		// Prevent jumping, since it's unblocked when this function returns false
+		SetEntPropFloat(client, Prop_Send, "m_jumpSupressedUntil", GetGameTime() + 0.1);
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
 
 	return MRES_Ignored;
 }
@@ -3146,6 +3256,23 @@ MRESReturn DTR_CInferno_Spread(int pThis, DHookReturn hReturn, DHookParam hParam
 		hParams.SetVector(1, vPos);
 		hReturn.Value = 1;
 		return MRES_ChangedHandled;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_Extinguish(int client) // Forward "L4D_PlayerExtinguish"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_Extinguish");
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_Extinguish);
+	Call_PushCell(client);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		return MRES_Supercede;
 	}
 
 	return MRES_Ignored;
@@ -3475,23 +3602,6 @@ MRESReturn DTR_CVomitJarProjectile_Detonate(int pThis, DHookReturn hReturn, DHoo
 	Call_PushCell(pThis);
 	Call_PushCell(client);
 	Call_Finish();
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CTerrorPlayer_Extinguish(int client) // Forward "L4D_PlayerExtinguish"
-{
-	//PrintToServer("##### DTR_CTerrorPlayer_Extinguish");
-
-	Action aResult = Plugin_Continue;
-	Call_StartForward(g_hFWD_CTerrorPlayer_Extinguish);
-	Call_PushCell(client);
-	Call_Finish(aResult);
-
-	if( aResult == Plugin_Handled )
-	{
-		return MRES_Supercede;
-	}
 
 	return MRES_Ignored;
 }

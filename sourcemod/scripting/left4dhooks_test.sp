@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.123"
+#define PLUGIN_VERSION		"1.126"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 163;
+		g_iForwardsMax = 170;
 	else
-		g_iForwardsMax = 123;
+		g_iForwardsMax = 126;
 
 	return APLRes_Success;
 }
@@ -301,12 +301,63 @@ Action sm_l4df(int client, int args)
 	return Plugin_Handled;
 }
 
+stock Action TimerCancelStagger(Handle timer, int client)
+{
+	client = GetClientOfUserId(client);
+	if( client )
+	{
+		L4D_CancelStagger(client);
+	}
+
+	return Plugin_Continue;
+}
+
 Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
 
 
+
+	// PrintToChatAll("ANY_CHECK %d ANY_START %d FIRST %d LAST %d", L4D_IsAnySurvivorInCheckpoint(), L4D_IsAnySurvivorInStartArea(), L4D_IsInFirstCheckpoint(client), L4D_IsInLastCheckpoint(client));
+
+
+
+	/*
+	float vPos[3];
+	GetClientAbsOrigin(client, vPos);
+
+	PrintToServer("L4D_IsPositionInFirstCheckpoint %N == %d", client, L4D_IsPositionInFirstCheckpoint(vPos));
+	PrintToServer("L4D_IsPositionInLastCheckpoint %N == %d", client, L4D_IsPositionInLastCheckpoint(vPos));
+	*/
+
+
+
+	/*
+	float vPos[3];
+
+	GetClientEyePosition(client, vPos);
+	PrintToChatAll("Eye %f %f %f", vPos[0], vPos[1], vPos[2]);
+
+	GetClientAbsOrigin(client, vPos);
+	PrintToChatAll("Abs %f %f %f", vPos[0], vPos[1], vPos[2]);
+
+	L4D_GetEntityWorldSpaceCenter(client, vPos);
+	PrintToChatAll("Cen %f %f %f", vPos[0], vPos[1], vPos[2]);
+	*/
+
+
+
+	// float vPos[3];
+	// GetClientAbsOrigin(client, vPos);
+	// PrintToChatAll("FIRST %d", L4D_IsPositionInFirstCheckpoint(vPos));
+	// PrintToChatAll("LAST %d", L4D_IsPositionInLastCheckpoint(vPos));
+
+
+
+	// Test for "L4D_OnCancelStagger" and "L4D_OnMotionControlledXY" forwards
+	// L4D_StaggerPlayer(client, client, NULL_VECTOR);
+	// CreateTimer(1.0, TimerCancelStagger, GetClientUserId(client));
 
 
 
@@ -1458,6 +1509,7 @@ Action sm_l4dd(int client, int args)
 
 	PrintToServer("L4D2_GetIntWeaponAttribute weapon_rifle (Bullets): %d",					L4D2_GetIntWeaponAttribute("weapon_rifle", L4D2IWA_Bullets));
 	PrintToServer("L4D2_GetIntWeaponAttribute weapon_rifle (ClipSize): %d",					L4D2_GetIntWeaponAttribute("weapon_rifle", L4D2IWA_ClipSize));
+	PrintToServer("L4D2_GetIntWeaponAttribute weapon_rifle (Default ClipSize): %d",			L4D2_GetIntWeaponAttribute("weapon_rifle", L4D2IWA_DefaultSize));
 	PrintToServer("L4D2_GetIntWeaponAttribute weapon_rifle (Bucket): %d",					L4D2_GetIntWeaponAttribute("weapon_rifle", L4D2IWA_Bucket));
 	if( g_bLeft4Dead2 )
 		PrintToServer("L4D2_GetIntWeaponAttribute weapon_rifle (Tier): %d",					L4D2_GetIntWeaponAttribute("weapon_rifle", L4D2IWA_Tier));
@@ -1932,7 +1984,7 @@ Action sm_l4dd(int client, int args)
 	return Plugin_Handled;
 }
 
-stock Action TimerDetonate(Handle timer, any entity)
+stock Action TimerDetonate(Handle timer, int entity)
 {
 	entity = EntRefToEntIndex(entity);
 	if( entity != INVALID_ENT_REFERENCE )
@@ -1943,7 +1995,7 @@ stock Action TimerDetonate(Handle timer, any entity)
 	return Plugin_Continue;
 }
 
-stock Action TimerDetonateVomitjar(Handle timer, any entity)
+stock Action TimerDetonateVomitjar(Handle timer, int entity)
 {
 	entity = EntRefToEntIndex(entity);
 	if( entity != INVALID_ENT_REFERENCE )
@@ -3167,7 +3219,7 @@ public Action L4D2_OnPounceOrLeapStumble(int victim, int attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnPounceOrLeapStumble\" %d %d", victim, attacker);
+		ForwardCalled("\"L4D2_OnPounceOrLeapStumble\" %d (%N) %d", victim, victim, attacker);
 	}
 
 	// WORKS
@@ -3184,7 +3236,7 @@ public void L4D2_OnPounceOrLeapStumble_Post(int victim, int attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnPounceOrLeapStumble_Post\" %d %d", victim, attacker);
+		ForwardCalled("\"L4D2_OnPounceOrLeapStumble_Post\" %d (%N) %d", victim, victim, attacker);
 	}
 }
 
@@ -3196,7 +3248,7 @@ public void L4D2_OnPounceOrLeapStumble_PostHandled(int victim, int attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnPounceOrLeapStumble_PostHandled\" %d %d", victim, attacker);
+		ForwardCalled("\"L4D2_OnPounceOrLeapStumble_PostHandled\" %d (%N) %d", victim, victim, attacker);
 	}
 }
 
@@ -4418,7 +4470,7 @@ stock Action OnPummelOnAnimPre(int client, int &anim)
 	return Plugin_Continue;
 }
 
-stock Action TimerOnPummelResetAnim(Handle timer, any victim) // Don't need client userID since it's not going to be validated just removed
+stock Action TimerOnPummelResetAnim(Handle timer, int victim) // Don't need client userID since it's not going to be validated just removed
 {
 	AnimHookDisable(victim, OnPummelOnAnimPre);
 
@@ -4490,6 +4542,47 @@ public void L4D2_OnThrowImpactedSurvivor_PostHandled(int attacker, int victim)
 	}
 }
 
+public Action L4D_OnCancelStagger(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnCancelStagger\" %d (%N)", client, client);
+	}
+
+	// WORKS
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_OnCancelStagger_Post(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnCancelStagger_Post\" %d (%N)", client, client);
+	}
+}
+
+public void L4D_OnCancelStagger_PostHandled(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnCancelStagger_PostHandled\" %d (%N)", client, client);
+	}
+}
+
 public Action L4D2_OnPlayerFling(int client, int attacker, float vecDir[3])
 {
 	static int called;
@@ -4530,6 +4623,25 @@ public void L4D2_OnPlayerFling_PostHandled(int client, int attacker, const float
 		ForwardCalled("\"L4D2_OnPlayerFling_PostHandled\" %d (%N) flung %d (%N). vecDir: (%0.1f %0.1f %0.1f)", attacker, attacker, client, client, vecDir[0], vecDir[1], vecDir[2]);
 	}
 }
+
+/*
+public Action L4D_OnMotionControlledXY(int client, int activity)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_IsMotionControlledXY\" %d %N - %d", client, client, activity);
+	}
+
+	// WORKING
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+*/
 
 public Action L4D_OnFatalFalling(int client, int camera)
 {
@@ -4706,7 +4818,7 @@ void ForwardCalled(const char[] format, any ...)
 	PrintToServer("----------");
 }
 
-stock bool TraceFilter(int entity, int contentsMask, any client)
+stock bool TraceFilter(int entity, int contentsMask, int client)
 {
 	if( entity == client )
 		return false;

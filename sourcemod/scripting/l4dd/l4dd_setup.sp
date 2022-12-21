@@ -134,9 +134,13 @@ void SetupForwardsNatives()
 	g_hFWD_ThrowImpactedSurvivor											= new GlobalForward("L4D2_OnThrowImpactedSurvivor",						ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_ThrowImpactedSurvivor_Post										= new GlobalForward("L4D2_OnThrowImpactedSurvivor_Post",				ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_ThrowImpactedSurvivor_PostHandled								= new GlobalForward("L4D2_OnThrowImpactedSurvivor_PostHandled",			ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_CancelStagger										= new GlobalForward("L4D_OnCancelStagger",								ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_CancelStagger_Post									= new GlobalForward("L4D_OnCancelStagger_Post",							ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_CancelStagger_PostHandled							= new GlobalForward("L4D_OnCancelStagger_PostHandled",					ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_Fling												= new GlobalForward("L4D2_OnPlayerFling",								ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CTerrorPlayer_Fling_Post											= new GlobalForward("L4D2_OnPlayerFling_Post",							ET_Event, Param_Cell, Param_Cell, Param_Array);
 	g_hFWD_CTerrorPlayer_Fling_PostHandled									= new GlobalForward("L4D2_OnPlayerFling_PostHandled",					ET_Event, Param_Cell, Param_Cell, Param_Array);
+	g_hFWD_CTerrorPlayer_IsMotionControlledXY								= new GlobalForward("L4D_OnMotionControlledXY",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CDeathFallCamera_Enable											= new GlobalForward("L4D_OnFatalFalling",								ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnFalling_Post										= new GlobalForward("L4D_OnFalling",									ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_Cough												= new GlobalForward("L4D_OnPlayerCough",								ET_Event, Param_Cell, Param_Cell);
@@ -267,6 +271,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_Dissolve",		 							Native_CEntityDissolve_Create);
 	CreateNative("L4D_OnITExpired",		 							Native_CTerrorPlayer_OnITExpired);
 	CreateNative("L4D_EstimateFallingDamage",		 				Native_CTerrorPlayer_EstimateFallingDamage);
+	CreateNative("L4D_GetEntityWorldSpaceCenter",		 			Native_CBaseEntity_WorldSpaceCenter);
 	CreateNative("L4D_AngularVelocity",		 						Native_CBaseEntity_ApplyLocalAngularVelocityImpulse);
 	CreateNative("L4D_GetRandomPZSpawnPosition",		 			Native_ZombieManager_GetRandomPZSpawnPosition);
 	CreateNative("L4D_FindRandomSpot",		 						Native_TerrorNavArea_FindRandomSpot);
@@ -280,6 +285,8 @@ void SetupForwardsNatives()
 	CreateNative("L4D_AreAllSurvivorsInFinaleArea",		 			Native_CDirector_AreAllSurvivorsInFinaleArea);
 	CreateNative("L4D_IsInFirstCheckpoint",		 					Native_IsInFirstCheckpoint);
 	CreateNative("L4D_IsInLastCheckpoint",		 					Native_IsInLastCheckpoint);
+	CreateNative("L4D_IsPositionInFirstCheckpoint",		 			Native_IsPositionInFirstCheckpoint);
+	CreateNative("L4D_IsPositionInLastCheckpoint",		 			Native_IsPositionInLastCheckpoint);
 	CreateNative("L4D_GetCheckpointFirst",		 					Native_GetCheckpointFirst);
 	CreateNative("L4D_GetCheckpointLast",		 					Native_GetCheckpointLast);
 	CreateNative("L4D_HasPlayerControlledZombies",		 			Native_CTerrorGameRules_HasPlayerControlledZombies);
