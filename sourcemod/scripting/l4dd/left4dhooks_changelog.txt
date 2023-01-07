@@ -1,3 +1,28 @@
+1.127 (07-Jan-2023)
+	- Added more Charger stocks to the "left4dhooks_silver.inc" include file. Thanks to "Forgetest" for providing.
+	- Added some more "L4D2UseAction" enum values to the "left4dhooks_stocks.inc" include file. Thanks to "Marttt" for reporting.
+	- Changed natives "L4D_IsPositionIn*" to use a wider search area to the nearest NavArea position, from 300.0 to 1000.0. Suggested by "ProjectSky".
+	- Added missing post handled forwards to the include file. Thanks to "Forgetest" for reporting.
+		- "L4D_OnStartMeleeSwing_PostHandled", "L4D2_OnChangeFinaleStage_PostHandled", "L4D2_CGasCan_ShouldStartAction_PostHandled",
+		- "L4D2_OnHitByVomitJar_PostHandled", "L4D2_CGasCan_ActionComplete_PostHandled", "L4D2_OnJockeyRide_PostHandled" and "L4D2_OnStartCarryingVictim_PostHandled".
+	- Added forward "L4D2_OnSlammedSurvivor_PostHandled" when the pre hook is being blocked. Requested by "Forgetest".
+	- Changed forward "L4D2_OnSlammedSurvivor" to allow blocking the forward.
+	- Changed forward "L4D_OnFatalFalling" to return client index 0 when the client is not available.
+	- Fixed forward "L4D_OnFatalFalling" throwing errors when client index is 0. Thanks to "Beatles" for reporting.
+	- Fixed forwards "L4D_TankRock_OnRelease" and "L4D_TankRock_OnRelease_Post" crashing on L4D1 Linux not giving a vecAng. Thanks to "Forgetest" for fixing.
+	- Deprecated native: "L4D2_AreTeamsFlipped" in favor of using: GameRules_GetProp("m_bAreTeamsFlipped"); - Suggested by "A1m`".
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks_silver.inc" Include file.
+	- Updated: "left4dhooks_stocks.inc" Include file.
+	- Updated: "left4dhooks.l4d1.txt" GameData file.
+	- Updated: "left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.126 (21-Dec-2022)
 	- Added weapon attribute "L4D2IWA_DefaultSize" for the "L4D2_GetIntWeaponAttribute" and "L4D2_SetIntWeaponAttribute" natives to get a weapons default clip size. Thanks to "iaNanaNana" for adding.
 	- Added natives "L4D_IsPositionInFirstCheckpoint" and "L4D_IsPositionInLastCheckpoint" to check if a given vector is within a checkpoint area. Thanks to "Forgetest" for the code.
@@ -8,15 +33,6 @@
 
 	- Changed natives: "L4D2Direct_GetNextShoveTime" and "L4D2Direct_SetNextShoveTime" method. Please report any issues.
 	- Deprecated natives: "L4D2Direct_GetShovePenalty" and "L4D2Direct_SetShovePenalty" in favor of using the "m_iShovePenalty" Prop_Send GetEntProp/SetEntProp natives.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "left4dhooks.inc" Include file.
-	- Updated: "left4dhooks.l4d1.txt" GameData file.
-	- Updated: "left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.125 (07-Dec-2022)
 	- Fixed update 1.124 breaking "L4D2_OnEndVersusModeRound". Thanks to "Forgetest" for reporting.
@@ -373,7 +389,7 @@
 	- Added some new enums to the "left4dhooks_silver.inc" include file: "L4D_TEAM_*", "L4D_ZOMBIE_CLASS_*", "L4D2_ZOMBIE_CLASS_*" and "L4D_WEAPON_SLOT_*".
 	- Added new include file "left4dhooks_lux_library.inc" - various new stocks from "lux_library.inc". Thanks to "Lux" for the original file and allowing use.
 	- Added new include file "left4dhooks_silver.inc" - various new stocks. This will be updated over time to add new simple stock functions.
-	- Added new inclide file "left4dhooks_stocks.inc" - various new stocks from "l4d_stocks.inc". Thanks to "Mr. Zero" for the original files.
+	- Added new include file "left4dhooks_stocks.inc" - various new stocks from "l4d_stocks.inc". Thanks to "Mr. Zero" for the original files.
 	- This is also combined with the "l4d_weapon_stocks.inc" include file by "Mr. Zero".
 	- Only required to copy to the "scripting/include" directory when compiling, "left4dhooks.inc" will include these automatically.
 

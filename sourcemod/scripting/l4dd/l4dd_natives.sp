@@ -149,7 +149,7 @@ Handle g_hSDK_CTerrorPlayer_MaterializeFromGhost;
 Handle g_hSDK_CTerrorPlayer_BecomeGhost;
 Handle g_hSDK_CCSPlayer_State_Transition;
 Handle g_hSDK_CDirector_SwapTeams;
-Handle g_hSDK_CDirector_AreTeamsFlipped;
+// Handle g_hSDK_CDirector_AreTeamsFlipped;
 Handle g_hSDK_CDirector_StartRematchVote;
 Handle g_hSDK_CDirector_FullRestart;
 Handle g_hSDK_CDirectorVersusMode_HideScoreboardNonVirtual;
@@ -1191,7 +1191,7 @@ int Native_IsPositionInLastCheckpoint(Handle plugin, int numParams) // Native "L
 
 bool IsPositionInSaferoom(float vecPos[3], bool bStartSaferoom)
 {
-    Address nav = L4D_GetNearestNavArea(vecPos);
+    Address nav = L4D_GetNearestNavArea(vecPos, 1000.0, _, true);
     if( nav != Address_Null )
     {
         int spawnAttributes = GetTerrorNavArea_Attributes(nav);
@@ -4680,6 +4680,9 @@ int Native_CDirector_SwapTeams(Handle plugin, int numParams) // Native "L4D2_Swa
 
 int Native_CDirector_AreTeamsFlipped(Handle plugin, int numParams) // Native "L4D2_AreTeamsFlipped"
 {
+	return GameRules_GetProp("m_bAreTeamsFlipped");
+
+	/*
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
 
 	ValidateAddress(g_pDirector, "g_pDirector");
@@ -4687,6 +4690,7 @@ int Native_CDirector_AreTeamsFlipped(Handle plugin, int numParams) // Native "L4
 
 	//PrintToServer("#### CALL g_hSDK_CDirector_AreTeamsFlipped");
 	return SDKCall(g_hSDK_CDirector_AreTeamsFlipped, g_pDirector);
+	*/
 }
 
 int Native_CDirector_StartRematchVote(Handle plugin, int numParams) // Native "L4D2_StartRematchVote"

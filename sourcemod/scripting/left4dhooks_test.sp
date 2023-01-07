@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct - TESTER
-*	Copyright (C) 2022 Silvers
+*	Copyright (C) 2023 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.126"
+#define PLUGIN_VERSION		"1.127"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,7 +81,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 170;
+		g_iForwardsMax = 178;
 	else
 		g_iForwardsMax = 126;
 
@@ -3441,6 +3441,18 @@ public void L4D2_OnJockeyRide_Post(int victim, int attacker)
 	}
 }
 
+public void L4D2_OnJockeyRide_PostHandled(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnJockeyRide_PostHandled\" %d (%N) grabbing %d (%N)", attacker, attacker, victim, victim);
+	}
+}
+
 public Action L4D2_OnStartCarryingVictim(int victim, int attacker)
 {
 	static int called;
@@ -3467,6 +3479,18 @@ public void L4D2_OnStartCarryingVictim_Post(int victim, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_OnStartCarryingVictim_Post\" %d (%N) grabbing %d (%N)", attacker, attacker, victim, victim);
+	}
+}
+
+public void L4D2_OnStartCarryingVictim_PostHandled(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnStartCarryingVictim_PostHandled\" %d (%N) grabbing %d (%N)", attacker, attacker, victim, victim);
 	}
 }
 
@@ -3542,6 +3566,18 @@ public void L4D2_OnHitByVomitJar_Post(int victim, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_OnHitByVomitJar_Post\" %d > %d)", victim, attacker);
+	}
+}
+
+public void L4D2_OnHitByVomitJar_PostHandled(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnHitByVomitJar_PostHandled\" %d > %d)", victim, attacker);
 	}
 }
 
@@ -3866,6 +3902,18 @@ public void L4D2_CGasCan_ActionComplete_Post(int client, int gascan, int nozzle)
 	}
 }
 
+public void L4D2_CGasCan_ActionComplete_PostHandled(int client, int gascan, int nozzle)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_CGasCan_ActionComplete_PostHandled\" %d (%N) - GasCan: %d > Nozzle: %d", client, client, gascan, nozzle);
+	}
+}
+
 public Action L4D2_CGasCan_ShouldStartAction(int client, int gascan, int nozzle)
 {
 	static int called;
@@ -3892,6 +3940,18 @@ public void L4D2_CGasCan_ShouldStartAction_Post(int client, int gascan, int nozz
 		called++;
 
 		ForwardCalled("\"L4D2_CGasCan_ShouldStartAction_Post\" %d (%N) - GasCan: %d > Nozzle: %d", client, client, gascan, nozzle);
+	}
+}
+
+public void L4D2_CGasCan_ShouldStartAction_PostHandled(int client, int gascan, int nozzle)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_CGasCan_ShouldStartAction_PostHandled\" %d (%N) - GasCan: %d > Nozzle: %d", client, client, gascan, nozzle);
 	}
 }
 
@@ -4236,6 +4296,18 @@ public void L4D_OnStartMeleeSwing_Post(int client, bool boolean)
 	}
 }
 
+public void L4D_OnStartMeleeSwing_PostHandled(int client, bool boolean)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnStartMeleeSwing_PostHandled\" %d. %d", client, boolean);
+	}
+}
+
 public Action L4D2_MeleeGetDamageForVictim(int client, int weapon, int victim, float &damage)
 {
 	static int called;
@@ -4287,6 +4359,18 @@ public void L4D2_OnChangeFinaleStage_Post(int finaleType, const char[] arg)
 		called++;
 
 		ForwardCalled("\"L4D2_OnChangeFinaleStage_Post\" %d. %s", finaleType, arg);
+	}
+}
+
+public void L4D2_OnChangeFinaleStage_PostHandled(int finaleType, const char[] arg)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnChangeFinaleStage_PostHandled\" %d. %s", finaleType, arg);
 	}
 }
 
@@ -4406,6 +4490,18 @@ public void L4D2_OnSlammedSurvivor_Post(int victim, int attacker, bool bWallSlam
 		called++;
 
 		ForwardCalled("\"L4D2_OnSlammedSurvivor_Post\" %d (%N) slammed %d (%N). Wall %d. Deadly %d", attacker, attacker, victim, victim, bWallSlam, bDeadlyCharge);
+	}
+}
+
+public void L4D2_OnSlammedSurvivor_PostHandled(int victim, int attacker, bool bWallSlam, bool bDeadlyCharge)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSlammedSurvivor_PostHandled\" %d (%N) slammed %d (%N). Wall %d. Deadly %d", attacker, attacker, victim, victim, bWallSlam, bDeadlyCharge);
 	}
 }
 

@@ -1684,6 +1684,7 @@ void LoadGameData()
 				LogError("Failed to create SDKCall: \"CDirector::SwapTeams\" (%s)", g_sSystem);
 		}
 
+		/*
 		StartPrepSDKCall(SDKCall_Raw);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::AreTeamsFlipped") == false )
 		{
@@ -1694,6 +1695,7 @@ void LoadGameData()
 			if( g_hSDK_CDirector_AreTeamsFlipped == null )
 				LogError("Failed to create SDKCall: \"CDirector::AreTeamsFlipped\" (%s)", g_sSystem);
 		}
+		*/
 
 		StartPrepSDKCall(SDKCall_Raw);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::StartRematchVote") == false )

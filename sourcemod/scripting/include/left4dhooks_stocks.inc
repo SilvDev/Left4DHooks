@@ -134,13 +134,17 @@ enum L4D2ZombieClassType
 
 enum L4D2UseAction
 {
-	L4D2UseAction_None				= 0, // No use action active
-	L4D2UseAction_Healing			= 1, // Includes healing yourself or a teammate.
-	L4D2UseAction_Defibing			= 4, // When defib'ing a dead body.
-	L4D2UseAction_GettingDefibed	= 5, // When comming back to life from a dead body.
-	L4D2UseAction_PouringGas		= 8, // Pouring gas into a generator
-	L4D2UseAction_Cola				= 9, // For Dead Center map 2 cola event, when handing over the cola to whitalker.
-	L4D2UseAction_Button			= 10 // Such as buttons, timed buttons, generators, etc.
+	L4D2UseAction_None				= 0,	// No use action active
+	L4D2UseAction_Healing			= 1,	// Includes healing yourself or a teammate.
+	L4D2UseAction_AmmoPack			= 2,	// When deploying the ammo pack that was never added into the game
+	L4D2UseAction_Defibing			= 4,	// When defib'ing a dead body.
+	L4D2UseAction_GettingDefibed	= 5,	// When comming back to life from a dead body.
+	L4D2UseAction_DeployIncendiary	= 6,	// When deploying Incendiary ammo
+	L4D2UseAction_DeployExplosive	= 7,	// When deploying Explosive ammo
+	L4D2UseAction_PouringGas		= 8,	// Pouring gas into a generator
+	L4D2UseAction_Cola				= 9,	// For Dead Center map 2 cola event, when handing over the cola to whitalker.
+	L4D2UseAction_Button			= 10,	// Such as buttons, timed buttons, generators, etc.
+	L4D2UseAction_UsePointScript	= 11	// When using a "point_script_use_target" entity
 	/* List is not fully done, these are just the ones I have found so far */
 }
 

@@ -59,18 +59,44 @@
 			"L4DD::CTankRock::OnRelease"
 			{
 				"signature"		"CTankRock::OnRelease"
-				"callconv"		"thiscall"
+				"linux"
+				{
+					"callconv"	"cdecl"
+				}
+				"windows"
+				{
+					"callconv"	"stdcall"
+				}
 				"return"		"void"
-				"this"			"entity"
+				"this"			"ignore"
 				"arguments"
 				{
+					"pThis"
+					{
+						"type"		"cbaseentity"
+						"linux"
+						{
+							"register"	"eax"
+						}
+						"windows"
+						{
+							"register"	"ecx"
+						}
+					}
 					"vec"
 					{
 						"type"		"vectorptr"
+						"linux"
+						{
+							"register"	"edx"
+						}
 					}
-					"ang"
+					"windows"
 					{
-						"type"		"vectorptr"
+						"ang"
+						{
+							"type"		"vectorptr"
+						}
 					}
 					"vec2"
 					{

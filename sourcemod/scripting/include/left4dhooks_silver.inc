@@ -713,15 +713,19 @@ stock bool L4D_HasReachedSmoker(int client)
 // ==================================================
 // CHARGER STOCKS - Written by "Forgetest"
 // ==================================================
+#define QueuedPummel_Victim		0
+#define QueuedPummel_StartTime	4
+#define QueuedPummel_Attacker	8
+
 /**
  * @brief Internally used to get offset to the start of queued pummel field.
  *
  * @return					Offset into CTerrorPlayer to the start of queued pummel props
  */
-static int L4D2_OffsQueuedPummelInfo()
+static stock int L4D2_OffsQueuedPummelInfo()
 {
 	static int m_hQueuedPummelVictim = -1;
-	if ( m_hQueuedPummelVictim == -1 )
+	if( m_hQueuedPummelVictim == -1 )
 		m_hQueuedPummelVictim = FindSendPropInfo("CTerrorPlayer", "m_pummelAttacker") + 4;
 	
 	return m_hQueuedPummelVictim;
@@ -730,31 +734,44 @@ static int L4D2_OffsQueuedPummelInfo()
 /**
  * @brief Returns the timestamp when the queued pummel begins.
  *
- * @param client			Client ID of the player to check
+ * @param client			Client ID of the charger to check
  *
  * @return timestamp or -1.0 if no queued pummel
  */
-stock float L4D2_GetQueuedPummelStartTime(int client)
+stock float L4D2_GetQueuedPummelStartTime(int charger)
 {
-	return GetEntDataFloat(client, L4D2_OffsQueuedPummelInfo() + 4);
+	return GetEntDataFloat(charger, L4D2_OffsQueuedPummelInfo() + QueuedPummel_StartTime);
+}
+
+/**
+ * @brief Sets the timestamp when the queued pummel begins.
+ *
+ * @param client			Client ID of the charger to check
+ * @param timestamp			Timestamp to set
+ *
+ * @noreturn
+ */
+stock void L4D2_SetQueuedPummelStartTime(int charger, float timestamp)
+{
+	SetEntDataFloat(charger, L4D2_OffsQueuedPummelInfo() + QueuedPummel_StartTime, timestamp);
 }
 
 /**
  * @brief Returns if a Charger is in a queued pummel.
  *
- * @param client			Client ID of the player to check
+ * @param charger			Client ID of the charger to check
  *
  * @return true if in queued pummel, false otherwise
  */
-stock bool L4D2_IsInQueuedPummel(int client)
+stock bool L4D2_IsInQueuedPummel(int charger)
 {
-	float flTimestamp = L4D2_GetQueuedPummelStartTime(client);
+	float flTimestamp = L4D2_GetQueuedPummelStartTime(charger);
 	
 	return flTimestamp != -1.0 && flTimestamp > GetGameTime();
 }
 
 /**
- * @brief Returns the victim when a Charger is in a queued pummel.
+ * @brief Returns the victim of a Charger in a queued pummel.
  *
  * @param client			Client ID of the player to check
  *
@@ -762,11 +779,24 @@ stock bool L4D2_IsInQueuedPummel(int client)
  */
 stock int L4D2_GetQueuedPummelVictim(int client)
 {
-	return GetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo());
+	return GetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo() + QueuedPummel_Victim);
 }
 
 /**
- * @brief Returns the attacker when a Survivor is in a queued pummel.
+ * @brief Sets the victim of a Charger in a queued pummel.
+ *
+ * @param client			Client ID of the player to set
+ * @param target			Client ID of the target to set
+ *
+ * @noreturn
+ */
+stock void L4D2_SetQueuedPummelVictim(int client, int target)
+{
+	SetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo() + QueuedPummel_Victim, target);
+}
+
+/**
+ * @brief Returns the attacker of a Survivor in a queued pummel.
  *
  * @param client			Client ID of the player to check
  *
@@ -774,7 +804,20 @@ stock int L4D2_GetQueuedPummelVictim(int client)
  */
 stock int L4D2_GetQueuedPummelAttacker(int client)
 {
-	return GetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo() + 8);
+	return GetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo() + QueuedPummel_Attacker);
+}
+
+/**
+ * @brief Sets the attacker of a Survivor in a queued pummel.
+ *
+ * @param client			Client ID of the player to set
+ * @param target			Client ID of the target to set
+ *
+ * @noreturn
+ */
+stock void L4D2_SetQueuedPummelAttacker(int client, int target)
+{
+	SetEntDataEnt2(client, L4D2_OffsQueuedPummelInfo() + QueuedPummel_Attacker, target);
 }
 
 

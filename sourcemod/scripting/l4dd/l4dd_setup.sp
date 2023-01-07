@@ -128,6 +128,7 @@ void SetupForwardsNatives()
 	g_hFWD_CTerrorPlayer_OnKnockedDown_PostHandled							= new GlobalForward("L4D_OnKnockedDown_PostHandled",					ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_OnSlammedSurvivor									= new GlobalForward("L4D2_OnSlammedSurvivor",							ET_Event, Param_Cell, Param_Cell, Param_CellByRef, Param_CellByRef);
 	g_hFWD_CTerrorPlayer_OnSlammedSurvivor_Post								= new GlobalForward("L4D2_OnSlammedSurvivor_Post",						ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_OnSlammedSurvivor_PostHandled						= new GlobalForward("L4D2_OnSlammedSurvivor_PostHandled",				ET_Event, Param_Cell, Param_Cell, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_QueuePummelVictim									= new GlobalForward("L4D2_OnPummelVictim",								ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_QueuePummelVictim_Post								= new GlobalForward("L4D2_OnPummelVictim_Post",							ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_QueuePummelVictim_PostHandled						= new GlobalForward("L4D2_OnPummelVictim_PostHandled",					ET_Event, Param_Cell, Param_Cell);

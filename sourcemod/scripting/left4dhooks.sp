@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2022 Silvers
+*	Copyright (C) 2023 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.126"
-#define PLUGIN_VERLONG		1126
+#define PLUGIN_VERSION		"1.127"
+#define PLUGIN_VERLONG		1127
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
