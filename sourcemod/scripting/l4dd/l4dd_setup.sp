@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2022 Silvers
+*	Copyright (C) 2023 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -101,6 +101,9 @@ void SetupForwardsNatives()
 	g_hFWD_CThrow_ActivateAbililty_PostHandled								= new GlobalForward("L4D_OnCThrowActivate_PostHandled",					ET_Event, Param_Cell);
 	g_hFWD_CBaseAnimating_SelectWeightedSequence_Pre						= new GlobalForward("L4D2_OnSelectTankAttackPre",						ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_CBaseAnimating_SelectWeightedSequence_Post						= new GlobalForward("L4D2_OnSelectTankAttack",							ET_Event, Param_Cell, Param_CellByRef);
+	g_hFWD_CTerrorPlayer_DoAnimationEvent									= new GlobalForward("L4D_OnDoAnimationEvent",							ET_Event, Param_Cell, Param_CellByRef, Param_CellByRef);
+	g_hFWD_CTerrorPlayer_DoAnimationEvent_Post								= new GlobalForward("L4D_OnDoAnimationEvent_Post",						ET_Event, Param_Cell, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_DoAnimationEvent_PostHandled						= new GlobalForward("L4D_OnDoAnimationEvent_PostHandled",				ET_Event, Param_Cell, Param_Cell, Param_Cell);
 	g_hFWD_CDirectorScriptedEventManager_SendInRescueVehicle				= new GlobalForward("L4D2_OnSendInRescueVehicle",						ET_Event);
 	g_hFWD_CDirectorVersusMode_EndVersusModeRound_Pre						= new GlobalForward("L4D2_OnEndVersusModeRound",						ET_Event, Param_Cell);
 	g_hFWD_CDirectorVersusMode_EndVersusModeRound_Post						= new GlobalForward("L4D2_OnEndVersusModeRound_Post",					ET_Event);
@@ -319,6 +322,8 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_ForceScavengeStart",		 					Native_ForceScavengeStart);
 	CreateNative("L4D2_IsTankInPlay",		 						Native_CDirector_IsTankInPlay);
 	CreateNative("L4D2_IsReachable",		 						Native_SurvivorBot_IsReachable);
+	CreateNative("L4D2_GetFirstSpawnClass",		 					Native_GetFirstSpawnClass);
+	CreateNative("L4D2_SetFirstSpawnClass",		 					Native_SetFirstSpawnClass);
 	CreateNative("L4D2_GetFurthestSurvivorFlow",		 			Native_CDirector_GetFurthestSurvivorFlow);
 	CreateNative("L4D2_GetDirectorScriptScope",						Native_GetDirectorScriptScope);
 	CreateNative("L4D2_GetScriptValueInt",							Native_CDirector_GetScriptValueInt);
@@ -363,6 +368,11 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_GetTankCount",								Native_GetTankCount);
 	CreateNative("L4D2_GetWitchCount",								Native_GetWitchCount);
 	CreateNative("L4D_GetCurrentChapter",							Native_GetCurrentChapter);
+	CreateNative("L4D_GetAllNavAreas",								Native_GetAllNavAreas);
+	CreateNative("L4D_GetNavAreaID",								Native_GetNavAreaID);
+	CreateNative("L4D_GetNavAreaByID",								Native_GetNavAreaByID);
+	CreateNative("L4D_GetNavAreaPos",								Native_GetNavAreaPos);
+	CreateNative("L4D_GetNavAreaSize",								Native_GetNavAreaSize);
 	CreateNative("L4D_GetNavArea_SpawnAttributes",					Native_GetTerrorNavArea_Attributes);
 	CreateNative("L4D_SetNavArea_SpawnAttributes",					Native_SetTerrorNavArea_Attributes);
 	CreateNative("L4D_GetNavArea_AttributeFlags",					Native_GetCNavArea_AttributeFlags);

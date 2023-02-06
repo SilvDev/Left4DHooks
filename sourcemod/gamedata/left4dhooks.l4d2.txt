@@ -856,6 +856,25 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::DoAnimationEvent"
+			{
+				"signature"		"CTerrorPlayer::DoAnimationEvent"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"event"
+					{
+						"type"	"int"
+					}
+					"variant"
+					{
+						"type"	"int"
+					}
+				}
+			}
+
 			"L4DD::CTerrorMeleeWeapon::GetDamageForVictim"
 			{
 				"signature"		"CTerrorMeleeWeapon::GetDamageForVictim"
@@ -1573,6 +1592,19 @@
 				}
 			}
 
+			"TheNavAreas"
+			{
+				"windows"
+				{
+					"signature" "nav_update_lighting"
+					"read" "82"
+				}
+				"linux"
+				{
+					"signature" "TheNavAreas"
+				}
+			}
+
 			"TerrorNavMesh"
 			{
 				"windows"
@@ -1733,12 +1765,6 @@
 				"linux"		"347"
 			}
 
-			"CTerrorPlayer::DoAnimationEvent"
-			{
-				"windows"	"510"
-				"linux"		"511"
-			}
-
 			/*
 			* CTerrorPlayer::Deafen(float,float,float)
 			*/
@@ -1821,7 +1847,7 @@
 				"linux"		"11256"
 			}
 
-			// Can be found from "CDirector::GetScriptScope(CDirector::ScriptLevels_t)"
+			// Can be found in "CDirector::GetScriptScope(CDirector::ScriptLevels_t)"
 			"m_iszScriptId"
 			{
 				"windows"	"968"
@@ -1838,6 +1864,13 @@
 			{
 				"windows"	"528"
 				"linux"		"528"
+			}
+
+			// Can be found in "CDirector::OnMapLoaded" - *((_DWORD *)v13 + 270) = RandomInt((char *)&n + 1, 6);
+			"CDirector::m_nFirstClassIndex"
+			{
+				"linux"		"1080"
+				"windows"	"1080"
 			}
 
 			"CTerrorPlayer::CanBecomeGhost::Offset"
@@ -3572,6 +3605,18 @@
 				/* 55 8B EC 56 8B F1 83 BE ? ? ? ? 00 57 8B BE */
 			}
 
+			/*
+			 * CTerrorPlayer::DoAnimationEvent(PlayerAnimEvent_t, int)
+			 */
+			"CTerrorPlayer::DoAnimationEvent"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16DoAnimationEventE17PlayerAnimEvent_ti"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8B\x2A\x83\x2A\x2A\x74\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x53"
+				/* ? ? ? ? ? ? ? 57 8B ? 83 ? ? 74 ? 8B ? ? ? ? ? 8B ? 8B ? ? 53 */
+				/* Search "NULL Ent in GiveNamedItem!\n" (function with "weapon_shield" inside) - xref to last VTable call, couple entries down */
+			}
+
 			/* Thanks to "Lux" for the signature */
 			"CTerrorMeleeWeapon::GetDamageForVictim"
 			{
@@ -4730,6 +4775,21 @@
 				"library"	"server"
 				"windows"	"\x55\x8B\xEC\x81\xEC\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x14\x53\x8B\x5D\x08"
 					/* 55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 FC 8B 45 14 53 8B 5D 08 */
+			}
+
+			"nav_update_lighting"
+			{
+				"library"	"server"
+				"linux"		"@_ZL19nav_update_lightingRK8CCommand"
+				"windows"	"\x55\x8B\x2A\x8B\x2A\x2A\x57\x33\x2A\x83\x2A\x2A\x75"
+				/* 55 8B ? 8B ? ? 57 33 ? 83 ? ? 75 */
+				/* Search: "Computed lighting for %d/%d areas\n" */
+			}
+
+			"TheNavAreas"
+			{
+				"library"	"server"
+				"linux"		"@TheNavAreas"
 			}
 
 			"TheNavMesh"

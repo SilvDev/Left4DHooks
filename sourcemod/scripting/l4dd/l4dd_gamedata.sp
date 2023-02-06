@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2022 Silvers
+*	Copyright (C) 2023 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -39,6 +39,12 @@ void LoadGameDataRules(GameData hGameData)
 	g_pGameRules = hGameData.GetAddress("GameRules");
 	ValidateAddress(g_pGameRules, "g_pGameRules", true);
 
+	g_pTheNavAreas = hGameData.GetAddress("TheNavAreas");
+	ValidateAddress(g_pTheNavAreas, "TheNavAreas", true);
+
+	g_pTheNavAreas_Size = g_pTheNavAreas + view_as<Address>(12);
+	g_pTheNavAreas_List = LoadFromAddress(g_pTheNavAreas, NumberType_Int32);
+
 	if( g_bLeft4Dead2 )
 	{
 		if( g_iScriptVMDetourIndex )
@@ -47,7 +53,26 @@ void LoadGameDataRules(GameData hGameData)
 		g_pScriptVM = hGameData.GetAddress("L4DD::ScriptVM");
 
 		ValidateAddress(g_pScriptVM, "g_pScriptVM", true);
+
+		g_iOff_NavAreaID = 140; // Hard-coding offset here, unlikely to ever change.
 	}
+	else
+	{
+		g_iOff_NavAreaID = 136; // Hard-coding offset here, unlikely to ever change.
+	}
+
+	#if defined DEBUG
+	#if DEBUG
+	PrintToServer("%12d == g_pGameRules", g_pGameRules);
+	PrintToServer("%12d == g_pTheNavAreas", g_pTheNavAreas);
+	PrintToServer("%12d == g_pTheNavAreas_List", g_pTheNavAreas_List);
+
+	if( g_bLeft4Dead2 )
+	{
+		PrintToServer("%12d == g_pScriptVM", g_pScriptVM);
+	}
+	#endif
+	#endif
 }
 
 void LoadGameData()
@@ -316,7 +341,7 @@ void LoadGameData()
 	*/
 
 	StartPrepSDKCall(SDKCall_Raw);
-	if( PrepSDKCall_SetFromConf(hGameData, g_bLeft4Dead2 ?  SDKConf_Signature : SDKConf_Address, "CDirector::AreAllSurvivorsInFinaleArea") == false )
+	if( PrepSDKCall_SetFromConf(hGameData, g_bLeft4Dead2 ? SDKConf_Signature : SDKConf_Address, "CDirector::AreAllSurvivorsInFinaleArea") == false )
 	{
 		LogError("Failed to find signature: \"CDirector::AreAllSurvivorsInFinaleArea\" (%s)", g_sSystem);
 	} else {
@@ -1221,7 +1246,7 @@ void LoadGameData()
 	*/
 
 	StartPrepSDKCall(SDKCall_Player);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Virtual, "CTerrorPlayer::DoAnimationEvent") == false )
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::DoAnimationEvent") == false )
 	{
 		LogError("Failed to find signature: \"CTerrorPlayer::DoAnimationEvent\" (%s)", g_sSystem);
 	} else {
@@ -1960,6 +1985,11 @@ void LoadGameData()
 
 		g_iOff_m_bFirstSurvivorLeftStartArea = hGameData.GetOffset("m_bFirstSurvivorLeftStartArea");
 		ValidateOffset(g_iOff_m_bFirstSurvivorLeftStartArea, "m_bFirstSurvivorLeftStartArea");
+	}
+	else
+	{
+		g_iOff_m_nFirstClassIndex = hGameData.GetOffset("CDirector::m_nFirstClassIndex");
+		ValidateOffset(g_iOff_m_nFirstClassIndex, "CDirector::m_nFirstClassIndex");
 	}
 
 	g_iOff_m_flow = hGameData.GetOffset("m_flow");

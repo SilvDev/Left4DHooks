@@ -319,6 +319,45 @@ Action sm_l4dd(int client, int args)
 
 
 
+	// PrintToServer("L4D2_GetFirstSpawnClass %d", L4D2_GetFirstSpawnClass());
+	// PrintToServer("L4D2_SetFirstSpawnClass set to 1", L4D2_SetFirstSpawnClass(1));
+
+
+
+	/*
+	// Get TheNavAreas
+	ArrayList aList = new ArrayList();
+	L4D_GetAllNavAreas(aList);
+
+	int size = aList.Length;
+
+	// Print all addresses:
+	// for( int i = 0; i < size; i++ )
+	// {
+		// PrintToServer("%4d. %d (ID=%d)", i, aList.Get(i), L4D_GetNavAreaID(aList.Get(i)));
+	// }
+
+	// Get random area
+	Address area = aList.Get(GetRandomInt(0, size - 1));
+	int id = L4D_GetNavAreaID(area);
+	PrintToServer("AREA %d (ID=%d) out of %d", area, id, size);
+	PrintToServer("ID test %d == %d", id, L4D_GetNavAreaByID(id));
+
+	// Get origin
+	float vPos[3];
+	L4D_GetNavAreaPos(area, vPos);
+	PrintToServer("POS %f %f %f", vPos[0], vPos[1], vPos[2]);
+
+	// Get size
+	float vSize[3];
+	L4D_GetNavAreaSize(area, vSize);
+	PrintToServer("SIZE %f %f %f", vSize[0], vSize[1], vSize[2]);
+
+	delete aList;
+	// */
+
+
+
 	// PrintToChatAll("ANY_CHECK %d ANY_START %d FIRST %d LAST %d", L4D_IsAnySurvivorInCheckpoint(), L4D_IsAnySurvivorInStartArea(), L4D_IsInFirstCheckpoint(client), L4D_IsInLastCheckpoint(client));
 
 
@@ -2934,6 +2973,61 @@ public Action L4D2_OnSelectTankAttack(int client, int &sequence)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
+}
+
+public Action L4D_OnDoAnimationEvent(int client, int &event, int &variant_param)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnDoAnimationEvent\" %d (%N) - (%d - %d)", client, client > 0 && client <= MaxClients ? client : 0, event, variant_param);
+	}
+
+	// WORKS
+	/*
+	if( event == 4 )
+	{
+		event = 98;
+		return Plugin_Changed;
+	}
+	// */
+
+	// WORKS
+	/*
+	if( event == 4 )
+	{
+		return Plugin_Handled;
+	}
+	// */
+
+	return Plugin_Continue;
+}
+
+public void L4D_OnDoAnimationEvent_Post(int client, int event, int variant_param)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnDoAnimationEvent_Post\" %d (%N) - (%d - %d)", client, client > 0 && client <= MaxClients ? client : 0, event, variant_param);
+	}
+}
+
+public void L4D_OnDoAnimationEvent_PostHandled(int client, int event, int variant_param)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnDoAnimationEvent_PostHandled\" %d (%N) - (%d - %d)", client, client > 0 && client <= MaxClients ? client : 0, event, variant_param);
+	}
 }
 
 public Action L4D2_OnSendInRescueVehicle()

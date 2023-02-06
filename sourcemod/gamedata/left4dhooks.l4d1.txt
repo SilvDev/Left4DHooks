@@ -668,6 +668,25 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::DoAnimationEvent"
+			{
+				"signature"		"CTerrorPlayer::DoAnimationEvent"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"event"
+					{
+						"type"	"int"
+					}
+					"variant"
+					{
+						"type"	"int"
+					}
+				}
+			}
+
 			/* Works for Linux L4D2 but not L4D1, currently leaving out
 			"L4DD::CDirectorScriptedEventManager::SendInRescueVehicle"
 			{
@@ -1178,6 +1197,19 @@
 				}
 			}
 
+			"TheNavAreas"
+			{
+				"windows"
+				{
+					"signature" "nav_update_lighting"
+					"read" "82"
+				}
+				"linux"
+				{
+					"signature" "TheNavAreas"
+				}
+			}
+
 			"TerrorNavMesh"
 			{
 				"windows"
@@ -1265,12 +1297,6 @@
 			{
 				"windows"	"323"
 				"linux"		"324"
-			}
-
-			"CTerrorPlayer::DoAnimationEvent"
-			{
-				"windows"	"484"
-				"linux"		"485"
 			}
 
 			/*
@@ -1938,7 +1964,7 @@
 				"library"	"server"
 				"linux"		"@_ZNK10Checkpoint12ContainsAreaEP13TerrorNavArea"
 				"windows"	"\x8B\x2A\x2A\x33\x2A\x85\x2A\x56\x7E\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x39\x2A\x74"
-				/* 8B ? ? 33 ? 85 ? 56 7E ? 8B ? 8B ? ? ? 39 ? 74  */
+				/* 8B ? ? 33 ? 85 ? 56 7E ? 8B ? 8B ? ? ? 39 ? 74 */
 				/* Search "Haven't left the initial checkpoint yet" compare with Linux to find function call */
 			}
 
@@ -2556,6 +2582,18 @@
 			}
 
 			/*
+			 * CTerrorPlayer::DoAnimationEvent(PlayerAnimEvent_t, int)
+			 */
+			"CTerrorPlayer::DoAnimationEvent"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16DoAnimationEventE17PlayerAnimEvent_ti"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x56"
+				/* ? ? ? ? ? ? 83 ? ? 55 8B ? 0F 84 ? ? ? ? 8B ? ? ? ? ? 56 */
+				/* Search "NULL Ent in GiveNamedItem!\n" (function with "weapon_shield" inside) - xref to VTable, few entries down */
+			}
+
+			/*
 			 * CDirectorScriptedEventManager::SendInRescueVehicle(void)
 			 *
 			 * find by String "FinaleEscapeStarted"
@@ -2951,8 +2989,8 @@
 			"CTerrorPlayer::TakeOverBot"
 			{
 				"library"	"server"
-				"linux"	  "@_ZN13CTerrorPlayer11TakeOverBotEb"
-				"windows" "\x81\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x57\x8D\x2A\x2A\x2A\x8B\xF9\x33\xDB\x50"
+				"linux"		"@_ZN13CTerrorPlayer11TakeOverBotEb"
+				"windows"	"\x81\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x57\x8D\x2A\x2A\x2A\x8B\xF9\x33\xDB\x50"
 			}
 
 			/*
@@ -2962,8 +3000,8 @@
 			"SurvivorBot::SetHumanSpectator"
 			{
 				"library"	"server"
-				"linux"   "@_ZN11SurvivorBot17SetHumanSpectatorEP13CTerrorPlayer"
-				"windows" "\x53\x8B\xD9\x83\x2A\x2A\x2A\x2A\x2A\x2A\x56\x8D\x2A\x2A\x2A\x2A\x2A\x7E\x07\x5E\x32\xC0\x5B\xC2\x04\x00"
+				"linux"		"@_ZN11SurvivorBot17SetHumanSpectatorEP13CTerrorPlayer"
+				"windows"	"\x53\x8B\xD9\x83\x2A\x2A\x2A\x2A\x2A\x2A\x56\x8D\x2A\x2A\x2A\x2A\x2A\x7E\x07\x5E\x32\xC0\x5B\xC2\x04\x00"
 			}
 
 			/*
@@ -3281,6 +3319,21 @@
 				"library"	"server"
 				"windows"	"\x8B\x2A\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x01\xFF\x2A\x53\x56"
 				/* 8B ? ? ? ? ? 85 ? 74 ? 8B ? 8B ? ? 6A 01 FF ? 53 56 */
+			}
+
+			"nav_update_lighting"
+			{
+				"library"	"server"
+				"linux"		"@_ZL19nav_update_lightingRK8CCommand"
+				"windows"	"\x8B\x2A\x2A\x2A\x57\x33\x2A\x83\x2A\x2A\x75\x2A\x8B"
+				/* 8B ? ? ? 57 33 ? 83 ? ? 75 ? 8B */
+				/* Search: "NavMesh Visibility List Lengths:  min = %d, avg = %d, max = %d\n" */
+			}
+
+			"TheNavAreas"
+			{
+				"library"	"server"
+				"linux"		"@TheNavAreas"
 			}
 
 			"TheNavMesh"
