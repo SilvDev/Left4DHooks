@@ -18,7 +18,7 @@
  * Copyright (C) 2017 "Accelerator74"
  *
  * Left 4 DHooks Direct SourceMod plugin
- * Copyright (C) 2022 "SilverShot" / "Silvers"
+ * Copyright (C) 2023 "SilverShot" / "Silvers"
  *
  * =============================================================================
  *
@@ -58,13 +58,13 @@
 
 
 
-// Natives: 252 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 56 [silvers - mine!] + 4 [anim] = 154
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 94 [silvers - mine!] + 4 [anim] = 249
+// Natives: 253 (including 3 for L4D1 only)
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 57 [silvers - mine!] + 4 [anim] = 155
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 95 [silvers - mine!] + 4 [anim] = 250
 
-// Forwards: 183 (including 2 for L4D1 only)
-// L4D1 = 129
-// L4D2 = 181
+// Forwards: 186 (including 2 for L4D1 only)
+// L4D1 = 132
+// L4D2 = 184
 
 // Stocks: 168 (L4D1 = 111, L4D2 = 164)
 // left4dhooks_silver			45 stocks	(L4D1 = 38,		L4D2 = 52)
@@ -1057,6 +1057,40 @@ forward void L4D_OnEnterGhostState(int client);
  * @noreturn
  */
 forward void L4D_OnEnterGhostState_PostHandled(int client);
+
+/**
+ * @brief Called whenever CTerrorPlayer::TakeOverBot(CTerrorPlayer*) is invoked
+ * @remarks This happens when player is looking to take over a bot
+ *
+ * @param client			the client that is looking to take over a bot
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+forward Action L4D_OnTakeOverBot(int client);
+
+/**
+ * @brief Called whenever CTerrorPlayer::TakeOverBot(CTerrorPlayer*) is invoked
+ * @remarks This happens when player is looking to take over a bot
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the client that is looking to take over a bot
+ * @param success			true if the takeover was successful, false otherwise
+ *
+ * @noreturn
+ */
+forward void L4D_OnTakeOverBot_Post(int client, bool success);
+
+/**
+ * @brief Called whenever CTerrorPlayer::TakeOverBot(CTerrorPlayer*) is invoked
+ * @remarks This happens when player is looking to take over a bot
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the client that is looking to take over a bot
+ * @param success			true if the takeover was successful, false otherwise
+ *
+ * @noreturn
+ */
+forward void L4D_OnTakeOverBot_PostHandled(int client, bool success);
 
 /**
  * @brief Called whenever CTerrorPlayer::MaterializeFromGhost is invoked
@@ -3358,7 +3392,7 @@ native any L4D_GetNearestNavArea(const float vecPos[3], float maxDist = 300.0, b
  *
  * @param client			The client to check
  *
- * @return					The nav area adress or 0 on fail
+ * @return					The nav area address or 0 on fail
  */
 native any L4D_GetLastKnownArea(int client);
 
@@ -3411,6 +3445,15 @@ native void L4D_FindRandomSpot(int NavArea, float vecPos[3]);
  * @return					True if visible, false otherwise
  */
 native bool L4D2_IsVisibleToPlayer(int client, int team, int team_target, int NavArea, float vecPos[3]);
+
+/**
+ * @brief Teleports a player to a valid position if they are stuck.
+ *
+ * @param client			Client to perform the action
+ *
+ * @noreturn
+ */
+native void L4D_WarpToValidPositionIfStuck(int client);
 
 /**
  * @brief Returns true when any survivor has left the starting area and true in Versus when the saferoom door automatically opens.

@@ -283,6 +283,16 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"TerrorNavArea::FindRandomSpot\" (%s)", g_sSystem);
 	}
 
+	StartPrepSDKCall(SDKCall_Player);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::WarpToValidPositionIfStuck") == false )
+	{
+		LogError("Failed to find signature: \"CTerrorPlayer::WarpToValidPositionIfStuck\" (%s)", g_sSystem);
+	} else {
+		g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck = EndPrepSDKCall();
+		if( g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck == null )
+			LogError("Failed to create SDKCall: \"CTerrorPlayer::WarpToValidPositionIfStuck\" (%s)", g_sSystem);
+	}
+
 	if( g_bLeft4Dead2 )
 	{
 		StartPrepSDKCall(SDKCall_Static);

@@ -69,6 +69,9 @@ GlobalForward g_hFWD_CDirector_IsTeamFull;
 GlobalForward g_hFWD_CTerrorPlayer_EnterGhostState_Pre;
 GlobalForward g_hFWD_CTerrorPlayer_EnterGhostState_Post;
 GlobalForward g_hFWD_CTerrorPlayer_EnterGhostState_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_TakeOverBot_Pre;
+GlobalForward g_hFWD_CTerrorPlayer_TakeOverBot_Post;
+GlobalForward g_hFWD_CTerrorPlayer_TakeOverBot_PostHandled;
 GlobalForward g_hFWD_CTankClaw_DoSwing_Pre;
 GlobalForward g_hFWD_CTankClaw_DoSwing_Post;
 GlobalForward g_hFWD_CTankClaw_GroundPound_Pre;
@@ -276,6 +279,9 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostStatePre");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostState",						true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_EnterGhostState_Pre,						DTR_CTerrorPlayer_EnterGhostState_Post,						"L4DD::CTerrorPlayer::OnEnterGhostState",							"L4D_OnEnterGhostState_PostHandled",			true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_TakeOverBot_Pre,							DTR_CTerrorPlayer_TakeOverBot_Post,							"L4DD::CTerrorPlayer::TakeOverBot",									"L4D_OnTakeOverBot");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_TakeOverBot_Pre,							DTR_CTerrorPlayer_TakeOverBot_Post,							"L4DD::CTerrorPlayer::TakeOverBot",									"L4D_OnTakeOverBot_Post",						true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_TakeOverBot_Pre,							DTR_CTerrorPlayer_TakeOverBot_Post,							"L4DD::CTerrorPlayer::TakeOverBot",									"L4D_OnTakeOverBot_PostHandled",				true);
 	CreateDetour(hGameData,			DTR_CDirector_IsTeamFull,									INVALID_FUNCTION,											"L4DD::CDirector::IsTeamFull",										"L4D_OnIsTeamFull");
 	CreateDetour(hGameData,			DTR_CTerrorGameRules_ClearTeamScores,						INVALID_FUNCTION,											"L4DD::CTerrorGameRules::ClearTeamScores",							"L4D_OnClearTeamScores");
 	CreateDetour(hGameData,			DTR_CTerrorGameRules_SetCampaignScores,						DTR_CTerrorGameRules_SetCampaignScores_Post,				"L4DD::CTerrorGameRules::SetCampaignScores",						"L4D_OnSetCampaignScores");
@@ -1527,6 +1533,39 @@ MRESReturn DTR_CTerrorPlayer_EnterGhostState_Post(int pThis, DHookReturn hReturn
 	//PrintToServer("##### DTR_CTerrorPlayer_EnterGhostState_Post");
 	Call_StartForward(g_bBlock_CTerrorPlayer_EnterGhostState ? g_hFWD_CTerrorPlayer_EnterGhostState_PostHandled : g_hFWD_CTerrorPlayer_EnterGhostState_Post);
 	Call_PushCell(pThis);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_CTerrorPlayer_TakeOverBot;
+MRESReturn DTR_CTerrorPlayer_TakeOverBot_Pre(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnTakeOverBot"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_TakeOverBot_Pre");
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_TakeOverBot_Pre);
+	Call_PushCell(pThis);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CTerrorPlayer_TakeOverBot = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	g_bBlock_CTerrorPlayer_TakeOverBot = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_TakeOverBot_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forwards "L4D_OnTakeOverBot_Post" and "L4D_OnTakeOverBot_PostHandled"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_TakeOverBot_Post");
+	Call_StartForward(g_bBlock_CTerrorPlayer_TakeOverBot ? g_hFWD_CTerrorPlayer_TakeOverBot_PostHandled : g_hFWD_CTerrorPlayer_TakeOverBot_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(hReturn.Value);
 	Call_Finish();
 
 	return MRES_Ignored;

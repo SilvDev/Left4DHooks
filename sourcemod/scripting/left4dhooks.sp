@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.128"
-#define PLUGIN_VERLONG		1128
+#define PLUGIN_VERSION		"1.129"
+#define PLUGIN_VERLONG		1129
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)

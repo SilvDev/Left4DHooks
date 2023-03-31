@@ -1,3 +1,18 @@
+1.129 (31-Mar-2023)
+	- Added native "L4D_WarpToValidPositionIfStuck" to teleport a stuck player. Requested by "ioioio".
+	- Added forwards "L4D_OnTakeOverBot", "L4D_OnTakeOverBot_Post" and "L4D_OnTakeOverBot_PostHandled" that triggers when a client takes over a bot.
+	- Updated "left4dhooks_lux_library" include file to version "0.5.7".
+
+	- Updated: Plugin and test plugin.
+	- Updated: "left4dhooks.inc" Include file.
+	- Updated: "left4dhooks_lux_library.inc" Include file.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.128 (06-Feb-2023)
 	- Added forwards "L4D_OnDoAnimationEvent", "L4D_OnDoAnimationEvent_Post" and "L4D_OnDoAnimationEvent_PostHandled" to trigger on certain animation events. Requested by "Forgetest".
 	- Added native "L4D_GetAllNavAreas" to return an ArrayList of all "TheNavAreas" addresses. Requested by "Marttt". Thanks to "HarryPotter" and "Forgetest" for help.
@@ -10,18 +25,8 @@
 	- Changed native "L4D2Direct_DoAnimationEvent" to expose the variant param. Requested by "Forgetest".
 	- Fixed natives "L4D_IsInFirstCheckpoint" and "L4D_IsPositionInFirstCheckpoint" sometimes incorrectly reporting false positives. Thanks to "Voevoda" for reporting.
 	- Fixed forward "L4D2_OnEntityShoved_Post*" param "bIsHighPounce" to be more reliable, although it may still not report accurately. Thanks to "Forgetest" for changes.
-	- Fixed forwards "L4D_OnSpawnSpecial_*", "L4D2_OnSpawnWitchBride_*", "L4D_OnSpawnTank_Post_*" and "L4D_OnSpawnSpecial*" to allow returning -1 as client index. Thanks to "Forgetest" for reporting.
+	- Fixed forwards "L4D_OnSpawnSpecial_*", "L4D2_OnSpawnWitchBride_*" and "L4D_OnSpawnTank_Post*" to allow returning -1 as client index. Thanks to "Forgetest" for reporting.
 	- Prevented forwards "L4D_OnTryOfferingTankBot*" from triggering when the client index was 0. Thanks to "Forgetest" for reporting.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "left4dhooks.inc" Include file.
-	- Updated: "left4dhooks_silver.inc" Include file.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.127 (07-Jan-2023)
 	- Added more Charger stocks to the "left4dhooks_silver.inc" include file. Thanks to "Forgetest" for providing.

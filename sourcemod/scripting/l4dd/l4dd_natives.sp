@@ -77,6 +77,7 @@ Handle g_hSDK_ZombieManager_GetRandomPZSpawnPosition;
 Handle g_hSDK_NavAreaBuildPath_ShortestPathCost;
 Handle g_hSDK_CNavMesh_GetNearestNavArea;
 Handle g_hSDK_TerrorNavArea_FindRandomSpot;
+Handle g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck;
 Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
 // Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
@@ -983,6 +984,18 @@ int Native_TerrorNavArea_FindRandomSpot(Handle plugin, int numParams) // Native 
 	//PrintToServer("#### CALL g_hSDK_TerrorNavArea_FindRandomSpot");
 	SDKCall(g_hSDK_TerrorNavArea_FindRandomSpot, area, vPos, sizeof(vPos));
 	SetNativeArray(2, vPos, sizeof(vPos));
+
+	return 0;
+}
+
+int Native_CTerrorPlayer_WarpToValidPositionIfStuck(Handle plugin, int numParams) // Native "L4D_FindRandomSpot"
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck, "CTerrorPlayer::WarpToValidPositionIfStuck");
+
+	int client = GetNativeCell(1);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck");
+	SDKCall(g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck, client);
 
 	return 0;
 }

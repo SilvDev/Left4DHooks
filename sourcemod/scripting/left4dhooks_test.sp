@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.127"
+#define PLUGIN_VERSION		"1.129"
 
 /*=======================================================================================
 	Plugin Info:
@@ -316,6 +316,10 @@ Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
+
+
+
+	// L4D_WarpToValidPositionIfStuck(client);
 
 
 
@@ -2112,7 +2116,7 @@ public void L4D_OnSpawnSpecial_Post(int client, int zombieClass, const float vec
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnSpawnSpecial_Post\" %d. %d (%N). (%f %f %f). (%f %f %f)", zombieClass, client, client, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
+		ForwardCalled("\"L4D_OnSpawnSpecial_Post\" %d. %d (%N). (%f %f %f). (%f %f %f)", zombieClass, client > 0 && client <= MaxClients ? client : 0, client > 0 && client <= MaxClients ? client : 0, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
 	}
 }
 
@@ -2124,7 +2128,7 @@ public void L4D_OnSpawnSpecial_PostHandled(int client, int zombieClass, const fl
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnSpawnSpecial_PostHandled\" %d. %d (%N). (%f %f %f). (%f %f %f)", zombieClass, client, client, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
+		ForwardCalled("\"L4D_OnSpawnSpecial_PostHandled\" %d. %d (%N). (%f %f %f). (%f %f %f)", zombieClass, client > 0 && client <= MaxClients ? client : 0, client > 0 && client <= MaxClients ? client : 0, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
 	}
 }
 
@@ -2152,7 +2156,7 @@ public void L4D_OnSpawnTank_Post(int client, const float vecPos[3], const float 
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnSpawnTank_Post\" %d (%N). (%f %f %f). (%f %f %f)", client, client, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
+		ForwardCalled("\"L4D_OnSpawnTank_Post\" %d (%N). (%f %f %f). (%f %f %f)", client > 0 && client <= MaxClients ? client : 0, client > 0 && client <= MaxClients ? client : 0, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
 	}
 }
 
@@ -2164,7 +2168,7 @@ public void L4D_OnSpawnTank_PostHandled(int client, const float vecPos[3], const
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnSpawnTank_PostHandled\" %d (%N). (%f %f %f). (%f %f %f)", client, client, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
+		ForwardCalled("\"L4D_OnSpawnTank_PostHandled\" %d (%N). (%f %f %f). (%f %f %f)", client > 0 && client <= MaxClients ? client : 0, client > 0 && client <= MaxClients ? client : 0, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2]);
 	}
 }
 
@@ -2415,6 +2419,47 @@ public void L4D_OnEnterGhostState_PostHandled(int client)
 		called++;
 
 		ForwardCalled("\"L4D_OnEnterGhostState_PostHandled\" %d", client);
+	}
+}
+
+public Action L4D_OnTakeOverBot(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnTakeOverBot\" %d (%N)", client, client);
+	}
+
+	// Blocks
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_OnTakeOverBot_Post(int client, bool success)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnTakeOverBot_Post\" %d (%N). Success: %d", client, client, success);
+	}
+}
+
+public void L4D_OnTakeOverBot_PostHandled(int client, bool success)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnTakeOverBot_PostHandled\" %d (%N). Success: %d", client, client, success);
 	}
 }
 

@@ -59,6 +59,9 @@ void SetupForwardsNatives()
 	g_hFWD_CTerrorPlayer_EnterGhostState_Pre								= new GlobalForward("L4D_OnEnterGhostStatePre",							ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_EnterGhostState_Post								= new GlobalForward("L4D_OnEnterGhostState",							ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_EnterGhostState_PostHandled						= new GlobalForward("L4D_OnEnterGhostState_PostHandled",				ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_TakeOverBot_Pre									= new GlobalForward("L4D_OnTakeOverBot",								ET_Event, Param_Cell);
+	g_hFWD_CTerrorPlayer_TakeOverBot_Post									= new GlobalForward("L4D_OnTakeOverBot_Post",							ET_Event, Param_Cell, Param_Cell);
+	g_hFWD_CTerrorPlayer_TakeOverBot_PostHandled							= new GlobalForward("L4D_OnTakeOverBot_PostHandled",					ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CDirector_IsTeamFull												= new GlobalForward("L4D_OnIsTeamFull",									ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_CTerrorGameRules_ClearTeamScores									= new GlobalForward("L4D_OnClearTeamScores",							ET_Event, Param_Cell);
 	g_hFWD_CTerrorGameRules_SetCampaignScores								= new GlobalForward("L4D_OnSetCampaignScores",							ET_Event, Param_CellByRef, Param_CellByRef);
@@ -279,6 +282,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_AngularVelocity",		 						Native_CBaseEntity_ApplyLocalAngularVelocityImpulse);
 	CreateNative("L4D_GetRandomPZSpawnPosition",		 			Native_ZombieManager_GetRandomPZSpawnPosition);
 	CreateNative("L4D_FindRandomSpot",		 						Native_TerrorNavArea_FindRandomSpot);
+	CreateNative("L4D_WarpToValidPositionIfStuck",		 			Native_CTerrorPlayer_WarpToValidPositionIfStuck);
 	CreateNative("L4D2_IsVisibleToPlayer",		 					Native_IsVisibleToPlayer);
 	CreateNative("L4D_GetNearestNavArea",		 					Native_CNavMesh_GetNearestNavArea);
 	CreateNative("L4D_GetLastKnownArea",		 					Native_CTerrorPlayer_GetLastKnownArea);
