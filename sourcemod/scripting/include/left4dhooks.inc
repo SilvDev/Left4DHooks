@@ -59,12 +59,12 @@
 
 
 // Natives: 253 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 57 [silvers - mine!] + 4 [anim] = 155
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 58 [silvers - mine!] + 4 [anim] = 156
 // L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 95 [silvers - mine!] + 4 [anim] = 250
 
-// Forwards: 186 (including 2 for L4D1 only)
+// Forwards: 188 (including 2 for L4D1 only)
 // L4D1 = 132
-// L4D2 = 184
+// L4D2 = 186
 
 // Stocks: 168 (L4D1 = 111, L4D2 = 164)
 // left4dhooks_silver			45 stocks	(L4D1 = 38,		L4D2 = 52)
@@ -2505,7 +2505,7 @@ forward void L4D_OnGrabWithTongue_PostHandled(int victim, int attacker);
  *
  * @return					Plugin_Handled to block, Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_OnJockeyRide(int victim, int attacker);
 
 /**
@@ -2518,7 +2518,7 @@ forward Action L4D2_OnJockeyRide(int victim, int attacker);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnJockeyRide_Post(int victim, int attacker);
 
 /**
@@ -2531,7 +2531,7 @@ forward void L4D2_OnJockeyRide_Post(int victim, int attacker);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnJockeyRide_PostHandled(int victim, int attacker);
 
 /**
@@ -2546,7 +2546,7 @@ forward void L4D2_OnJockeyRide_PostHandled(int victim, int attacker);
  *
  * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_OnSlammedSurvivor(int victim, int attacker, bool &bWallSlam, bool &bDeadlyCharge);
 
 /**
@@ -2562,7 +2562,7 @@ forward Action L4D2_OnSlammedSurvivor(int victim, int attacker, bool &bWallSlam,
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnSlammedSurvivor_Post(int victim, int attacker, bool bWallSlam, bool bDeadlyCharge);
 
 /**
@@ -2578,7 +2578,7 @@ forward void L4D2_OnSlammedSurvivor_Post(int victim, int attacker, bool bWallSla
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnSlammedSurvivor_PostHandled(int victim, int attacker, bool bWallSlam, bool bDeadlyCharge);
 
 /**
@@ -2590,7 +2590,7 @@ forward void L4D2_OnSlammedSurvivor_PostHandled(int victim, int attacker, bool b
  *
  * @return					Plugin_Handled to block, Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_OnStartCarryingVictim(int victim, int attacker);
 
 /**
@@ -2603,7 +2603,7 @@ forward Action L4D2_OnStartCarryingVictim(int victim, int attacker);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnStartCarryingVictim_Post(int victim, int attacker);
 
 /**
@@ -2616,7 +2616,7 @@ forward void L4D2_OnStartCarryingVictim_Post(int victim, int attacker);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_OnStartCarryingVictim_PostHandled(int victim, int attacker);
 
 /**
@@ -2896,7 +2896,7 @@ forward void L4D2_VomitJar_Detonate_PostHandled(int entity, int client);
  *
  * @return					Plugin_Handled to block allowing damage to an entity, Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_CInsectSwarm_CanHarm(int acid, int spitter, int entity);
 
 /**
@@ -2910,7 +2910,7 @@ forward Action L4D2_CInsectSwarm_CanHarm(int acid, int spitter, int entity);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CInsectSwarm_CanHarm_Post(int acid, int spitter, int entity);
 
 /**
@@ -2924,7 +2924,7 @@ forward void L4D2_CInsectSwarm_CanHarm_Post(int acid, int spitter, int entity);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CInsectSwarm_CanHarm_PostHandled(int acid, int spitter, int entity);
 
 /**
@@ -2947,10 +2947,36 @@ forward void L4D_CBreakableProp_Break(int prop, int entity);
  * @param inflictor			the inflictor entity index
  * @param attacker			the attacker entity index
  *
+ * @return					Plugin_Handled to block detonating, Plugin_Changed to change any values, Plugin_Continue otherwise
+ */
+// L4D2 only.
+forward Action L4D2_CGasCan_EventKilled(int gascan, int &inflictor, int &attacker);
+
+/**
+ * @brief Called whenever CGasCan::Event_Killed() is invoked
+ * @remarks Called when a gascan is broken
+ *
+ * @param gascan			the gascan entity index
+ * @param inflictor			the inflictor entity index
+ * @param attacker			the attacker entity index
+ *
  * @noreturn
  */
- // L4D2 only.
-forward void L4D2_CGasCan_EventKilled(int gascan, int inflictor, int attacker);
+// L4D2 only.
+forward void L4D2_CGasCan_EventKilled_Post(int gascan, int inflictor, int attacker);
+
+/**
+ * @brief Called whenever CGasCan::Event_Killed() is invoked
+ * @remarks Called when a gascan is broken
+ *
+ * @param gascan			the gascan entity index
+ * @param inflictor			the inflictor entity index
+ * @param attacker			the attacker entity index
+ *
+ * @noreturn
+ */
+// L4D2 only.
+forward void L4D2_CGasCan_EventKilled_PostHandled(int gascan, int inflictor, int attacker);
 
 /**
  * @brief Called whenever CGasCan::ShouldStartAction() is invoked
@@ -2962,7 +2988,7 @@ forward void L4D2_CGasCan_EventKilled(int gascan, int inflictor, int attacker);
  *
  * @return					Plugin_Handled to block adding to Scavenge score (see "Scavenge Score Fix" plugin for more details), Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_CGasCan_ShouldStartAction(int client, int gascan, int nozzle);
 
 /**
@@ -2976,7 +3002,7 @@ forward Action L4D2_CGasCan_ShouldStartAction(int client, int gascan, int nozzle
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CGasCan_ShouldStartAction_Post(int client, int gascan, int nozzle);
 
 /**
@@ -2990,7 +3016,7 @@ forward void L4D2_CGasCan_ShouldStartAction_Post(int client, int gascan, int noz
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CGasCan_ShouldStartAction_PostHandled(int client, int gascan, int nozzle);
 
 /**
@@ -3003,7 +3029,7 @@ forward void L4D2_CGasCan_ShouldStartAction_PostHandled(int client, int gascan, 
  *
  * @return					Plugin_Handled to block adding to Scavenge score (see "Scavenge Score Fix" plugin for more details), Plugin_Continue otherwise
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_CGasCan_ActionComplete(int client, int gascan, int nozzle);
 
 /**
@@ -3017,7 +3043,7 @@ forward Action L4D2_CGasCan_ActionComplete(int client, int gascan, int nozzle);
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CGasCan_ActionComplete_Post(int client, int gascan, int nozzle);
 
 /**
@@ -3031,7 +3057,7 @@ forward void L4D2_CGasCan_ActionComplete_Post(int client, int gascan, int nozzle
  *
  * @noreturn
  */
- // L4D2 only.
+// L4D2 only.
 forward void L4D2_CGasCan_ActionComplete_PostHandled(int client, int gascan, int nozzle);
 
 /**
@@ -3062,7 +3088,7 @@ forward void L4D_OnServerHibernationUpdate(bool hibernating);
  *
  * @return			Plugin_Handled to let the client through with addons, Plugin_Continue otherwise.
  */
- // L4D2 only.
+// L4D2 only.
 forward Action L4D2_OnClientDisableAddons(const char[] SteamID);
 
 /**
@@ -3559,11 +3585,10 @@ native bool L4D2_IsReachable(int client, const float vecPos[3]);
  *
  * @param startArea				NavArea address
  * @param endArea				NavArea address
- * @param ignoreNavBlockers		Bool to ignore blocked areas while checking (does not seem to work as expected)
+ * @param ignoreNavBlockers		Bool to ignore blocked areas while checking (does not seem to work as expected) (ignored in L4D1)
  *
  * @return						Distance between the areas, 0.0 if the same area or -1.0 on failure.
  */
-// L4D2 only.
 native float L4D2_NavAreaTravelDistance(float startPos[3], float endPos[3], bool ignoreNavBlockers);
 
 /**
@@ -3781,7 +3806,7 @@ native bool L4D_GoAwayFromKeyboard(int client);
  *
  * @return			True or false
  */
- // L4D2 only.
+// L4D2 only.
 native bool L4D2_AreWanderersAllowed();
 
 /**
@@ -4373,6 +4398,7 @@ native int L4D_GetMaxChapters();
 
 /**
  * @brief Returns all TheNavAreas addresses
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param aList		The ArrayList to store all nav area addresses.
  *
@@ -4382,6 +4408,7 @@ native void L4D_GetAllNavAreas(ArrayList aList);
 
 /**
  * @brief Returns a given NavArea's ID from it's address
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The NavArea address
  *
@@ -4391,6 +4418,7 @@ native int L4D_GetNavAreaID(Address area);
 
 /**
  * @brief Returns a given NavArea address from it's ID
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param id			The NavArea ID
  *
@@ -4400,6 +4428,7 @@ native Address L4D_GetNavAreaByID(int id);
 
 /**
  * @brief Returns origin of a given NavArea
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The address of the NavArea to read.
  *param vecPos		The vector to store the position read.
@@ -4410,6 +4439,7 @@ native void L4D_GetNavAreaPos(Address area, float vecPos[3]);
 
 /**
  * @brief Returns size of a given NavArea
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The address of the NavArea to read.
  *param vecPos		The vector to store the size read.
@@ -4421,6 +4451,7 @@ native void L4D_GetNavAreaSize(Address area, float vecSize[3]);
 /**
  * @brief Returns the nav area attribute flags
  * @remarks See the "NAV_BASE_*" near the top of the include file
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a NavArea
  *
@@ -4431,6 +4462,7 @@ native int L4D_GetNavArea_AttributeFlags(Address pTerrorNavArea);
 /**
  * @brief Sets the nav area attribute flags
  * @remarks See the "NAV_BASE_*" near the top of the include file
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a NavArea
  *param flags				Attribute flags to set
@@ -4442,6 +4474,7 @@ native void L4D_SetNavArea_AttributeFlags(Address pTerrorNavArea, int flags);
 /**
  * @brief Returns the terror nav area attribute flags
  * @remarks See the "NAV_SPAWN_*" near the top of the include file
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a TerrorNavArea
  *
@@ -4452,6 +4485,7 @@ native int L4D_GetNavArea_SpawnAttributes(Address pTerrorNavArea);
 /**
  * @brief Sets the terror nav area attribute flags
  * @remarks See the "NAV_SPAWN_*" near the top of the include file
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a TerrorNavArea
  *param flags				Attribute flags to set

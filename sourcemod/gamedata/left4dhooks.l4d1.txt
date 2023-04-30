@@ -2035,6 +2035,26 @@
 
 			/**
 			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
+			 * float NavAreaTravelDistance<ShortestPathCost>(Vector const&, Vector const&, ShortestPathCost &)
+			 *
+			 * How to find on Windows:
+			 * 1. Find the "CNavArea::ComputeEarliestOccupyTimes" function's offsets with asherkin's VTable dump.
+			 * 2. In IDA Pro, go to the ".rdata" section of the Windows binary.
+			 * 3. Search for "CNavArea::`vftable'" to jump to the "CNavArea" vtable.
+			 * 4. Compare your dump's offsets with asherkin's dump's offsets to find the "CNavArea::ComputeEarliestOccupyTimes" function.
+			 * 5. Look for the "CNavArea::ComputeEarliestOccupyTimes" function in the Windows binary.
+			 * 6. The first function call above both "info_player_counterterrorist" strings in "CNavArea::ComputeEarliestOccupyTimes" should be this function.
+			 **/
+			"NavAreaTravelDistance"
+			{
+				"library"	"server"
+				"linux"		"@_Z21NavAreaTravelDistanceI16ShortestPathCostEfRK6VectorS3_RT_.constprop.127"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x83\x2A\x2A\x53\x8B"
+				/* ? ? ? ? ? ? D9 05 ? ? ? ? 83 ? ? 53 8B */
+			}
+
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CTankClaw::DoSwing()
 			 *
 			 * How to find on Windows:

@@ -201,7 +201,9 @@ void SetupForwardsNatives()
 		g_hFWD_CTerrorPlayer_OnStartCarryingVictim							= new GlobalForward("L4D2_OnStartCarryingVictim",						ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_CTerrorPlayer_OnStartCarryingVictim_Post						= new GlobalForward("L4D2_OnStartCarryingVictim_Post",					ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_CTerrorPlayer_OnStartCarryingVictim_PostHandled				= new GlobalForward("L4D2_OnStartCarryingVictim_PostHandled",			ET_Event, Param_Cell, Param_Cell);
-		g_hFWD_CGasCanEvent_Killed											= new GlobalForward("L4D2_CGasCan_EventKilled",							ET_Event, Param_Cell, Param_Cell, Param_Cell);
+		g_hFWD_CGasCanEvent_Killed											= new GlobalForward("L4D2_CGasCan_EventKilled",							ET_Event, Param_Cell, Param_CellByRef, Param_CellByRef);
+		g_hFWD_CGasCanEvent_Killed_Post										= new GlobalForward("L4D2_CGasCan_EventKilled_Post",					ET_Event, Param_Cell, Param_Cell, Param_Cell);
+		g_hFWD_CGasCanEvent_Killed_PostHandled								= new GlobalForward("L4D2_CGasCan_EventKilled_PostHandled",				ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_ShouldStartAction									= new GlobalForward("L4D2_CGasCan_ShouldStartAction",					ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_ShouldStartAction_Post								= new GlobalForward("L4D2_CGasCan_ShouldStartAction_Post",				ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_ShouldStartAction_PostHandled						= new GlobalForward("L4D2_CGasCan_ShouldStartAction_PostHandled",		ET_Event, Param_Cell, Param_Cell, Param_Cell);

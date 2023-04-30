@@ -1,17 +1,21 @@
-1.129 (31-Mar-2023)
-	- Added native "L4D_WarpToValidPositionIfStuck" to teleport a stuck player. Requested by "ioioio".
-	- Added forwards "L4D_OnTakeOverBot", "L4D_OnTakeOverBot_Post" and "L4D_OnTakeOverBot_PostHandled" that triggers when a client takes over a bot.
-	- Updated "left4dhooks_lux_library" include file to version "0.5.7".
+1.130 (01-May-2023)
+	- Changed native "L4D2_NavAreaTravelDistance" to support L4D1. Thanks to "Eärendil" for reporting, and "Psyk0tik" for the signature.
+	- Changed forward "L4D2_CGasCan_EventKilled" to an Action instead of Void forward to allow blocking detonation. Requested by "Mystik Spiral".
+	- Added forwards "L4D2_CGasCan_EventKilled_Post" and "L4D2_CGasCan_EventKilled_PostHandled" to pair with the changed forward.
+	- Added a check to validate the "CTerrorGameRules::GetMissionInfo" address. Thanks to "yezi" for reporting.
 
 	- Updated: Plugin and test plugin.
-	- Updated: "left4dhooks.inc" Include file.
-	- Updated: "left4dhooks_lux_library.inc" Include file.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+    - Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+    - Updated: "scripting/include/left4dhooks.inc" Include file.
 	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
+1.129 (31-Mar-2023)
+	- Added native "L4D_WarpToValidPositionIfStuck" to teleport a stuck player. Requested by "ioioio".
+	- Added forwards "L4D_OnTakeOverBot", "L4D_OnTakeOverBot_Post" and "L4D_OnTakeOverBot_PostHandled" that triggers when a client takes over a bot.
+	- Updated "left4dhooks_lux_library" include file to version "0.5.7".
 
 1.128 (06-Feb-2023)
 	- Added forwards "L4D_OnDoAnimationEvent", "L4D_OnDoAnimationEvent_Post" and "L4D_OnDoAnimationEvent_PostHandled" to trigger on certain animation events. Requested by "Forgetest".

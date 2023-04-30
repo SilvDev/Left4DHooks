@@ -146,6 +146,8 @@ GlobalForward g_hFWD_CTerrorPlayer_OnHitByVomitJar_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnHitByVomitJar_PostHandled;
 GlobalForward g_hFWD_CBreakableProp_Break_Post;
 GlobalForward g_hFWD_CGasCanEvent_Killed;
+GlobalForward g_hFWD_CGasCanEvent_Killed_Post;
+GlobalForward g_hFWD_CGasCanEvent_Killed_PostHandled;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction_Post;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction_PostHandled;
@@ -442,7 +444,9 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim_Post",				true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim_PostHandled",		true);
-		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									INVALID_FUNCTION,											"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled");
+		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled");
+		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled_Post",				true);
+		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction");
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction_Post",			true);
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction_PostHandled",	true);
@@ -3777,6 +3781,7 @@ MRESReturn DTR_CBreakableProp_Break_Post(int pThis, DHookReturn hReturn, DHookPa
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CGasCanEvent_Killed;
 MRESReturn DTR_CGasCanEvent_Killed(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled"
 {
 	//PrintToServer("##### DTR_CGasCanEvent_Killed");
@@ -3784,7 +3789,41 @@ MRESReturn DTR_CGasCanEvent_Killed(int pThis, DHookReturn hReturn, DHookParam hP
 	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
 	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
 
+	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CGasCanEvent_Killed);
+	Call_PushCell(pThis);
+	Call_PushCellRef(a1);
+	Call_PushCellRef(a2);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CGasCanEvent_Killed = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	if( aResult == Plugin_Changed )
+	{
+		hParams.SetObjectVar(1, 48, ObjectValueType_EhandlePtr, a1);
+		hParams.SetObjectVar(1, 48, ObjectValueType_EhandlePtr, a2);
+		return MRES_ChangedHandled;
+	}
+
+	g_bBlock_CGasCanEvent_Killed = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CGasCanEvent_Killed_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled_Post" and "L4D2_CGasCan_EventKilled_PostHandled"
+{
+	//PrintToServer("##### DTR_CGasCanEvent_Killed");
+
+	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
+	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
+
+	Call_StartForward(g_bBlock_CGasCanEvent_Killed ? g_hFWD_CGasCanEvent_Killed_PostHandled : g_hFWD_CGasCanEvent_Killed_Post);
 	Call_PushCell(pThis);
 	Call_PushCell(a1);
 	Call_PushCell(a2);

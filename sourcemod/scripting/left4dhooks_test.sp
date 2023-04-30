@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.129"
+#define PLUGIN_VERSION		"1.130"
 
 /*=======================================================================================
 	Plugin Info:
@@ -316,6 +316,8 @@ Action sm_l4dd(int client, int args)
 {
 	PrintToServer("Uncomment the things you want to test. All disabled by default.");
 	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
+
+
 
 
 
@@ -3982,7 +3984,7 @@ public void L4D_CBreakableProp_Break(int prop, int entity)
 	}
 }
 
-public void L4D2_CGasCan_EventKilled(int gascan, int inflictor, int attacker)
+public Action L4D2_CGasCan_EventKilled(int gascan, int &inflictor, int &attacker)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -3991,6 +3993,43 @@ public void L4D2_CGasCan_EventKilled(int gascan, int inflictor, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_CGasCan_EventKilled\" %d (Inf=%d) (Att=%d)", gascan, inflictor, attacker);
+	}
+
+	// WORKS - Block detonating
+	// return Plugin_Handled;
+
+	// WORKS - Change attacker
+	/*
+	int bot = GetRandomSurvivor(1, 1);
+	inflictor = bot;
+	attacker = bot;
+	return Plugin_Changed;
+	// */
+
+	return Plugin_Continue;
+}
+
+public void L4D2_CGasCan_EventKilled_Post(int gascan, int inflictor, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_CGasCan_EventKilled_Post\" %d (Inf=%d) (Att=%d)", gascan, inflictor, attacker);
+	}
+}
+
+public void L4D2_CGasCan_EventKilled_PostHandled(int gascan, int inflictor, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_CGasCan_EventKilled_PostHandled\" %d (Inf=%d) (Att=%d)", gascan, inflictor, attacker);
 	}
 }
 

@@ -727,6 +727,7 @@ int Native_CTerrorGameRules_GetSurvivorSetMap(Handle plugin, int numParams) // N
 	char sTemp[8];
 	//PrintToServer("#### CALL g_hSDK_CTerrorGameRules_GetMissionInfo");
 	int infoPointer = SDKCall(g_hSDK_CTerrorGameRules_GetMissionInfo);
+	ValidateAddress(infoPointer, "CTerrorGameRules::GetMissionInfo");
 
 	//PrintToServer("#### CALL g_hSDK_KeyValues_GetString");
 	SDKCall(g_hSDK_KeyValues_GetString, infoPointer, sTemp, sizeof(sTemp), "survivor_set", "2"); // Default set = 2
@@ -1881,8 +1882,6 @@ int Native_SetFirstSpawnClass(Handle plugin, int numParams) // Native "L4D2_SetF
 
 int Native_NavAreaTravelDistance(Handle plugin, int numParams) // Native "L4D2_NavAreaTravelDistance"
 {
-	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
-
 	ValidateNatives(g_hSDK_NavAreaTravelDistance, "NavAreaTravelDistance");
 
 	float vPos[3], vEnd[3];
@@ -1892,7 +1891,10 @@ int Native_NavAreaTravelDistance(Handle plugin, int numParams) // Native "L4D2_N
 	int a3 = GetNativeCell(3);
 
 	//PrintToServer("#### CALL g_hSDK_NavAreaTravelDistance");
-	return SDKCall(g_hSDK_NavAreaTravelDistance, vPos, vEnd, a3);
+	if( g_bLeft4Dead2 )
+		return SDKCall(g_hSDK_NavAreaTravelDistance, vPos, vEnd, a3);
+
+	return SDKCall(g_hSDK_NavAreaTravelDistance, vPos, vEnd);
 }
 
 int Native_NavAreaBuildPath(Handle plugin, int numParams) // Native "L4D2_NavAreaBuildPath"
@@ -3191,6 +3193,7 @@ int Native_CTerrorGameRules_GetNumChaptersForMissionAndMode(Handle plugin, int n
 
 			//PrintToServer("#### CALL g_hSDK_CTerrorGameRules_GetMissionInfo");
 			int infoPointer = SDKCall(g_hSDK_CTerrorGameRules_GetMissionInfo);
+			ValidateAddress(infoPointer, "CTerrorGameRules::GetMissionInfo");
 
 			char sMode[64];
 			char sTemp[64];

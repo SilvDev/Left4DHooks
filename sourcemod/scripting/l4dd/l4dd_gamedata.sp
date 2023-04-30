@@ -782,20 +782,6 @@ void LoadGameData()
 		}
 
 		StartPrepSDKCall(SDKCall_Static);
-		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NavAreaTravelDistance") == false )
-		{
-			LogError("Failed to find signature: \"NavAreaTravelDistance\" (%s)", g_sSystem);
-		} else {
-			PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
-			PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
-			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-			PrepSDKCall_SetReturnInfo(SDKType_Float, SDKPass_Plain);
-			g_hSDK_NavAreaTravelDistance = EndPrepSDKCall();
-			if( g_hSDK_NavAreaTravelDistance == null )
-				LogError("Failed to create SDKCall: \"NavAreaTravelDistance\" (%s)", g_sSystem);
-		}
-
-		StartPrepSDKCall(SDKCall_Static);
 		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NavAreaBuildPath_ShortestPathCost") == false )
 		{
 			LogError("Failed to find signature: \"NavAreaBuildPath_ShortestPathCost\" (%s)", g_sSystem);
@@ -933,6 +919,21 @@ void LoadGameData()
 					LogError("Failed to create SDKCall: \"CDirector::GetScriptValueString\" (%s)", g_sSystem);
 		}
 		*/
+	}
+
+	StartPrepSDKCall(SDKCall_Static);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NavAreaTravelDistance") == false )
+	{
+		LogError("Failed to find signature: \"NavAreaTravelDistance\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
+		PrepSDKCall_AddParameter(SDKType_Vector, SDKPass_ByRef);
+		if( g_bLeft4Dead2 )
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		PrepSDKCall_SetReturnInfo(SDKType_Float, SDKPass_Plain);
+		g_hSDK_NavAreaTravelDistance = EndPrepSDKCall();
+		if( g_hSDK_NavAreaTravelDistance == null )
+			LogError("Failed to create SDKCall: \"NavAreaTravelDistance\" (%s)", g_sSystem);
 	}
 
 
