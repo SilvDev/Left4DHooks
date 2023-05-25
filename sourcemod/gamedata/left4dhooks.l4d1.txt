@@ -1120,6 +1120,64 @@
 				}
 			}
 
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/Mutant_Tanks
+			 * CFirstAidKit::StartHealing(CFirstAidKit::HealTargetType)
+			 *
+			 * Note: Detouring as a pre-hook for changing "first_aid_kit_use_duration" per player before healing starts.
+			 * Note: Detouring as a post-hook for changing "first_aid_kit_use_duration" back to default value after healing starts.
+			 * Note for Linux users: Function prototype uses custom registers including the "this" pointer which needs to be registered as param 1.
+			 **/
+			"L4DD::CFirstAidKit::StartHealing"
+			{
+				"signature"	"CFirstAidKit::StartHealing"
+				"linux"
+				{
+					"callconv"	"cdecl"
+					"return"	"void"
+					"this"		"ignore"
+					"arguments"
+					{
+						"this"
+						{
+							"type"		"cbaseentity"
+							"register"	"eax"
+						}
+						"targetType"
+						{
+							"type"		"int"
+							"register"	"edx"
+						}
+					}
+				}
+				"mac"
+				{
+					"callconv"	"thiscall"
+					"return"	"void"
+					"this"		"entity"
+					"arguments"
+					{
+						"targetType"
+						{
+							"type"		"int"
+						}
+					}
+				}
+				"windows"
+				{
+					"callconv"	"thiscall"
+					"return"	"void"
+					"this"		"entity"
+					"arguments"
+					{
+						"targetType"
+						{
+							"type"		"int"
+						}
+					}
+				}
+			}
+
 			"L4DD::CServerGameDLL::ServerHibernationUpdate"
 			{
 				"signature"		"CServerGameDLL::ServerHibernationUpdate"
@@ -2811,6 +2869,25 @@
 				/* Search: "Fire prop detonated %.0f,%.0f,%.0f.  Breaker:%s. Attacker:%s.\n" */
 			}
 
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/Mutant_Tanks
+			 * CFirstAidKit::StartHealing(CFirstAidKit::HealTargetType)
+			 *
+			 * Note: Used for detouring the function.
+			 *
+			 * How to find on Windows:
+			 * 1. Search for the "PlayerHealing" or "PlayerHealingOther" string.
+			 * 2. The string can only be found in this function.
+			 **/
+			"CFirstAidKit::StartHealing"
+			{
+				"library"	"server"
+				"linux"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE.part.43"
+				"mac"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8D\xB1\x2A\x2A\x2A\x2A\x57\x89"
+						/* ? ? ? ? ? ? ? ? 53 55 56 8D B1 ? ? ? ? 57 89 */
+			}
+
 			"BossZombiePlayerBot::ChooseVictim"
 			{
 				"library"		"server"
@@ -2920,6 +2997,18 @@
 				"linux"		"@_ZNK8CNavMesh10GetNavAreaERK6Vectorf"
 				"windows"	"\x83\xEC\x2A\x56\x8B\xF1\x83\x7E\x2A\x2A\x75\x09\x33\xC0\x5E\x83\xC4"
 				/* 83 EC ? 56 8B F1 83 7E ? ? 75 09 33 C0 5E 83 C4 */
+			}
+
+			/*
+			 * CNavArea::IsConnected(CNavArea const*, NavDirType)const
+			 */
+			"CNavArea::IsConnected"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK8CNavArea11IsConnectedEPKS_10NavDirType"
+				"windows"	"\x55\x8B\x2A\x2A\x2A\x3B\x2A\x75\x2A\xB0\x2A\x5D\xC2"
+				/* 55 8B ? ? ? 3B ? 75 ? B0 ? 5D C2 */
+				/* Search: "ScriptIsConnectedArea" - Go to unique sub below, return at the bottom calls target function */
 			}
 
 			/*

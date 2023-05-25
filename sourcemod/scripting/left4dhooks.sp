@@ -18,11 +18,11 @@
 
 
 
-#define PLUGIN_VERSION		"1.130"
-#define PLUGIN_VERLONG		1130
+#define PLUGIN_VERSION		"1.132"
+#define PLUGIN_VERLONG		1132
 
 #define DEBUG				0
-// #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down)
+// #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
 
 #define DETOUR_ALL			0	// Only enable required detours, for public release.
 // #define DETOUR_ALL		1	// Enable all detours, for testing.
@@ -67,7 +67,7 @@
 		"Fyren" for being so awesome and inspiring me from his sdktools patch to do custom |this| calls.
 		"ivailosp" for providing the Windows addresses that needed to be patched to get player slot unlocking to work.
 		"dvander" for making sourcemod and teaching me about the mod r/m bytes.
-		"DDRKhat" for letting me use his Linux server to test this
+		"DDRKhat" for letting me use his Linux server to test this.
 		"Frustian" for being a champ and poking around random Linux sigs so I could the one native I actually needed.
 		"XBetaAlpha" for making this a team effort rather than one guy writing all the code.
 
@@ -201,10 +201,10 @@ static const char g_sModels2[][] =
 
 
 // Dynamic Detours:
-#define MAX_FWD_LEN							64		// Maximum string length of forward and signature names, used for ArrayList.
+#define MAX_FWD_LEN							64		// Maximum string length of forward and signature names, used for ArrayList
 
 // ToDo: When using extra-api.ext (or hopefully one day native SM forwards), g_aDetoursHooked will store the number of plugins using each forward
-// so we can disable when the value is 0 and not have to check all plugins just to determine if still required.
+// so we can disable when the value is 0 and not have to check all plugins just to determine if still required
 ArrayList g_aDetoursHooked;					// Identifies if the detour hook is enabled or disabled
 ArrayList g_aDetourHandles;					// Stores detour handles to enable/disable as required
 ArrayList g_aGameDataSigs;					// Stores Signature names
@@ -256,7 +256,7 @@ int g_iOff_LobbyReservation;
 int g_iOff_VersusStartTimer;
 int g_iOff_m_rescueCheckTimer;
 int g_iOff_m_iszScriptId;
-int g_iOff_SpawnTimer;
+int g_iOff_m_flBecomeGhostAt;
 int g_iOff_MobSpawnTimer;
 int g_iOff_VersusMaxCompletionScore;
 int g_iOff_OnBeginRoundSetupTime;
@@ -331,6 +331,7 @@ int g_iCanBecomeGhostOffset;
 
 // Other
 Address g_pScriptId;
+int g_iPlayerResourceRef;
 int g_iAttackTimer;
 int g_iOffsetAmmo;
 int g_iPrimaryAmmoType;
@@ -671,7 +672,7 @@ public void OnPluginStart()
 	// ====================================================================================================
 	//									COMMANDS
 	// ====================================================================================================
-	// When adding or removing plugins that use any detours during gameplay. To optimize forwards by disabling unused or enabling required functions that were previously unused. TODO: Not needed when using extra-api.ext.
+	// When adding or removing plugins that use any detours during gameplay. To optimize forwards by disabling unused or enabling required functions that were previously unused. TODO: Not needed when using extra-api.ext
 	RegAdminCmd("sm_l4dd_unreserve",	CmdLobby,	ADMFLAG_ROOT, "Removes lobby reservation.");
 	RegAdminCmd("sm_l4dd_reload",		CmdReload,	ADMFLAG_ROOT, "Reloads the detour hooks, enabling or disabling depending if they're required by other plugins.");
 	RegAdminCmd("sm_l4dd_detours",		CmdDetours,	ADMFLAG_ROOT, "Lists the currently active forwards and the plugins using them.");
@@ -847,6 +848,7 @@ void GetGameMode() // Forward "L4D_OnGameModeChange"
 		SDKCall(g_hSDK_CDirector_GetGameModeBase, g_pDirector, sMode, sizeof(sMode));
 
 		if( strcmp(sMode,			"coop") == 0 )		g_iCurrentMode = GAMEMODE_COOP;
+		else if( strcmp(sMode,		"realism") == 0 )	g_iCurrentMode = GAMEMODE_COOP;
 		else if( strcmp(sMode,		"survival") == 0 )	g_iCurrentMode = GAMEMODE_SURVIVAL;
 		else if( strcmp(sMode,		"versus") == 0 )	g_iCurrentMode = GAMEMODE_VERSUS;
 		else if( strcmp(sMode,		"scavenge") == 0 )	g_iCurrentMode = GAMEMODE_SCAVENGE;
@@ -1383,6 +1385,13 @@ void CallCheckRequiredDetours(int client = 0)
 public void OnMapStart()
 {
 	g_bRoundEnded = false;
+
+
+
+	// Load PlayerResource
+	int iPlayerResource = FindEntityByClassname(-1, "terror_player_manager");
+
+	g_iPlayerResourceRef = (iPlayerResource != INVALID_ENT_REFERENCE) ? EntIndexToEntRef(iPlayerResource): INVALID_ENT_REFERENCE;
 
 
 

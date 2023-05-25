@@ -1,16 +1,52 @@
+1.132 (25-May-2023)
+	- Added forwards "L4D1_FirstAidKit_StartHealing", "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled" to control first aid kit duration.
+	- Added forwards "L4D2_BackpackItem_StartAction", "L4D2_BackpackItem_StartAction_Post" and "L4D2_BackpackItem_StartAction_PostHandled" to control first aid kit duration, defibrillator and other use durations.
+	- Forwards requested by "Eyal282". Thanks to "Psyk0tik" for the detour functions and signatures.
+
+	- Fixed various offsets from the from the 2.2.2.7 L4D2 update. Thanks to "sorallll" and "PaaNChaN" for reporting and "SirPlease" for updating.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
+1.131 (25-May-2023)
+	- Fixed signatures broken from the 2.2.2.7 L4D2 update.
+	- Thanks to "robex" and "XiLuo" for reporting changes.
+	- Thanks to "A1m`" for updating various offsets.
+
+	- Added stock "L4D_IsTankProp" in the "left4dhooks_silver.inc" file, to check if a prop can be hit by tanks. Thanks to "Eyal282" for adding.
+	- Added forward "L4D2_OnChargerImpact" to trigger when a Charger impacts after charging. Requested by "Eyal282".
+	- Added native "L4D_NavArea_IsConnected" to check if 2 areas are connected. Requested by "Eyal282".
+	- Added native "L4D_GetNavAreaCenter" to get the center of a NavArea. Requested by "3ipKa".
+	- Added native "L4D_SetPlayerSpawnTime" to set the spawn timer of a SI. Requested by "A1m`".
+
+	- Fixed native "L4D_OnGameModeChange" in L4D2 returning 0 for realism. Thanks to "HarryPotter" for reporting.
+	- Fixed forward "L4D2_CGasCan_EventKilled" not setting the correct modified values. Thanks to " 4NTEP xD " for reporting.
+
+	- Fixed stocks "L4D2_GetWeaponUpgradeAmmoCount" and "L4D2_GetWeaponUpgrades" in the "left4dhooks_stocks" file, to return values other than 0 and 1. Thanks to "BHaType" for reporting.
+	- Plugins using either of these stocks should be recompiled against the updated file.
+
+	- Changes to the test plugin removing unnecessary lines printed to console when forwards trigger.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/include/left4dhooks_silver.inc" Include file.
+	- Updated: "/scripting/include/left4dhooks_stocks.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.130 (01-May-2023)
 	- Changed native "L4D2_NavAreaTravelDistance" to support L4D1. Thanks to "Eärendil" for reporting, and "Psyk0tik" for the signature.
 	- Changed forward "L4D2_CGasCan_EventKilled" to an Action instead of Void forward to allow blocking detonation. Requested by "Mystik Spiral".
 	- Added forwards "L4D2_CGasCan_EventKilled_Post" and "L4D2_CGasCan_EventKilled_PostHandled" to pair with the changed forward.
 	- Added a check to validate the "CTerrorGameRules::GetMissionInfo" address. Thanks to "yezi" for reporting.
-
-	- Updated: Plugin and test plugin.
-    - Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-    - Updated: "scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.129 (31-Mar-2023)
 	- Added native "L4D_WarpToValidPositionIfStuck" to teleport a stuck player. Requested by "ioioio".
@@ -338,7 +374,7 @@
 
 1.86 (02-Feb-2022)
 	- Added forward "L4D_OnServerHibernationUpdate" to report when server hibernation status changes. Requested by ProjectSky".
-	- Added new weapon attribute. Requested by "A1m".
+	- Added new weapon attribute. Requested by "A1m`".
 		- L4D2FloatWeaponAttributes: "L4D2FWA_GainRange".
 
 	- Fixed broken signatures in L4D1 and L4D2 due to game updates.
@@ -364,7 +400,7 @@
 
 1.81 (30-Nov-2021)
 	- Fixed forward "L4D_OnVomitedUpon" sometimes throwing errors about null pointer. Thanks to "Krufftys Killers" for reporting.
-	- Changed function "Local_GetRandomClient" in "left4dhooks_silver.inc" to be stock. Thanks to "A1m" for reporting.
+	- Changed function "Local_GetRandomClient" in "left4dhooks_silver.inc" to be stock. Thanks to "A1m1" for reporting.
 
 1.80 (24-Nov-2021)
 	- Fixed forward "L4D_OnSpawnSpecial_Post" param error. Thanks to "fdxx" for reporting.
@@ -373,7 +409,7 @@
 	- Changed forward "L4D_OnSpawnSpecial_Post" prototype to remove the reference variable.
 
 1.78 (23-Nov-2021)
-	- Added forwards "L4D_OnSpawnSpecial_Post", "L4D_OnSpawnTank_Post", "L4D_OnSpawnWitch_Post" and "L4D2_OnSpawnWitchBride_Post". Requested by "A1m".
+	- Added forwards "L4D_OnSpawnSpecial_Post", "L4D_OnSpawnTank_Post", "L4D_OnSpawnWitch_Post" and "L4D2_OnSpawnWitchBride_Post". Requested by "A1m`".
 	- Added stocks "GetAnyRandomClient", "GetRandomSurvivor" and "GetRandomInfected" to the "left4dhooks_silver.inc" include file.
 
 1.77 (21-Nov-2021)
