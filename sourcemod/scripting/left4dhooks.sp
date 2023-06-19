@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.132"
-#define PLUGIN_VERLONG		1132
+#define PLUGIN_VERSION		"1.133"
+#define PLUGIN_VERLONG		1133
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -341,6 +341,7 @@ int g_iClassTank;
 char g_sSystem[16];
 bool g_bLinuxOS;
 bool g_bLeft4Dead2;
+bool g_bFinalCheck;
 bool g_bMapStarted;
 bool g_bRoundEnded;
 bool g_bCheckpointFirst[MAXPLAYERS+1];
@@ -880,6 +881,14 @@ int Native_Internal_GetGameMode(Handle plugin, int numParams) // Native "L4D_Get
 
 int Native_CTerrorGameRules_IsGenericCooperativeMode(Handle plugin, int numParams) // Native "L4D2_IsGenericCooperativeMode"
 {
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	if( !g_bMapStarted )
+	{
+		LogError("Native L4D2_IsGenericCooperativeMode should not be used before OnMapStart, please report to 3rd party plugin author.");
+		return false;
+	}
+
 	ValidateAddress(g_pGameRules, "g_pGameRules");
 	ValidateNatives(g_hSDK_CTerrorGameRules_IsGenericCooperativeMode, "CTerrorGameRules::IsGenericCooperativeMode");
 
@@ -894,6 +903,14 @@ int Native_Internal_IsCoopMode(Handle plugin, int numParams) // Native "L4D_IsCo
 
 int Native_Internal_IsRealismMode(Handle plugin, int numParams) // Native "L4D2_IsRealismMode"
 {
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	if( !g_bMapStarted )
+	{
+		LogError("Native L4D2_IsRealismMode should not be used before OnMapStart, please report to 3rd party plugin author.");
+		return false;
+	}
+
 	ValidateAddress(g_pGameRules, "g_pGameRules");
 	ValidateNatives(g_hSDK_CTerrorGameRules_IsRealismMode, "CTerrorGameRules::IsRealismMode");
 
@@ -925,6 +942,7 @@ public void OnMapEnd()
 {
 	// Reset vars
 	g_bMapStarted = false;
+	g_bFinalCheck = false;
 	g_iMaxChapters = 0;
 
 	// Reset checkpoints
@@ -1391,7 +1409,7 @@ public void OnMapStart()
 	// Load PlayerResource
 	int iPlayerResource = FindEntityByClassname(-1, "terror_player_manager");
 
-	g_iPlayerResourceRef = (iPlayerResource != INVALID_ENT_REFERENCE) ? EntIndexToEntRef(iPlayerResource): INVALID_ENT_REFERENCE;
+	g_iPlayerResourceRef = (iPlayerResource != INVALID_ENT_REFERENCE) ? EntIndexToEntRef(iPlayerResource) : INVALID_ENT_REFERENCE;
 
 
 

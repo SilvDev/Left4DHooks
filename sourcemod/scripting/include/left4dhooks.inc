@@ -59,8 +59,8 @@
 
 
 // Natives: 256 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 61 [silvers - mine!] + 4 [anim] = 159
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 98 [silvers - mine!] + 4 [anim] = 253
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 65 [silvers - mine!] + 4 [anim] = 164
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 105 [silvers - mine!] + 4 [anim] = 260
 
 // Forwards: 195 (including 5 for L4D1 only)
 // L4D1 = 135
@@ -96,7 +96,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("AnimHookDisable");
 	MarkNativeAsOptional("AnimGetActivity");
 	MarkNativeAsOptional("AnimGetFromActivity");
-
 	MarkNativeAsOptional("L4D_GetGameModeType");
 	MarkNativeAsOptional("L4D_Deafen");
 	MarkNativeAsOptional("L4D_GetTempHealth");
@@ -136,7 +135,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_MolotovPrj");
 	MarkNativeAsOptional("L4D2_VomitJarPrj");
 	MarkNativeAsOptional("L4D2_GrenadeLauncherPrj");
-
 	MarkNativeAsOptional("L4D_GetPointer");
 	MarkNativeAsOptional("L4D_GetClientFromAddress");
 	MarkNativeAsOptional("L4D_GetEntityFromAddress");
@@ -178,7 +176,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_IsSurvivalMode");
 	MarkNativeAsOptional("L4D2_IsScavengeMode");
 	MarkNativeAsOptional("L4D_IsVersusMode");
-
 	MarkNativeAsOptional("L4D2_VScriptWrapper_GetMapNumber");
 	MarkNativeAsOptional("L4D2_VScriptWrapper_HasEverBeenInjured");
 	MarkNativeAsOptional("L4D2_VScriptWrapper_GetAliveDuration");
@@ -221,7 +218,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_SetNavArea_SpawnAttributes");
 	MarkNativeAsOptional("L4D_GetNavArea_AttributeFlags");
 	MarkNativeAsOptional("L4D_SetNavArea_AttributeFlags");
-
 	MarkNativeAsOptional("L4D_ScavengeBeginRoundSetupTime");
 	MarkNativeAsOptional("L4D_ResetMobTimer");
 	MarkNativeAsOptional("L4D_GetPlayerSpawnTime");
@@ -306,7 +302,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4DDirect_GetSurvivorHealthBonus");
 	MarkNativeAsOptional("L4DDirect_SetSurvivorHealthBonus");
 	MarkNativeAsOptional("L4DDirect_RecomputeTeamScores");
-
 	MarkNativeAsOptional("L4D2Direct_GetTankCount");
 	MarkNativeAsOptional("L4D2Direct_GetMobSpawnTimer");
 	MarkNativeAsOptional("L4D2Direct_GetSIClassDeathTimer");
@@ -341,7 +336,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("ITimer_Invalidate");
 	MarkNativeAsOptional("ITimer_HasStarted");
 	MarkNativeAsOptional("ITimer_GetElapsedTime");
-
 	MarkNativeAsOptional("CTimer_GetDuration");
 	MarkNativeAsOptional("CTimer_SetDuration");
 	MarkNativeAsOptional("CTimer_GetTimestamp");
@@ -359,8 +353,15 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_Charger_StartCarryingVictim");
 	MarkNativeAsOptional("L4D2_Charger_PummelVictim");
 	MarkNativeAsOptional("L4D2_Charger_EndPummel");
+	MarkNativeAsOptional("L4D2_Charger_EndCarry");
 	MarkNativeAsOptional("L4D2_Jockey_EndRide");
+	MarkNativeAsOptional("L4D_Hunter_ReleaseVictim");
+	MarkNativeAsOptional("L4D_Smoker_ReleaseVictim");
 	MarkNativeAsOptional("L4D_CancelStagger");
+	MarkNativeAsOptional("L4D_FindUseEntity");
+	MarkNativeAsOptional("L4D_ForceHunterVictim");
+	MarkNativeAsOptional("L4D_ForceSmokerVictim");
+	MarkNativeAsOptional("L4D2_ForceJockeyVictim");
 	MarkNativeAsOptional("L4D_CreateRescuableSurvivors");
 	MarkNativeAsOptional("L4D_ReviveSurvivor");
 	MarkNativeAsOptional("L4D_GetHighestFlowSurvivor");
@@ -375,7 +376,6 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_State_Transition");
 	MarkNativeAsOptional("L4D_RegisterForbiddenTarget");
 	MarkNativeAsOptional("L4D_UnRegisterForbiddenTarget");
-
 	MarkNativeAsOptional("L4D2_CTerrorPlayer_OnHitByVomitJar");
 	MarkNativeAsOptional("L4D2_Infected_OnHitByVomitJar");
 	MarkNativeAsOptional("L4D2_CTerrorPlayer_Fling");
@@ -408,6 +408,7 @@ enum
 };
 
 // For the "L4D_GetPointer" native
+// Some of these will only be valid after OnMapStart() because they change on each new map. For example: POINTER_GAMERULES, POINTER_THENAVAREAS, POINTER_MISSIONINFO and possibly others
 enum PointerType
 {
 	POINTER_DIRECTOR		= 1,	// @TheDirector
@@ -421,7 +422,8 @@ enum PointerType
 	POINTER_SCAVENGEMODE	= 9,	// pScavengeMode (L4D2 Only)
 	POINTER_VERSUSMODE		= 10,	// pVersusMode
 	POINTER_SCRIPTVM		= 11,	// @g_pScriptVM (L4D2 Only)
-	POINTER_THENAVAREAS		= 12	// @TheNavAreas
+	POINTER_THENAVAREAS		= 12,	// @TheNavAreas
+	POINTER_MISSIONINFO		= 13	// MissionInfo pointer
 };
 
 // Provided by "BHaType":
@@ -2969,8 +2971,9 @@ forward void L4D_CBreakableProp_Break(int prop, int entity);
 /**
  * @brief Called whenever CFirstAidKit::StartHealing() is invoked
  * @remarks Called when a player is using a first aid kit to heal
- * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes.
- * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes.
+ * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes
+ * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes
+ * @note: This does not change the animation speed
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
@@ -2983,8 +2986,9 @@ forward Action L4D1_FirstAidKit_StartHealing(int client, int entity);
 /**
  * @brief Called whenever CFirstAidKit::StartHealing() is invoked
  * @remarks Called when a player is using a first aid kit to heal
- * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes.
- * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes.
+ * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes
+ * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes
+ * @note: This does not change the animation speed
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
@@ -2997,8 +3001,9 @@ forward void L4D1_FirstAidKit_StartHealing_Post(int client, int entity);
 /**
  * @brief Called whenever CFirstAidKit::StartHealing() is invoked
  * @remarks Called when a player is using a first aid kit to heal
- * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes.
- * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes.
+ * @note: Detouring as a pre-hook for changing "first_aid_heal_percent" per player before healing finishes
+ * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes
+ * @note: This does not change the animation speed
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
@@ -3009,8 +3014,9 @@ forward void L4D1_FirstAidKit_StartHealing_Post(int client, int entity);
 forward void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity);
 
 /**
- * @brief Called whenever sourcemodCBaseBackpackItem::StartAction() is invoked
- * @remarks Called when a player is using an item and about to use it
+ * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ * @note: This does not change the animation speed
  * @note: Detouring as a pre-hook for changing the following per player before starting any actions:
  * - "first_aid_kit_use_duration"
  * - "ammo_pack_use_duration"
@@ -3018,19 +3024,21 @@ forward void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity);
  * - "defibrillator_use_duration"
  * - "gas_can_use_duration"
  * - "upgrade_pack_use_duration"
- * @note: Detouring as a post-hook for changing the above back to default values after starting any actions.
+ * @note: Detouring as a post-hook for changing the above back to default values after starting any actions
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
+ * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file.
  *
  * @return					Plugin_Handled to block healing, Plugin_Continue otherwise
  */
 // L4D2 only
-forward Action L4D2_BackpackItem_StartAction(int client, int entity);
+forward Action L4D2_BackpackItem_StartAction(int client, int entity, any type);
 
 /**
- * @brief Called whenever sourcemodCBaseBackpackItem::StartAction() is invoked
- * @remarks Called when a player is using an item and about to use it
+ * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ * @note: This does not change the animation speed
  * @note: Detouring as a pre-hook for changing the following per player before starting any actions:
  * - "first_aid_kit_use_duration"
  * - "ammo_pack_use_duration"
@@ -3038,19 +3046,21 @@ forward Action L4D2_BackpackItem_StartAction(int client, int entity);
  * - "defibrillator_use_duration"
  * - "gas_can_use_duration"
  * - "upgrade_pack_use_duration"
- * @note: Detouring as a post-hook for changing the above back to default values after starting any actions.
+ * @note: Detouring as a post-hook for changing the above back to default values after starting any actions
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
+ * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file.
  *
  * @noreturn
  */
 // L4D2 only
-forward void L4D2_BackpackItem_StartAction_Post(int client, int entity);
+forward void L4D2_BackpackItem_StartAction_Post(int client, int entity, any type);
 
 /**
- * @brief Called whenever sourcemodCBaseBackpackItem::StartAction() is invoked
- * @remarks Called when a player is using an item and about to use it
+ * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ * @note: This does not change the animation speed
  * @note: Detouring as a pre-hook for changing the following per player before starting any actions:
  * - "first_aid_kit_use_duration"
  * - "ammo_pack_use_duration"
@@ -3058,15 +3068,16 @@ forward void L4D2_BackpackItem_StartAction_Post(int client, int entity);
  * - "defibrillator_use_duration"
  * - "gas_can_use_duration"
  * - "upgrade_pack_use_duration"
- * @note: Detouring as a post-hook for changing the above back to default values after starting any actions.
+ * @note: Detouring as a post-hook for changing the above back to default values after starting any actions
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
+ * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file.
  *
  * @noreturn
  */
 // L4D2 only
-forward void L4D2_BackpackItem_StartAction_PostHandled(int client, int entity);
+forward void L4D2_BackpackItem_StartAction_PostHandled(int client, int entity, any type);
 
 /**
  * @brief Called whenever CGasCan::Event_Killed() is invoked
@@ -3866,12 +3877,13 @@ native int L4D2_SpitterPrj(int client, const float vecPos[3], const float vecAng
  *
  * @param client	Client id to affect
  * @param fTime		Duration of screen effects (game default: 15.0 - Cvar: "adrenaline_duration")
- * @param heal		True = give health benefits and fire "adrenaline_used" event. False = only screen effects
+ * @param heal		True = give health benefits. False = only screen effects
+ * @param event		True = fire the "adrenaline_used" event. False = no event triggered
  *
  * @return			True on success, false otherwise
  */
 // L4D2 only
-native void L4D2_UseAdrenaline(int client, float fTime = 15.0, bool heal = true);
+native void L4D2_UseAdrenaline(int client, float fTime = 15.0, bool heal = true, bool event = true);
 
 /**
  * @brief Respawns a player from dead state
@@ -4042,6 +4054,7 @@ native float L4D2_GetScriptValueFloat(const char[] key, float value);
 /**
  * @brief Returns if there is a configurable difficulty setting
  * @brief Returns true for Coop/Realism modes
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return				True if there is a configurable difficulty setting, false otherwise
  **/
@@ -4051,7 +4064,7 @@ native bool L4D2_HasConfigurableDifficultySetting();
 /**
  * @brief Returns the maps default Survivor set
  * @brief Does not return the overridden value when changed from the "L4D_OnGetSurvivorSet" or "L4D_OnFastGetSurvivorSet" forwards
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return				Maps default survivor set
  **/
@@ -4069,6 +4082,7 @@ native int L4D2_GetSurvivorSetMod();
 
 /**
  * @brief Returns if the current game mode is Coop/Realism mode
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return				True if the current game mode is Coop/Realism mode, false otherwise
  **/
@@ -4084,10 +4098,11 @@ native bool L4D_IsCoopMode();
 
 /**
  * @brief Returns if the current game mode is Realism mode
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return				True if the current game mode is Realism mode, false otherwise
- **/
 // L4D2 only
+ **/
 native bool L4D2_IsRealismMode();
 
 /**
@@ -4290,8 +4305,7 @@ native int L4D_RestartScenarioFromVote(const char[] map);
 
 /**
  * @brief Gets the max versus completion score for the map
- * @remarks Requires GameRules to be initialized--map must be loaded
- *			Seems to be updated before OnMapStart
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return			The map's max completion distance (map distance score)
  */
@@ -4299,8 +4313,7 @@ native int L4D_GetVersusMaxCompletionScore();
 
 /**
  * @brief Sets the max versus completion score for the map
- * @remarks Requires GameRules to be initialized--map must be loaded
- *			Seems to be updated before OnMapStart and checked on round_start
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @param score		The versus max completion score to set for the round
  */
@@ -4333,9 +4346,11 @@ native bool L4D_IsFirstMapInScenario();
 /**
  * @brief Tells if the Mission (map) is the final map of the campaign
  *
+ * @param anyMap	True to return true if any map is a finale, not just the last map of a campaign (useful for campaigns that have multiple finale maps)
+ *
  * @return			true if the map is the last map of the campaign (finale)
  */
-native bool L4D_IsMissionFinalMap();
+native bool L4D_IsMissionFinalMap(bool anyMap = false);
 
 /**
  * @brief Notifies the CGameRulesProxy that the game state has been changed
@@ -4534,7 +4549,7 @@ native int L4D_GetCurrentChapter();
 
 /**
  * @brief Returns the maximum number of chapters for the current game mode
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @return			Max chapters
  */
@@ -4542,7 +4557,7 @@ native int L4D_GetMaxChapters();
 
 /**
  * @brief Returns all TheNavAreas addresses
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  *param aList		The ArrayList to store all nav area addresses
  *
@@ -4552,7 +4567,7 @@ native void L4D_GetAllNavAreas(ArrayList aList);
 
 /**
  * @brief Returns a given NavArea's ID from it's address
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  *param area		The NavArea address
  *
@@ -4562,7 +4577,7 @@ native int L4D_GetNavAreaID(Address area);
 
 /**
  * @brief Returns a given NavArea address from it's ID
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  *param id			The NavArea ID
  *
@@ -4572,7 +4587,6 @@ native Address L4D_GetNavAreaByID(int id);
 
 /**
  * @brief Returns origin of a given NavArea
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The address of the NavArea to read
  *param vecPos		The vector to store the position read
@@ -4583,7 +4597,6 @@ native void L4D_GetNavAreaPos(Address area, float vecPos[3]);
 
 /**
  * @brief Returns center of a given NavArea
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The address of the NavArea to read
  *param vecPos		The vector to store the center position
@@ -4594,7 +4607,6 @@ native void L4D_GetNavAreaCenter(Address area, float vecPos[3]);
 
 /**
  * @brief Returns size of a given NavArea
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area		The address of the NavArea to read
  *param vecPos		The vector to store the size read
@@ -4605,7 +4617,6 @@ native void L4D_GetNavAreaSize(Address area, float vecSize[3]);
 
 /**
  * @brief  	Returns true if this area is connected to other area in given direction. (If you set direction to -1 or 4, it will automatically check all directions for a connection)
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param area1		The address of the first NavArea
  *param are2a		The address of the second NavArea
@@ -4618,7 +4629,6 @@ native bool L4D_NavArea_IsConnected(Address area1, Address area2, int direction)
 /**
  * @brief Returns the nav area attribute flags
  * @remarks See the "NAV_BASE_*" near the top of the include file
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a NavArea
  *
@@ -4629,7 +4639,6 @@ native int L4D_GetNavArea_AttributeFlags(Address pTerrorNavArea);
 /**
  * @brief Sets the nav area attribute flags
  * @remarks See the "NAV_BASE_*" near the top of the include file
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a NavArea
  *param flags				Attribute flags to set
@@ -4641,7 +4650,6 @@ native void L4D_SetNavArea_AttributeFlags(Address pTerrorNavArea, int flags);
 /**
  * @brief Returns the terror nav area attribute flags
  * @remarks See the "NAV_SPAWN_*" near the top of the include file
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a TerrorNavArea
  *
@@ -4652,7 +4660,6 @@ native int L4D_GetNavArea_SpawnAttributes(Address pTerrorNavArea);
 /**
  * @brief Sets the terror nav area attribute flags
  * @remarks See the "NAV_SPAWN_*" near the top of the include file
- * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid
  *
  *param pTerrorNavArea		Pointer to a TerrorNavArea
  *param flags				Attribute flags to set
@@ -5054,7 +5061,7 @@ native void L4D2_SetFloatWeaponAttribute(const char[] weaponName, L4D2FloatWeapo
 
 /**
  * @brief Retrieve the index for a given melee weapon from the Melee Weapon Database
- * @remarks Index updated on OnMapStart - suggest using RequestFrame to find index
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  * @remarks Index can change depending on available melee weapons each map
  *
  * @param weaponName 	Weapon to lookup index id for
@@ -5935,6 +5942,48 @@ native void L4D2_CTerrorPlayer_Fling(int client, int attacker, const float vecDi
 native void L4D_CancelStagger(int client);
 
 /**
+ * @brief Finds the Use client/entity if available
+ * @remarks See the "L4D1_FirstAidKit_StartHealing" and "L4D2_BackpackItem_StartAction" pre hook forwards for examples of usage and games range values.
+ *
+ * @param client			Client ID of the person to check
+ * @param players			True = only search for players, false = search for any use entity
+ * @param range				Maximum distance to search for a usable entity
+ *
+ * @return					Entity index or maybe 0 or -1 if none (not validated). May return an attached entity on the client (for example prop_dynamic) or other nearby entities
+ */
+native int L4D_FindUseEntity(int client, bool players = false, float range = 96.0);
+
+/**
+ * @brief Forces a Hunter to pin a victim
+ *
+ * @param victim			Client index of the Survivor affect
+ * @param attacker			Client index of the client attacking the Survivor
+ *
+ * @noreturn
+ */
+native void L4D_ForceHunterVictim(int victim, int attacker);
+
+/**
+ * @brief Forces a Smoker to grab a victim with their tongue
+ *
+ * @param victim			Client index of the Survivor affect
+ * @param attacker			Client index of the client attacking the Survivor
+ *
+ * @noreturn
+ */
+native void L4D_ForceSmokerVictim(int victim, int attacker);
+
+/**
+ * @brief Forces a Jockey to pin a victim
+ *
+ * @param victim			Client index of the Survivor affect
+ * @param attacker			Client index of the client attacking the Survivor
+ *
+ * @noreturn
+ */
+native void L4D2_ForceJockeyVictim(int victim, int attacker);
+
+/**
  * @brief Flings a Survivor like when they're flung by a nearby Charger impact
  * @remarks	attacker can be the same client index as victim
  *
@@ -5982,15 +6031,46 @@ native void L4D2_Charger_PummelVictim(int victim, int attacker);
 native void L4D2_Charger_EndPummel(int victim, int attacker);
 
 /**
+ * @brief Makes a Charger stop carrying a Survivor
+ *
+ * @param victim			Client index of the Survivor to affect
+ * @param attacker			Client index of the Charger
+ *
+ * @noreturn
+ */
+// L4D2 only
+native void L4D2_Charger_EndCarry(int victim, int attacker);
+
+/**
  * @brief Makes a Jockey stop riding a Survivor
  *
  * @param victim			Client index of the Survivor to affect
- * @param attacker			Client index of the Jockey riding the Survivor
+ * @param attacker			Client index of the Jockey
  *
  * @noreturn
  */
 // L4D2 only
 native void L4D2_Jockey_EndRide(int victim, int attacker);
+
+/**
+ * @brief Makes a Hunter end pounce on a Survivor
+ *
+ * @param victim			Client index of the Survivor to affect
+ * @param attacker			Client index of the Hunter
+ *
+ * @noreturn
+ */
+native void L4D_Hunter_ReleaseVictim(int victim, int attacker);
+
+/**
+ * @brief Makes a Smoker stop hanging a Survivor from it's tongue
+ *
+ * @param victim			Client index of the Survivor to affect
+ * @param attacker			Client index of the Smoker
+ *
+ * @noreturn
+ */
+native void L4D_Smoker_ReleaseVictim(int victim, int attacker);
 
 /**
  * @brief Spawns all dead survivors in rescuable rooms
@@ -6013,6 +6093,7 @@ native void L4D_ReviveSurvivor(int client);
 
 /**
  * @brief Retrieve a clients map flow progress percentage. Doesn't have to be Versus mode
+ * @remarks Can only be called 1 frame after OnMapStart at the earliest otherwise the addresses are invalid - Since version 1.133 Left4DHooks will block these calls and log an error
  *
  * @param client			Client ID of the person to affect
  *
@@ -6133,7 +6214,6 @@ native void L4D2_SwapTeams();
  *
  * @return					0=Not flipped. 1=Flipped
  */
-// L4D2 only
 #pragma deprecated Use this instead: GameRules_GetProp("m_bAreTeamsFlipped");
 native bool L4D2_AreTeamsFlipped();
 

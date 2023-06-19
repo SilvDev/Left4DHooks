@@ -3917,155 +3917,6 @@ MRESReturn DTR_CGasCan_ShouldStartAction_Post(DHookReturn hReturn, DHookParam hP
 	return MRES_Ignored;
 }
 
-bool g_bBlock_CBaseBackpackItem_StartAction;
-MRESReturn DTR_CBaseBackpackItem_StartAction(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_BackpackItem_StartAction"
-{
-	//PrintToServer("##### DTR_CBaseBackpackItem_StartAction");
-
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Action aResult = Plugin_Continue;
-		Call_StartForward(g_hFWD_CBaseBackpackItem_StartAction);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish(aResult);
-
-		if( aResult == Plugin_Handled )
-		{
-			g_bBlock_CBaseBackpackItem_StartAction = true;
-
-			hReturn.Value = 0;
-			return MRES_Supercede;
-		}
-	}
-
-	g_bBlock_CBaseBackpackItem_StartAction = false;
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CBaseBackpackItem_StartAction_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_BackpackItem_StartAction_Post" and "L4D2_BackpackItem_StartAction_PostHandled"
-{
-	//PrintToServer("##### DTR_CBaseBackpackItem_StartAction_Post");
-
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Call_StartForward(g_bBlock_CBaseBackpackItem_StartAction ? g_hFWD_CBaseBackpackItem_StartAction_PostHandled : g_hFWD_CBaseBackpackItem_StartAction_Post);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish();
-	}
-
-	return MRES_Ignored;
-}
-
-bool g_bBlock_CFirstAidKit_StartHealing;
-MRESReturn DTR_CFirstAidKit_StartHealing_NIX(DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
-{
-	//PrintToServer("##### DTR_CFirstAidKit_StartHealing");
-
-	int pThis = hParams.Get(1);
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Action aResult = Plugin_Continue;
-		Call_StartForward(g_hFWD_CFirstAidKit_StartHealing);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish(aResult);
-
-		if( aResult == Plugin_Handled )
-		{
-			g_bBlock_CFirstAidKit_StartHealing = true;
-
-			return MRES_Supercede;
-		}
-	}
-
-	g_bBlock_CFirstAidKit_StartHealing = false;
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CFirstAidKit_StartHealing_Post_NIX(DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled"
-{
-	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_Post");
-
-	int pThis = hParams.Get(1);
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Call_StartForward(g_bBlock_CFirstAidKit_StartHealing ? g_hFWD_CFirstAidKit_StartHealing_PostHandled : g_hFWD_CFirstAidKit_StartHealing_Post);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish();
-	}
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CFirstAidKit_StartHealing_WIN(int pThis, DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
-{
-	//PrintToServer("##### DTR_CFirstAidKit_StartHealing");
-
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Action aResult = Plugin_Continue;
-		Call_StartForward(g_hFWD_CFirstAidKit_StartHealing);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish(aResult);
-
-		if( aResult == Plugin_Handled )
-		{
-			g_bBlock_CFirstAidKit_StartHealing = true;
-
-			return MRES_Supercede;
-		}
-	}
-
-	g_bBlock_CFirstAidKit_StartHealing = false;
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CFirstAidKit_StartHealing_Post_WIN(int pThis, DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled"
-{
-	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_Post");
-
-	if( !IsValidEntity(pThis) ) return MRES_Ignored;
-
-	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
-
-	if( client > 0 && IsClientInGame(client) )
-	{
-		Call_StartForward(g_bBlock_CFirstAidKit_StartHealing ? g_hFWD_CFirstAidKit_StartHealing_PostHandled : g_hFWD_CFirstAidKit_StartHealing_Post);
-		Call_PushCell(client);
-		Call_PushCell(pThis);
-		Call_Finish();
-	}
-
-	return MRES_Ignored;
-}
-
 bool g_bBlock_CGasCan_OnActionComplete;
 MRESReturn DTR_CGasCan_OnActionComplete(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_ActionComplete"
 {
@@ -4112,6 +3963,164 @@ MRESReturn DTR_CGasCan_OnActionComplete_Post(int pThis, DHookReturn hReturn, DHo
 	Call_PushCell(pThis);
 	Call_PushCell(nozzle);
 	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+int g_iCBaseBackpackItem_StartAction;
+bool g_bBlock_CBaseBackpackItem_StartAction;
+MRESReturn DTR_CBaseBackpackItem_StartAction(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_BackpackItem_StartAction"
+{
+	//PrintToServer("##### DTR_CBaseBackpackItem_StartAction");
+
+	g_iCBaseBackpackItem_StartAction = -1;
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		static char sTemp[32];
+		GetEdictClassname(pThis, sTemp, sizeof(sTemp));
+		g_aWeaponIDs.GetValue(sTemp, g_iCBaseBackpackItem_StartAction);
+
+		Action aResult = Plugin_Continue;
+		Call_StartForward(g_hFWD_CBaseBackpackItem_StartAction);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_PushCell(g_iCBaseBackpackItem_StartAction);
+		Call_Finish(aResult);
+
+		if( aResult == Plugin_Handled )
+		{
+			g_bBlock_CBaseBackpackItem_StartAction = true;
+
+			hReturn.Value = 0;
+			return MRES_Supercede;
+		}
+	}
+
+	g_bBlock_CBaseBackpackItem_StartAction = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CBaseBackpackItem_StartAction_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_BackpackItem_StartAction_Post" and "L4D2_BackpackItem_StartAction_PostHandled"
+{
+	//PrintToServer("##### DTR_CBaseBackpackItem_StartAction_Post");
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		Call_StartForward(g_bBlock_CBaseBackpackItem_StartAction ? g_hFWD_CBaseBackpackItem_StartAction_PostHandled : g_hFWD_CBaseBackpackItem_StartAction_Post);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_PushCell(g_iCBaseBackpackItem_StartAction);
+		Call_Finish();
+	}
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_CFirstAidKit_StartHealing;
+MRESReturn DTR_CFirstAidKit_StartHealing_NIX(DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
+{
+	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_NIX");
+
+	int pThis = hParams.Get(1);
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		Action aResult = Plugin_Continue;
+		Call_StartForward(g_hFWD_CFirstAidKit_StartHealing);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_Finish(aResult);
+
+		if( aResult == Plugin_Handled )
+		{
+			g_bBlock_CFirstAidKit_StartHealing = true;
+
+			return MRES_Supercede;
+		}
+	}
+
+	g_bBlock_CFirstAidKit_StartHealing = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CFirstAidKit_StartHealing_Post_NIX(DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled"
+{
+	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_Post_NIX");
+
+	int pThis = hParams.Get(1);
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		Call_StartForward(g_bBlock_CFirstAidKit_StartHealing ? g_hFWD_CFirstAidKit_StartHealing_PostHandled : g_hFWD_CFirstAidKit_StartHealing_Post);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_Finish();
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CFirstAidKit_StartHealing_WIN(int pThis, DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
+{
+	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_WIN");
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		Action aResult = Plugin_Continue;
+		Call_StartForward(g_hFWD_CFirstAidKit_StartHealing);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_Finish(aResult);
+
+		if( aResult == Plugin_Handled )
+		{
+			g_bBlock_CFirstAidKit_StartHealing = true;
+
+			return MRES_Supercede;
+		}
+	}
+
+	g_bBlock_CFirstAidKit_StartHealing = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CFirstAidKit_StartHealing_Post_WIN(int pThis, DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled"
+{
+	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_Post_WIN");
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
+
+	if( client > 0 && IsClientInGame(client) )
+	{
+		Call_StartForward(g_bBlock_CFirstAidKit_StartHealing ? g_hFWD_CFirstAidKit_StartHealing_PostHandled : g_hFWD_CFirstAidKit_StartHealing_Post);
+		Call_PushCell(client);
+		Call_PushCell(pThis);
+		Call_Finish();
+	}
 
 	return MRES_Ignored;
 }

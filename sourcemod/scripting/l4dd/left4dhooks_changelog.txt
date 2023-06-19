@@ -1,16 +1,36 @@
+1.133 (19-Jun-2023)
+	- Added details to some natives explaining they can only be used 1 frame after "OnMapStart" due to pointers being unavailable before. Thanks to "HarryPotter" for reporting.
+	- Added an error log when certain natives are used before before "OnMapStart" instead of an ambiguous error about invalid offsets.
+	- Added "POINTER_MISSIONINFO" enum for the "L4D_GetPointer" native to return the MissionInfo pointer.
+	- Added native "L4D_FindUseEntity" to find a valid Use entity. This was added to find a valid target within the "L4D1_FirstAidKit_StartHealing" and "L4D2_BackpackItem_StartAction" pre hook forwards.
+	- Added natives "L4D_ForceHunterVictim", "L4D_ForceSmokerVictim" and "L4D2_ForceJockeyVictim" to pin specific Special Infected on specific Survivors.
+	- Added natives "L4D_Hunter_ReleaseVictim", "L4D_Smoker_ReleaseVictim" and "L4D2_Charger_EndCarry" to release pinned victims.
+	- Changed forwards "L4D2_BackpackItem_StartAction", "L4D2_BackpackItem_StartAction_Post" and "L4D2_BackpackItem_StartAction_PostHandled" to include a weapon type param.
+	- Changed native "L4D2_UseAdrenaline" adding an optional param to fire the related event. Also fixed max health to use the true value instead of hard coding to 100. Thanks to "Eyal282" for reporting.
+	- Changed native "L4D_IsMissionFinalMap" adding an optional param to support custom maps with multiple finales to return true if the "env_outtro_stats" entity is detected but not technically the last map.
+	- Changed native "L4D2_NavAreaBuildPath" to block being called before OnMapStart, to fix any related crashes while TheNavArea is not initialized. Thanks to "Mika Misori" for reporting.
+	- Changed native "L4D_IsInLastCheckpoint" code, to prevent teleporting Survivors on some 3rd party maps. Thanks to "tRololo312312" for reporting.
+	- Explanation: calling "TerrorNavMesh::GetLastCheckpoint" would otherwise teleport players to that finale position, for some reason.
+	- Fixed native "L4D2Direct_GetSIClassDeathTimer" returning the timer for the wrong Special Infected and errors when checking Chargers. Thanks to "PencilMario" for reporting.
+
+	- Updated "left4dhooks_lux_library" include file, fixing the "Terror_GetAdrenalineTime" stock to check for adrenaline being active. Thanks to "Lux" for changes and "Eyal282" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/include/left4dhooks_lux_library.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.132 (25-May-2023)
 	- Added forwards "L4D1_FirstAidKit_StartHealing", "L4D1_FirstAidKit_StartHealing_Post" and "L4D1_FirstAidKit_StartHealing_PostHandled" to control first aid kit duration.
 	- Added forwards "L4D2_BackpackItem_StartAction", "L4D2_BackpackItem_StartAction_Post" and "L4D2_BackpackItem_StartAction_PostHandled" to control first aid kit duration, defibrillator and other use durations.
 	- Forwards requested by "Eyal282". Thanks to "Psyk0tik" for the detour functions and signatures.
 
 	- Fixed various offsets from the from the 2.2.2.7 L4D2 update. Thanks to "sorallll" and "PaaNChaN" for reporting and "SirPlease" for updating.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.131 (25-May-2023)
 	- Fixed signatures broken from the 2.2.2.7 L4D2 update.
@@ -30,17 +50,6 @@
 	- Plugins using either of these stocks should be recompiled against the updated file.
 
 	- Changes to the test plugin removing unnecessary lines printed to console when forwards trigger.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/include/left4dhooks_silver.inc" Include file.
-	- Updated: "/scripting/include/left4dhooks_stocks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.130 (01-May-2023)
 	- Changed native "L4D2_NavAreaTravelDistance" to support L4D1. Thanks to "Eärendil" for reporting, and "Psyk0tik" for the signature.
@@ -87,7 +96,7 @@
 	- Added natives "L4D_IsPositionInFirstCheckpoint" and "L4D_IsPositionInLastCheckpoint" to check if a given vector is within a checkpoint area. Thanks to "Forgetest" for the code.
 	- Added native "L4D_GetEntityWorldSpaceCenter" to get an entities worldspace center. Requested by "A1m`".
 	- Added forwards "L4D_OnCancelStagger", "L4D_OnCancelStagger_Post" and "L4D_OnCancelStagger_PostHandled" to notify when a players stagger is being cancelled. Requested by "Forgetest".
-	- Fixed native "L4D_IsInLastCheckpoint" teleporting players in the final. Thanks to "HarryPotter" for reporting.
+	- Fixed native "L4D_IsInLastCheckpoint" teleporting players in the finale. Thanks to "HarryPotter" for reporting.
 	- L4D1: Fixed forward "L4D_OnReleaseSurvivorPositions" crashing Windows servers by fixing the GameData signature.
 
 	- Changed natives: "L4D2Direct_GetNextShoveTime" and "L4D2Direct_SetNextShoveTime" method. Please report any issues.

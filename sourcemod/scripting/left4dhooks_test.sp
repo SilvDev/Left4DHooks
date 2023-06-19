@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.132"
+#define PLUGIN_VERSION		"1.133"
 
 /*=======================================================================================
 	Plugin Info:
@@ -314,8 +314,48 @@ stock Action TimerCancelStagger(Handle timer, int client)
 
 Action sm_l4dd(int client, int args)
 {
-	PrintToServer("Uncomment the things you want to test. All disabled by default.");
-	PrintToServer("Must test individual sections on their own otherwise you'll receive errors about symbols already defined..");
+	/*
+		NOTE:
+		Uncomment the things you want to test. All disabled by default.
+		Must test individual sections on their own otherwise you'll receive errors about symbols already defined..
+	*/
+
+
+
+	/*
+	int victim, attacker;
+	victim = GetRandomSurvivor(1, -1);
+	attacker = GetRandomInfected(1, -1);
+
+	if( L4D2_GetPlayerZombieClass(attacker) == L4D2ZombieClass_Hunter )
+	{
+		L4D_ForceHunterVictim(victim, attacker);
+		PrintToChatAll("Forced Hunter %N on %N", attacker, victim);
+
+		L4D_Hunter_ReleaseVictim(victim, attacker);
+	}
+
+	if( L4D2_GetPlayerZombieClass(attacker) == L4D2ZombieClass_Smoker )
+	{
+		L4D_ForceSmokerVictim(victim, attacker);
+		PrintToChatAll("Forced Smoker %N on %N", attacker, victim);
+
+		L4D_Smoker_ReleaseVictim(victim, attacker);
+	}
+
+	if( L4D2_GetPlayerZombieClass(attacker) == L4D2ZombieClass_Jockey )
+	{
+		L4D2_ForceJockeyVictim(victim, attacker);
+		PrintToChatAll("Forced Jockey %N on %N", attacker, victim);
+	}
+
+	if( L4D2_GetPlayerZombieClass(attacker) == L4D2ZombieClass_Charger )
+	{
+		victim = L4D_GetVictimCarry(attacker);
+		L4D2_Charger_EndCarry(victim, attacker);
+		PrintToChatAll("Forced Charger drop %N on %N", attacker, victim);
+	}
+	// */
 
 
 
@@ -4073,13 +4113,20 @@ public Action L4D1_FirstAidKit_StartHealing(int client, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D1_FirstAidKit_StartHealing\" %d (%N) - MedKit = %d", client, client, entity);
+		// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
+		float range = FindConVar("player_use_radius").FloatValue;
+
+		int target = L4D_FindUseEntity(client, true, range); // "m_healTarget" is not set at this point, must call this native if you wish to identify the target before healing
+		if( target < 0 || target > MaxClients ) target = 0;
+
+		ForwardCalled("\"L4D1_FirstAidKit_StartHealing\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
 	}
 
 	// WORKS - Block using
 	// return Plugin_Handled;
 
 	// Modify healing duration:
+	// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
 	// FindConVar("first_aid_kit_use_duration").FloatValue = 1.0;
 
 	return Plugin_Continue;
@@ -4093,10 +4140,14 @@ public void L4D1_FirstAidKit_StartHealing_Post(int client, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D1_FirstAidKit_StartHealing_Post\" %d (%N) - MedKit = %d", client, client, entity);
+		int target = GetEntPropEnt(client, Prop_Send, "m_healTarget"); // Target is only valid in post hook
+		if( target == -1 ) target = 0;
+
+		ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
 	}
 
 	// Reset healing duration:
+	// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
 	// FindConVar("first_aid_kit_use_duration").FloatValue = 5.0; // Game default is "5"
 }
 
@@ -4112,7 +4163,7 @@ public void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity)
 	}
 }
 
-public Action L4D2_BackpackItem_StartAction(int client, int entity)
+public Action L4D2_BackpackItem_StartAction(int client, int entity, any type)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4120,29 +4171,83 @@ public Action L4D2_BackpackItem_StartAction(int client, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_BackpackItem_StartAction\" %d (%N) - Item = %d", client, client, entity);
+		// Range of FindUseEntity
+		// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
+		bool players;
+		float range;
+
+		switch( type )
+		{
+			case L4D2WeaponId_ColaBottles:
+			{
+				range = FindConVar("cola_bottles_use_range").FloatValue;
+			}
+			case L4D2WeaponId_Gascan:
+			{
+				range = FindConVar("gascan_use_range").FloatValue;
+			}
+			default:
+			{
+				range = FindConVar("player_use_radius").FloatValue;
+				players = true;
+			}
+		}
+
+		// Validate target
+		int target = L4D_FindUseEntity(client, players, range); // "m_healTarget" is not set at this point, must call this native if you wish to identify the target before healing
+
+		if( type == L4D2WeaponId_FirstAidKit || type == L4D2WeaponId_Defibrillator )
+		{
+			if( target < 0 || target > MaxClients ) target = 0;
+		}
+		else
+		{
+			if( target < 0 ) target = 0;
+		}
+
+		// Print
+		switch( type )
+		{
+			case L4D2WeaponId_FirstAidKit:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
+			}
+			case L4D2WeaponId_Defibrillator:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction\" %d (%N) - Defib = %d. Reviving: %d (%N)", client, client, entity, target, target);
+			}
+			case L4D2WeaponId_ColaBottles, L4D2WeaponId_Gascan:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction\" %d (%N) - GasCan = %d. Target: %d", client, client, entity, target);
+			}
+			default:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction\" %d (%N) - Item = %d", client, client, entity);
+			}
+		}
 	}
 
 	// WORKS - Block using
 	// return Plugin_Handled;
 
 	// Modify use duration:
+	// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
 	/*
-	char sTemp[32];
-	GetEdictClassname(entity, sTemp, sizeof(sTemp));
-
-	if( strcmp(sTemp, "weapon_first_aid_kit") == 0 )					FindConVar("first_aid_kit_use_duration").FloatValue = 1.0;
-	else if( strcmp(sTemp, "weapon_defibrillator") == 0 )				FindConVar("defibrillator_use_duration").FloatValue = 5.0;
-	else if( strcmp(sTemp, "weapon_upgradepack_explosive") == 0 )		FindConVar("upgrade_pack_use_duration").FloatValue = 5.0;
-	else if( strcmp(sTemp, "weapon_upgradepack_incendiary") == 0 )		FindConVar("upgrade_pack_use_duration").FloatValue = 5.0;
-	else if( strcmp(sTemp, "weapon_cola_bottles") == 0 )				FindConVar("cola_bottles_use_duration").FloatValue = 5.0;
-	else if( strcmp(sTemp, "weapon_gascan") == 0 )						FindConVar("gas_can_use_duration").FloatValue = 5.0;
-	*/
+	switch( type )
+	{
+		case L4D2WeaponId_FirstAidKit:			FindConVar("first_aid_kit_use_duration").FloatValue = 1.0;
+		case L4D2WeaponId_Defibrillator:		FindConVar("defibrillator_use_duration").FloatValue = 5.0;
+		case L4D2WeaponId_FragAmmo:				FindConVar("upgrade_pack_use_duration").FloatValue = 5.0;
+		case L4D2WeaponId_IncendiaryAmmo:		FindConVar("upgrade_pack_use_duration").FloatValue = 5.0;
+		case L4D2WeaponId_ColaBottles:			FindConVar("cola_bottles_use_duration").FloatValue = 5.0;
+		case L4D2WeaponId_Gascan:				FindConVar("gas_can_use_duration").FloatValue = 5.0;
+	}					
+	// */
 
 	return Plugin_Continue;
 }
 
-public void L4D2_BackpackItem_StartAction_Post(int client, int entity)
+public void L4D2_BackpackItem_StartAction_Post(int client, int entity, any type)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -4150,24 +4255,46 @@ public void L4D2_BackpackItem_StartAction_Post(int client, int entity)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - Item = %d", client, client, entity);
+		int target = GetEntPropEnt(client, Prop_Send, "m_useActionTarget"); // Target is only valid in post hook
+		if( target == -1 ) target = 0;
+
+		switch( type )
+		{
+			case L4D2WeaponId_FirstAidKit:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
+			}
+			case L4D2WeaponId_Defibrillator:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - Defib = %d. Reviving: %d (%N)", client, client, entity, target, target);
+			}
+			case L4D2WeaponId_ColaBottles, L4D2WeaponId_Gascan:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - GasCan = %d. Target: %d", client, client, entity, target);
+			}
+			default:
+			{
+				ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - Item = %d", client, client, entity);
+			}
+		}
 	}
 
 	// Reset use duration:
+	// Better to use FindConVar in plugin start, hook the convar for change and store the value in a variable, this is just an example:
 	/*
-	char sTemp[32];
-	GetEdictClassname(entity, sTemp, sizeof(sTemp));
-
-	if( strcmp(sTemp, "weapon_first_aid_kit") == 0 )					FindConVar("first_aid_kit_use_duration").FloatValue = 5.0;
-	else if( strcmp(sTemp, "weapon_defibrillator") == 0 )				FindConVar("defibrillator_use_duration").FloatValue = 3.0;
-	else if( strcmp(sTemp, "weapon_upgradepack_explosive") == 0 )		FindConVar("upgrade_pack_use_duration").FloatValue = 1.9;
-	else if( strcmp(sTemp, "weapon_upgradepack_incendiary") == 0 )		FindConVar("upgrade_pack_use_duration").FloatValue = 1.9;
-	else if( strcmp(sTemp, "weapon_cola_bottles") == 0 )				FindConVar("cola_bottles_use_duration").FloatValue = 1.95;
-	else if( strcmp(sTemp, "weapon_gascan") == 0 )						FindConVar("gas_can_use_duration").FloatValue = 2.0;
-	*/
+	switch( type )
+	{
+		case L4D2WeaponId_FirstAidKit:			FindConVar("first_aid_kit_use_duration").FloatValue = 5.0;
+		case L4D2WeaponId_Defibrillator:		FindConVar("defibrillator_use_duration").FloatValue = 3.0;
+		case L4D2WeaponId_FragAmmo:				FindConVar("upgrade_pack_use_duration").FloatValue = 1.9;
+		case L4D2WeaponId_IncendiaryAmmo:		FindConVar("upgrade_pack_use_duration").FloatValue = 1.9;
+		case L4D2WeaponId_ColaBottles:			FindConVar("cola_bottles_use_duration").FloatValue = 1.95;
+		case L4D2WeaponId_Gascan:				FindConVar("gas_can_use_duration").FloatValue = 2.0;
+	}
+	// */
 }
 
-public void L4D2_BackpackItem_StartAction_PostHandled(int client, int entity)
+public void L4D2_BackpackItem_StartAction_PostHandled(int client, int entity, any type)
 {
 	static int called;
 	if( called < MAX_CALLS )

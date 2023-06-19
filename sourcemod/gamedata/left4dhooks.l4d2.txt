@@ -2688,6 +2688,25 @@
 				/* ? ? ? ? ? ? 53 56 57 8B ? 8B B7 ? ? ? ? 68 */
 			}
 
+			/**
+			 * CTerrorPlayer::FindUseEntity(float, float, float, bool *, bool)
+			 *
+			 * How to find on Windows:
+			 * 1. Find the function's offsets with asherkin's VTable dump.
+			 * 2. In IDA Pro, go to the ".rdata" section of the Windows binary.
+			 * 3. Search for "CTerrorPlayer::`vftable'" to jump to the "CTerrorPlayer" vtable.
+			 * 4. Compare your dump's offsets with asherkin's dump's offsets to find the target function.
+			 * 5. Look for the target function in the Windows binary.
+			 **/
+			"CTerrorPlayer::FindUseEntity"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer13FindUseEntityEfffPbb"
+				"mac"		"@_ZN13CTerrorPlayer13FindUseEntityEfffPbb"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x0F"
+				/* ? ? ? ? ? ? ? ? E8 ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 0F */
+			}
+
 			/*
 			*  Script_ForceVersusStart(void)
 			*/
@@ -3987,7 +4006,7 @@
 
 				- Find it through only xref, which is setting up ScriptDesc structures: string "Trigger a mob as soon as possible when"
 				- If you go past the first call, you should hit unique bytes in sig making
-				*/
+			*/
 			"CDirector::ResetMobTimer"
 			{
 				"library"	"server"
@@ -4030,7 +4049,7 @@
 				Uses campaign mission file to determine if the current map
 				is a First map.
 				Called from CDirector::OnEndScenario, look near string "vs_shutting_down", up to case 7
-				*/
+			*/
 			"CDirector::IsFirstMapInScenario"
 			{
 				"library"	"server"
@@ -4043,7 +4062,7 @@
 				Uses campaign mission file to determine if the current map
 				is a Final(e) map.
 				Called from CDirectorVersusMode::EndVersusModeRound(), look near string "versus_match_finished"
-				*/
+			*/
 			"CTerrorGameRules::IsMissionFinalMap"
 			{
 				"library"	"server"
@@ -4059,7 +4078,7 @@
 
 				- Find "Going to intermission...\n" in CGameRules::GoToIntermission
 				- Last call in the func
-				*/
+			*/
 			"CGameRulesProxy::NotifyNetworkStateChanged"
 			{
 				"library"	"server"
@@ -4390,6 +4409,18 @@
 			}
 
 			/*
+			 * CTerrorPlayer::OnCarryEnded(CTerrorPlayer *this, bool, bool, bool)
+			 */
+			"CTerrorPlayer::OnCarryEnded"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer12OnCarryEndedEbbb"
+				"windows"	"\x55\x8B\x2A\x53\x56\x8B\x2A\x2A\x2A\x2A\x2A\x57\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8D"
+				/* 55 8B ? 53 56 8B ? ? ? ? ? 57 8B ? 8B ? ? ? ? ? 8D */
+				/* Search: "charger_carry_end" */ // Found by "SilverShot".
+			}
+
+			/*
 			 * CTerrorPlayer::OnRideEnded(CTerrorPlayer *this, CTerrorPlayer *)
 			 */
 			"CTerrorPlayer::OnRideEnded"
@@ -4399,6 +4430,30 @@
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x56\x57\x68\x2A\x2A\x2A\x2A\x8B\x2A\xE8"
 				/* 55 8B ? 83 ? ? 53 56 57 68 ? ? ? ? 8B ? E8 */
 				/* Search: "SurvivorJockeyEnded.Ride" */ // Found by "SilverShot".
+			}
+
+			/*
+			 * CTerrorPlayer::ReleaseTongueVictim(CTerrorPlayer *this, bool)
+			 */
+			"CTerrorPlayer::ReleaseTongueVictim"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer19ReleaseTongueVictimEb"
+				"windows"	"\x53\x8B\x2A\x83\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x83\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x56\x8B\x2A\x2A\x2A\x2A\x2A\x57\x89"
+				/* 53 8B ? 83 ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 83 ? ? 8B ? ? ? ? ? 56 8B ? ? ? ? ? 57 89 */
+				/* Search: "Tongue letting go because of damage" target function is called not far below */ // Found by "SilverShot".
+			}
+
+			/*
+			 * CTerrorPlayer::OnPounceEnded(CTerrorPlayer *this)
+			 */
+			"CTerrorPlayer::OnPounceEnded"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer13OnPounceEndedEv"
+				"windows"	"\x55\x8B\x2A\x51\x53\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x56\x74"
+				/* 55 8B ? 51 53 8B ? 80 ? ? ? ? ? ? 56 74 */
+				/* Search: "pounce_end */ // Found by "SilverShot".
 			}
 
 			/*

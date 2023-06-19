@@ -211,9 +211,9 @@ void SetupForwardsNatives()
 		g_hFWD_CGasCan_ShouldStartAction									= new GlobalForward("L4D2_CGasCan_ShouldStartAction",					ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_ShouldStartAction_Post								= new GlobalForward("L4D2_CGasCan_ShouldStartAction_Post",				ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_ShouldStartAction_PostHandled						= new GlobalForward("L4D2_CGasCan_ShouldStartAction_PostHandled",		ET_Event, Param_Cell, Param_Cell, Param_Cell);
-		g_hFWD_CBaseBackpackItem_StartAction								= new GlobalForward("L4D2_BackpackItem_StartAction",					ET_Event, Param_Cell, Param_Cell);
-		g_hFWD_CBaseBackpackItem_StartAction_Post							= new GlobalForward("L4D2_BackpackItem_StartAction_Post",				ET_Event, Param_Cell, Param_Cell);
-		g_hFWD_CBaseBackpackItem_StartAction_PostHandled					= new GlobalForward("L4D2_BackpackItem_StartAction_PostHandled",		ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_CBaseBackpackItem_StartAction								= new GlobalForward("L4D2_BackpackItem_StartAction",					ET_Event, Param_Cell, Param_Cell, Param_Cell);
+		g_hFWD_CBaseBackpackItem_StartAction_Post							= new GlobalForward("L4D2_BackpackItem_StartAction_Post",				ET_Event, Param_Cell, Param_Cell, Param_Cell);
+		g_hFWD_CBaseBackpackItem_StartAction_PostHandled					= new GlobalForward("L4D2_BackpackItem_StartAction_PostHandled",		ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_OnActionComplete										= new GlobalForward("L4D2_CGasCan_ActionComplete",						ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_OnActionComplete_Post								= new GlobalForward("L4D2_CGasCan_ActionComplete_Post",					ET_Event, Param_Cell, Param_Cell, Param_Cell);
 		g_hFWD_CGasCan_OnActionComplete_PostHandled							= new GlobalForward("L4D2_CGasCan_ActionComplete_PostHandled",			ET_Event, Param_Cell, Param_Cell, Param_Cell);
@@ -526,11 +526,18 @@ void SetupForwardsNatives()
 	// =========================
 	CreateNative("L4D_CTerrorPlayer_OnVomitedUpon",					Native_CTerrorPlayer_OnVomitedUpon);
 	CreateNative("L4D_CancelStagger",								Native_CTerrorPlayer_CancelStagger);
+	CreateNative("L4D_FindUseEntity",								Native_CTerrorPlayer_FindUseEntity);
+	CreateNative("L4D_ForceHunterVictim",							Native_CTerrorPlayer_OnPouncedOnSurvivor);
+	CreateNative("L4D_ForceSmokerVictim",							Native_CTerrorPlayer_GrabVictimWithTongue);
+	CreateNative("L4D2_ForceJockeyVictim",							Native_CTerrorPlayer_OnLeptOnSurvivor);
 	CreateNative("L4D2_Charger_ThrowImpactedSurvivor",				Native_ThrowImpactedSurvivor);
 	CreateNative("L4D2_Charger_StartCarryingVictim",				Native_CTerrorPlayer_OnStartCarryingVictim);
 	CreateNative("L4D2_Charger_PummelVictim",						Native_CTerrorPlayer_QueuePummelVictim);
 	CreateNative("L4D2_Charger_EndPummel",							Native_CTerrorPlayer_OnPummelEnded);
+	CreateNative("L4D2_Charger_EndCarry",							Native_CTerrorPlayer_OnCarryEnded);
 	CreateNative("L4D2_Jockey_EndRide",								Native_CTerrorPlayer_OnRideEnded);
+	CreateNative("L4D_Hunter_ReleaseVictim",						Native_CTerrorPlayer_OnPounceEnded);
+	CreateNative("L4D_Smoker_ReleaseVictim",						Native_CTerrorPlayer_ReleaseTongueVictim);
 	CreateNative("L4D_RespawnPlayer",								Native_CTerrorPlayer_RespawnPlayer);
 	CreateNative("L4D_CreateRescuableSurvivors",					Native_CDirector_CreateRescuableSurvivors);
 	CreateNative("L4D_ReviveSurvivor",								Native_CTerrorPlayer_OnRevived);
