@@ -398,6 +398,7 @@ void SetupForwardsNatives()
 
 	// L4D2 only:
 	CreateNative("L4D_ScavengeBeginRoundSetupTime", 				Native_ScavengeBeginRoundSetupTime);
+	CreateNative("L4D2_SpawnAllScavengeItems",						Native_CDirector_SpawnAllScavengeItems);
 	CreateNative("L4D_ResetMobTimer",								Native_CDirector_ResetMobTimer);
 	CreateNative("L4D_GetPlayerSpawnTime",							Native_GetPlayerSpawnTime);
 	CreateNative("L4D_SetPlayerSpawnTime",							Native_SetPlayerSpawnTime);
@@ -562,6 +563,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_GetVersusCompletionPlayer",					Native_CTerrorGameRules_GetVersusCompletion);
 	CreateNative("L4D2_SwapTeams",									Native_CDirector_SwapTeams);
 	CreateNative("L4D2_AreTeamsFlipped",							Native_CDirector_AreTeamsFlipped);
+	CreateNative("L4D2_Rematch",									Native_CDirector_Rematch);
 	CreateNative("L4D2_StartRematchVote",							Native_CDirector_StartRematchVote);
 	CreateNative("L4D2_FullRestart",								Native_CDirector_FullRestart);
 	CreateNative("L4D2_HideVersusScoreboard",						Native_CDirectorVersusMode_HideScoreboardNonVirtual);
