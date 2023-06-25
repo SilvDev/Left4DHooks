@@ -97,6 +97,7 @@ Handle g_hSDK_CTerrorGameRules_GetTeamScore;
 Handle g_hSDK_CDirector_RestartScenarioFromVote;
 Handle g_hSDK_CDirector_IsFirstMapInScenario;
 Handle g_hSDK_CTerrorGameRules_IsMissionFinalMap;
+Handle g_hSDK_CDirector_SpawnAllScavengeItems;
 Handle g_hSDK_CDirector_ResetMobTimer;
 Handle g_hSDK_CGameRulesProxy_NotifyNetworkStateChanged;
 Handle g_hSDK_CTerrorPlayer_OnStaggered;
@@ -160,6 +161,7 @@ Handle g_hSDK_CCSPlayer_State_Transition;
 Handle g_hSDK_CDirector_SwapTeams;
 // Handle g_hSDK_CDirector_AreTeamsFlipped;
 Handle g_hSDK_CDirector_StartRematchVote;
+Handle g_hSDK_CDirector_Rematch;
 Handle g_hSDK_CDirector_FullRestart;
 Handle g_hSDK_CDirectorVersusMode_HideScoreboardNonVirtual;
 Handle g_hSDK_CDirectorScavengeMode_HideScoreboardNonVirtual;
@@ -2094,6 +2096,18 @@ int Native_ScavengeBeginRoundSetupTime(Handle plugin, int numParams) // Native "
 	ValidateAddress(g_iOff_OnBeginRoundSetupTime, "OnBeginRoundSetupTime");
 
 	return LoadFromAddress(view_as<Address>(g_pScavengeMode + g_iOff_OnBeginRoundSetupTime + 4), NumberType_Int32);
+}
+
+int Native_SpawnAllScavengeItems(Handle plugin, int numParams) // Native "L4D_SpawnAllScavengeItems"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateAddress(g_pDirector, "g_pDirector");
+	ValidateNatives(g_hSDK_CDirector_SpawnAllScavengeItems, "CDirector::SpawnAllScavengeItems");
+
+	//PrintToServer("#### CALL g_hSDK_CDirector_SpawnAllScavengeItems");
+	SDKCall(g_hSDK_CDirector_SpawnAllScavengeItems, g_pDirector);
+	return 0;
 }
 
 int Native_CDirector_ResetMobTimer(Handle plugin, int numParams) // Native "L4D_ResetMobTimer"
@@ -5092,6 +5106,18 @@ int Native_CDirector_StartRematchVote(Handle plugin, int numParams) // Native "L
 
 	//PrintToServer("#### CALL g_hSDK_CDirector_StartRematchVote");
 	SDKCall(g_hSDK_CDirector_StartRematchVote, g_pDirector);
+
+	return 0;
+}
+
+int Native_CDirector_Rematch(Handle plugin, int numParams) // Native "L4D2_Rematch"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateNatives(g_hSDK_CDirector_Rematch, "CDirector::Rematch");
+
+	//PrintToServer("#### CALL g_hSDK_CDirector_StartRematchVote");
+	SDKCall(g_hSDK_CDirector_Rematch, g_pDirector);
 
 	return 0;
 }
