@@ -219,6 +219,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetNavArea_AttributeFlags");
 	MarkNativeAsOptional("L4D_SetNavArea_AttributeFlags");
 	MarkNativeAsOptional("L4D_ScavengeBeginRoundSetupTime");
+	MarkNativeAsOptional("L4D2_SpawnAllScavengeItems");
 	MarkNativeAsOptional("L4D_ResetMobTimer");
 	MarkNativeAsOptional("L4D_GetPlayerSpawnTime");
 	MarkNativeAsOptional("L4D_SetPlayerSpawnTime");
@@ -383,6 +384,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_SwapTeams");
 	MarkNativeAsOptional("L4D2_AreTeamsFlipped");
 	MarkNativeAsOptional("L4D2_StartRematchVote");
+	MarkNativeAsOptional("L4D2_Rematch");
 	MarkNativeAsOptional("L4D2_FullRestart");
 	MarkNativeAsOptional("L4D2_HideVersusScoreboard");
 	MarkNativeAsOptional("L4D2_HideScavengeScoreboard");
@@ -4261,6 +4263,16 @@ native float L4D2_VScriptWrapper_NavAreaTravelDistance(const float startPos[3], 
 native int L4D_ScavengeBeginRoundSetupTime();
 
 /**
+ * @brief Spawns all Scavenge gascans in the map.
+ * @remarks	Requires the Director to be available--map must be started
+ * @remarks Enables to fix https://github.com/ValveSoftware/Source-1-Games/issues/1616
+ *
+ * @noreturn
+ */
+// L4D2 only
+native void L4D2_SpawnAllScavengeItems();
+
+/**
  * @brief Resets the natural mob (horde) timer
  * @remarks	Requires the Director to be available--map must be started
  *
@@ -6225,6 +6237,16 @@ native bool L4D2_AreTeamsFlipped();
  */
 // L4D2 only
 native void L4D2_StartRematchVote();
+
+/**
+ * @brief Passes a Versus rematch vote like end of game before credits roll.
+ * @remarks A failed vote would have kicked players back to lobby.
+ * @remarks Do not use this in conjunction with "L4D2_StartRematchVote"
+ *
+ * @noreturn
+ */
+// L4D2 only
+native void L4D2_Rematch();
 
 /**
  * @brief Seems to restart the chapter like "mp_restartgame". In Versus the teams flip
