@@ -109,6 +109,21 @@
 				}
 			}
 
+			"L4DD::CTankRock::BounceTouch"
+			{
+				"signature"		"CTankRock::BounceTouch"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"cbaseentity"
+					}
+				}
+			}
+
 			"L4DD::CDeathFallCamera::Enable"
 			{
 				"signature"		"CDeathFallCamera::Enable"
@@ -2225,6 +2240,28 @@
 				"linux"		"@_ZN9CTankRock9OnReleaseERK6VectorRK6QAngleS2_S2_.constprop.121"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xC7\x86\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x57"
 						/* ? ? ? ? ? ? ? ? ? ? ? C7 86 ? ? ? ? ? ? ? ? E8 ? ? ? ? 8B ? ? ? 57 */
+			}
+
+			/**
+			 * CTankRock::BounceTouch(CBaseEntity *)
+			 *
+			 * How to find on Windows:
+			 * 1a. Search for the "HulkZombie.ThrownProjectileHit" string.
+			 * 2a. One of the functions that references that string should be this function.
+			 *
+			 * 1b. Find the function's offsets with asherkin's VTable dump.
+			 * 2b. In IDA Pro, go to the ".rdata" section of the Windows binary.
+			 * 3b. Search for "CTankRock::`vftable'" to jump to the "CTankRock" vtable.
+			 * 4b. Compare your dump's offsets with asherkin's dump's offsets to find the target function.
+			 * 5b. Look for the target function in the Windows binary.
+			 **/
+			"CTankRock::BounceTouch"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
+				"mac"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x8B\x9C\x2A\x2A\x2A\x2A\x2A\x0F"
+						/* ? ? ? ? ? ? 53 8B 9C ? ? ? ? ? 0F */
 			}
 
 			/**
