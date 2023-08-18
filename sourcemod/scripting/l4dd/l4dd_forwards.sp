@@ -125,9 +125,6 @@ GlobalForward g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_PostPost;
 GlobalForward g_hFWD_CDirectorVersusMode_EndVersusModeRound_Pre;
 GlobalForward g_hFWD_CDirectorVersusMode_EndVersusModeRound_Post;
 GlobalForward g_hFWD_CDirectorVersusMode_EndVersusModeRound_PostHandled;
-// GlobalForward g_hFWD_CDirector_EndScenario_Pre;
-// GlobalForward g_hFWD_CDirector_EndScenario_Post;
-// GlobalForward g_hFWD_CDirector_EndScenario_PostHandled;
 GlobalForward g_hFWD_CBaseAnimating_SelectWeightedSequence_Pre;
 GlobalForward g_hFWD_CBaseAnimating_SelectWeightedSequence_Post;
 GlobalForward g_hFWD_CTerrorPlayer_DoAnimationEvent;
@@ -307,14 +304,6 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_RecalculateVersusScore,					DTR_CTerrorPlayer_RecalculateVersusScore_Post,				"L4DD::CTerrorPlayer::RecalculateVersusScore",						"L4D_OnRecalculateVersusScore");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_RecalculateVersusScore,					DTR_CTerrorPlayer_RecalculateVersusScore_Post,				"L4DD::CTerrorPlayer::RecalculateVersusScore",						"L4D_OnRecalculateVersusScore_Post",			true);
 	}
-/*
-	else
-	{
-		CreateDetour(hGameData,			DTR_CDirector_EndScenario_Pre,								DTR_CDirector_EndScenario_Post,								"L4DD::CDirector::EndScenario",										"L4D_OnEndScenario");
-		CreateDetour(hGameData,			DTR_CDirector_EndScenario_Pre,								DTR_CDirector_EndScenario_Post,								"L4DD::CDirector::EndScenario",										"L4D_OnEndScenario_Post",						true);
-		CreateDetour(hGameData,			DTR_CDirector_EndScenario_Pre,								DTR_CDirector_EndScenario_Post,								"L4DD::CDirector::EndScenario",										"L4D_OnEndScenario_PostHandled",				true);
-	}
-*/
 
 	CreateDetour(hGameData,			DTR_CDirector_OnFirstSurvivorLeftSafeArea,					DTR_CDirector_OnFirstSurvivorLeftSafeArea_Post,				"L4DD::CDirector::OnFirstSurvivorLeftSafeArea",						"L4D_OnFirstSurvivorLeftSafeArea");
 	CreateDetour(hGameData,			DTR_CDirector_OnFirstSurvivorLeftSafeArea,					DTR_CDirector_OnFirstSurvivorLeftSafeArea_Post,				"L4DD::CDirector::OnFirstSurvivorLeftSafeArea",						"L4D_OnFirstSurvivorLeftSafeArea_Post",			true);
@@ -2630,48 +2619,6 @@ MRESReturn DTR_CDirectorVersusMode_EndVersusModeRound_Post(DHookReturn hReturn, 
 	return MRES_Ignored;
 }
 
-/*
-bool g_bBlock_CDirector_EndScenario;
-MRESReturn DTR_CDirector_EndScenario_Pre(int pThis, DHookParam hParams) // Forward "L4D_OnEndScenario"
-{
-	//PrintToServer("##### DTR_CDirector_EndScenario_Pre");
-	if( g_bRoundEnded ) return MRES_Ignored;
-
-	int a1 = hParams.Get(1);
-
-	Action aResult = Plugin_Continue;
-	Call_StartForward(g_hFWD_CDirector_EndScenario_Pre);
-	Call_PushCell(a1);
-	Call_Finish(aResult);
-
-	if( aResult == Plugin_Handled )
-	{
-		g_bBlock_CDirector_EndScenario = true;
-
-		return MRES_Supercede;
-	}
-
-	g_bBlock_CDirector_EndScenario = false;
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CDirector_EndScenario_Post(int pThis, DHookParam hParams) // Forward "L4D_OnEndScenario_Post" and "L4D_OnEndScenario_PostHandled"
-{
-	//PrintToServer("##### DTR_CDirector_EndScenario_Post");
-	if( g_bRoundEnded ) return MRES_Ignored;
-	g_bRoundEnded = true;
-
-	int a1 = hParams.Get(1);
-
-	Call_StartForward(g_bBlock_CDirector_EndScenario ? g_hFWD_CDirector_EndScenario_PostHandled : g_hFWD_CDirector_EndScenario_Post);
-	Call_PushCell(a1);
-	Call_Finish();
-
-	return MRES_Ignored;
-}
-*/
-
 bool g_bBlock_CTerrorPlayer_OnLedgeGrabbed;
 MRESReturn DTR_CTerrorPlayer_OnLedgeGrabbed(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnLedgeGrabbed"
 {
@@ -3024,7 +2971,7 @@ MRESReturn DTR_CTerrorWeapon_OnHit_Post(int weapon, DHookReturn hReturn, DHookPa
 }
 
 bool g_bBlock_CTerrorPlayer_OnShovedByPounceLanding;
-MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnPounceOrLeapStumble"
+MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding(int pThis, DHookParam hParams) // Forward "L4D2_OnPounceOrLeapStumble"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedByPounceLanding");
 	int a1 = hParams.Get(1);
@@ -3039,7 +2986,6 @@ MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding(int pThis, DHookReturn hRet
 	{
 		g_bBlock_CTerrorPlayer_OnShovedByPounceLanding = true;
 
-		hReturn.Value = 0.0;
 		return MRES_Supercede;
 	}
 
@@ -3048,7 +2994,7 @@ MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding(int pThis, DHookReturn hRet
 	return MRES_Ignored;
 }
 
-MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnPounceOrLeapStumble_Post" and "L4D2_OnPounceOrLeapStumble_PostHandled"
+MRESReturn DTR_CTerrorPlayer_OnShovedByPounceLanding_Post(int pThis, DHookParam hParams) // Forward "L4D2_OnPounceOrLeapStumble_Post" and "L4D2_OnPounceOrLeapStumble_PostHandled"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedByPounceLanding_Post");
 	int a1 = hParams.Get(1);

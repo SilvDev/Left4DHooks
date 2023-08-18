@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.134"
-#define PLUGIN_VERLONG		1134
+#define PLUGIN_VERSION		"1.135"
+#define PLUGIN_VERLONG		1135
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -264,6 +264,9 @@ int g_iOff_VersusMaxCompletionScore;
 int g_iOff_OnBeginRoundSetupTime;
 int g_iOff_m_iTankCount;
 int g_iOff_m_iWitchCount;
+int g_iOff_m_PlayerAnimState;
+int g_iOff_m_eCurrentMainSequenceActivity;
+int g_iOff_m_bIsCustomSequence;
 int g_iOff_m_iCampaignScores;
 int g_iOff_m_fTankSpawnFlowPercent;
 int g_iOff_m_fWitchSpawnFlowPercent;
@@ -1457,8 +1460,6 @@ public void OnMapStart()
 	// Because reload command calls this function. We only want these loaded on actual map start.
 	if( !g_bMapStarted )
 	{
-		g_bMapStarted = true;
-
 		GetGameMode(); // Get current game mode
 
 
@@ -1568,6 +1569,8 @@ public void OnMapStart()
 				}
 			}
 		}
+
+		g_bMapStarted = true;
 	}
 }
 

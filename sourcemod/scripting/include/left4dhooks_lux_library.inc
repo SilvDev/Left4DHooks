@@ -20,6 +20,8 @@
 #endif
 #define _lux_library_included
 
+#pragma newdecls required
+
 #include <sourcemod>
 #include <sdktools>
 
