@@ -129,14 +129,17 @@ void LoadGameData()
 	// =========================
 	// ANIMATION NATIVES
 	// =========================
-	StartPrepSDKCall(SDKCall_Raw);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CMultiPlayerAnimState::ResetMainActivity") == false )
+	if( g_bLeft4Dead2 )
 	{
-		LogError("Failed to find signature: \"CMultiPlayerAnimState::ResetMainActivity\" (%s)", g_sSystem);
-	} else {
-		g_hSDK_CMultiPlayerAnimState_ResetMainActivity = EndPrepSDKCall();
-		if( g_hSDK_CMultiPlayerAnimState_ResetMainActivity == null )
-			LogError("Failed to create SDKCall: \"CMultiPlayerAnimState::ResetMainActivity\" (%s)", g_sSystem);
+		StartPrepSDKCall(SDKCall_Raw);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CMultiPlayerAnimState::ResetMainActivity") == false )
+		{
+			LogError("Failed to find signature: \"CMultiPlayerAnimState::ResetMainActivity\" (%s)", g_sSystem);
+		} else {
+			g_hSDK_CMultiPlayerAnimState_ResetMainActivity = EndPrepSDKCall();
+			if( g_hSDK_CMultiPlayerAnimState_ResetMainActivity == null )
+				LogError("Failed to create SDKCall: \"CMultiPlayerAnimState::ResetMainActivity\" (%s)", g_sSystem);
+		}
 	}
 
 

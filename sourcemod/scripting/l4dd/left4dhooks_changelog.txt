@@ -1,3 +1,11 @@
+1.136 (05-Sep-2023)
+	- Fixed the last update logging an error in L4D1. Thanks to "HarryPotter" for reporting.
+	- Fixed forward "L4D_TankClaw_DoSwing_Post" having the wrong name and not activating. Thanks to "Forgetest" for reporting.
+
+	- Updated: Plugin.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+
 1.135 (18-Aug-2023)
 	- Added a ton of natives for "PlayerAnimState" in L4D2 only. See the "methodmap PlayerAnimState" section of the "left4dhooks.inc" include file. Thanks to "Forgetest" for the code and "A1m`" for various stuff.
 	- Added native "L4D_HasMapStarted" to check if game addresses have been loaded in OnMapStart. For use with some natives that require being called only after OnMapStart.
@@ -5,15 +13,6 @@
 	- Fixed forward "L4D2_OnPounceOrLeapStumble" detour to potentially fix rare random crashes. Thanks to "A1m`" and "Forgetest" for reporting.
 	- Fixed stock "L4D2_SetEntityGlow" to use the newdecls. Thanks to "Dragokas" for reporting.
 	- Fixed the test plugin examples for "L4D1_FirstAidKit_StartHealing" and "L4D2_BackpackItem_StartAction". Thanks to "Mystik Spiral" for reporting.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/include/left4dhooks_stocks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.134 (10-Jul-2023)
 	- Added "POINTER_SURVIVALMODE" enum for the "L4D_GetPointer" native to return the SurvivalMode pointer.

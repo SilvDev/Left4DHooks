@@ -321,7 +321,7 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CDirectorVersusMode_GetMissionVersusBossSpawning,		DTR_CDirectorVersusMode_GetMissionVersusBossSpawning_Post,	"L4DD::CDirectorVersusMode::GetMissionVersusBossSpawning",			"L4D_OnGetMissionVSBossSpawning_PostHandled",	true);
 	CreateDetour(hGameData,			DTR_ZombieManager_ReplaceTank,								INVALID_FUNCTION,											"L4DD::ZombieManager::ReplaceTank",									"L4D_OnReplaceTank");
 	CreateDetour(hGameData,			DTR_CTankClaw_DoSwing_Pre,									DTR_CTankClaw_DoSwing_Post,									"L4DD::CTankClaw::DoSwing",											"L4D_TankClaw_DoSwing_Pre");
-	CreateDetour(hGameData,			DTR_CTankClaw_DoSwing_Pre,									DTR_CTankClaw_DoSwing_Post,									"L4DD::CTankClaw::DoSwing",											"L4D_TankClaw_DoSwing_Post3",					true);
+	CreateDetour(hGameData,			DTR_CTankClaw_DoSwing_Pre,									DTR_CTankClaw_DoSwing_Post,									"L4DD::CTankClaw::DoSwing",											"L4D_TankClaw_DoSwing_Post",					true);
 	CreateDetour(hGameData,			DTR_CTankClaw_GroundPound_Pre,								DTR_CTankClaw_GroundPound_Post,								"L4DD::CTankClaw::GroundPound",										"L4D_TankClaw_GroundPound_Pre");
 	CreateDetour(hGameData,			DTR_CTankClaw_GroundPound_Pre,								DTR_CTankClaw_GroundPound_Post,								"L4DD::CTankClaw::GroundPound",										"L4D_TankClaw_GroundPound_Post",				true);
 	CreateDetour(hGameData,			DTR_CTankClaw_OnPlayerHit_Pre,								DTR_CTankClaw_OnPlayerHit_Post,								"L4DD::CTankClaw::OnPlayerHit",										"L4D_TankClaw_OnPlayerHit_Pre");
