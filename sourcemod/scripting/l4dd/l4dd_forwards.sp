@@ -147,6 +147,9 @@ GlobalForward g_hFWD_CTerrorPlayer_OnVomitedUpon_PostHandled;
 GlobalForward g_hFWD_CTerrorPlayer_OnHitByVomitJar;
 GlobalForward g_hFWD_CTerrorPlayer_OnHitByVomitJar_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnHitByVomitJar_PostHandled;
+GlobalForward g_hFWD_Infected_OnHitByVomitJar;
+GlobalForward g_hFWD_Infected_OnHitByVomitJar_Post;
+GlobalForward g_hFWD_Infected_OnHitByVomitJar_PostHandled;
 GlobalForward g_hFWD_CBreakableProp_Break_Post;
 GlobalForward g_hFWD_CGasCanEvent_Killed;
 GlobalForward g_hFWD_CGasCanEvent_Killed_Post;
@@ -503,6 +506,9 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnHitByVomitJar,							DTR_CTerrorPlayer_OnHitByVomitJar_Post,						"L4DD::CTerrorPlayer::OnHitByVomitJar",								"L4D2_OnHitByVomitJar");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnHitByVomitJar,							DTR_CTerrorPlayer_OnHitByVomitJar_Post,						"L4DD::CTerrorPlayer::OnHitByVomitJar",								"L4D2_OnHitByVomitJar_Post",					true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnHitByVomitJar,							DTR_CTerrorPlayer_OnHitByVomitJar_Post,						"L4DD::CTerrorPlayer::OnHitByVomitJar",								"L4D2_OnHitByVomitJar_PostHandled",				true);
+		CreateDetour(hGameData,		DTR_Infected_OnHitByVomitJar,								DTR_Infected_OnHitByVomitJar_Post,							"L4DD::Infected::OnHitByVomitJar",									"L4D2_Infected_HitByVomitJar");
+		CreateDetour(hGameData,		DTR_Infected_OnHitByVomitJar,								DTR_Infected_OnHitByVomitJar_Post,							"L4DD::Infected::OnHitByVomitJar",									"L4D2_Infected_HitByVomitJar_Post",				true);
+		CreateDetour(hGameData,		DTR_Infected_OnHitByVomitJar,								DTR_Infected_OnHitByVomitJar_Post,							"L4DD::Infected::OnHitByVomitJar",									"L4D2_Infected_HitByVomitJar_PostHandled",		true);
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride");
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_Post",					true);
 		CreateDetour(hGameData,		DTR_ZombieManager_SpawnWitchBride,							DTR_ZombieManager_SpawnWitchBride_Post,						"L4DD::ZombieManager::SpawnWitchBride",								"L4D2_OnSpawnWitchBride_PostHandled",			true);
@@ -4538,6 +4544,58 @@ MRESReturn DTR_CTerrorPlayer_OnHitByVomitJar_Post(int client, DHookReturn hRetur
 		a1 = hParams.Get(1);
 
 	Call_StartForward(g_bBlock_CTerrorPlayer_OnHitByVomitJar ? g_hFWD_CTerrorPlayer_OnHitByVomitJar_PostHandled : g_hFWD_CTerrorPlayer_OnHitByVomitJar_Post);
+	Call_PushCell(client);
+	Call_PushCell(a1);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_Infected_OnHitByVomitJar;
+MRESReturn DTR_Infected_OnHitByVomitJar(int client, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_Infected_HitByVomitJar"
+{
+	//PrintToServer("##### DTR_Infected_OnHitByVomitJar");
+
+	int a1;
+
+	if( !hParams.IsNull(1) )
+		a1 = hParams.Get(1);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_Infected_OnHitByVomitJar);
+	Call_PushCell(client);
+	Call_PushCellRef(a1);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_Infected_OnHitByVomitJar = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	g_bBlock_Infected_OnHitByVomitJar = false;
+
+	if( aResult == Plugin_Changed )
+	{
+		hParams.Set(1, a1);
+		return MRES_ChangedHandled;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_Infected_OnHitByVomitJar_Post(int client, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_Infected_HitByVomitJar_Post" and "L4D2_Infected_HitByVomitJar_PostHandled"
+{
+	//PrintToServer("##### DTR_Infected_OnHitByVomitJar_Post");
+
+	int a1;
+
+	if( !hParams.IsNull(1) )
+		a1 = hParams.Get(1);
+
+	Call_StartForward(g_bBlock_Infected_OnHitByVomitJar ? g_hFWD_Infected_OnHitByVomitJar_PostHandled : g_hFWD_Infected_OnHitByVomitJar_Post);
 	Call_PushCell(client);
 	Call_PushCell(a1);
 	Call_Finish();

@@ -1648,6 +1648,21 @@ int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // N
 	// return entity;
 }
 
+// Spitter acid projectile damage
+bool g_bAcidWatch;
+int g_iAcidEntity[2048];
+
+// Sounds are based on "PlayerZombie.AttackHit" from "game_sounds_infected_special.txt"
+char g_sAcidSounds[6][] =
+{
+	"player/PZ/hit/zombie_slice_1.wav",
+	"player/PZ/hit/zombie_slice_2.wav",
+	"player/PZ/hit/zombie_slice_3.wav",
+	"player/PZ/hit/zombie_slice_4.wav",
+	"player/PZ/hit/zombie_slice_5.wav",
+	"player/PZ/hit/zombie_slice_6.wav"
+};
+
 int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4D2_SpitterPrj"
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
@@ -1663,14 +1678,20 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 	int entity = SDKCall(g_hSDK_CSpitterProjectile_Create, vPos, vAng, vAng, vAng, client);
 	// SetEntPropFloat(entity, Prop_Data, "m_flCreateTime", GetGameTime());
 
+	AcidDamageTest(client, entity);
+
+	return entity;
+}
+
+void AcidDamageTest(int client, int entity)
+{
 	// Not watching for acid damage
 	if( !g_bAcidWatch )
 	{
 		// Verify client is not team 3, which causes sound bug
-		if( !client || GetClientTeam(client) != 3 )
+		if( !client || GetClientTeam(client) != 3 || !IsClientInGame(client) )
 		{
 			g_bAcidWatch = true;
-			g_iAcidEntity[entity] = EntIndexToEntRef(entity);
 
 			// Hook clients damage
 			for( int i = 1; i <= MaxClients; i++ )
@@ -1683,7 +1704,7 @@ int Native_CSpitterProjectile_Create(Handle plugin, int numParams) // Native "L4
 		}
 	}
 
-	return entity;
+	g_iAcidEntity[entity] = EntIndexToEntRef(entity);
 }
 
 void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int damagetype)
@@ -1693,9 +1714,18 @@ void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int dam
 	{
 		if( ((damagetype == (DMG_ENERGYBEAM|DMG_RADIATION) && attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) && GetClientTeam(attacker) != 3)) || (damagetype == (DMG_ENERGYBEAM|DMG_RADIATION|DMG_PREVENT_PHYSICS_FORCE) && attacker > MaxClients) )
 		{
-			float vPos[3];
-			GetClientAbsOrigin(victim, vPos);
-			EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], _, SNDCHAN_AUTO, 85, _, 0.55, GetRandomInt(95, 105), _, vPos);
+			EmitSoundToAll(g_sAcidSounds[GetRandomInt(0, sizeof(g_sAcidSounds) - 1)], inflictor, SNDCHAN_AUTO, 85, _, 0.55, GetRandomInt(95, 105));
+
+			// Red flash when taking damage
+			Handle msg = StartMessageOne("Fade", victim);
+			BfWriteShort(msg, 256);
+			BfWriteShort(msg, 0);			// Duration
+			BfWriteShort(msg, 1);			// Type
+			BfWriteByte(msg, 255);			// Red
+			BfWriteByte(msg, 0);			// Green
+			BfWriteByte(msg, 0);			// Blue
+			BfWriteByte(msg, 30);			// Alpha
+			EndMessage();
 		}
 	}
 }

@@ -1299,6 +1299,21 @@
 				}
 			}
 
+			"L4DD::Infected::OnHitByVomitJar"
+			{
+				"signature"		"Infected::OnHitByVomitJar"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"cbaseentity"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::MaterializeFromGhost"
 			{
 				"signature"		"CTerrorPlayer::MaterializeFromGhost"

@@ -1,10 +1,20 @@
+1.137 (23-Sep-2023)
+	- Added forwards "L4D2_Infected_HitByVomitJar", "L4D2_Infected_HitByVomitJar_Post" and "L4D2_Infected_HitByVomitJar_PostHandled" to trigger when common infected are hit with a VomitJar. Requested by "Eyal282".
+	- Incorporated the Spitter Acid no sound fix for when clients disconnected. Thanks to "Marttt" for reporting.
+	- Now also flashes red like the game should when taking damage from this bugged entity. Thanks to "Marttt" for reporting.
+	- Updated to the latest version of the "lux_library" include file. Thanks to "Lux" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/include/left4dhooks_lux_library.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+
 1.136 (05-Sep-2023)
 	- Fixed the last update logging an error in L4D1. Thanks to "HarryPotter" for reporting.
 	- Fixed forward "L4D_TankClaw_DoSwing_Post" having the wrong name and not activating. Thanks to "Forgetest" for reporting.
-
-	- Updated: Plugin.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
 
 1.135 (18-Aug-2023)
 	- Added a ton of natives for "PlayerAnimState" in L4D2 only. See the "methodmap PlayerAnimState" section of the "left4dhooks.inc" include file. Thanks to "Forgetest" for the code and "A1m`" for various stuff.

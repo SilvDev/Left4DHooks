@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.136"
-#define PLUGIN_VERLONG		1136
+#define PLUGIN_VERSION		"1.137"
+#define PLUGIN_VERLONG		1137
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -360,22 +360,6 @@ ConVar g_hCvar_Adrenaline;
 ConVar g_hCvar_Revives;
 ConVar g_hCvar_MPGameMode;
 DynamicHook g_hScriptHook;
-
-
-
-// Spitter acid projectile damage
-bool g_bAcidWatch;
-int g_iAcidEntity[2048];
-
-char g_sAcidSounds[6][] =
-{
-	"player/PZ/hit/zombie_slice_1.wav",
-	"player/PZ/hit/zombie_slice_2.wav",
-	"player/PZ/hit/zombie_slice_3.wav",
-	"player/PZ/hit/zombie_slice_4.wav",
-	"player/PZ/hit/zombie_slice_5.wav",
-	"player/PZ/hit/zombie_slice_6.wav"
-};
 
 
 
@@ -1028,6 +1012,24 @@ public void OnClientDisconnect(int client)
 		else
 		{
 			i++;
+		}
+	}
+
+
+
+	// Acid damage, no sound fix
+	if( g_bLeft4Dead2 )
+	{
+		if( !IsClientInGame(client) || (GetClientTeam(client) == 3 && GetEntProp(client, Prop_Send, "m_zombieClass") == L4D2_ZOMBIE_CLASS_SPITTER) )
+		{
+			int entity = -1;
+			while( (entity = FindEntityByClassname(entity, "insect_swarm")) != INVALID_ENT_REFERENCE )
+			{
+				if( GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity") == client )
+				{
+					AcidDamageTest(0, entity); // See the "l4dd_natives.sp" file
+				}
+			}
 		}
 	}
 }

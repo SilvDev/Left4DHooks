@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.135"
+#define PLUGIN_VERSION		"1.137"
 
 /*=======================================================================================
 	Plugin Info:
@@ -3962,7 +3962,7 @@ public Action L4D2_OnHitByVomitJar(int victim, int &attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnHitByVomitJar\" %d > %d)", victim, attacker);
+		ForwardCalled("\"L4D2_OnHitByVomitJar\" %d > %d", victim, attacker);
 	}
 
 	// attacker = victim;
@@ -3982,7 +3982,7 @@ public void L4D2_OnHitByVomitJar_Post(int victim, int attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnHitByVomitJar_Post\" %d > %d)", victim, attacker);
+		ForwardCalled("\"L4D2_OnHitByVomitJar_Post\" %d > %d", victim, attacker);
 	}
 }
 
@@ -3994,7 +3994,51 @@ public void L4D2_OnHitByVomitJar_PostHandled(int victim, int attacker)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnHitByVomitJar_PostHandled\" %d > %d)", victim, attacker);
+		ForwardCalled("\"L4D2_OnHitByVomitJar_PostHandled\" %d > %d", victim, attacker);
+	}
+}
+
+public Action L4D2_Infected_HitByVomitJar(int victim, int &attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_Infected_HitByVomitJar\" %d > %d", victim, attacker);
+	}
+
+	// attacker = victim;
+	// return Plugin_Changed;
+
+	// WORKS
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_Infected_HitByVomitJar_Post(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_Infected_HitByVomitJar_Post\" %d > %d", victim, attacker);
+	}
+}
+
+public void L4D2_Infected_HitByVomitJar_PostHandled(int victim, int attacker)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_Infected_HitByVomitJar_PostHandled\" %d > %d", victim, attacker);
 	}
 }
 

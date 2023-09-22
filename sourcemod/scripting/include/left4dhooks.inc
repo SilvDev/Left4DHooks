@@ -64,9 +64,9 @@
 // L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 67 [silvers - mine!] + 4 [anim] = 166
 // L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 111 [silvers - mine!] + 4 [anim] = 266
 
-// Forwards: 198 (including 5 for L4D1 only)
+// Forwards: 201 (including 5 for L4D1 only)
 // L4D1 = 138
-// L4D2 = 193
+// L4D2 = 196
 
 // Stocks: 169 (L4D1 = 114, L4D2 = 167)
 // left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
@@ -3008,6 +3008,41 @@ forward void L4D2_OnHitByVomitJar_Post(int victim, int attacker);
  * @noreturn
  */
 forward void L4D2_OnHitByVomitJar_PostHandled(int victim, int attacker);
+
+/**
+ * @brief Called whenever Infected::OnHitByVomitJar is invoked
+ * @remarks Called when a common infected is about to be hit from a Bilejar explosion
+ *
+ * @param victim			the common who's now it
+ * @param attacker			the attacker who caused the vomit (can be 0)
+ *
+ * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
+ */
+forward Action L4D2_Infected_HitByVomitJar(int victim, int &attacker);
+
+/**
+ * @brief Called whenever Infected::OnHitByVomitJar is invoked
+ * @remarks Called when a common infected is hit from a Bilejar explosion
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param victim			the common who's now it
+ * @param attacker			the attacker who caused the vomit (can be 0)
+ *
+ * @noreturn
+ */
+forward void L4D2_Infected_HitByVomitJar_Post(int victim, int attacker);
+
+/**
+ * @brief Called whenever Infected::OnHitByVomitJar is invoked
+ * @remarks Called when a common infected is hit from a Bilejar explosion
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param victim			the common who's now it
+ * @param attacker			the attacker who caused the vomit (can be 0)
+ *
+ * @noreturn
+ */
+forward void L4D2_Infected_HitByVomitJar_PostHandled(int victim, int attacker);
 
 /**
  * @brief Called whenever CPipeBombProjectile::Create is invoked
