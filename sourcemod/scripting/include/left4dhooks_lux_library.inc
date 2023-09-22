@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2023  LuxLuma
+* Copyright (C) 2021  LuxLuma
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #tryinclude <left4dhooks_silver>
 #tryinclude <left4dhooks_stocks>
 
-#define LUX_LIBRARY_VERSION "0.5.7"
+#define LUX_LIBRARY_VERSION "0.5.8"
 
 #define GIMMEDATA "lux_library"
 
@@ -317,7 +317,7 @@ stock bool IsPositionInWater(float vecOrigin[3])
  *
  * @param iClient			Client index of the player.
  * @param flDelay			Delay before sending effect.
- * @param dspEffectType		DSP effect type see "scripts/dsp_presets.txt"
+ * @param dspEffectType		Dsp effect type see "scripts/dsp_presets.txt"
  *
  * @error			Invalid client index.
  **/
@@ -325,18 +325,18 @@ stock void Terror_SetPendingDspEffect(int iClient, float flDelay, int dspEffectT
 {
 	static EngineVersion IsEngine;
 	if(IsEngine == Engine_Unknown)
-		IsEngine = GetEngineVersion();
-
+	IsEngine = GetEngineVersion();
+	
 	// Get CountdownTimer address
 	static int timerAddress = -1;
 	if(timerAddress == -1)
 	{
 		if(IsEngine == Engine_Left4Dead2)
-			timerAddress = FindSendPropInfo("CTerrorPlayer", "m_iBloodyHandsLevel") + 8;
+		timerAddress = FindSendPropInfo("CTerrorPlayer", "m_iBloodyHandsLevel") + 8;
 		else
-			timerAddress = FindSendPropInfo("CTerrorPlayer", "m_bloodyHandsPercent") + 4;
+		timerAddress = FindSendPropInfo("CTerrorPlayer", "m_bloodyHandsPercent") + 4;
 	}
-
+	
 	//timerAddress + 4 = Duration
 	//timerAddress + 8 = TimeStamp
 	SetEntDataFloat(iClient, timerAddress + 4, flDelay);
@@ -352,7 +352,6 @@ stock void Terror_SetPendingDspEffect(int iClient, float flDelay, int dspEffectT
  *
  * @error			Invalid client index.
  **/
-// L4D2 only.
 stock void Terror_SetAdrenalineTime(int iClient, float flDuration)
 {
 	// Get CountdownTimer address
@@ -377,7 +376,6 @@ stock void Terror_SetAdrenalineTime(int iClient, float flDuration)
  * @return 			Remaining duration or -1.0 if there's no effect.
  * @error			Invalid client index.
  **/
-// L4D2 only.
 stock float Terror_GetAdrenalineTime(int iClient)
 {
 	// Get CountdownTimer address
@@ -500,7 +498,6 @@ stock void PhysicsExplode(float vecOrigin[3], int iMagnitude, float flRadius, bo
  *
  * @error			Invalid effect index.
  **/
-// L4D2 only.
 stock void TE_SetupExplodeForce(float vecOrigin[3], float flRadius, float flMagnitude)
 {
 	static int iEffectIndex = INVALID_STRING_INDEX;
@@ -751,7 +748,6 @@ stock void TE_SetupParticleFollowEntity(int iParticleIndex, int iEntIndex, float
  *
  * @error			Invalid effect index.
  **/
-// L4D2 only.
 stock void TE_SetupParticleFollowEntity_MaintainOffset(int iParticleIndex, int iEntIndex, float vecParticleStartPos[3], float vecParticleAngles[3]={0.0, 0.0, 0.0})
 {
 	static float vecDummy[3]={0.0, 0.0, 0.0};
@@ -1436,10 +1432,10 @@ stock void EmitMixedAmbientSound(int client, const char[] sample,
 	
 	if(flDistMulti > 1.0)
 	{
-		newPitch = FloatToInt(newPitch / (flDistMulti > 2.0 ? 2.0 : flDistMulti));
+		newPitch = RoundToNearest(newPitch / (flDistMulti > 2.0 ? 2.0 : flDistMulti));
 	}
 	
-	DistLevelBoost = FloatToInt((flDistPercent * exponent) * levelBoost);
+	DistLevelBoost = RoundToNearest((flDistPercent * exponent) * levelBoost);
 	if(DistLevelBoost > levelBoost)
 		DistLevelBoost = levelBoost;
 	
@@ -1520,19 +1516,14 @@ stock void EmitMixedAmbientSound_FallBack(int client, const char[] sample,
 	newPitch = pitch;
 	if(flDistMulti > 1.0)
 	{
-		newPitch = FloatToInt(newPitch / (flDistMulti > 2.0 ? 2.0 : flDistMulti));
+		newPitch = RoundToNearest(newPitch / (flDistMulti > 2.0 ? 2.0 : flDistMulti));
 	}
 	
-	DistLevelBoost = FloatToInt((flDistPercent * exponent) * levelBoost);
+	DistLevelBoost = RoundToNearest((flDistPercent * exponent) * levelBoost);
 	if(DistLevelBoost > levelBoost)
 		DistLevelBoost = levelBoost;
 	
 	EmitSoundToClient(client, sample, entity, sndChannel, level + DistLevelBoost, _, _, newPitch, _, origin);
-}
-
-int FloatToInt(float val)
-{
-	return RoundFloat(val);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
