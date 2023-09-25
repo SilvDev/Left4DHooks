@@ -1648,7 +1648,11 @@ int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // N
 	// return entity;
 }
 
+
+
+// ====================================================================================================
 // Spitter acid projectile damage
+// ====================================================================================================
 bool g_bAcidWatch;
 int g_iAcidEntity[2048];
 
@@ -1719,12 +1723,12 @@ void OnAcidDamage(int victim, int attacker, int inflictor, float damage, int dam
 			// Red flash when taking damage
 			Handle msg = StartMessageOne("Fade", victim);
 			BfWriteShort(msg, 256);
-			BfWriteShort(msg, 0);			// Duration
-			BfWriteShort(msg, 1);			// Type
-			BfWriteByte(msg, 255);			// Red
-			BfWriteByte(msg, 0);			// Green
-			BfWriteByte(msg, 0);			// Blue
-			BfWriteByte(msg, 30);			// Alpha
+			BfWriteShort(msg, 0);		// Duration
+			BfWriteShort(msg, 1);		// Type
+			BfWriteByte(msg, 255);		// Red
+			BfWriteByte(msg, 0);		// Green
+			BfWriteByte(msg, 0);		// Blue
+			BfWriteByte(msg, 30);		// Alpha
 			EndMessage();
 		}
 	}
@@ -1763,6 +1767,9 @@ public void OnEntityDestroyed(int entity)
 		}
 	}
 }
+// ====================================================================================================
+
+
 
 int Native_CTerrorPlayer_OnAdrenalineUsed(Handle plugin, int numParams) // Native "L4D2_UseAdrenaline"
 {

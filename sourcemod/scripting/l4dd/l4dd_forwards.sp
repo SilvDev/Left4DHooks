@@ -476,6 +476,9 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled");
 		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled_Post",				true);
 		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled_PostHandled",			true);
+		CreateDetour(hGameData,		DTR_CPhysicsProp_OnTakeDamage,								DTR_CPhysicsProp_OnTakeDamage_Post,							"L4DD::CPhysicsProp::OnTakeDamage",									"L4D2_CGasCan_EventKilled");
+		CreateDetour(hGameData,		DTR_CPhysicsProp_OnTakeDamage,								DTR_CPhysicsProp_OnTakeDamage_Post,							"L4DD::CPhysicsProp::OnTakeDamage",									"L4D2_CGasCan_EventKilled_Post",				true);
+		CreateDetour(hGameData,		DTR_CPhysicsProp_OnTakeDamage,								DTR_CPhysicsProp_OnTakeDamage_Post,							"L4DD::CPhysicsProp::OnTakeDamage",									"L4D2_CGasCan_EventKilled_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction");
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction_Post",			true);
 		CreateDetour(hGameData,		DTR_CGasCan_ShouldStartAction,								DTR_CGasCan_ShouldStartAction_Post,							"L4DD::CGasCan::ShouldStartAction",									"L4D2_CGasCan_ShouldStartAction_PostHandled",	true);
@@ -3903,6 +3906,60 @@ MRESReturn DTR_CGasCanEvent_Killed(int pThis, DHookReturn hReturn, DHookParam hP
 MRESReturn DTR_CGasCanEvent_Killed_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled_Post" and "L4D2_CGasCan_EventKilled_PostHandled"
 {
 	//PrintToServer("##### DTR_CGasCanEvent_Killed");
+
+	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
+	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
+
+	Call_StartForward(g_bBlock_CGasCanEvent_Killed ? g_hFWD_CGasCanEvent_Killed_PostHandled : g_hFWD_CGasCanEvent_Killed_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(a1);
+	Call_PushCell(a2);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CPhysicsProp_OnTakeDamage(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled"
+{
+	if( GetEntProp(pThis, Prop_Data, "m_nModelIndex") != g_iGasCanModel ) return MRES_Ignored; // Verify "weapon_gascan" type
+
+	//PrintToServer("##### DTR_CPhysicsProp_OnTakeDamage");
+
+	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
+	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CGasCanEvent_Killed);
+	Call_PushCell(pThis);
+	Call_PushCellRef(a1);
+	Call_PushCellRef(a2);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CGasCanEvent_Killed = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	if( aResult == Plugin_Changed )
+	{
+		hParams.SetObjectVar(1, 48, ObjectValueType_EhandlePtr, a1);
+		hParams.SetObjectVar(1, 52, ObjectValueType_EhandlePtr, a2);
+		return MRES_ChangedHandled;
+	}
+
+	g_bBlock_CGasCanEvent_Killed = false;
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CPhysicsProp_OnTakeDamage_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled_Post" and "L4D2_CGasCan_EventKilled_PostHandled"
+{
+	if( GetEntProp(pThis, Prop_Data, "m_nModelIndex") != g_iGasCanModel ) return MRES_Ignored; // Verify "weapon_gascan" type
+
+	//PrintToServer("##### DTR_CPhysicsProp_OnTakeDamage");
 
 	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
 	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);

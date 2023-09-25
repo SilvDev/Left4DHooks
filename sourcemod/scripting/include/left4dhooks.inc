@@ -3011,7 +3011,7 @@ forward void L4D2_OnHitByVomitJar_PostHandled(int victim, int attacker);
 
 /**
  * @brief Called whenever Infected::OnHitByVomitJar is invoked
- * @remarks Called when a common infected is about to be hit from a Bilejar explosion
+ * @remarks Called when a common infected or Witch is about to be hit from a Bilejar explosion and possibly boomer explosion
  *
  * @param victim			the common who's now it
  * @param attacker			the attacker who caused the vomit (can be 0)
@@ -3022,7 +3022,7 @@ forward Action L4D2_Infected_HitByVomitJar(int victim, int &attacker);
 
 /**
  * @brief Called whenever Infected::OnHitByVomitJar is invoked
- * @remarks Called when a common infected is hit from a Bilejar explosion
+ * @remarks Called when a common infected or Witch is hit from a Bilejar explosion and possibly boomer explosion
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the common who's now it
@@ -3034,7 +3034,7 @@ forward void L4D2_Infected_HitByVomitJar_Post(int victim, int attacker);
 
 /**
  * @brief Called whenever Infected::OnHitByVomitJar is invoked
- * @remarks Called when a common infected is hit from a Bilejar explosion
+ * @remarks Called when a common infected or Witch is hit from a Bilejar explosion and possibly boomer explosion
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param victim			the common who's now it

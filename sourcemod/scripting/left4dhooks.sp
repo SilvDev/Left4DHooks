@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.137"
-#define PLUGIN_VERLONG		1137
+#define PLUGIN_VERSION		"1.138"
+#define PLUGIN_VERLONG		1138
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -120,6 +120,8 @@
 native void Updater_AddPlugin(const char[] url);
 // ====================================================================================================
 
+
+
 // PROFILER
 #if DEBUG
 #include <profiler>
@@ -178,6 +180,9 @@ float g_fProf;
 
 // Dissolver
 #define SPRITE_GLOW							"sprites/blueglow1.vmt"
+
+// GasCan model for damage hook
+#define MODEL_GASCAN						"models/props_junk/gascan001a.mdl"
 
 
 
@@ -344,6 +349,7 @@ int g_iPrimaryAmmoType;
 int g_iCurrentMode;
 int g_iMaxChapters;
 int g_iClassTank;
+int g_iGasCanModel;
 char g_sSystem[16];
 bool g_bLinuxOS;
 bool g_bLeft4Dead2;
@@ -371,29 +377,19 @@ bool g_bLateLoad;
 
 
 
-// ====================================================================================================
-//										TARGET FILTERS
-// ====================================================================================================
+// TARGET FILTERS
 #include "l4dd/l4dd_targetfilters.sp"
 
-// ====================================================================================================
-//										NATIVES
-// ====================================================================================================
+// NATIVES
 #include "l4dd/l4dd_natives.sp"
 
-// ====================================================================================================
-//										DETOURS - FORWARDS
-// ====================================================================================================
+// DETOURS - FORWARDS
 #include "l4dd/l4dd_forwards.sp"
 
-// ====================================================================================================
-//										GAMEDATA
-// ====================================================================================================
+// GAMEDATA
 #include "l4dd/l4dd_gamedata.sp"
 
-// ====================================================================================================
-//										SETUP FORWARDS AND NATIVES
-// ====================================================================================================
+// SETUP FORWARDS AND NATIVES
 #include "l4dd/l4dd_setup.sp"
 
 
@@ -433,16 +429,16 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 
 
-	// ====================================================================================================
-	//									UPDATER
-	// ====================================================================================================
+	// =================
+	// UPDATER
+	// =================
 	MarkNativeAsOptional("Updater_AddPlugin");
 
 
 
-	// ====================================================================================================
-	//									DUPLICATE PLUGIN RUNNING
-	// ====================================================================================================
+	// =================
+	// DUPLICATE PLUGIN RUNNING
+	// =================
 	if( GetFeatureStatus(FeatureType_Native, "L4D_BecomeGhost") == FeatureStatus_Available )
 	{
 		strcopy(error, err_max, "\n====================\nPlugin \"Left 4 DHooks\" is already running. Please remove the duplicate plugin.\n====================");
@@ -451,9 +447,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 
 
-	// ====================================================================================================
-	//									EXTENSION BLOCK
-	// ====================================================================================================
+	// =================
+	// EXTENSION BLOCK
+	// =================
 	if( GetFeatureStatus(FeatureType_Native, "L4D_RestartScenarioFromVote") != FeatureStatus_Unknown )
 	{
 		strcopy(error, err_max, "\n====================\nThis plugin replaces Left4Downtown. Delete the extension to run.\n====================");
@@ -462,16 +458,16 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 
 
-	// ====================================================================================================
-	//									SETUP FORWARDS AND NATIVES
-	// ====================================================================================================
+	// =================
+	// SETUP FORWARDS AND NATIVES
+	// =================
 	SetupForwardsNatives(); // From: "l4dd/l4dd_setup.sp"
 
 
 
-	// ====================================================================================================
-	//									END SETUP
-	// ====================================================================================================
+	// =================
+	// END SETUP
+	// =================
 	RegPluginLibrary("left4dhooks");
 
 
@@ -717,8 +713,8 @@ public void OnPluginStart()
 		HookEvent("round_end",						Event_RoundEnd);
 		HookEvent("player_entered_start_area",		Event_EnteredStartArea);
 		HookEvent("player_left_start_area",			Event_LeftStartArea);
-		HookEvent("player_left_checkpoint",			Event_LeftCheckpoint);
 		HookEvent("player_entered_checkpoint",		Event_EnteredCheckpoint);
+		HookEvent("player_left_checkpoint",			Event_LeftCheckpoint);
 	}
 }
 
@@ -1483,6 +1479,8 @@ public void OnMapStart()
 			for( int i = 0; i < 2048; i++ )
 				g_iAcidEntity[i] = 0;
 		}
+
+		g_iGasCanModel = PrecacheModel(MODEL_GASCAN);
 
 
 
