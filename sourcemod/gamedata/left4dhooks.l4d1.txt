@@ -933,6 +933,21 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::DropWeapons"
+			{
+				"signature"		"CTerrorPlayer::DropWeapons"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"bool"
+					}
+				}
+			}
+
 			"L4DD::CInferno::Spread"
 			{
 				"signature"		"CInferno::Spread"
@@ -1577,6 +1592,11 @@
 			{
 				"windows"	"344"
 				"linux"		"344"
+			}
+			"L4D2IntWeapon_Type" // Search: "WeaponType" for offset
+			{
+				"windows"	"2196"
+				"linux"		"2196"
 			}
 
 			// L4D2FloatWeapon
@@ -2875,6 +2895,18 @@
 				/* 83 ? ? 56 8B ? E8 ? ? ? ? 84 ? 0F 85 ? ? ? ? 57 */
 				/* Search: "Tongue letting go on getting bashed." for "CTerrorPlayer::OnStunned". Called by xref
 				 */
+			}
+
+			/*
+			* CTerrorPlayer::DropWeapons(CTerrorPlayer *this, bool a2)
+			*/
+			"CTerrorPlayer::DropWeapons"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer11DropWeaponsEb"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x0F\x84\x2A\x2A\x2A\x2A\x6A\x2A\x68\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? ? ? ? 83 ? ? 0F 84 ? ? ? ? 6A ? 68 ? ? ? ? 8B */
+				/* Search: "Survivor %s changed model from %s to %s via SetModelFromClass". Xref to VTable. 2 entries down. */
 			}
 
 			/*
