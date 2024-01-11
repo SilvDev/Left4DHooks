@@ -1246,6 +1246,19 @@
 		// ====================================================================================================
 		"Addresses"
 		{
+			"ammoDef"
+			{
+				"linux"
+				{
+					"signature"	"ammoDef"
+				}
+				"windows"
+				{
+					"signature"	"CTerrorAmmoDefSystem::Init"
+					"read"		"38"
+				}
+			}
+
 			"CDirector"
 			{
 				"windows"
@@ -1448,7 +1461,7 @@
 
 			// VARIOUS OFFSETS
 
-			// Offset to the "push" call: e.g. 68 14 D7 50 10                          push    offset aMolotovProject_0 ; "Molotov projectile spawned at %f %f %f,"...
+			// Offset to the "push" call: e.g. 68 14 D7 50 10						  push	offset aMolotovProject_0 ; "Molotov projectile spawned at %f %f %f,"...
 			"Molotov_OffsetPush"
 			{
 				"windows"	"75"
@@ -1758,6 +1771,20 @@
 		// ====================================================================================================
 		"Signatures"
 		{
+			"ammoDef"
+			{
+				"library"		"server"
+				"linux"			"@_ZL7ammoDef"
+			}
+
+			"CTerrorAmmoDefSystem::Init"
+			{
+				"library"		"server"
+				"windows"		"\xD9\x05\x2A\x2A\x2A\x2A\x6A\x0E\x6A\x0A\x6A\x04\x2A\xD9\x2A\x2A\x68\x2A\x2A\x2A\x2A\x6A\x00\x6A\x00\x6A\x01\x68\x02\x00\x00\x80"
+								/* not actual function beginning, starts at the second call */
+								/* D9 05 ? ? ? ? 6A 0E 6A 0A 6A 04 ? D9 ? ? 68 ? ? ? ? 6A 00 6A 00 6A 01 68 02 00 00 80 */
+			}
+
 			// =========================
 			// SILVERS SIGS
 			// =========================

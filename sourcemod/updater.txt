@@ -4,8 +4,8 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.140"
-			"Previous"	"1.139"
+			"Latest"	"1.141"
+			"Previous"	"1.140"
 		}
 
 		"Notes"	"Full changelog @ https://forums.alliedmods.net/showthread.php?t=321696"
@@ -19,10 +19,16 @@
 			"Plugin"	"Path_SM/plugins/left4dhooks.smx"
 			"Plugin"	"Path_SM/gamedata/left4dhooks.l4d1.txt"
 			"Plugin"	"Path_SM/gamedata/left4dhooks.l4d2.txt"
+			"Plugin"	"Path_SM/scripting/include/left4dhooks.inc"
+			"Plugin"	"Path_SM/scripting/include/left4dhooks_anim.inc"
+			"Plugin"	"Path_SM/scripting/include/left4dhooks_lux_library.inc"
+			"Plugin"	"Path_SM/scripting/include/left4dhooks_silver.inc"
+			"Plugin"	"Path_SM/scripting/include/left4dhooks_stocks.inc"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_forwards.sp"
+			"Plugin"	"Path_SM/scripting/l4dd/l4dd_gamedata.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_natives.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_setup.sp"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks.inc"
+			"Plugin"	"Path_SM/scripting/l4dd/l4dd_targetfilters.sp"
 			"Plugin"	"Path_SM/scripting/left4dhooks_test.sp"
 			"Source"	"Path_SM/scripting/left4dhooks.sp"
 		}
