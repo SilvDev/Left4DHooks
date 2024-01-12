@@ -1012,6 +1012,40 @@
 				}
 			}
 
+			"L4DD::CMolotovProjectile::Create"
+			{
+				"signature"		"CMolotovProjectile::Create"
+				"callconv"		"cdecl"
+				"return"		"cbaseentity"
+				"arguments"
+				{
+					"origin"
+					{
+						"type"		"vectorptr"
+					}
+					"angles"
+					{
+						"type"		"vectorptr"
+					}
+					"velocity"
+					{
+						"type"		"vectorptr"
+					}
+					"rotation"
+					{
+						"type"		"vectorptr"
+					}
+					"owner"
+					{
+						"type"		"cbaseentity"
+					}
+					"duration"
+					{
+						"type"		"float"
+					}
+				}
+			}
+
 			"L4DD::CPipeBombProjectile::Detonate"
 			{
 				"signature"		"CPipeBombProjectile::Detonate"

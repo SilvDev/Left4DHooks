@@ -578,15 +578,18 @@ void LoadGameData()
 			patches[3] = hGameData.GetAddress("Realism_StrFind");
 		}
 
-
 		// Write custom gamedata with found addresses from literal strings
 		BuildPath(Path_SM, sPath, sizeof(sPath), "gamedata/%s.txt", GAMEDATA_TEMP);
 		File hFile = OpenFile(sPath, "w", false);
+		if( hFile == null )
+		{
+			SetFailState("Failed to create file: \"%s\". Check your folder permissions allow writing.", sPath);
+		}
 
 		char sAddress[512];
 		char sHexAddr[32];
 
-		// Dynamically generated Projectile Create detours:
+		// Dynamically generated projectile Create detours:
 		hFile.WriteLine("\"Games\"");
 		hFile.WriteLine("{");
 		hFile.WriteLine("	\"#default\"");
@@ -694,6 +697,7 @@ void LoadGameData()
 		hFile.WriteLine("			}");
 		hFile.WriteLine("		}");
 
+		// Dynamically generated addresses
 		hFile.WriteLine("");
 		hFile.WriteLine("		\"Addresses\"");
 		hFile.WriteLine("		{");
@@ -724,6 +728,8 @@ void LoadGameData()
 
 		hFile.WriteLine("		}");
 		hFile.WriteLine("");
+
+		// Dynamically generated signatures
 		hFile.WriteLine("		\"Signatures\"");
 		hFile.WriteLine("		{");
 
@@ -769,11 +775,10 @@ void LoadGameData()
 				StrCat(sAddress, sizeof(sAddress), sHexAddr);
 				if( i == 3 ) StrCat(sAddress, sizeof(sAddress), "\\x68"); // Match byte after for "CTerrorGameRules::IsRealismMode", otherwise its not unique signature
 
-
 				// Write lines
 				hFile.WriteLine("			\"FindAddress_%d\"", i);
 				hFile.WriteLine("			{");
-				// hFile.WriteLine("				\"library\"	\"server\""); // Server is default.
+				hFile.WriteLine("				\"library\"	\"server\""); // Server is default.
 				if( g_bLinuxOS )
 				{
 					hFile.WriteLine("				\"linux\"	\"%s\"", sAddress);

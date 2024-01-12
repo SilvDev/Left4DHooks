@@ -1,3 +1,10 @@
+1.142 (12-Jan-2024)
+	- Fixed the last update breaking on Linux servers. Thanks to "Hawkins" for reporting and testing.
+
+	- Updated: "/gamedata/l4dd/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/gamedata/l4dd/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+
 1.141 (11-Jan-2024)
 	- Added forwards "L4D_MolotovProjectile*", "L4D2_VomitJarProjectile*" and "L4D2_GrenadeLauncherProjectile*" to trigger when on various grenade creations. Requested by "Kerouha".
 	- Added forward "L4D2_OnChooseVictim_Pre" which shows the previously targeted entity. Requested by "Forgetest".
