@@ -1441,7 +1441,6 @@
 		// ====================================================================================================
 		"Offsets"
 		{
-			// Used to block "L4D2_OnSendInRescueVehicle" and "L4D2_OnUseHealingItems" on Linux until DHooks supports object returns.
 			"OS"
 			{
 				"windows"	"0"

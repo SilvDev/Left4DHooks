@@ -1169,9 +1169,9 @@
 				}
 			}
 
-			"L4DD::CPipeBombProjectile::Create"
+			"L4DD::CMolotovProjectile::Create"
 			{
-				"signature"		"CPipeBombProjectile::Create"
+				"signature"		"CMolotovProjectile::Create"
 				"callconv"		"cdecl"
 				"return"		"cbaseentity"
 				"arguments"
@@ -1203,9 +1203,9 @@
 				}
 			}
 
-			"L4DD::CMolotovProjectile::Create"
+			"L4DD::CPipeBombProjectile::Create"
 			{
-				"signature"		"CMolotovProjectile::Create"
+				"signature"		"CPipeBombProjectile::Create"
 				"callconv"		"cdecl"
 				"return"		"cbaseentity"
 				"arguments"
@@ -1984,7 +1984,6 @@
 		// ====================================================================================================
 		"Offsets"
 		{
-			// Used to block "L4D2_OnSendInRescueVehicle" and "L4D2_OnUseHealingItems" on Linux until DHooks supports object returns.
 			"OS"
 			{
 				"windows"	"0"
