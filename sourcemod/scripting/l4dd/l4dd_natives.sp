@@ -80,6 +80,7 @@ Handle g_hSDK_TerrorNavArea_FindRandomSpot;
 Handle g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck;
 Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
+Handle g_hSDK_CBaseTrigger_IsTouching;
 // Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
 Handle g_hSDK_CDirector_AreAllSurvivorsInFinaleArea;
 Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
@@ -146,6 +147,7 @@ Handle g_hSDK_CTerrorPlayer_OnPummelEnded;
 Handle g_hSDK_CTerrorPlayer_OnCarryEnded;
 Handle g_hSDK_CTerrorPlayer_OnRideEnded;
 Handle g_hSDK_CDirector_CreateRescuableSurvivors;
+Handle g_hSDK_CTerrorPlayer_StopBeingRevived;
 Handle g_hSDK_CTerrorPlayer_OnRevived;
 Handle g_hSDK_CTerrorGameRules_GetVersusCompletion;
 Handle g_hSDK_CDirectorTacticalServices_GetHighestFlowSurvivor;
@@ -1138,6 +1140,17 @@ int Native_CDirector_HasAnySurvivorLeftSafeArea(Handle plugin, int numParams) //
 	return SDKCall(g_hSDK_CDirector_HasAnySurvivorLeftSafeArea, g_pDirector);
 }
 
+int Native_CBaseTrigger_IsTouching(Handle plugin, int numParams) // Native "L4D_IsTouchingTrigger"
+{
+	ValidateNatives(g_hSDK_CBaseTrigger_IsTouching, "CBaseTrigger::IsTouching");
+
+	int trigger = GetNativeCell(1);
+	int entity = GetNativeCell(2);
+
+	//PrintToServer("#### CALL g_hSDK_CBaseTrigger_IsTouching");
+	return SDKCall(g_hSDK_CBaseTrigger_IsTouching, trigger, entity);
+}
+
 int Native_CDirector_IsAnySurvivorInStartArea(Handle plugin, int numParams) // Native "L4D_IsAnySurvivorInStartArea"
 {
 	if( g_bLeft4Dead2 )
@@ -1264,10 +1277,73 @@ bool IsInFirstCheckpoint(int client)
 int Native_IsInLastCheckpoint(Handle plugin, int numParams) // Native "L4D_IsInLastCheckpoint"
 {
 	int client = GetNativeCell(1);
+
 	return IsInLastCheckpoint(client);
 }
 
 bool IsInLastCheckpoint(int client)
+{
+	static int entity = INVALID_ENT_REFERENCE;
+
+	if( EntRefToEntIndex(entity) == INVALID_ENT_REFERENCE )
+	{
+		entity = FindEntityByClassname(-1, "info_changelevel");
+		if( entity == INVALID_ENT_REFERENCE )
+		{
+			return false;
+		}
+
+		entity = EntIndexToEntRef(entity);
+	}
+
+	return SDKCall(g_hSDK_CBaseTrigger_IsTouching, entity, client);
+}
+
+/* ALTERNATIVE METHOD: checking vMins and vMax, although can be inaccurate if the saferoom is not a rectangle (c2m4 for example) - Thanks to "Shadowysn" for pointing out
+bool IsInLastCheckpoint(int client)
+{
+	static int entity = INVALID_ENT_REFERENCE;
+	static float vMax[3];
+	static float vMin[3];
+
+	if( EntRefToEntIndex(entity) == INVALID_ENT_REFERENCE )
+	{
+		entity = FindEntityByClassname(-1, "info_changelevel");
+		if( entity == INVALID_ENT_REFERENCE )
+		{
+			return false;
+		}
+
+		entity = EntIndexToEntRef(entity);
+
+		GetEntPropVector(entity, Prop_Data, "m_vecMaxs", vMax);
+		GetEntPropVector(entity, Prop_Data, "m_vecMins", vMin);
+	}
+
+	float vPos[3];
+
+	GetClientAbsOrigin(client, vPos);
+
+	if( vPos[0] > vMin[0] && vPos[1] > vMin[1] && vPos[2] > vMin[2] && vPos[0] < vMax[0] && vPos[1] < vMax[1] && vPos[2] < vMax[2] )
+	{
+		return true;
+	}
+
+	return false;
+}
+// */
+
+/* OLD METHOD: Kept for reference, those it does not return correctly on all maps
+int Native_IsInLastCheckpoint_Old(Handle plugin, int numParams) // Native "L4D_IsInLastCheckpoint_Old"
+{
+	int client = GetNativeCell(1);
+	bool nav;
+	if( numParams > 1 ) nav = GetNativeCell(2);
+
+	return IsInLastCheckpoint_Old(client, nav);
+}
+
+bool IsInLastCheckpoint_Old(int client, bool nav)
 {
 	ValidateNatives(g_hSDK_CTerrorGameRules_IsMissionFinalMap, "CTerrorGameRules::IsMissionFinalMap");
 
@@ -1278,38 +1354,44 @@ bool IsInLastCheckpoint(int client)
 
 	if( g_bLeft4Dead2 )
 	{
-		float vPos[3];
-		GetClientAbsOrigin(client, vPos);
-		return IsPositionInSaferoom(vPos, false);
-
-		/*
-		ValidateNatives(g_hSDK_CTerrorPlayer_GetLastKnownArea, "CTerrorPlayer::GetLastKnownArea");
-		ValidateNatives(g_hSDK_TerrorNavMesh_GetLastCheckpoint, "TerrorNavMesh::GetLastCheckpoint");
-		ValidateNatives(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, "TerrorNavMesh::IsInExitCheckpoint_NoLandmark");
-
-		//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_GetLastKnownArea");
-		int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
-		if( area == 0 ) return false;
-
-		//PrintToServer("#### CALL g_hSDK_TerrorNavMesh_GetLastCheckpoint");
-		int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetLastCheckpoint, g_pNavMesh);
-		if( nav1 )
+		if( !nav )
 		{
-			//PrintToServer("#### CALL g_hSDK_Checkpoint_ContainsArea");
-			if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+			float vPos[3];
+			GetClientAbsOrigin(client, vPos);
+			return IsPositionInSaferoom(vPos, false);
+		}
+		else
+		{
+			ValidateNatives(g_hSDK_CTerrorPlayer_GetLastKnownArea, "CTerrorPlayer::GetLastKnownArea");
+			ValidateNatives(g_hSDK_TerrorNavMesh_GetLastCheckpoint, "TerrorNavMesh::GetLastCheckpoint");
+			ValidateNatives(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, "TerrorNavMesh::IsInExitCheckpoint_NoLandmark");
+
+			//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_GetLastKnownArea");
+			int area = SDKCall(g_hSDK_CTerrorPlayer_GetLastKnownArea, client);
+			if( area == 0 ) return false;
+
+			//PrintToServer("#### CALL g_hSDK_TerrorNavMesh_GetLastCheckpoint");
+			int nav1 = SDKCall(g_hSDK_TerrorNavMesh_GetLastCheckpoint, g_pNavMesh);
+			if( nav1 )
+			{
+				//PrintToServer("#### CALL g_hSDK_Checkpoint_ContainsArea");
+				if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, area) )
+					return true;
+			}
+
+			//PrintToServer("#### CALL g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark");
+			if( SDKCall(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, g_pNavMesh, area) )
 				return true;
 		}
-
-		//PrintToServer("#### CALL g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark");
-		if( SDKCall(g_hSDK_TerrorNavMesh_IsInExitCheckpoint_NoLandmark, g_pNavMesh, area) )
-			return true;
-		*/
 	}
 	else
 	{
 		return g_bCheckpointLast[client];
 	}
+
+	return false;
 }
+*/
 
 int Native_IsPositionInFirstCheckpoint(Handle plugin, int numParams) // Native "L4D_IsPositionInFirstCheckpoint"
 {
@@ -2589,11 +2671,14 @@ int Native_CTerrorPlayer_OnStaggered(Handle plugin, int numParams) // Native "L4
 	int a1 = GetNativeCell(1);
 	int a2 = GetNativeCell(2);
 	float vDir[3];
-	GetNativeArray(3, vDir, sizeof(vDir));
 
 	if( IsNativeParamNullVector(3) )
 	{
 		GetEntPropVector(a2, Prop_Send, "m_vecOrigin", vDir);
+	}
+	else
+	{
+		GetNativeArray(3, vDir, sizeof(vDir));
 	}
 
 	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_OnStaggered");
@@ -5072,6 +5157,19 @@ void RespawnRescue()
 	SDKCall(g_hSDK_CDirector_CreateRescuableSurvivors, g_pDirector);
 
 	g_hCvar_RescueDeadTime.SetInt(time);
+}
+
+int Native_CTerrorPlayer_StopBeingRevived(Handle plugin, int numParams) // Native "L4D_StopBeingRevived"
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_StopBeingRevived, "CTerrorPlayer::StopBeingRevived");
+
+	int client = GetNativeCell(1);
+	int vocalize = GetNativeCell(2);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_StopBeingRevived");
+	SDKCall(g_hSDK_CTerrorPlayer_StopBeingRevived, client, vocalize);
+
+	return 0;
 }
 
 int Native_CTerrorPlayer_OnRevived(Handle plugin, int numParams) // Native "L4D_ReviveSurvivor"

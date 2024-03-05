@@ -158,6 +158,9 @@ GlobalForward g_hFWD_CGasCanEvent_Killed_PostHandled;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction_Post;
 GlobalForward g_hFWD_CGasCan_ShouldStartAction_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_StartUseAction;
+GlobalForward g_hFWD_CTerrorPlayer_StartUseAction_Post;
+GlobalForward g_hFWD_CTerrorPlayer_StartUseAction_PostHandled;
 GlobalForward g_hFWD_CBaseBackpackItem_StartAction;
 GlobalForward g_hFWD_CBaseBackpackItem_StartAction_Post;
 GlobalForward g_hFWD_CBaseBackpackItem_StartAction_PostHandled;
@@ -524,6 +527,9 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CGasCan_OnActionComplete,								DTR_CGasCan_OnActionComplete_Post,							"L4DD::CGasCan::OnActionComplete",									"L4D2_CGasCan_ActionComplete");
 		CreateDetour(hGameData,		DTR_CGasCan_OnActionComplete,								DTR_CGasCan_OnActionComplete_Post,							"L4DD::CGasCan::OnActionComplete",									"L4D2_CGasCan_ActionComplete_Post",				true);
 		CreateDetour(hGameData,		DTR_CGasCan_OnActionComplete,								DTR_CGasCan_OnActionComplete_Post,							"L4DD::CGasCan::OnActionComplete",									"L4D2_CGasCan_ActionComplete_PostHandled",		true);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_StartUseAction,							DTR_CTerrorPlayer_StartUseAction_Post,						"L4DD::CTerrorPlayer::StartUseAction",								"L4D2_OnStartUseAction");
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_StartUseAction,							DTR_CTerrorPlayer_StartUseAction_Post,						"L4DD::CTerrorPlayer::StartUseAction",								"L4D2_OnStartUseAction_Post",					true);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_StartUseAction,							DTR_CTerrorPlayer_StartUseAction_Post,						"L4DD::CTerrorPlayer::StartUseAction",								"L4D2_OnStartUseAction_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_CBaseBackpackItem_StartAction,							DTR_CBaseBackpackItem_StartAction_Post,						"L4DD::CBaseBackpackItem::StartAction",								"L4D2_BackpackItem_StartAction");
 		CreateDetour(hGameData,		DTR_CBaseBackpackItem_StartAction,							DTR_CBaseBackpackItem_StartAction_Post,						"L4DD::CBaseBackpackItem::StartAction",								"L4D2_BackpackItem_StartAction_Post",			true);
 		CreateDetour(hGameData,		DTR_CBaseBackpackItem_StartAction,							DTR_CBaseBackpackItem_StartAction_Post,						"L4DD::CBaseBackpackItem::StartAction",								"L4D2_BackpackItem_StartAction_PostHandled",	true);
@@ -1367,6 +1373,8 @@ bool g_bBlock_CDirector_OnFirstSurvivorLeftSafeArea;
 MRESReturn DTR_CDirector_OnFirstSurvivorLeftSafeArea(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnFirstSurvivorLeftSafeArea"
 {
 	//PrintToServer("##### DTR_CDirector_OnFirstSurvivorLeftSafeArea");
+	g_bBlock_CDirector_OnFirstSurvivorLeftSafeArea = false;
+
 	if( hParams.IsNull(1) ) return MRES_Ignored;
 
 	int value = hParams.Get(1);
@@ -1391,8 +1399,6 @@ MRESReturn DTR_CDirector_OnFirstSurvivorLeftSafeArea(DHookReturn hReturn, DHookP
 		hReturn.Value = 0;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CDirector_OnFirstSurvivorLeftSafeArea = false;
 
 	return MRES_Ignored;
 }
@@ -1998,6 +2004,8 @@ float g_fCTankRock_OnRelease_Angle[3];
 MRESReturn DTR_CTankRock_OnRelease(DHookParam hParams) // Forward "L4D_TankRock_OnRelease"
 {
 	//PrintToServer("##### DTR_CTankRock_OnRelease");
+	g_bCTankRock_OnRelease_Changed = false;
+
 	int pThis = hParams.Get(1);
 	int tank = GetEntPropEnt(pThis, Prop_Data, "m_hThrower");
 	if( tank < 1 ) return MRES_Ignored;
@@ -2167,6 +2175,8 @@ bool g_bBlock_CDirector_TryOfferingTankBot;
 MRESReturn DTR_CDirector_TryOfferingTankBot(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnTryOfferingTankBot"
 {
 	//PrintToServer("##### DTR_CDirector_TryOfferingTankBot");
+	g_bBlock_CDirector_TryOfferingTankBot = false;
+
 	int a1, a2;
 
 	if( !hParams.IsNull(1) )
@@ -2189,8 +2199,6 @@ MRESReturn DTR_CDirector_TryOfferingTankBot(DHookReturn hReturn, DHookParam hPar
 		hReturn.Value = -1;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CDirector_TryOfferingTankBot = false;
 
 	// UNKNOWN - PROBABLY WORKING
 	if( aResult == Plugin_Changed )
@@ -2227,6 +2235,8 @@ MRESReturn DTR_CDirector_TryOfferingTankBot_Post(DHookReturn hReturn, DHookParam
 MRESReturn DTR_CDirector_TryOfferingTankBot_Clone(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnTryOfferingTankBot"
 {
 	//PrintToServer("##### DTR_CDirector_TryOfferingTankBot_Clone");
+	g_bBlock_CDirector_TryOfferingTankBot = false;
+
 	int a1 = -1, a2;
 
 	if( !hParams.IsNull(2) )
@@ -2249,8 +2259,6 @@ MRESReturn DTR_CDirector_TryOfferingTankBot_Clone(DHookReturn hReturn, DHookPara
 		hReturn.Value = -1;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CDirector_TryOfferingTankBot = false;
 
 	// UNKNOWN - PROBABLY WORKING
 	if( aResult == Plugin_Changed )
@@ -2631,6 +2639,8 @@ bool g_bBlock_CDirectorVersusMode_EndVersusModeRound;
 MRESReturn DTR_CDirectorVersusMode_EndVersusModeRound_Pre(DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnEndVersusModeRound"
 {
 	//PrintToServer("##### DTR_CDirectorVersusMode_EndVersusModeRound_Pre");
+	g_bBlock_CDirectorVersusMode_EndVersusModeRound = false;
+
 	if( g_bRoundEnded ) return MRES_Ignored;
 
 	int a1 = hParams.Get(1);
@@ -2647,8 +2657,6 @@ MRESReturn DTR_CDirectorVersusMode_EndVersusModeRound_Pre(DHookReturn hReturn, D
 		hReturn.Value = 0;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CDirectorVersusMode_EndVersusModeRound = false;
 
 	return MRES_Ignored;
 }
@@ -2820,6 +2828,8 @@ bool g_bBlock_CTerrorPlayer_OnShovedBySurvivor;
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnShovedBySurvivor"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor");
+	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
+
 	if( hParams.IsNull(1) ) return MRES_Ignored;
 
 	float a2[3];
@@ -2840,8 +2850,6 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor(int pThis, DHookReturn hReturn, 
 		hReturn.Value = 0;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
 
 	return MRES_Ignored;
 }
@@ -2867,6 +2875,8 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Post(int pThis, DHookReturn hRet
 MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnShovedBySurvivor"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnShovedBySurvivor_Clone");
+	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
+
 	if( hParams.IsNull(1) ) return MRES_Ignored;
 
 	float a3[3];
@@ -2888,8 +2898,6 @@ MRESReturn DTR_CTerrorPlayer_OnShovedBySurvivor_Clone(DHookReturn hReturn, DHook
 		hReturn.Value = 0;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CTerrorPlayer_OnShovedBySurvivor = false;
 
 	return MRES_Ignored;
 }
@@ -2917,10 +2925,10 @@ bool g_bIsPouncing;
 bool g_bBlock_CTerrorWeapon_OnHit;
 MRESReturn DTR_CTerrorWeapon_OnHit(int weapon, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnEntityShoved"
 {
+	//PrintToServer("##### DTR_CTerrorWeapon_OnHit");
 	g_bIsPouncing = false;
 	g_bBlock_CTerrorWeapon_OnHit = false;
 
-	//PrintToServer("##### DTR_CTerrorWeapon_OnHit");
 	bool userCall = hParams.Get(3);
 	if( userCall )
 	{
@@ -3094,6 +3102,8 @@ bool g_bBlock_CTerrorPlayer_OnSlammedSurvivor;
 MRESReturn DTR_CTerrorPlayer_OnSlammedSurvivor(int pThis, DHookParam hParams) // Forward "L4D2_OnSlammedSurvivor"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_OnSlammedSurvivor");
+	g_bBlock_CTerrorPlayer_OnSlammedSurvivor = false;
+
 	if( hParams.IsNull(1) ) return MRES_Ignored;
 
 	int victim = hParams.Get(1);
@@ -3113,8 +3123,6 @@ MRESReturn DTR_CTerrorPlayer_OnSlammedSurvivor(int pThis, DHookParam hParams) //
 		g_bBlock_CTerrorPlayer_OnSlammedSurvivor = true;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CTerrorPlayer_OnSlammedSurvivor = false;
 
 	if( aResult == Plugin_Changed )
 	{
@@ -3150,6 +3158,8 @@ bool g_bBlock_CTerrorPlayer_QueuePummelVictim;
 MRESReturn DTR_CTerrorPlayer_QueuePummelVictim(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnPummelVictim"
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_QueuePummelVictim");
+	g_bBlock_CTerrorPlayer_QueuePummelVictim = false;
+
 	if( hParams.IsNull(1) ) return MRES_Ignored;
 
 	int victim = hParams.Get(1);
@@ -3169,8 +3179,6 @@ MRESReturn DTR_CTerrorPlayer_QueuePummelVictim(int pThis, DHookReturn hReturn, D
 		hReturn.Value = 0;
 		return MRES_Supercede;
 	}
-
-	g_bBlock_CTerrorPlayer_QueuePummelVictim = false;
 
 	return MRES_Ignored;
 }
@@ -4362,9 +4370,11 @@ MRESReturn DTR_CGasCanEvent_Killed_Post(int pThis, DHookReturn hReturn, DHookPar
 
 MRESReturn DTR_CPhysicsProp_OnTakeDamage(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_CGasCan_EventKilled"
 {
+	//PrintToServer("##### DTR_CPhysicsProp_OnTakeDamage");
+	g_bBlock_CGasCanEvent_Killed = false;
+
 	if( GetEntProp(pThis, Prop_Data, "m_nModelIndex") != g_iGasCanModel ) return MRES_Ignored; // Verify "weapon_gascan" type
 
-	//PrintToServer("##### DTR_CPhysicsProp_OnTakeDamage");
 	int a1 = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
 	int a2 = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
 
@@ -4389,8 +4399,6 @@ MRESReturn DTR_CPhysicsProp_OnTakeDamage(int pThis, DHookReturn hReturn, DHookPa
 		hParams.SetObjectVar(1, 52, ObjectValueType_EhandlePtr, a2);
 		return MRES_ChangedHandled;
 	}
-
-	g_bBlock_CGasCanEvent_Killed = false;
 
 	return MRES_Ignored;
 }
@@ -4520,11 +4528,58 @@ MRESReturn DTR_CGasCan_OnActionComplete_Post(int pThis, DHookReturn hReturn, DHo
 	return MRES_Ignored;
 }
 
+bool g_bBlock_CTerrorPlayer_StartUseAction;
+MRESReturn DTR_CTerrorPlayer_StartUseAction(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnStartUseAction"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_StartUseAction");
+	g_bBlock_CTerrorPlayer_StartUseAction = false;
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int action = hParams.Get(1);
+	int target = hParams.Get(2);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_StartUseAction);
+	Call_PushCell(action);
+	Call_PushCell(pThis);
+	Call_PushCell(target);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_CTerrorPlayer_StartUseAction = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_StartUseAction_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnStartUseAction_Post" and "L4D2_OnStartUseAction_PostHandled"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_StartUseAction_Post");
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	int action = hParams.Get(1);
+	int target = hParams.Get(2);
+
+	Call_StartForward(g_bBlock_CTerrorPlayer_StartUseAction ? g_hFWD_CTerrorPlayer_StartUseAction_PostHandled : g_hFWD_CTerrorPlayer_StartUseAction_Post);
+	Call_PushCell(action);
+	Call_PushCell(pThis);
+	Call_PushCell(target);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
 int g_iCBaseBackpackItem_StartAction;
 bool g_bBlock_CBaseBackpackItem_StartAction;
 MRESReturn DTR_CBaseBackpackItem_StartAction(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_BackpackItem_StartAction"
 {
 	//PrintToServer("##### DTR_CBaseBackpackItem_StartAction");
+	g_bBlock_CBaseBackpackItem_StartAction = false;
 	g_iCBaseBackpackItem_StartAction = -1;
 
 	if( !IsValidEntity(pThis) ) return MRES_Ignored;
@@ -4553,8 +4608,6 @@ MRESReturn DTR_CBaseBackpackItem_StartAction(int pThis, DHookReturn hReturn, DHo
 		}
 	}
 
-	g_bBlock_CBaseBackpackItem_StartAction = false;
-
 	return MRES_Ignored;
 }
 
@@ -4581,6 +4634,8 @@ bool g_bBlock_CFirstAidKit_StartHealing;
 MRESReturn DTR_CFirstAidKit_StartHealing_NIX(DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
 {
 	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_NIX");
+	g_bBlock_CFirstAidKit_StartHealing = false;
+
 	int pThis = hParams.Get(1);
 	if( !IsValidEntity(pThis) ) return MRES_Ignored;
 
@@ -4601,8 +4656,6 @@ MRESReturn DTR_CFirstAidKit_StartHealing_NIX(DHookParam hParams) // Forward "L4D
 			return MRES_Supercede;
 		}
 	}
-
-	g_bBlock_CFirstAidKit_StartHealing = false;
 
 	return MRES_Ignored;
 }
@@ -4629,6 +4682,8 @@ MRESReturn DTR_CFirstAidKit_StartHealing_Post_NIX(DHookParam hParams) // Forward
 MRESReturn DTR_CFirstAidKit_StartHealing_WIN(int pThis, DHookParam hParams) // Forward "L4D1_FirstAidKit_StartHealing"
 {
 	//PrintToServer("##### DTR_CFirstAidKit_StartHealing_WIN");
+	g_bBlock_CFirstAidKit_StartHealing = false;
+
 	if( !IsValidEntity(pThis) ) return MRES_Ignored;
 
 	int client = GetEntPropEnt(pThis, Prop_Send, "m_hOwner");
@@ -4648,8 +4703,6 @@ MRESReturn DTR_CFirstAidKit_StartHealing_WIN(int pThis, DHookParam hParams) // F
 			return MRES_Supercede;
 		}
 	}
-
-	g_bBlock_CFirstAidKit_StartHealing = false;
 
 	return MRES_Ignored;
 }

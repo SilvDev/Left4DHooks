@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.143"
-#define PLUGIN_VERLONG		1143
+#define PLUGIN_VERSION		"1.144"
+#define PLUGIN_VERLONG		1144
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -1096,8 +1096,7 @@ int Native_AnimHookDisable(Handle plugin, int numParams) // Native "AnimHookDisa
 	int entity;
 
 	// Loop through all anim hooks
-	int length = g_iAnimationHookedPlugins.Length;
-	for( int i = 0; i < length; i++ )
+	for( int i = g_iAnimationHookedPlugins.Length-1; i >= 0; i-- )
 	{
 		// Get hooked plugin handle
 		target = g_iAnimationHookedPlugins.Get(i, 0);
@@ -1112,8 +1111,6 @@ int Native_AnimHookDisable(Handle plugin, int numParams) // Native "AnimHookDisa
 			if( client == entity )
 			{
 				g_iAnimationHookedPlugins.Erase(i);
-				if( i > 0 ) i--;
-				length--;
 			} else {
 				keep = true;
 			}
@@ -1130,7 +1127,7 @@ int Native_AnimHookDisable(Handle plugin, int numParams) // Native "AnimHookDisa
 	}
 
 	// Remove detour, no more plugins using it
-	if( length == 0 && g_aDetoursHooked.Get(index) == 1 && g_aForceDetours.Get(g_iAnimationDetourIndex) == 1 )
+	if( g_iAnimationHookedPlugins.Length == 0 && g_aDetoursHooked.Get(index) == 1 && g_aForceDetours.Get(g_iAnimationDetourIndex) == 1 )
 	{
 		g_bAnimationRemoveHook = true;
 		RequestFrame(OnFrameRemoveDetour);

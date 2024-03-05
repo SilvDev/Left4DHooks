@@ -1200,7 +1200,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/Mutant_Tanks
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CFirstAidKit::StartHealing(CFirstAidKit::HealTargetType)
 			 *
 			 * Note: Detouring as a pre-hook for changing "first_aid_kit_use_duration" per player before healing starts.
@@ -1226,19 +1226,6 @@
 						{
 							"type"		"int"
 							"register"	"edx"
-						}
-					}
-				}
-				"mac"
-				{
-					"callconv"	"thiscall"
-					"return"	"void"
-					"this"		"entity"
-					"arguments"
-					{
-						"targetType"
-						{
-							"type"		"int"
 						}
 					}
 				}
@@ -2056,7 +2043,6 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer13FindUseEntityEffPb"
-				"mac"		"@_ZN13CTerrorPlayer13FindUseEntityEffPb"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xB8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xD9\x2A\xD9\x2A\x2A\x53"
 				/* ? ? ? ? ? ? B8 ? ? ? ? E8 ? ? ? ? D9 ? D9 ? ? 53 */
 			}
@@ -2130,6 +2116,25 @@
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x81\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x57"
 				/* 55 8B ? 83 ? ? 81 ? ? ? ? ? 53 55 56 8B ? 80 ? ? ? ? ? ? 57 */
 				/* Search: "unsticking %s from %.1f %.1f %.1f to %.1f %.1f %.1f\n" */
+			}
+
+			/**
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
+			 * CBaseTrigger::IsTouching(CBaseEntity *)
+			 *
+			 * How to find on Windows:
+			 * 1. Search for the "PlayerOutsideCheckpoint" string.
+			 * 2. The string can only be found in "InfoChangelevel::OnCheckpointDoorClosed".
+			 * 3. Click on the first function call in "InfoChangelevel::OnCheckpointDoorClosed".
+			 * 4. Click on the last function call in that function.
+			 * 5. This function should be the second function call in that function.
+			 **/
+			"CBaseTrigger::IsTouching"
+			{
+				"library"	"server"
+				"linux"		"@_ZN12CBaseTrigger10IsTouchingEP11CBaseEntity"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\xFF\x2A\x8B\x2A\x89\x2A\x2A\x2A\xEB\x2A\xC7\x44\x2A\x2A\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x2A\x51\x8D\x8E"
+				/* ? ? ? ? ? ? ? 85 ? 74 ? 8B ? 8B ? ? FF ? 8B ? 89 ? ? ? EB ? C7 44 ? ? ? ? ? ? 8D ? ? ? 51 8D 8E */
 			}
 
 			/*
@@ -2354,7 +2359,6 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
-				"mac"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x8B\x9C\x2A\x2A\x2A\x2A\x2A\x0F"
 						/* ? ? ? ? ? ? 53 8B 9C ? ? ? ? ? 0F */
 			}
@@ -2896,6 +2900,21 @@
 				/* ? ? ? ? ? ? 81 EC ? ? ? ? 53 56 8B F1 8B 06 8B 90 ? ? ? ? 57 FF D2 84 C0 */
 			}
 
+			/*
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
+			* CTerrorPlayer::StopBeingRevived(bool)
+			*
+			* 1. Search for the "Player.StopVoice" string.
+			* 2. One of the functions that references that string should be this function.
+			*/
+			"CTerrorPlayer::StopBeingRevived"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer16StopBeingRevivedEb"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x6A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x85\x2A\x2A\x2A\x2A\x83\x2A\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B\x15\x2A\x2A\x2A\x2A\x8B\x2A\x81\xE1\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x8D\x2A\x2A\x2A\x85\x2A\x0F\x84\x2A\x2A\x2A\x2A\xC1\x2A\x2A\x39\x2A\x2A\x0F\x85\x2A\x2A\x2A\x2A\x8B\x2A\x85\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\xD9\x2A\x51\x8B\x2A\xD9\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x8B\x90\x2A\x2A\x2A\x2A\x6A\x2A\x6A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x8B\x90\x2A\x2A\x2A\x2A\x6A\x2A\x6A\x2A\x8B\x2A\xFF\x2A\x8B\x0D\x2A\x2A\x2A\x2A\x8D\x2A\x2A\x85\x2A\x8D\xBE"
+				/* ? ? ? ? ? ? ? ? 6A ? 8B ? E8 ? ? ? ? 8B 85 ? ? ? ? 83 ? ? 0F 84 ? ? ? ? 8B 15 ? ? ? ? 8B ? 81 E1 ? ? ? ? C1 ? ? 8D ? ? ? 85 ? 0F 84 ? ? ? ? C1 ? ? 39 ? ? 0F 85 ? ? ? ? 8B ? 85 ? 0F 84 ? ? ? ? 8B ? E8 ? ? ? ? 85 ? 74 ? D9 ? 51 8B ? D9 ? ? E8 ? ? ? ? 8B ? E8 ? ? ? ? 8B ? ? 8B 90 ? ? ? ? 6A ? 6A ? 8B ? FF ? 8B ? 8B 90 ? ? ? ? 6A ? 6A ? 8B ? FF ? 8B 0D ? ? ? ? 8D ? ? 85 ? 8D BE */
+			}
+
 			// Search: "ledge_hang"
 			"CTerrorPlayer::OnRevived"
 			{
@@ -3044,7 +3063,7 @@
 			}
 
 			/**
-			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/Mutant_Tanks
+			 * Thanks to "Psyk0tik" from: https://github.com/Psykotikism/L4D1-2_Signatures
 			 * CFirstAidKit::StartHealing(CFirstAidKit::HealTargetType)
 			 *
 			 * Note: Used for detouring the function.
@@ -3057,7 +3076,6 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE.part.43"
-				"mac"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8D\xB1\x2A\x2A\x2A\x2A\x57\x89"
 						/* ? ? ? ? ? ? ? ? 53 55 56 8D B1 ? ? ? ? 57 89 */
 			}

@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.143"
+#define PLUGIN_VERSION		"1.144"
 
 /*=======================================================================================
 	Plugin Info:
@@ -352,6 +352,11 @@ Action sm_l4dd(int client, int args)
 		Uncomment the things you want to test. All disabled by default.
 		Must test individual sections on their own otherwise you'll receive errors about symbols already defined..
 	*/
+
+
+
+	// L4D_StopBeingRevived(client);
+	// PrintToChatAll("L4D_IsInLastCheckpoint: %d", L4D_IsInLastCheckpoint(client));
 
 
 
@@ -4701,7 +4706,7 @@ public void L4D1_FirstAidKit_StartHealing_Post(int client, int entity)
 		int target = GetEntPropEnt(client, Prop_Send, "m_healTarget"); // Target is only valid in post hook
 		if( target == -1 ) target = 0;
 
-		ForwardCalled("\"L4D2_BackpackItem_StartAction_Post\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
+		ForwardCalled("\"L4D1_FirstAidKit_StartHealing_Post\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
 	}
 
 	// Reset healing duration:
@@ -4718,6 +4723,62 @@ public void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity)
 		called++;
 
 		ForwardCalled("\"L4D1_FirstAidKit_StartHealing_PostHandled\" %d (%N) - MedKit = %d", client, client, entity);
+	}
+}
+
+public Action L4D2_OnStartUseAction(any action, int client, int target)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		if( action == L4D2UseAction_DeployIncendiary || action == L4D2UseAction_DeployExplosive )
+		{
+			target = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+		}
+
+		ForwardCalled("\"L4D2_OnStartUseAction\" %d (%N) - Target: %d. Action: %d", client, client, target, action);
+	}
+
+	// WORKS - Block action
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnStartUseAction_Post(any action, int client, int target)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		if( action == L4D2UseAction_DeployIncendiary || action == L4D2UseAction_DeployExplosive )
+		{
+			target = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+		}
+
+		ForwardCalled("\"L4D2_OnStartUseAction_Post\" %d (%N) - Target: %d. Action: %d", client, client, target, action);
+	}
+}
+
+public void L4D2_OnStartUseAction_PostHandled(any action, int client, int target)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		if( action == L4D2UseAction_DeployIncendiary || action == L4D2UseAction_DeployExplosive )
+		{
+			target = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+		}
+
+		ForwardCalled("\"L4D2_OnStartUseAction_PostHandled\" %d (%N) - Target: %d. Action: %d", client, client, target, action);
 	}
 }
 

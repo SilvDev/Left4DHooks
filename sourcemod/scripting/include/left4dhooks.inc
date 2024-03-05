@@ -61,13 +61,13 @@
 
 
 // Natives: 272 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 70 [silvers - mine!] + 4 [anim] = 169
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 114 [silvers - mine!] + 4 [anim] = 269
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 72 [silvers - mine!] + 4 [anim] = 171
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 116 [silvers - mine!] + 4 [anim] = 271
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
-// Forwards: 217 (including 5 for L4D1 only)
+// Forwards: 220 (including 5 for L4D1 only)
 // L4D1 = 146
-// L4D2 = 212
+// L4D2 = 215
 
 // Stocks: 169 (L4D1 = 114, L4D2 = 167)
 // left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
@@ -115,6 +115,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetRandomPZSpawnPosition");
 	MarkNativeAsOptional("L4D_GetNearestNavArea");
 	MarkNativeAsOptional("L4D_GetLastKnownArea");
+	MarkNativeAsOptional("L4D_IsTouchingTrigger");
 	MarkNativeAsOptional("L4D2_GetFurthestSurvivorFlow");
 	MarkNativeAsOptional("L4D2_GetFirstSpawnClass");
 	MarkNativeAsOptional("L4D2_SetFirstSpawnClass");
@@ -373,6 +374,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_ForceSmokerVictim");
 	MarkNativeAsOptional("L4D2_ForceJockeyVictim");
 	MarkNativeAsOptional("L4D_CreateRescuableSurvivors");
+	MarkNativeAsOptional("L4D_StopBeingRevived");
 	MarkNativeAsOptional("L4D_ReviveSurvivor");
 	MarkNativeAsOptional("L4D_GetHighestFlowSurvivor");
 	MarkNativeAsOptional("L4D_GetInfectedFlowDistance");
@@ -3864,6 +3866,7 @@ forward Action L4D1_FirstAidKit_StartHealing(int client, int entity);
  * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes
  * @note: This does not change the animation speed
  * @note: To find the use entity that is being targeted, use the native: "L4D_FindUseEntity"
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
@@ -3880,6 +3883,7 @@ forward void L4D1_FirstAidKit_StartHealing_Post(int client, int entity);
  * @note: Detouring as a post-hook for changing "first_aid_heal_percent" back to default value after healing finishes
  * @note: This does not change the animation speed
  * @note: To find the use entity that is being targeted, use the native: "L4D_FindUseEntity"
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the client performing the action
  * @param entity			the medkit entity they are using
@@ -3890,6 +3894,48 @@ forward void L4D1_FirstAidKit_StartHealing_Post(int client, int entity);
 forward void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity);
 
 /**
+ * @brief Called whenever CTerrorPlayer::StartUseAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ *
+ * @param action			the type of action being performed (can use the "L4D2UseAction" enum from "left4dhooks_stocks.inc" include file)
+ * @param client			the client performing the action
+ * @param target			the target they are affecting/using
+ *
+ * @return					Plugin_Handled to block action, Plugin_Continue otherwise
+ */
+// L4D2 only
+forward Action L4D2_OnStartUseAction(any action, int client, int target);
+
+/**
+ * @brief Called whenever CTerrorPlayer::StartUseAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ * @remarks The target entity will appear as the client when deploying upgrade packs.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param action			the type of action being performed (can use the "L4D2UseAction" enum from "left4dhooks_stocks.inc" include file)
+ * @param client			the client performing the action
+ * @param target			the target they are affecting/using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_OnStartUseAction_Post(any action, int client, int target);
+
+/**
+ * @brief Called whenever CTerrorPlayer::StartUseAction() is invoked
+ * @remarks Called when a player is holding an item and about to use it
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param action			the type of action being performed (can use the "L4D2UseAction" enum from "left4dhooks_stocks.inc" include file)
+ * @param client			the client performing the action
+ * @param target			the target they are affecting/using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_OnStartUseAction_PostHandled(any action, int client, int target);
+
+/**
  * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
  * @remarks Called when a player is holding an item and about to use it
  * @note: This does not change the animation speed
@@ -3904,7 +3950,7 @@ forward void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity);
  * @note: To find the use entity that is being targeted, use the native: "L4D_FindUseEntity"
  *
  * @param client			the client performing the action
- * @param entity			the medkit entity they are using
+ * @param entity			the entity they are using
  * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file
  *
  * @return					Plugin_Handled to block healing, Plugin_Continue otherwise
@@ -3915,6 +3961,7 @@ forward Action L4D2_BackpackItem_StartAction(int client, int entity, any type);
 /**
  * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
  * @remarks Called when a player is holding an item and about to use it
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  * @note: This does not change the animation speed
  * @note: Detouring as a pre-hook for changing the following per player before starting any actions:
  * - "first_aid_kit_use_duration"
@@ -3927,7 +3974,7 @@ forward Action L4D2_BackpackItem_StartAction(int client, int entity, any type);
  * @note: To find the use entity that is being targeted, use the native: "L4D_FindUseEntity"
  *
  * @param client			the client performing the action
- * @param entity			the medkit entity they are using
+ * @param entity			the entity they are using
  * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file
  *
  * @noreturn
@@ -3938,6 +3985,7 @@ forward void L4D2_BackpackItem_StartAction_Post(int client, int entity, any type
 /**
  * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
  * @remarks Called when a player is holding an item and about to use it
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  * @note: This does not change the animation speed
  * @note: Detouring as a pre-hook for changing the following per player before starting any actions:
  * - "first_aid_kit_use_duration"
@@ -3950,7 +3998,7 @@ forward void L4D2_BackpackItem_StartAction_Post(int client, int entity, any type
  * @note: To find the use entity that is being targeted, use the native: "L4D_FindUseEntity"
  *
  * @param client			the client performing the action
- * @param entity			the medkit entity they are using
+ * @param entity			the entity they are using
  * @param type				the weapon type ID. Can be found as L4D2WeaponId in the left4dhooks_stocks include file
  *
  * @noreturn
@@ -4480,6 +4528,16 @@ native any L4D_GetNearestNavArea(const float vecPos[3], float maxDist = 300.0, b
 native any L4D_GetLastKnownArea(int client);
 
 /**
+ * @brief Returns if an entity is touching a trigger
+ *
+ * @param trigger			The trigger entity to test (for example info_changelevel)
+ * @param entity			The entity to test whether it's inside the trigger area
+ *
+ * @return					True if inside, false otherwise
+ */
+native bool L4D_IsTouchingTrigger(int trigger, int entity);
+
+/**
  * @brief Gets the first Special Infected type the Director will spawn. Value set on map start
  * @remarks zombieClass: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
  *
@@ -4580,10 +4638,11 @@ native bool L4D_IsInFirstCheckpoint(int client);
 
 /**
  * @brief Returns true when the specified Survivor or Special Infected is in the ending checkpoint area
+ * @remarks This uses the "info_changelevel" entity, and checks the player is within the vector mins and vector maxs of the entity
  *
  * @param client	Client id to check their checkpoint
  *
- * @return			True if a survivor is in the ending checkpoint area. False otherwise
+ * @return			True if the player is in the ending checkpoint area. False otherwise
  */
 native bool L4D_IsInLastCheckpoint(int client);
 
@@ -7041,6 +7100,16 @@ native void L4D_Smoker_ReleaseVictim(int victim, int attacker);
  * @noreturn
  */
 native void L4D_CreateRescuableSurvivors();
+
+/**
+ * @brief Stops reviving an incapacitated survivor, also from ledge hanging
+ *
+ * @param client			Client ID of the person to affect
+ * @param vocalize			Vocalize the player stopping
+ *
+ * @noreturn
+ */
+native void L4D_StopBeingRevived(int client, bool vocalize = false);
 
 /**
  * @brief Revives an incapacitated survivor, also from ledge hanging
