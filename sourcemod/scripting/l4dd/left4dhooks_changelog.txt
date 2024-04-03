@@ -1,3 +1,15 @@
+1.145 (03-Apr-2024)
+	- Changed natives "L4D_IsPositionInFirstCheckpoint" and "L4D_IsPositionInLastCheckpoint" to scan for the nearest visible NavArea to prevent finding those outside saferooms, and accurately return true.
+	- Fixed target filters that match specific Survivors not working for multiples of the same characters in L4D1. Thanks to "HarryPotter" for reporting.
+	- Fixed native "L4D_IsCoopMode" in L4D2 reporting true for Realism mode. Thanks to "HarryPotter" for reporting.
+	- Really fixed forward "L4D2_OnChooseVictim_Pre" throwing errors in L4D1 (for some reason the changes in gamedata did not carry over to release version).
+
+	- Updated: Plugin plugin.
+	- Updated: "/gamedata/l4dd/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_targetfilters.sp" project file.
+
 1.144 (05-Mar-2024)
 	- Added forwards: "L4D2_OnStartUseAction", "L4D2_OnStartUseAction_Post" and "L4D2_OnStartUseAction_PostHandled" to trigger on actions, see "L4D2UseAction" enum from "left4dhooks_stocks.inc" include file. Requested by "Machine".
 	- Added native "L4D_IsTouchingTrigger" to detect if an entity is touching a trigger.
@@ -5,15 +17,6 @@
 	- Fixed native "L4D_IsInLastCheckpoint" to check if a player is within the "info_changelevel" area of the last checkpoint. Thanks to "Shadowysn" for help pointing out some information to make it work accurately.
 	- Fixed native "AnimHookDisable" not completely working under some circumstances. Thanks to "Forgetest" for finding and fixing.
 	- Fixed forward "L4D2_OnChooseVictim_Pre" throwing errors in L4D1.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/gamedata/l4dd/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/l4dd/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 
 1.143 (25-Jan-2024)
 	- Added examples for the "L4D_PipeBomb_Detonate*" forwards to the test plugin for differentiating PipeBomb and breakable prop (propane tank, oxygen tank etc) explosions.

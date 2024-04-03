@@ -1411,7 +1411,7 @@ int Native_IsPositionInLastCheckpoint(Handle plugin, int numParams) // Native "L
 
 bool IsPositionInSaferoom(float vecPos[3], bool bStartSaferoom)
 {
-	Address nav = L4D_GetNearestNavArea(vecPos, 1000.0, _, _, true);
+	Address nav = L4D_GetNearestNavArea(vecPos, 1000.0, true, true, false);
 	if( nav != Address_Null )
 	{
 		int spawnAttributes = GetTerrorNavArea_Attributes(nav);

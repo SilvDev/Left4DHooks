@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.144"
-#define PLUGIN_VERLONG		1144
+#define PLUGIN_VERSION		"1.145"
+#define PLUGIN_VERLONG		1145
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -887,6 +887,21 @@ int Native_CTerrorGameRules_IsGenericCooperativeMode(Handle plugin, int numParam
 
 int Native_Internal_IsCoopMode(Handle plugin, int numParams) // Native "L4D_IsCoopMode"
 {
+	if( g_iCurrentMode == GAMEMODE_COOP && g_bLeft4Dead2 )
+	{
+		if( !g_bMapStarted )
+		{
+			ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_TOO_EARLY, "L4D_IsCoopMode");
+			return false;
+		}
+
+		ValidateAddress(g_pGameRules, "g_pGameRules");
+		ValidateNatives(g_hSDK_CTerrorGameRules_IsRealismMode, "CTerrorGameRules::IsRealismMode");
+
+		//PrintToServer("#### CALL g_hSDK_CTerrorGameRules_IsRealismMode");
+		return SDKCall(g_hSDK_CTerrorGameRules_IsRealismMode, g_pGameRules) == false;
+	}
+
 	return g_iCurrentMode == GAMEMODE_COOP;
 }
 
