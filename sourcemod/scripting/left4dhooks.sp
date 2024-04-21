@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.145"
-#define PLUGIN_VERLONG		1145
+#define PLUGIN_VERSION		"1.146"
+#define PLUGIN_VERLONG		1146
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -962,6 +962,8 @@ public void OnMapEnd()
 	// Reset hooks - Clear causes memory leaks, delete and re-create
 	// g_iAnimationHookedClients.Clear();
 	// g_iAnimationHookedPlugins.Clear();
+	delete g_iAnimationHookedClients;
+	delete g_iAnimationHookedPlugins;
 	g_iAnimationHookedClients = new ArrayList();
 	g_iAnimationHookedPlugins = new ArrayList(2);
 

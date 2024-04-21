@@ -3722,7 +3722,7 @@ MRESReturn DTR_SurvivorBot_FindScavengeItem_Post(int pThis, DHookReturn hReturn,
 
 MRESReturn DTR_BossZombiePlayerBot_ChooseVictim_Pre(int client, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnChooseVictim_Pre"
 {
-	//PrintToServer("##### DTR_BossZombiePlayerBot_ChooseVictim_Pre")
+	//PrintToServer("##### DTR_BossZombiePlayerBot_ChooseVictim_Pre");
 	int target;
 	if( !hParams.IsNull(1) )
 		target = hParams.Get(1);

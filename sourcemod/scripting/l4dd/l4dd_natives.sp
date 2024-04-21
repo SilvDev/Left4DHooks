@@ -317,7 +317,8 @@ int Native_WriteMemoryString(Handle plugin, int numParams) // Native "L4D_WriteM
 	int addy = GetNativeCell(1);
 
 	int maxlength;
-	GetNativeStringLength(2, maxlength) + 1;
+	GetNativeStringLength(2, maxlength);
+	maxlength += 1;
 	char[] buffer = new char[maxlength];
 
 	GetNativeString(2, buffer, maxlength);
@@ -954,7 +955,11 @@ int Native_CEntityDissolve_Create(Handle plugin, int numParams) // Native "L4D_D
 
 	//PrintToServer("#### CALL g_hSDK_CEntityDissolve_Create");
 	int dissolver = SDKCall(g_hSDK_CEntityDissolve_Create, entity, "", GetGameTime() + 0.8, 2, false);
-	SetEntPropFloat(dissolver, Prop_Send, "m_flFadeOutStart", 0.0); // Fixes broken particles
+	if( dissolver != -1 )
+	{
+		SetEntPropFloat(dissolver, Prop_Send, "m_flFadeOutStart", 0.0); // Fixes broken particles
+	}
+
 	return dissolver;
 }
 
@@ -1678,20 +1683,23 @@ int Native_CTankRock_Create(Handle plugin, int numParams) // Native "L4D_TankRoc
 
 	// Create rock
 	int entity = CreateEntityByName("env_rock_launcher");
-	TeleportEntity(entity, vPos, vAng, vVel);
-	DispatchSpawn(entity);
+	if( entity != -1 )
+	{
+		TeleportEntity(entity, vPos, vAng, vVel);
+		DispatchSpawn(entity);
 
-	// Watch for "tank_rock" entity index and to set owner
-	g_iTankRockEntity = 0;
-	g_iTankRockOwner = client > 0 && client <= MaxClients ? client : -1;
-	AcceptEntityInput(entity, "LaunchRock");
-	g_iTankRockOwner = 0;
+		// Watch for "tank_rock" entity index and to set owner
+		g_iTankRockEntity = 0;
+		g_iTankRockOwner = client > 0 && client <= MaxClients ? client : -1;
+		AcceptEntityInput(entity, "LaunchRock");
+		g_iTankRockOwner = 0;
 
-	// Delete and return rock index
-	RemoveEntity(entity);
+		// Delete and return rock index
+		RemoveEntity(entity);
 
-	entity = g_iTankRockEntity;
-	g_iTankRockEntity = 0;
+		entity = g_iTankRockEntity;
+		g_iTankRockEntity = 0;
+	}
 
 	return entity;
 }
@@ -1775,19 +1783,22 @@ int Native_CPipeBombProjectile_Create(Handle plugin, int numParams) // Native "L
 void CreatePipeParticle(int target, int type)
 {
 	int entity = CreateEntityByName("info_particle_system");
-	if( type == 0 )	DispatchKeyValue(entity, "effect_name", PARTICLE_FUSE);
-	else			DispatchKeyValue(entity, "effect_name", PARTICLE_LIGHT);
+	if( entity != -1 )
+	{
+		if( type == 0 )	DispatchKeyValue(entity, "effect_name", PARTICLE_FUSE);
+		else			DispatchKeyValue(entity, "effect_name", PARTICLE_LIGHT);
 
-	DispatchSpawn(entity);
-	ActivateEntity(entity);
-	AcceptEntityInput(entity, "Start");
+		DispatchSpawn(entity);
+		ActivateEntity(entity);
+		AcceptEntityInput(entity, "Start");
 
-	SetVariantString("!activator");
-	AcceptEntityInput(entity, "SetParent", target);
+		SetVariantString("!activator");
+		AcceptEntityInput(entity, "SetParent", target);
 
-	if( type == 0 )	SetVariantString("fuse");
-	else			SetVariantString("pipebomb_light");
-	AcceptEntityInput(entity, "SetParentAttachment", target);
+		if( type == 0 )	SetVariantString("fuse");
+		else			SetVariantString("pipebomb_light");
+		AcceptEntityInput(entity, "SetParentAttachment", target);
+	}
 }
 
 int Native_CMolotovProjectile_Create(Handle plugin, int numParams) // Native "L4D_MolotovPrj"

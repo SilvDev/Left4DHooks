@@ -4443,7 +4443,7 @@ native void L4D_StopMusic(int client, const char[] music_str, float one_float = 
  *
  * @param entity	The entity to dissolve
  *
- * @return			Entity index of the dissolver, which should automatically delete itself when the effect is done
+ * @return			Entity index of the dissolver, which should automatically delete itself when the effect is done, or -1 on failure
  */
 native int L4D_Dissolve(int entity);
 
@@ -4648,6 +4648,8 @@ native bool L4D_IsInLastCheckpoint(int client);
 
 /**
  * @brief Returns true when a given vector is within the starting checkpoint area
+ * @remarks This might return false on certain maps when the NavArea has the wrong flags to indicate that's within the safe area, please report if that happens
+ * @remarks This requires line-of-sight from the vector position to the ground/NavArea to identify
  *
  * @param vecPos	Vector position to check
  *
@@ -4787,7 +4789,7 @@ native void L4D_DetonateProjectile(int entity);
  * @param vecAng		Vector direction of the projectile
  * @param vecVel		Vector velocity of the projectile
  *
- * @return				Entity index of the projectile
+ * @return				Entity index of the projectile or -1 on failure
  */
 native int L4D_TankRockPrj(int client, const float vecPos[3], const float vecAng[3], const float vecVel[3] = NULL_VECTOR);
 

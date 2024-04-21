@@ -1,14 +1,17 @@
+1.146 (21-Apr-2024)
+	- Fixed a memory leak. Thanks to "HarryPotter" for reporting.
+	- Fixed native "L4D_WriteMemoryString" buffer length. Thanks to "HarryPotter" for reporting.
+	- Changed natives "L4D_Dissolve" and "L4D_TankRockPrj" to return -1 if the entity failed to be created. Thanks to "ReCreator" for reporting.
+
+	- Updated: Plugin.
+	- Updated: "/scripting/include/left4dhooks.inc" include file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+
 1.145 (03-Apr-2024)
 	- Changed natives "L4D_IsPositionInFirstCheckpoint" and "L4D_IsPositionInLastCheckpoint" to scan for the nearest visible NavArea to prevent finding those outside saferooms, and accurately return true.
 	- Fixed target filters that match specific Survivors not working for multiples of the same characters in L4D1. Thanks to "HarryPotter" for reporting.
 	- Fixed native "L4D_IsCoopMode" in L4D2 reporting true for Realism mode. Thanks to "HarryPotter" for reporting.
 	- Really fixed forward "L4D2_OnChooseVictim_Pre" throwing errors in L4D1 (for some reason the changes in gamedata did not carry over to release version).
-
-	- Updated: Plugin plugin.
-	- Updated: "/gamedata/l4dd/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_targetfilters.sp" project file.
 
 1.144 (05-Mar-2024)
 	- Added forwards: "L4D2_OnStartUseAction", "L4D2_OnStartUseAction_Post" and "L4D2_OnStartUseAction_PostHandled" to trigger on actions, see "L4D2UseAction" enum from "left4dhooks_stocks.inc" include file. Requested by "Machine".
