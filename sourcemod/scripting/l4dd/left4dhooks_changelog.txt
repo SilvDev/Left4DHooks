@@ -1,13 +1,15 @@
+1.148 (05-May-2024)
+	- Update to fix GameData changes on Linux due to the recent update in L4D1. Thanks to "Forgetest" for fixing.
+	- Removed excess "functions" from the L4D1 temporary gamedata file, which were intended only for L4D2.
+
+	- Updated: Plugin.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+
 1.147 (30-Apr-2024)
 	- Fixed the "L4D_CancelStagger" not working on Special Infected (hackish fix, the SDKCall does not appear to work). Thanks to "Forgetest" for a solution.
 	- Changed "left4dhooks_silver.inc" include file to include the main "left4dhooks.inc" include, required by some functions. Thanks to "Forgetest" for reporting.
 	- Moved bool block variables within the forwards to the top, preventing wrongly firing the "*PostHandled" forwards, in case of any error before being set to false.
-
-	- Updated: Plugin.
-	- Updated: "/scripting/include/left4dhooks.inc" include file.
-	- Updated: "/scripting/include/left4dhooks_silver.inc" include file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 
 1.146 (21-Apr-2024)
 	- Fixed a memory leak from the Animation hooks system. Thanks to "HarryPotter" for reporting.
