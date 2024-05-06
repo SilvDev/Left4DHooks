@@ -74,10 +74,6 @@
 					"pThis"
 					{
 						"type"		"cbaseentity"
-						"linux"
-						{
-							"register"	"eax"
-						}
 						"windows"
 						{
 							"register"	"ecx"
@@ -86,17 +82,10 @@
 					"vec"
 					{
 						"type"		"vectorptr"
-						"linux"
-						{
-							"register"	"edx"
-						}
 					}
-					"windows"
+					"ang"
 					{
-						"ang"
-						{
-							"type"		"vectorptr"
-						}
+						"type"		"vectorptr"
 					}
 					"vec2"
 					{
@@ -1505,7 +1494,7 @@
 			"CTerrorPlayer::CanBecomeGhost::Offset"
 			{
 				"windows"	"1460"
-				"linux"		"1644"
+				"linux"		"2111"
 			}
 			"CTerrorPlayer::CanBecomeGhost::Bytes"
 			{
@@ -2112,7 +2101,7 @@
 			"CTerrorPlayer::WarpToValidPositionIfStuck"
 			{
 				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer26WarpToValidPositionIfStuckEv.part.204"
+				"linux"		"@_ZN13CTerrorPlayer26WarpToValidPositionIfStuckEv"
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x81\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x57"
 				/* 55 8B ? 83 ? ? 81 ? ? ? ? ? 53 55 56 8B ? 80 ? ? ? ? ? ? 57 */
 				/* Search: "unsticking %s from %.1f %.1f %.1f to %.1f %.1f %.1f\n" */
@@ -2241,7 +2230,7 @@
 			"NavAreaTravelDistance"
 			{
 				"library"	"server"
-				"linux"		"@_Z21NavAreaTravelDistanceI16ShortestPathCostEfRK6VectorS3_RT_.constprop.127"
+				"linux"		"@_Z21NavAreaTravelDistanceI16ShortestPathCostEfRK6VectorS3_RT_"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x83\x2A\x2A\x53\x8B"
 				/* ? ? ? ? ? ? D9 05 ? ? ? ? 83 ? ? 53 8B */
 			}
@@ -2337,7 +2326,7 @@
 			"CTankRock::OnRelease"
 			{
 				"library"	"server"
-				"linux"		"@_ZN9CTankRock9OnReleaseERK6VectorRK6QAngleS2_S2_.constprop.121"
+				"linux"		"@_ZN9CTankRock9OnReleaseERK6VectorRK6QAngleS2_S2_"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xC7\x86\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x57"
 						/* ? ? ? ? ? ? ? ? ? ? ? C7 86 ? ? ? ? ? ? ? ? E8 ? ? ? ? 8B ? ? ? 57 */
 			}
@@ -2974,7 +2963,7 @@
 			"CTerrorPlayer::OnShovedBySurvivor_Clone"
 			{
 				"library"	"server"
-				"linux" 	"@_ZN13CTerrorPlayer18OnShovedBySurvivorEPS_RK6Vector.part.824.constprop.1109"
+				"linux" 	"@_ZN13CTerrorPlayer18OnShovedBySurvivorEPS_RK6Vector.part.591"
 			}
 
 			/*
@@ -3075,7 +3064,7 @@
 			"CFirstAidKit::StartHealing"
 			{
 				"library"	"server"
-				"linux"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE.part.43"
+				"linux"		"@_ZN12CFirstAidKit12StartHealingENS_14HealTargetTypeE.part.38"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8D\xB1\x2A\x2A\x2A\x2A\x57\x89"
 						/* ? ? ? ? ? ? ? ? 53 55 56 8D B1 ? ? ? ? 57 89 */
 			}
