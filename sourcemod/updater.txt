@@ -4,8 +4,8 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.148"
-			"Previous"	"1.147"
+			"Latest"	"1.149"
+			"Previous"	"1.148"
 		}
 
 		"Notes"	"Full changelog @ https://forums.alliedmods.net/showthread.php?t=321696"
