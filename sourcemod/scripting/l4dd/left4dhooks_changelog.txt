@@ -1,3 +1,10 @@
+1.150 (06-May-2024)
+	- L4D1 Linux: Removed some unused clone functions that were removed from the game update. Thanks to "Ja-Forces" and "Forgetest" for reporting.
+
+	- Updated: Plugin.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+
 1.149 (06-May-2024)
 	- Repackage of the last update to include the GameData changes, which it did not.
 

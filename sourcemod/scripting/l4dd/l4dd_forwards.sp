@@ -393,15 +393,9 @@ void SetupDetours(GameData hGameData = null)
 
 	if( !g_bLeft4Dead2 && g_bLinuxOS )
 	{
-		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot");
-		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot_Post",				true);
-		CreateDetour(hGameData,		DTR_CDirector_TryOfferingTankBot_Clone,						DTR_CDirector_TryOfferingTankBot_Clone_Post,				"L4DD::CDirector::TryOfferingTankBot_Clone",						"L4D_OnTryOfferingTankBot_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor_Post",					true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnShovedBySurvivor_Clone,					DTR_CTerrorPlayer_OnShovedBySurvivor_Clone_Post,			"L4DD::CTerrorPlayer::OnShovedBySurvivor_Clone",					"L4D_OnShovedBySurvivor_PostHandled",			true);
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						DTR_CTerrorPlayer_OnStaggered_Clone_Post,					"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger");
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						DTR_CTerrorPlayer_OnStaggered_Clone_Post,					"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger_Post",							true);
-		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStaggered_Clone,						DTR_CTerrorPlayer_OnStaggered_Clone_Post,					"L4DD::CTerrorPlayer::OnStaggered_Clone",							"L4D2_OnStagger_PostHandled",					true);
 	}
 
 	CreateDetour(hGameData,			DTR_CTerrorWeapon_OnHit,									DTR_CTerrorWeapon_OnHit_Post,								"L4DD::CTerrorWeapon::OnHit",										"L4D2_OnEntityShoved");
@@ -2232,65 +2226,6 @@ MRESReturn DTR_CDirector_TryOfferingTankBot_Post(DHookReturn hReturn, DHookParam
 	return MRES_Ignored;
 }
 
-MRESReturn DTR_CDirector_TryOfferingTankBot_Clone(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnTryOfferingTankBot"
-{
-	//PrintToServer("##### DTR_CDirector_TryOfferingTankBot_Clone");
-	g_bBlock_CDirector_TryOfferingTankBot = false;
-
-	int a1 = -1, a2;
-
-	if( !hParams.IsNull(2) )
-		a1 = hParams.Get(2);
-
-	if( a1 == 0 ) return MRES_Ignored;
-
-	a2 = hParams.Get(3);
-
-	Action aResult = Plugin_Continue;
-	Call_StartForward(g_hFWD_CDirector_TryOfferingTankBot);
-	Call_PushCell(a1);
-	Call_PushCellRef(a2);
-	Call_Finish(aResult);
-
-	if( aResult == Plugin_Handled )
-	{
-		g_bBlock_CDirector_TryOfferingTankBot = true;
-
-		hReturn.Value = -1;
-		return MRES_Supercede;
-	}
-
-	// UNKNOWN - PROBABLY WORKING
-	if( aResult == Plugin_Changed )
-	{
-		hParams.Set(3, a2);
-
-		return MRES_ChangedOverride;
-	}
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CDirector_TryOfferingTankBot_Clone_Post(DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnTryOfferingTankBot_Post" and "L4D_OnTryOfferingTankBot_PostHandled"
-{
-	//PrintToServer("##### DTR_CDirector_TryOfferingTankBot_Clone_Post");
-	int a1 = -1, a2;
-
-	if( !hParams.IsNull(2) )
-		a1 = hParams.Get(2);
-
-	if( a1 == 0 ) return MRES_Ignored;
-
-	a2 = hParams.Get(3);
-
-	Call_StartForward(g_bBlock_CDirector_TryOfferingTankBot ? g_hFWD_CDirector_TryOfferingTankBot_PostHandled : g_hFWD_CDirector_TryOfferingTankBot_Post);
-	Call_PushCell(a1);
-	Call_PushCell(a2);
-	Call_Finish();
-
-	return MRES_Ignored;
-}
-
 bool g_bBlock_CThrow_ActivateAbililty;
 MRESReturn DTR_CThrow_ActivateAbililty(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnCThrowActivate"
 {
@@ -2758,52 +2693,6 @@ MRESReturn DTR_CTerrorPlayer_OnStaggered_Post(int pThis, DHookParam hParams) // 
 
 	Call_StartForward(g_bBlock_CTerrorPlayer_OnStaggered ? g_hFWD_CTerrorPlayer_OnStaggered_PostHandled : g_hFWD_CTerrorPlayer_OnStaggered_Post);
 	Call_PushCell(pThis);
-	Call_PushCell(source);
-	Call_Finish();
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CTerrorPlayer_OnStaggered_Clone(DHookParam hParams) // Forward "L4D2_OnStagger"
-{
-	//PrintToServer("##### DTR_CTerrorPlayer_OnStaggered_Clone");
-	int target = hParams.Get(1);
-
-	int source = -1;
-
-	if( !hParams.IsNull(2) )
-		source = hParams.Get(2);
-
-	Action aResult = Plugin_Continue;
-	Call_StartForward(g_hFWD_CTerrorPlayer_OnStaggered);
-	Call_PushCell(target);
-	Call_PushCell(source);
-	Call_Finish(aResult);
-
-	if( aResult == Plugin_Handled )
-	{
-		g_bBlock_CTerrorPlayer_OnStaggered = true;
-
-		return MRES_Supercede;
-	}
-
-	g_bBlock_CTerrorPlayer_OnStaggered = false;
-
-	return MRES_Ignored;
-}
-
-MRESReturn DTR_CTerrorPlayer_OnStaggered_Clone_Post(DHookParam hParams) // Forward "L4D2_OnStagger_Post" and "L4D2_OnStagger_PostHandled"
-{
-	//PrintToServer("##### DTR_CTerrorPlayer_OnStaggered_Clone_Post");
-	int target = hParams.Get(1);
-
-	int source = -1;
-
-	if( !hParams.IsNull(2) )
-		source = hParams.Get(2);
-
-	Call_StartForward(g_bBlock_CTerrorPlayer_OnStaggered ? g_hFWD_CTerrorPlayer_OnStaggered_PostHandled : g_hFWD_CTerrorPlayer_OnStaggered_Post);
-	Call_PushCell(target);
 	Call_PushCell(source);
 	Call_Finish();
 

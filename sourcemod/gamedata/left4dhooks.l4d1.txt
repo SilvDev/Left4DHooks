@@ -647,38 +647,6 @@
 				}
 			}
 
-			// Only using this for Linux.
-			"L4DD::CDirector::TryOfferingTankBot_Clone"
-			{
-				"signature"		"CDirector::TryOfferingTankBot_Clone"
-				"callconv"		"cdecl"
-				"return"		"int"
-				"this"			"ignore"
-				"arguments"
-				{
-					"a1"
-					{
-						"type"	"objectptr"
-						"linux"
-						{
-							"register"	"eax"
-						}
-					}
-					"a2"
-					{
-						"type"	"cbaseentity"
-						"linux"
-						{
-							"register"	"edx"
-						}
-					}
-					"a3"
-					{
-						"type"	"bool"
-					}
-				}
-			}
-
 			"L4DD::CThrow::ActivateAbililty"
 			{
 				"signature"		"CThrow::ActivateAbililty"
@@ -812,31 +780,6 @@
 						"type"	"cbaseentity"
 					}
 					"a2"
-					{
-						"type"	"vectorptr"
-					}
-				}
-			}
-
-			"L4DD::CTerrorPlayer::OnStaggered_Clone"
-			{
-				"signature"		"CTerrorPlayer::OnStaggered_Clone"
-				"callconv"		"cdecl"
-				"return"		"void"
-				"this"			"ignore"
-				"arguments"
-				{
-					"a1"
-					{
-						"type"	"cbaseentity"
-						"register" "eax"
-					}
-					"a2"
-					{
-						"type"	"cbaseentity"
-						"register" "edx"
-					}
-					"a3"
 					{
 						"type"	"vectorptr"
 					}
@@ -2800,17 +2743,6 @@
 			}
 
 			/*
-			 * CDirector::TryOfferingTankBot(void) [clone]
-			 * unique string "Tank offer: Starting the lottery\n"
-			 * Only using this for Linux.
-			 */
-			"CDirector::TryOfferingTankBot_Clone"
-			{
-				"library"	"server"
-				"linux"		"@_ZN8Director18TryOfferingTankBotEP11CBaseEntityb.part.203"
-			}
-
-			/*
 			 * CThrow::ActivateAbililty()
 			 *		Start a tank rock throw
 			 *
@@ -2923,15 +2855,6 @@
 				"windows"	"\x83\x2A\x2A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x0F\x85\x2A\x2A\x2A\x2A\x8B\x2A\x8B"
 				/* 83 ? ? ? 8B ? E8 ? ? ? ? 84 ? 0F 85 ? ? ? ? 8B ? 8B */
 				/* Search: "Player.Shoved" */
-			}
-
-			/*
-			 * CTerrorPlayer::OnStaggered(CBaseEntity *, Vector const) [clone]
-			 */
-			"CTerrorPlayer::OnStaggered_Clone"
-			{
-				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer11OnStaggeredEP11CBaseEntityPK6Vector.part.712"
 			}
 
 			/*
