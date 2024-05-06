@@ -1,3 +1,6 @@
+1.149 (06-May-2024)
+	- Repackage of the last update to include the GameData changes, which it did not.
+
 1.148 (05-May-2024)
 	- Update to fix GameData changes on Linux due to the recent update in L4D1. Thanks to "Forgetest" for fixing.
 	- Removed excess "functions" from the L4D1 temporary gamedata file, which were intended only for L4D2.
