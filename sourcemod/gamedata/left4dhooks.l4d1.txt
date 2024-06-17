@@ -437,6 +437,21 @@
 				}
 			}
 
+			"L4DD::CDirector::OnFinishIntro"
+			{
+				"signature"		"CDirector::OnFinishIntro"
+				"callconv"		"thiscall"
+				"return"		"bool"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"bool"
+					}
+				}
+			}
+
 			"L4DD::CDirector::IsTeamFull"
 			{
 				"signature"		"CDirector::IsTeamFull"
@@ -1524,7 +1539,17 @@
 				"windows"	"1652"
 				"linux"		"1648"
 			}
+			"m_bInIntro"
+			{
+				"windows"	"642"
+				"linux"		"642"
+			}
 			"m_bFirstSurvivorLeftStartArea" // Found just before the call to "Director::OnFirstSurvivorLeftSafeArea"
+			{
+				"windows"	"360"
+				"linux"		"356"
+			}
+			"m_bFirstSurvivorLeftStartArea" // Found in "CTerrorGameRules::SetInIntro"
 			{
 				"windows"	"360"
 				"linux"		"356"
@@ -2545,6 +2570,18 @@
 				"linux"		"@_ZN13CTerrorPlayer17OnEnterGhostStateEv"
 				"windows"	"\x55\x56\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x8D\x2A\x2A\x2A\x2A\x2A\x57"
 				/* 55 56 8B ? 8B ? ? ? ? ? 8B ? ? 8D ? ? ? ? ? 57 */
+			}
+
+			/*
+			 * Director::OnFinishIntro(Director *this)
+			 */
+			"CDirector::OnFinishIntro"
+			{
+				"library"		"server"
+				"linux"			"@_ZN8Director13OnFinishIntroEv"
+				"windows"		"\x51\xA1\x2A\x2A\x2A\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\xC6\x2A\x2A\x2A\x2A\x2A\x2A\x75\x2A\x8D"
+				/* 51 A1 ? ? ? ? 80 ? ? ? ? ? ? C6 ? ? ? ? ? ? 75 ? 8D */
+				/* Search "hostfile" for "CTerrorPlayer::ShowHostDetails" - The string appears twice in this function. Xref to function that calls this, xref again for target function. */
 			}
 
 			/*
