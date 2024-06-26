@@ -209,6 +209,18 @@ stock L4DTeam L4D_GetClientTeam(int client)
 }
 
 /**
+ * Changes the client's team using L4DTeam.
+ *
+ * @param client		Player's index.
+ * @return				New L4DTeam of player.
+ * @error				Invalid client index.
+ */
+stock void L4D_ChangeClientTeam(int client, L4DTeam team)
+{
+	ChangeClientTeam(client, view_as<int>(team));
+}
+
+/**
  * Returns zombie player L4D1 zombie class.
  *
  * @param client		Player's index.
