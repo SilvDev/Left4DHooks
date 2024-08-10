@@ -2116,7 +2116,17 @@ void LoadGameData()
 		g_pScriptedEventManager = hGameData.GetOffset("ScriptedEventManagerPtr");
 		ValidateOffset(g_pScriptedEventManager, "ScriptedEventManagerPtr");
 
+		g_pItemManager = hGameData.GetOffset("ItemManagerPtr");
+		ValidateOffset(g_pItemManager, "ItemManagerPtr");
 
+		g_pMusicBanks = hGameData.GetOffset("MusicBanksPtr");
+		ValidateOffset(g_pMusicBanks, "MusicBanksPtr");
+
+		g_pSessionManager = hGameData.GetOffset("SessionManagerPtr");
+		ValidateOffset(g_pSessionManager, "SessionManagerPtr");
+
+		g_pChallengeMode = hGameData.GetOffset("ChallengeModePtr");
+		ValidateOffset(g_pChallengeMode, "ChallengeModePtr");
 
 		// DisableAddons
 		g_pVanillaModeAddress = hGameData.GetAddress("VanillaModeAddress");
@@ -2143,7 +2153,12 @@ void LoadGameData()
 		PrintToServer("Ptr Offsets:");
 		PrintToServer("%12d == VersusModePtr", g_pVersusMode);
 		PrintToServer("%12d == ScavengeModePtr", g_pScavengeMode);
+		PrintToServer("%12d == SurvivalModePtr", g_pSurvivalMode);
 		PrintToServer("%12d == ScriptedEventManagerPtr", g_pScriptedEventManager);
+		PrintToServer("%12d == ItemManagerPtr", g_pItemManager);
+		PrintToServer("%12d == MusicBanksPtr", g_pMusicBanks);
+		PrintToServer("%12d == SessionManagerPtr", g_pSessionManager);
+		PrintToServer("%12d == ChallengeModePtr", g_pChallengeMode);
 		PrintToServer("%12d == VanillaModeAddress", g_pVanillaModeAddress);
 		PrintToServer("%12d == VanillaModeOffset (Win=0, Nix=4)", g_iOff_VanillaModeOffset);
 	// } else {
@@ -2197,8 +2212,20 @@ void LoadGameData()
 		g_pScavengeMode =					LoadFromAddress(g_pDirector + view_as<Address>(g_pScavengeMode), NumberType_Int32);
 		ValidateAddress(g_pScavengeMode, "ScavengeModePtr", true);
 
-		g_pSurvivalMode = LoadFromAddress(g_pDirector + view_as<Address>(g_pSurvivalMode), NumberType_Int32);
+		g_pSurvivalMode = 					LoadFromAddress(g_pDirector + view_as<Address>(g_pSurvivalMode), NumberType_Int32);
 		ValidateAddress(g_pSurvivalMode, "g_pSurvivalMode", true);
+
+		g_pItemManager = 					LoadFromAddress(g_pDirector + view_as<Address>(g_pItemManager), NumberType_Int32);
+		ValidateAddress(g_pItemManager, "ItemManagerPtr", true);
+
+		g_pMusicBanks = 					LoadFromAddress(g_pDirector + view_as<Address>(g_pMusicBanks), NumberType_Int32);
+		ValidateAddress(g_pMusicBanks, "MusicBanksPtr", true);
+
+		g_pSessionManager = 				LoadFromAddress(g_pDirector + view_as<Address>(g_pSessionManager), NumberType_Int32);
+		ValidateAddress(g_pSessionManager, "SessionManagerPtr", true);
+
+		g_pChallengeMode = 					LoadFromAddress(g_pDirector + view_as<Address>(g_pChallengeMode), NumberType_Int32);
+		ValidateAddress(g_pChallengeMode, "ChallengeModePtr", true);
 	} else {
 		// L4D1: g_pDirector is also g_pVersusMode.
 		g_pVersusMode = view_as<int>(g_pDirector);
@@ -2226,6 +2253,11 @@ void LoadGameData()
 		PrintToServer("%12d == ScriptedEventManagerPtr", g_pScriptedEventManager);
 		PrintToServer("%12d == VersusModePtr", g_pVersusMode);
 		PrintToServer("%12d == g_pScavengeMode", g_pScavengeMode);
+		PrintToServer("%12d == SurvivalModePtr", g_pSurvivalMode);
+		PrintToServer("%12d == ItemManagerPtr", g_pItemManager);
+		PrintToServer("%12d == MusicBanksPtr", g_pMusicBanks);
+		PrintToServer("%12d == SessionManagerPtr", g_pSessionManager);
+		PrintToServer("%12d == ChallengeModePtr", g_pChallengeMode);
 	}
 	PrintToServer("");
 	#endif

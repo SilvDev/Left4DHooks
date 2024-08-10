@@ -544,7 +544,11 @@ enum PointerType
 	POINTER_THENAVAREAS		= 12,	// @TheNavAreas
 	POINTER_MISSIONINFO		= 13,	// MissionInfo pointer
 	POINTER_SURVIVALMODE	= 14,	// pSurvivalMode pointer (assuming this is the same as pVersusMode in L4D1 and also TheDirector)
-	POINTER_AMMODEF			= 15	// ammoDef Pointer
+	POINTER_AMMODEF			= 15,	// ammoDef Pointer
+	POINTER_ITEMMANAGER		= 16,	// pItemManager (L4D2 Only)
+	POINTER_MUSICBANKS		= 17,	// pMusicBanks (L4D2 Only)
+	POINTER_SESSIONMANAGER	= 18,	// pSessionManager (L4D2 Only)
+	POINTER_CHALLENGEMODE	= 19	// pChallengeMode (L4D2 Only) (mutation modes only)
 };
 
 // Provided by "BHaType":

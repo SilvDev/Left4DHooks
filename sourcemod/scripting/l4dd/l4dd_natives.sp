@@ -284,6 +284,10 @@ any Native_GetPointer(Handle plugin, int numParams) // Native "L4D_GetPointer"
 		case POINTER_MISSIONINFO:		return SDKCall(g_hSDK_CTerrorGameRules_GetMissionInfo);
 		case POINTER_SURVIVALMODE:		return g_pSurvivalMode;
 		case POINTER_AMMODEF:			return g_pAmmoDef;
+		case POINTER_ITEMMANAGER:		return g_pItemManager;
+		case POINTER_MUSICBANKS:		return g_pMusicBanks;
+		case POINTER_SESSIONMANAGER:	return g_pSessionManager;
+		case POINTER_CHALLENGEMODE:		return g_pChallengeMode;
 	}
 
 	return 0;

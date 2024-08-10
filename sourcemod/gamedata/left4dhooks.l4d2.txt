@@ -2146,10 +2146,34 @@
 				"linux"		"1600"
 			}
 
+			"ChallengeModePtr"
+			{
+				"windows"	"1608"
+				"linux"		"1608"
+			}
+
 			"ScriptedEventManagerPtr"
 			{
 				"windows"	"1592"
 				"linux"		"1592"
+			}
+
+			"ItemManagerPtr"
+			{
+				"linux"			"1580"
+				"windows"		"1580"
+			}
+
+			"MusicBanksPtr"
+			{
+				"linux"			"1584"
+				"windows"		"1584"
+			}
+
+			"SessionManagerPtr"
+			{
+				"windows"		"1588"
+				"linux"			"1588"
 			}
 
 			"CSquirrelVM::GetValue"
