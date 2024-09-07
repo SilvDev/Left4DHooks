@@ -1519,6 +1519,11 @@
 				"windows"	"1816"
 				"linux"		"1812"
 			}
+			"m_iCampaignScores2"
+			{
+				"windows"	"852" // + 8
+				"linux"		"844" // + 4?
+			}
 			"VersusMaxCompletionScore" // Found via "m_iVersusMapScoreMax" string
 			{
 				"windows"	"952"
@@ -1843,7 +1848,7 @@
 			}
 
 			/*
-			*  CTerrorPlayer::OnITExpired(void)
+			* CTerrorPlayer::OnITExpired(void)
 			*/
 			"CTerrorPlayer::OnITExpired"
 			{
@@ -1890,8 +1895,8 @@
 			}
 
 			/*
-			*  CPipeBombProjectile::Create(Vector  const&, QAngle  const&, Vector  const&, Vector  const&, CBaseCombatCharacter *, float)
-			*  Search: "BEEP_CONTEXT"
+			* CPipeBombProjectile::Create(Vector  const&, QAngle  const&, Vector  const&, Vector  const&, CBaseCombatCharacter *, float)
+			* Search: "BEEP_CONTEXT"
 			*/
 			"CPipeBombProjectile::Create"
 			{
@@ -1902,8 +1907,8 @@
 			}
 
 			/*
-			*  CMolotovProjectile::Create(int, int, int, int, CBaseEntity *)
-			*  Search: "Molotov projectile spawned at %f %f %f"
+			* CMolotovProjectile::Create(int, int, int, int, CBaseEntity *)
+			* Search: "Molotov projectile spawned at %f %f %f"
 			*/
 			"CMolotovProjectile::Create"
 			{
@@ -1919,8 +1924,8 @@
 			}
 
 			/*
-			*  CPipeBombProjectile::Detonate(CPipeBombProjectile *this)
-			*  Search: "weapon_pipebomb_dirt"
+			* CPipeBombProjectile::Detonate(CPipeBombProjectile *this)
+			* Search: "weapon_pipebomb_dirt"
 			*/
 			"CPipeBombProjectile::Detonate"
 			{
@@ -1931,8 +1936,8 @@
 			}
 
 			/*
-			*  CMolotovProjectile::Detonate(CMolotovProjectile *this)
-			*  Search: "hegrenade_detonate" - the function that contains "Molotov.Loop"
+			* CMolotovProjectile::Detonate(CMolotovProjectile *this)
+			* Search: "hegrenade_detonate" - the function that contains "Molotov.Loop"
 			*/
 			"CMolotovProjectile::Detonate"
 			{
@@ -2005,7 +2010,7 @@
 			}
 
 			/*
-			*  Director::ForceVersusStart(Director *this)
+			* Director::ForceVersusStart(Director *this)
 			*/
 			// Naming after L4D2 function:
 			"Script_ForceVersusStart"
@@ -2018,7 +2023,7 @@
 			}
 
 			/*
-			*  Director::OnHoldoutStarted(Director::HoldoutTriggerType)
+			* Director::OnHoldoutStarted(Director::HoldoutTriggerType)
 			*/
 			// Naming after L4D2 function:
 			"Script_ForceSurvivalStart"
@@ -2031,7 +2036,7 @@
 			}
 
 			/*
-			*  ZombieManager::GetRandomPZSpawnPosition(ZombieManager *_ZombieManager, int zombieClass, int attempts, int a4, int a5)
+			* ZombieManager::GetRandomPZSpawnPosition(ZombieManager *_ZombieManager, int zombieClass, int attempts, int a4, int a5)
 			*/
 			"ZombieManager::GetRandomPZSpawnPosition"
 			{
@@ -2043,7 +2048,7 @@
 			}
 
 			/*
-			*  CNavMesh::GetNearestNavArea(CNavMesh *this, const Vector *, bool, float, bool, bool, bool)
+			* CNavMesh::GetNearestNavArea(CNavMesh *this, const Vector *, bool, float, bool, bool, bool)
 			*/
 			"CNavMesh::GetNearestNavArea"
 			{
@@ -2055,7 +2060,7 @@
 			}
 
 			/*
-			*  TerrorNavArea::FindRandomSpot(TerrorNavArea *this)
+			* TerrorNavArea::FindRandomSpot(TerrorNavArea *this)
 			*/
 			"TerrorNavArea::FindRandomSpot"
 			{
@@ -2095,7 +2100,7 @@
 			}
 
 			/*
-			*  Director::HasAnySurvivorLeftSafeArea(void)
+			* Director::HasAnySurvivorLeftSafeArea(void)
 			*/
 			"CDirector::HasAnySurvivorLeftSafeArea"
 			{
@@ -2107,7 +2112,7 @@
 			}
 
 			/*
-			*  Director::IsAnySurvivorInStartArea(void)const
+			* Director::IsAnySurvivorInStartArea(void)const
 			*/
 			"CDirector::IsAnySurvivorInStartArea"
 			{
@@ -2119,7 +2124,7 @@
 			}
 
 			/*
-			*  TerrorNavMesh::GetInitialCheckpoint(TerrorNavMesh *this)
+			* TerrorNavMesh::GetInitialCheckpoint(TerrorNavMesh *this)
 			*/
 			"TerrorNavMesh::GetInitialCheckpoint"
 			{
@@ -2131,7 +2136,7 @@
 			}
 
 			/*
-			*  Checkpoint::ContainsArea(TerrorNavArea *)const
+			* Checkpoint::ContainsArea(TerrorNavArea *)const
 			*/
 			"Checkpoint::ContainsArea"
 			{
@@ -2143,7 +2148,7 @@
 			}
 
 			/*
-			*  TerrorNavMesh::GetLastCheckpoint(TerrorNavMesh *this)
+			* TerrorNavMesh::GetLastCheckpoint(TerrorNavMesh *this)
 			*/
 			"TerrorNavMesh::GetLastCheckpoint"
 			{
@@ -2155,7 +2160,7 @@
 			}
 
 			/*
-			*  Director::IsAnySurvivorInExitCheckpoint(void)const
+			* Director::IsAnySurvivorInExitCheckpoint(void)const
 			*/
 			"CDirector::IsAnySurvivorInExitCheckpoint"
 			{
@@ -2360,7 +2365,7 @@
 			}
 
 			/**
-			 *  Witch::SetHarasser(Witch *this, CBaseEntity *)
+			 * Witch::SetHarasser(Witch *this, CBaseEntity *)
 			 **/
 			"Witch::SetHarasser"
 			{
@@ -2637,7 +2642,7 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules17SetCampaignScoresEii"
-				"windows" "\x56\x8D\x44\x2A\x2A\x8D\xB1\x2A\x2A\x2A\x2A\x50\x6A\x00\x8B\xCE\xE8\x2A\x2A\x2A\x2A\x8D\x4C\x2A\x2A\x51\x6A\x01\x8B\xCE\xE8\x2A\x2A\x2A\x2A\x5E\xC2\x08\x00"
+				"windows"	"\x56\x8D\x44\x2A\x2A\x8D\xB1\x2A\x2A\x2A\x2A\x50\x6A\x00\x8B\xCE\xE8\x2A\x2A\x2A\x2A\x8D\x4C\x2A\x2A\x51\x6A\x01\x8B\xCE\xE8\x2A\x2A\x2A\x2A\x5E\xC2\x08\x00"
 				/* 56 8D 44 ? ? 8D B1 ? ? ? ? 50 6A 00 8B CE E8 ? ? ? ? 8D 4C ? ? 51 6A 01 8B CE E8 ? ? ? ? 5E C2 08 00 */
 			}
 
@@ -2895,7 +2900,7 @@
 			}
 
 			/*
-			 *  CTerrorWeapon::OnSwingStart(CTerrorWeapon *this)
+			 * CTerrorWeapon::OnSwingStart(CTerrorWeapon *this)
 			 */
 			"CTerrorWeapon::OnSwingStart"
 			{
@@ -3297,7 +3302,7 @@
 			// l4d2addresses.txt
 			// ====================================================================================================
 			/*
-			 *  CTerrorPlayer::OnVomitedUpon(CTerrorPlayer *this)
+			 * CTerrorPlayer::OnVomitedUpon(CTerrorPlayer *this)
 			 */
 			"CTerrorPlayer::OnVomitedUpon"
 			{
