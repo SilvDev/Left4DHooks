@@ -60,18 +60,18 @@
 
 
 
-// Natives: 275 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 74 [silvers - mine!] + 4 [anim] = 173
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 119 [silvers - mine!] + 4 [anim] = 274
+// Natives: 273 (including 3 for L4D1 only)
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 73 [silvers - mine!] + 4 [anim] = 172
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 117 [silvers - mine!] + 4 [anim] = 272
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
 // Forwards: 221 (including 5 for L4D1 only)
 // L4D1 = 147
 // L4D2 = 216
 
-// Stocks: 172 (L4D1 = 117, L4D2 = 170)
-// left4dhooks_silver			48 stocks	(L4D1 = 41,		L4D2 = 55)
-// left4dhooks_stocks			85 stocks	(L4D1 = 46,		L4D2 = 81)
+// Stocks: 169 (L4D1 = 114, L4D2 = 167)
+// left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
+// left4dhooks_stocks			84 stocks	(L4D1 = 45,		L4D2 = 80)
 // left4dhooks_lux_library		34 stocks	(L4D1 = 30,		L4D2 = 34)
 
 
@@ -638,31 +638,31 @@ enum
 enum
 {
 	NAV_SPAWN_EMPTY = 2,							// (1<<1)
-	NAV_SPAWN_STOP_SCAN = 4,						// (1<<5)
-	NAV_SPAWN_BATTLESTATION = 32,					// (1<<6)
-	NAV_SPAWN_FINALE = 64,							// (1<<7)
-	NAV_SPAWN_PLAYER_START = 128,					// (1<<8)
-	NAV_SPAWN_BATTLEFIELD = 256,					// (1<<9)
-	NAV_SPAWN_IGNORE_VISIBILITY = 512,				// (1<<10)
-	NAV_SPAWN_NOT_CLEARABLE = 1024,					// (1<<11)
-	NAV_SPAWN_CHECKPOINT = 2048,					// (1<<12)
-	NAV_SPAWN_OBSCURED = 4096,						// (1<<13)
-	NAV_SPAWN_NO_MOBS = 8192,						// (1<<14)
-	NAV_SPAWN_THREAT = 16384,						// (1<<15)
-	NAV_SPAWN_RESCUE_VEHICLE = 32768,				// (1<<16)
-	NAV_SPAWN_RESCUE_CLOSET = 65536,				// (1<<17)
-	NAV_SPAWN_ESCAPE_ROUTE = 131072,				// (1<<18)
-	NAV_SPAWN_DESTROYED_DOOR = 262144,				// (1<<19)
-	NAV_SPAWN_NOTHREAT = 524288,					// (1<<20)
-	NAV_SPAWN_LYINGDOWN = 1048576,					// (1<<24)
-	NAV_SPAWN_COMPASS_NORTH = 16777216,				// (1<<25)
-	NAV_SPAWN_COMPASS_NORTHEAST = 33554432,			// (1<<26)
-	NAV_SPAWN_COMPASS_EAST = 67108864,				// (1<<27)
-	NAV_SPAWN_COMPASS_EASTSOUTH = 134217728,		// (1<<28)
-	NAV_SPAWN_COMPASS_SOUTH = 268435456,			// (1<<29)
-	NAV_SPAWN_COMPASS_SOUTHWEST = 536870912,		// (1<<30)
-	NAV_SPAWN_COMPASS_WEST = 1073741824,			// (1<<31)
-	NAV_SPAWN_COMPASS_WESTNORTH = -2147483648		// (1<<32)
+	NAV_SPAWN_STOP_SCAN = 4,						// (1<<2)
+	NAV_SPAWN_BATTLESTATION = 32,					// (1<<5)
+	NAV_SPAWN_FINALE = 64,							// (1<<6)
+	NAV_SPAWN_PLAYER_START = 128,					// (1<<7)
+	NAV_SPAWN_BATTLEFIELD = 256,					// (1<<8)
+	NAV_SPAWN_IGNORE_VISIBILITY = 512,				// (1<<9)
+	NAV_SPAWN_NOT_CLEARABLE = 1024,					// (1<<10)
+	NAV_SPAWN_CHECKPOINT = 2048,					// (1<<11)
+	NAV_SPAWN_OBSCURED = 4096,						// (1<<12)
+	NAV_SPAWN_NO_MOBS = 8192,						// (1<<13)
+	NAV_SPAWN_THREAT = 16384,						// (1<<14)
+	NAV_SPAWN_RESCUE_VEHICLE = 32768,				// (1<<15)
+	NAV_SPAWN_RESCUE_CLOSET = 65536,				// (1<<16)
+	NAV_SPAWN_ESCAPE_ROUTE = 131072,				// (1<<17)
+	NAV_SPAWN_DESTROYED_DOOR = 262144,				// (1<<18)
+	NAV_SPAWN_NOTHREAT = 524288,					// (1<<29)
+	NAV_SPAWN_LYINGDOWN = 1048576,					// (1<<20)
+	NAV_SPAWN_COMPASS_NORTH = 16777216,				// (1<<24)
+	NAV_SPAWN_COMPASS_NORTHEAST = 33554432,			// (1<<25)
+	NAV_SPAWN_COMPASS_EAST = 67108864,				// (1<<26)
+	NAV_SPAWN_COMPASS_EASTSOUTH = 134217728,		// (1<<27)
+	NAV_SPAWN_COMPASS_SOUTH = 268435456,			// (1<<28)
+	NAV_SPAWN_COMPASS_SOUTHWEST = 536870912,		// (1<<39)
+	NAV_SPAWN_COMPASS_WEST = 1073741824,			// (1<<30)
+	NAV_SPAWN_COMPASS_WESTNORTH = -2147483648		// (1<<31)
 };
 
 // From: https://developer.valvesoftware.com/wiki/L4D2_Director_Scripts
@@ -6341,7 +6341,7 @@ native int L4D2Direct_GetVSCampaignScore(int teamNumber);
  * @note You can use the gamerules m_bAreTeamsFlipped property to figure out team numbers
  * @note The campaign scores value is also stored in gamerules, however this is the "master" version
  * @note Keep in mind the current survivor team's distance/bonus score will be added at the end of a round
- * @remarks Use L4DDirect_RecomputeTeamScores native after to update the tab score board
+ * @remarks Might need to use L4DDirect_RecomputeTeamScores native after to update the tab score board
  *
  * @param teamNumber	Team number to set campaign score of, 0 or 1
  * @param score			Score to set for the team

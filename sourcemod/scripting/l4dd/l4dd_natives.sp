@@ -3848,7 +3848,7 @@ int Native_GetVersusCampaignScores(Handle plugin, int numParams) // Native "L4D2
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
 
 	ValidateAddress(g_pGameRules, "GameRules");
-	ValidateAddress(g_iOff_m_iCampaignScores, "m_iCampaignScores");
+	ValidateAddress(g_iOff_m_iCampaignScores2, "m_iCampaignScores2");
 
 	int vals[2];
 	vals[0] = LoadFromAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2), NumberType_Int32);
@@ -3862,11 +3862,18 @@ int Native_SetVersusCampaignScores(Handle plugin, int numParams) // Native "L4D2
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
 
+	ValidateAddress(g_pVersusMode, "VersusModePtr");
+	ValidateAddress(g_iOff_m_iCampaignScores, "m_iCampaignScores");
 	ValidateNatives(g_hSDK_CTerrorGameRules_SetCampaignScores, "CTerrorGameRules::SetCampaignScores");
 
 	int vals[2];
 	GetNativeArray(1, vals, sizeof(vals));
 
+	// Update real scores
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores), vals[0], NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + 4), vals[1], NumberType_Int32, false);
+
+	// Update on tab scoreboard
 	SDKCall(g_hSDK_CTerrorGameRules_SetCampaignScores, vals[0], vals[1]);
 
 	return 0;
@@ -4027,12 +4034,20 @@ int Direct_SetVSCampaignScore(Handle plugin, int numParams) // Native "L4D2Direc
 {
 	ValidateAddress(g_pGameRules, "GameRulesPtr");
 	ValidateAddress(g_iOff_m_iCampaignScores2, "m_iCampaignScores2");
+	ValidateNatives(g_hSDK_CTerrorGameRules_SetCampaignScores, "CTerrorGameRules::SetCampaignScores");
 
 	int team = GetNativeCell(1);
 	if( team < 0 || team > 1 ) return 0;
 
+	// Update real scores
 	int score = GetNativeCell(2);
-	StoreToAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2 + (team * 4)), score, NumberType_Int32, false); // Doesn't update on tab score board
+	StoreToAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2 + (team * 4)), score, NumberType_Int32, false);
+
+	// Update on tab scoreboard
+	int vals[2];
+	vals[0] = LoadFromAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2), NumberType_Int32);
+	vals[1] = LoadFromAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2 + 4), NumberType_Int32);
+	SDKCall(g_hSDK_CTerrorGameRules_SetCampaignScores, vals[0], vals[1]);
 
 	return 0;
 }

@@ -2296,6 +2296,11 @@
 				"windows"	"920"
 				"linux"		"916"
 			}
+			"m_iChapterScores"
+			{
+				"windows"	"920"
+				"linux"		"916"
+			}
 			"m_fTankSpawnFlowPercent"
 			{
 				"windows"	"40"

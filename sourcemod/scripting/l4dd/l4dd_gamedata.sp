@@ -1009,7 +1009,7 @@ void LoadGameData()
 		g_hSDK_CTDefibPlayer = EndPrepSDKCall();
 		
 		if( g_hSDK_CTDefibPlayer == null )
-		{ 
+		{
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::OnRevivedByDefibrillator\" (%s)", g_sSystem);
 		}
 
