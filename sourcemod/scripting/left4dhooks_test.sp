@@ -1763,6 +1763,9 @@ Action sm_l4dd(int client, int args)
 
 	PrintToServer("L4D_HasPlayerControlledZombies %d",					L4D_HasPlayerControlledZombies()); // WORKS
 
+	// WORKS when pinned by dominators
+	PrintToServer("L4D2_GetSpecialInfectedDominatingMe %d",				L4D2_GetSpecialInfectedDominatingMe(client));
+
 
 	// WORKS
 	// L4D2_UseAdrenaline(client, 15.0, false);
@@ -4105,6 +4108,18 @@ public void L4D2_OnStartCarryingVictim_Post(int victim, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_OnStartCarryingVictim_Post\" %d (%N) grabbing %d (%N)", attacker, attacker, victim, victim);
+	}
+}
+
+public void L4D2_OnDominatedBySpecialInfected(int victim, int dominator)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnDominatedBySpecialInfected\" %d (%N) dominating %d (%N)", dominator, dominator, victim, victim);
 	}
 }
 

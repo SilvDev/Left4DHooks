@@ -184,6 +184,7 @@ GlobalForward g_hFWD_CTerrorPlayer_OnLeptOnSurvivor_PostHandled;
 GlobalForward g_hFWD_CTerrorPlayer_OnStartCarryingVictim;
 GlobalForward g_hFWD_CTerrorPlayer_OnStartCarryingVictim_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnStartCarryingVictim_PostHandled;
+GlobalForward g_hFWD_CTerrorPlayer_OnDominatedBySpecialInfected;
 GlobalForward g_hFWD_CCharge_ImpactStagger;
 GlobalForward g_hFWD_CInsectSwarm_CanHarm;
 GlobalForward g_hFWD_CInsectSwarm_CanHarm_Post;
@@ -510,6 +511,7 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim");
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim_Post",				true);
 		CreateDetour(hGameData,		DTR_CTerrorPlayer_OnStartCarryingVictim,					DTR_CTerrorPlayer_OnStartCarryingVictim_Post,				"L4DD::CTerrorPlayer::OnStartCarryingVictim",						"L4D2_OnStartCarryingVictim_PostHandled",		true);
+		CreateDetour(hGameData,		INVALID_FUNCTION,											DTR_CTerrorPlayer_IsDominatedBySpecialInfected,				"L4DD::CTerrorPlayer::IsDominatedBySpecialInfected",				"L4D2_OnDominatedBySpecialInfected");
 		CreateDetour(hGameData,		DTR_CCharge_ImpactStagger,									INVALID_FUNCTION,											"L4DD::CCharge::ImpactStagger",										"L4D2_OnChargerImpact");
 		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled");
 		CreateDetour(hGameData,		DTR_CGasCanEvent_Killed,									DTR_CGasCanEvent_Killed_Post,								"L4DD::CGasCan::Event_Killed",										"L4D2_CGasCan_EventKilled_Post",				true);
@@ -4807,6 +4809,30 @@ MRESReturn DTR_CTerrorPlayer_OnStartCarryingVictim_Post(int pThis, DHookReturn h
 	Call_PushCell(target);
 	Call_PushCell(pThis);
 	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_IsDominatedBySpecialInfected(int pThis, DHookReturn hReturn) // Forward "L4D2_OnDominatedBySpecialInfected"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_IsDominatedBySpecialInfected");
+
+	// Is domination happened ?
+	if (hReturn.Value)
+	{
+		// this function is called literally for everyone, including infected clients. (wtf?)
+		if( GetClientTeam(pThis) != 2 ) return MRES_Ignored;
+
+		// only alive survivors. in case of some weird bugs ?
+		if( !IsPlayerAlive(pThis) ) return MRES_Ignored;
+
+		int attacker = SDKCall(g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe, pThis);
+
+		Call_StartForward(g_hFWD_CTerrorPlayer_OnDominatedBySpecialInfected);
+		Call_PushCell(pThis);
+		Call_PushCell(attacker);
+		Call_Finish();	
+	}
 
 	return MRES_Ignored;
 }

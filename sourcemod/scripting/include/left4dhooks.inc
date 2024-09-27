@@ -3299,6 +3299,20 @@ forward void L4D2_OnStartCarryingVictim_Post(int victim, int attacker);
 forward void L4D2_OnStartCarryingVictim_PostHandled(int victim, int attacker);
 
 /**
+ * @brief Called when CTerrorPlayer::IsDominatedBySpecialInfected() is invoked and returned true.
+ * @remarks Dominators are: Hunter, Smoker, Jockey, and Charger.
+ * @remarks This forward is called in frames, but instantly tells you when any domination happened. Recommend not to put too much logic in here.
+ * @remarks For Chargers, this forward is called when being carried or being pummeled. Queue pummeling will not trigger this forward.
+ * 
+ * @param victim		Client index of the victim
+ * @param dominator		Client index of the dominator
+ *
+ * @noreturn
+ **/
+// L4D2 Only.
+forward void L4D2_OnDominatedBySpecialInfected(int victim, int dominator);
+
+/**
  * @brief Called when CCharge::ImpactStagger is invoked
  * @remarks Called when a Charger impacts a wall or object after charging, but not when carrying a Survivor
  * @remarks Can be used to determine if someone is being staggered from this impact, L4D2_OnStagger should trigger in the same frame
@@ -4587,6 +4601,18 @@ native float L4D2_GetFurthestSurvivorFlow();
  * @noreturn
  */
 native void L4D_FindRandomSpot(int NavArea, float vecPos[3]);
+
+/**
+ * @brief Given a victim client index, returns the client index of the Special Infected that is dominating the victim.
+ * @remarks Returns -1 if victim index is invalid, or not a survivor, or not being dominated by a Special Infected.
+ * @remarks You can see this native as the SDKCall version of L4D2_GetInfectedAttacker().
+ * 
+ * @param victim			The client index of the victim to check.
+ * 
+ * @return 					The client index of the Special Infected that is dominating the victim.
+ */
+// L4D2 Only.
+native int L4D2_GetSpecialInfectedDominatingMe(int victim);
 
 /**
  * @brief Checks if a player is visible to a specified position. Should be slightly faster than using TR_TraceRayFilterEx
