@@ -311,6 +311,20 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::WarpToValidPositionIfStuck\" (%s)", g_sSystem);
 	}
 
+	if ( g_bLeft4Dead2 )
+	{
+		StartPrepSDKCall(SDKCall_Player);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CTerrorPlayer::GetSpecialInfectedDominatingMe") == false )
+		{
+			LogError("Failed to find signature: \"CTerrorPlayer::GetSpecialInfectedDominatingMe\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_SetReturnInfo(SDKType_CBasePlayer, SDKPass_Pointer);
+			g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe = EndPrepSDKCall();
+			if( g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe == null )
+				LogError("Failed to create SDKCall: \"CTerrorPlayer::GetSpecialInfectedDominatingMe\" (%s)", g_sSystem);
+		}
+	}
+
 	if( g_bLeft4Dead2 )
 	{
 		StartPrepSDKCall(SDKCall_Static);
