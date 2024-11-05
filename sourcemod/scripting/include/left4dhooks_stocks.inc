@@ -161,7 +161,7 @@ enum L4DResourceType
 	L4DResource_TankTickets2
 }
 
-stock static const char L4D1ZombieClassname[6][32] =
+stock const char L4D1ZombieClassname[6][32] =
 {
 	"smoker",
 	"boomer",
@@ -171,7 +171,7 @@ stock static const char L4D1ZombieClassname[6][32] =
 	"error_bad_L4D1ZombieClassType"
 };
 
-stock static const char L4D2ZombieClassname[9][32] =
+stock const char L4D2ZombieClassname[9][32] =
 {
 	"smoker",
 	"boomer",
