@@ -3357,20 +3357,6 @@ forward void L4D2_OnChargerImpact(int client);
 forward Action L4D2_OnPummelVictim(int attacker, int victim);
 
 /**
- * @brief Called when CTerrorPlayer::IsDominatedBySpecialInfected() is invoked and returned true
- * @remarks Dominators are: Hunter, Smoker, Jockey, and Charger
- * @remarks This forward is called in frames, but instantly tells you when any domination happened. Recommend not to put too much logic in here
- * @remarks For Chargers, this forward is called when being carried or being pummeled. Queue pummeling will not trigger this forward
- * 
- * @param victim		Client index of the victim
- * @param dominator		Client index of the dominator
- *
- * @noreturn
- **/
-// L4D2 Only
-forward void L4D2_OnDominatedBySpecialInfected(int victim, int dominator);
-
-/**
  * @brief Called when CTerrorPlayer::QueuePummelVictim is invoked
  * @remarks Called when a player is about to be pummelled by a Charger
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
@@ -3395,6 +3381,21 @@ forward void L4D2_OnPummelVictim_Post(int attacker, int victim);
  **/
 // L4D2 only
 forward void L4D2_OnPummelVictim_PostHandled(int attacker, int victim);
+
+/**
+ * @brief Called when CTerrorPlayer::IsDominatedBySpecialInfected() is invoked and returned true
+ * @remarks Call when a player is being dominated, called over multiple frames
+ * @remarks Dominators are: Hunter, Smoker, Jockey, and Charger
+ * @remarks This forward is called in frames, but instantly tells you when any domination happened. Recommend not to put too much logic in here
+ * @remarks For Chargers, this forward is called when being carried or being pummelled. Queue pummelling will not trigger this forward
+ * 
+ * @param victim		Client index of the victim
+ * @param dominator		Client index of the dominator
+ *
+ * @noreturn
+ **/
+// L4D2 Only
+forward void L4D2_OnDominatedBySpecialInfected(int victim, int dominator);
 
 /**
  * @brief Called whenever CTerrorPlayer::OnVomitedUpon is invoked
