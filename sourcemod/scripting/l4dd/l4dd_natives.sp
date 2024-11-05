@@ -80,6 +80,7 @@ Handle g_hSDK_CNavMesh_GetNearestNavArea;
 Handle g_hSDK_TerrorNavArea_FindRandomSpot;
 Handle g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck;
 Handle g_hSDK_IsVisibleToPlayer;
+Handle g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
 Handle g_hSDK_CBaseTrigger_IsTouching;
 // Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
@@ -1157,6 +1158,16 @@ int Native_CTerrorPlayer_WarpToValidPositionIfStuck(Handle plugin, int numParams
 	SDKCall(g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck, client);
 
 	return 0;
+}
+
+int Native_CTerrorPlayer_GetSpecialInfectedDominatingMe(Handle plugin, int numParams) // Native "L4D2_GetSpecialInfectedDominatingMe"
+{
+	ValidateNatives(g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe, "CTerrorPlayer::GetSpecialInfectedDominatingMe");
+
+	int client = GetNativeCell(1);
+
+	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe");
+	return SDKCall(g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe, client);
 }
 
 int Native_IsVisibleToPlayer(Handle plugin, int numParams) // Native "L4D2_IsVisibleToPlayer"

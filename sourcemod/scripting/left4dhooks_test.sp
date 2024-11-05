@@ -342,6 +342,7 @@ stock Action TimerCancelStagger(Handle timer, int client)
 		L4D_CancelStagger(client);
 	}
 
+	if( timer ) timer = null; // Fix SM 1.12 warnings about unused variables -_-
 	return Plugin_Continue;
 }
 
@@ -2463,6 +2464,7 @@ stock Action TimerDetonate(Handle timer, int entity)
 		L4D_DetonateProjectile(entity);
 	}
 
+	if( timer ) timer = null; // Fix SM 1.12 warnings about unused variables -_-
 	return Plugin_Continue;
 }
 
@@ -2480,10 +2482,11 @@ stock Action TimerDetonateVomitjar(Handle timer, int entity)
 		TeleportEntity(entity, vPos, NULL_VECTOR, view_as<float>({ 0.0, 0.0, -1.0}));
 	}
 
+	if( timer ) timer = null; // Fix SM 1.12 warnings about unused variables -_-
 	return Plugin_Continue;
 }
 
-void GetGroundAngles(float vOrigin[3])
+stock void GetGroundAngles(float vOrigin[3])
 {
 	float vAng[3], vLookAt[3], vTargetOrigin[3];
 
@@ -3579,6 +3582,25 @@ public Action L4D2_OnSendInRescueVehicle()
 	return Plugin_Continue;
 }
 
+public Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1])
+{
+	bool block;
+
+	for( int i = 1; i <= MaxClients; i++ )
+	{
+		if( i <= 3 ) // Players index 3 or less, for testing
+		{
+			block = true;
+			players[i] = 1; // Block player from spawning in rescue closets
+		}
+	}
+
+	// WORKS
+	if( block )
+		return Plugin_Changed;
+	return Plugin_Continue;
+}
+
 public Action L4D2_OnEndVersusModeRound(bool countSurvivors)
 {
 	static int called;
@@ -3941,6 +3963,19 @@ public Action L4D2_OnFindScavengeItem(int client, int &item)
 
 	return Plugin_Continue;
 }
+
+public void L4D2_OnDominatedBySpecialInfected(int victim, int dominator)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnDominatedBySpecialInfected\" %d (%N) dominating %d (%N)", dominator, dominator, victim, victim);
+	}
+}
+
 
 public Action L4D_OnPouncedOnSurvivor(int victim, int attacker)
 {
@@ -5811,6 +5846,7 @@ stock Action TimerOnPummelResetAnim(Handle timer, int victim) // Don't need clie
 {
 	AnimHookDisable(victim, OnPummelOnAnimPre);
 
+	if( timer ) timer = null; // Fix SM 1.12 warnings about unused variables -_-
 	return Plugin_Continue;
 }
 
@@ -6210,5 +6246,7 @@ stock bool TraceFilter(int entity, int contentsMask, int client)
 {
 	if( entity == client )
 		return false;
+
+	if( contentsMask ) contentsMask = 0; // Fix SM 1.12 warnings about unused variables -_-
 	return true;
 }

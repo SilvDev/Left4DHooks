@@ -292,6 +292,14 @@
 				}
 			}
 
+			"L4DD::CTerrorPlayer::IsDominatedBySpecialInfected"
+			{
+				"signature"		"CTerrorPlayer::IsDominatedBySpecialInfected"
+				"callconv"		"thiscall"
+				"return"		"bool"
+				"this"			"entity"
+			}
+
 			"L4DD::CTerrorPlayer::OnFalling"
 			{
 				"signature"		"CTerrorPlayer::OnFalling"
@@ -1018,6 +1026,13 @@
 						"type"	"charptr"
 					}
 				}
+			}
+
+			"L4DD::CDirector::CreateRescuableSurvivors"
+			{
+				"signature"		"L4DD::CDirector::CreateRescuableSurvivors"
+				"callconv"		"thiscall"
+				"return"		"int"
 			}
 
 			"L4DD::CDirectorVersusMode::EndVersusModeRound"
@@ -4970,6 +4985,21 @@
 				"windows"	"\x55\x8B\x2A\x51\x53\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x56\x74"
 				/* 55 8B ? 51 53 8B ? 80 ? ? ? ? ? ? 56 74 */
 				/* Search: "pounce_end */ // Found by "SilverShot".
+			}
+
+			/*
+			 * CTerrorPlayer::IsDominatedBySpecialInfected(CTerrorPlayer *)
+			 * 
+			 * search for string "gas_can_forced_drop" to find CGasCan::DropCarriedProp
+			 * this event will pass the victim client id, which is our desired CTerrorPlayer* pointer
+			 * find the first call that passes this pointer, the function is CTerrorPlayer::IsDominatedBySpecialInfected
+			 */
+			"CTerrorPlayer::IsDominatedBySpecialInfected"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13CTerrorPlayer28IsDominatedBySpecialInfectedEv"
+				"windows"	"\x8B\x15\x2A\x2A\x2A\x2A\x56\x8B\xF1\x8B\x86\x5C\x3E\x00\x00"
+				/* 8B 15 ? ? ? ? 56 8B F1 8B 86 5C 3E 00 00 */
 			}
 
 			/*

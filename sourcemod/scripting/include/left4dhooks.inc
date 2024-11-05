@@ -60,18 +60,18 @@
 
 
 
-// Natives: 273 (including 3 for L4D1 only)
+// Natives: 274 (including 3 for L4D1 only)
 // L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 73 [silvers - mine!] + 4 [anim] = 172
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 117 [silvers - mine!] + 4 [anim] = 272
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 118 [silvers - mine!] + 4 [anim] = 273
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
-// Forwards: 221 (including 5 for L4D1 only)
-// L4D1 = 147
-// L4D2 = 216
+// Forwards: 224 (including 5 for L4D1 only)
+// L4D1 = 149
+// L4D2 = 219
 
 // Stocks: 169 (L4D1 = 114, L4D2 = 167)
 // left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
-// left4dhooks_stocks			84 stocks	(L4D1 = 45,		L4D2 = 80)
+// left4dhooks_stocks			86 stocks	(L4D1 = 46,		L4D2 = 81)
 // left4dhooks_lux_library		34 stocks	(L4D1 = 30,		L4D2 = 34)
 
 
@@ -121,6 +121,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2_SetFirstSpawnClass");
 	MarkNativeAsOptional("L4D_FindRandomSpot");
 	MarkNativeAsOptional("L4D2_IsVisibleToPlayer");
+	MarkNativeAsOptional("L4D2_GetSpecialInfectedDominatingMe");
 	MarkNativeAsOptional("L4D_HasAnySurvivorLeftSafeArea");
 	MarkNativeAsOptional("L4D_IsAnySurvivorInStartArea");
 	MarkNativeAsOptional("L4D_IsAnySurvivorInCheckpoint");
@@ -842,7 +843,7 @@ enum WeaponType
 	WEAPONTYPE_UNKNOWN
 };
 
-stock static const char g_sWeaponTypes[WeaponType][] =
+stock static const char g_sWeaponTypes[WeaponType][16] =
 {
 	"pistol",
 	"smg",
@@ -1211,6 +1212,28 @@ methodmap AmmoDef
 	public static native int MaxSplashSize(int nAmmoIndex);
 	public static native int TracerType(int nAmmoIndex);
 	public static native float DamageForce(int nAmmoIndex);
+}
+
+
+
+
+
+// ====================================================================================================
+// STOCKS
+// ====================================================================================================
+
+/**
+ * @brief Returns a weapons classname from the WeaponType valu
+ * @remarks This is only to prevent SM 1.12 warnings about unused variables
+ *
+ * @param type			WeaponType
+ * @return				Classname string
+ * @error				Invalid type index
+ */
+// L4D2 only
+stock char[] L4D2_GetWeaponClassname(WeaponType type)
+{
+	return g_sWeaponTypes[type];
 }
 
 
@@ -1681,7 +1704,7 @@ forward void L4D_OnMaterializeFromGhost_PostHandled(int client);
 /**
  * @brief Called whenever CDirector::OnFinishIntro is invoked
  * @remarks called when the intro cutscene has finished
- * @remarks This is a post hook, it appears to be called before the "L4D_OnReleaseSurvivorPositions" forward.
+ * @remarks This is a post hook, it appears to be called before the "L4D_OnReleaseSurvivorPositions" forward
  *
  * @noreturn
  */
@@ -2458,6 +2481,15 @@ forward void L4D_OnDoAnimationEvent_PostHandled(int client, int event, int varia
 forward Action L4D2_OnSendInRescueVehicle();
 
 /**
+ * @brief Called whenever CDirector::CreateRescuableSurvivors is invoked
+ * @remarks Called when the director is attempting to find survivors to respawn in rescue closets
+ * @remarks The value for every client in the "players" array will be set to 1, change this value to 0 to prevent their ghost appearing in rescue closets
+ *
+ * @return			Plugin_Changed to modify who is allowed to spawn, Plugin_Continue otherwise
+ */
+forward Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1]);
+
+/**
  * @brief Called whenever CDirectorScriptedEventManager::ChangeFinaleStage is invoked
  * @remarks Called when the director stage changes
  * @remarks some values for FinaleStageType: 1 - Finale Started; 6 - Rescue Vehicle Ready; 7 - Zombie Hordes; 8 - Tank; 10 - Combat Respite (nothing spawns)
@@ -3088,7 +3120,7 @@ forward Action L4D2_OnFindScavengeItem(int client, int &item);
  *
  * @return					Plugin_Handled to block, Plugin_Changed to use overwritten values from plugin, Plugin_Continue otherwise
  */
-// FOr a future update:
+// For a future update:
 // * @param targetScanFlags	targeting flags (unknown)
 // * @param ignoreTarget		entity to ignore targeting
 // forward Action L4D2_OnChooseVictim_Pre(int specialInfected, int &lastTarget, int &targetScanFlags, int &ignoreTarget); // For a future update
@@ -3323,6 +3355,20 @@ forward void L4D2_OnChargerImpact(int client);
  **/
 // L4D2 only
 forward Action L4D2_OnPummelVictim(int attacker, int victim);
+
+/**
+ * @brief Called when CTerrorPlayer::IsDominatedBySpecialInfected() is invoked and returned true
+ * @remarks Dominators are: Hunter, Smoker, Jockey, and Charger
+ * @remarks This forward is called in frames, but instantly tells you when any domination happened. Recommend not to put too much logic in here
+ * @remarks For Chargers, this forward is called when being carried or being pummeled. Queue pummeling will not trigger this forward
+ * 
+ * @param victim		Client index of the victim
+ * @param dominator		Client index of the dominator
+ *
+ * @noreturn
+ **/
+// L4D2 Only
+forward void L4D2_OnDominatedBySpecialInfected(int victim, int dominator);
 
 /**
  * @brief Called when CTerrorPlayer::QueuePummelVictim is invoked
@@ -4600,6 +4646,18 @@ native void L4D_FindRandomSpot(int NavArea, float vecPos[3]);
  * @return					True if visible, false otherwise
  */
 native bool L4D2_IsVisibleToPlayer(int client, int team, int team_target, int NavArea, float vecPos[3]);
+
+/**
+ * @brief Given a victim client index, returns the client index of the Special Infected that is dominating the victim
+ * @remarks Returns -1 if victim index is invalid, or not a survivor, or not being dominated by a Special Infected
+ * @remarks You can see this native as the SDKCall version of L4D2_GetInfectedAttacker()
+ * 
+ * @param victim			The client index of the victim to check
+ * 
+ * @return 					The client index of the Special Infected that is dominating the victim
+ */
+// L4D2 Only
+native int L4D2_GetSpecialInfectedDominatingMe(int victim)
 
 /**
  * @brief Teleports a player to a valid position if they are stuck

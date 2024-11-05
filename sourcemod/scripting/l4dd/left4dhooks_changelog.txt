@@ -1,10 +1,25 @@
+1.154 (05-Nov-2024)
+	- Added forward "L4D_OnCreateRescuableSurvivors" to allow blocking specific players from respawning. Requested by "Kerouha".
+	- Added forward "L4D2_OnDominatedBySpecialInfected" to trigger when someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
+	- Added native "L4D2_GetSpecialInfectedDominatingMe" to chec if someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
+	- Added stocks "L4D1_GetZombieClassname" and "L4D2_GetZombieClassname" to prevent SM 1.12 warnings.
+	- Minor change to "left4dhooks_lux_library.inc" to prevent SM 1.12 warnings.
+	- Fixed warnings in SM 1.12. Thanks to "Sist" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+	- Updated: "/scripting/include/left4dhooks.inc" include file.
+	- Updated: "/scripting/include/left4dhooks_lux_library.inc" include file.
+	- Updated: "/scripting/include/left4dhooks_stocks.inc" include file.
+
 1.153 (17-Sep-2024)
 	- Changed natives "L4D2Direct_SetVSCampaignScore" and "L4D2_SetVersusCampaignScores" to update the tab scoreboard and real scores. Thanks to "Pa4H" for reporting.
 	- Fixed the "NAV_SPAWN_*" attribute comments in the "left4dhooks.inc" include file. Thanks to "Marttt" for reporting.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/include/left4dhooks.inc" include file.
 
 1.152 (07-Sep-2024)
 	- Added 4 member pointers of CDirector for L4D_GetPointer() to use. Thanks to "blueblur0730" for adding on GitHub.

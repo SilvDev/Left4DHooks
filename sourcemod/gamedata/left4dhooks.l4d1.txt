@@ -736,6 +736,13 @@
 				"this"			"ignore"
 			}
 
+			"L4DD::CDirector::CreateRescuableSurvivors"
+			{
+				"signature"		"L4DD::CDirector::CreateRescuableSurvivors"
+				"callconv"		"thiscall"
+				"return"		"int"
+			}
+
 			"L4DD::CDirectorVersusMode::EndVersusModeRound"
 			{
 				"signature"		"CDirectorVersusMode::EndVersusModeRound"

@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.153"
-#define PLUGIN_VERLONG		1153
+#define PLUGIN_VERSION		"1.154"
+#define PLUGIN_VERLONG		1154
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -1005,10 +1005,13 @@ public void OnMapEnd()
 	{
 		hPlug = ReadPlugin(hIter);
 
-		for( int i = 1; i <= MaxClients; i++ )
+		if( hPlug )
 		{
-			g_hAnimationCallbackPre[i].RemoveAllFunctions(hPlug);
-			g_hAnimationCallbackPost[i].RemoveAllFunctions(hPlug);
+			for( int i = 1; i <= MaxClients; i++ )
+			{
+				g_hAnimationCallbackPre[i].RemoveAllFunctions(hPlug);
+				g_hAnimationCallbackPost[i].RemoveAllFunctions(hPlug);
+			}
 		}
 	}
 
