@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.154"
-#define PLUGIN_VERLONG		1154
+#define PLUGIN_VERSION		"1.156"
+#define PLUGIN_VERLONG		1156
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -1355,7 +1355,7 @@ void AddonsDisabler_Unpatch()
 // ====================================================================================================
 //										ADDONS DISABLER DETOUR
 // ====================================================================================================
-MRESReturn DTR_AddonsDisabler(int pThis, Handle hReturn, DHookParam hParams) // Forward "L4D2_OnClientDisableAddons"
+MRESReturn DTR_AddonsDisabler(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D2_OnClientDisableAddons"
 {
 	// Details on finding offsets can be found here: https://github.com/ProdigySim/left4dhooks/pull/1
 	// Big thanks to "ProdigySim" for updating for The Last Stand update.

@@ -203,6 +203,18 @@ void SetupForwardsNatives()
 	// g_hFWD_GetRandomPZSpawnPos												= new GlobalForward("L4D_OnGetRandomPZSpawnPosition",					ET_Event, Param_CellByRef, Param_CellByRef, Param_CellByRef, Param_Array);
 	// g_hFWD_InfectedShoved													= new GlobalForward("L4D_OnInfectedShoved",								ET_Event, Param_Cell, Param_Cell);
 	// g_hFWD_OnWaterMove														= new GlobalForward("L4D2_OnWaterMove",									ET_Event, Param_Cell);
+	if ( g_bLeft4Dead2 )
+	{
+		g_hFWD_InfoChangeLevel_OnSavingEntities								= new GlobalForward("L4D2_OnSavingEntities",							ET_Event, Param_Cell);
+		g_hFWD_InfoChangeLevel_OnSavingEntities_Post						= new GlobalForward("L4D2_OnSavingEntities_Post",						ET_Event, Param_Cell);
+		g_hFWD_InfoChangeLevel_OnSavingEntities_PostHandled					= new GlobalForward("L4D2_OnSavingEntities_PostHandled",				ET_Event, Param_Cell);
+	}
+	else
+	{
+		g_hFWD_InfoChangeLevel_OnSavingEntities								= new GlobalForward("L4D1_OnSavingEntities",							ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_InfoChangeLevel_OnSavingEntities_Post						= new GlobalForward("L4D1_OnSavingEntities_Post",						ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_InfoChangeLevel_OnSavingEntities_PostHandled					= new GlobalForward("L4D1_OnSavingEntities_PostHandled",				ET_Event, Param_Cell, Param_Cell);
+	}
 
 	if( g_bLeft4Dead2 )
 	{
@@ -603,6 +615,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_State_Transition",							Native_CCSPlayer_State_Transition);
 	CreateNative("L4D_RegisterForbiddenTarget",						Native_CDirector_RegisterForbiddenTarget);
 	CreateNative("L4D_UnRegisterForbiddenTarget",					Native_CDirector_UnregisterForbiddenTarget);
+	CreateNative("L4D_IsEntitySaveable",							Native_InfoChangeLevel_IsEntitySaveable);
 
 	// L4D2 only:
 	CreateNative("L4D2_CTerrorPlayer_OnHitByVomitJar",				Native_CTerrorPlayer_OnHitByVomitJar);

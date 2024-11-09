@@ -1212,6 +1212,21 @@
 					}
 				}
 			}
+
+			"L4DD::InfoChangelevel::SaveEntities"
+			{
+				"signature"		"InfoChangelevel::SaveEntities"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"KeyValues"
+					{
+						"type"	"int"
+					}
+				}
+			}
 		}
 
 
@@ -3060,7 +3075,19 @@
 				/* Search: "%s_%s_%d%s" and xref to vtable, function is above this. */
 			}
 
-
+			/**
+			 * windows sig:
+			 * Search for string "Would change level, but not going to!\n" to find InfoChangelevel::StartChangeLevel
+			 * the function above string "map_transition" is InfoChangeLevel::SavingEntities
+			 */
+			/*  */
+			"InfoChangelevel::SaveEntities"
+			{
+				"library"	"server"
+				"linux"		"@_ZN15InfoChangelevel12SaveEntitiesEP9KeyValues"
+				"windows"	"\x55\x8B\xEC\x83\xE4\xF8\x83\xEC\x24"
+				/* 55 8B EC 83 E4 F8 83 EC 24 */
+			}
 
 			// ====================================================================================================
 			// NATIVES
@@ -3546,6 +3573,23 @@
 				"windows"	"\x56\x8B\x2A\x2A\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x84\x2A\x74\x2A\x8B\x2A\x5E\xC3"
 				/* 56 8B ? ? ? 85 ? 74 ? 8B ? 8B ? ? ? ? ? 8B ? FF ? 84 ? 74 ? 8B ? 5E C3 */ // Found by SilverShot.
 				/* Search "PanicEvent" for "CCarProp::InputSurvivorStandingOnCar". Called in here. */
+			}
+
+			/*
+			 * InfoChangelevel::IsEntitySaveable(CBaseEntity *)
+			 */
+			
+			/**
+			 * windows sig:
+			 * Find InfoChangelevel::SaveEntities (see signature description InfoChangelevel::SaveEntities),
+			 * At the top of the function, see a 'while' statement, inside of it there's 'if' statement, the second condition call is InfoChangelevel::IsEntitySaveable.
+			 */
+			"InfoChangelevel::IsEntitySaveable"
+			{
+				"library"	"server"
+				"linux"		"@_ZN15InfoChangelevel16IsEntitySaveableEP11CBaseEntity"
+				"windows"	"\x53\x56\x8B\x74\x24\x0C\x8B\x06\x8B\x90\x84\x00\x00\x00"
+				/* 53 56 8B 74 24 0C 8B 06 8B 90 84 00 00 00 */
 			}
 
 			/*

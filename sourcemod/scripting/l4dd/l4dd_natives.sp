@@ -175,6 +175,7 @@ Handle g_hSDK_CDirectorScavengeMode_HideScoreboardNonVirtual;
 Handle g_hSDK_CDirector_HideScoreboard;
 Handle g_hSDK_CDirector_RegisterForbiddenTarget;
 Handle g_hSDK_CDirector_UnregisterForbiddenTarget;
+Handle g_hSDK_InfoChangeLevel_IsEntitySaveable;
 
 
 
@@ -5649,6 +5650,44 @@ int Native_CDirector_UnregisterForbiddenTarget(Handle plugin, int numParams) // 
 	SDKCall(g_hSDK_CDirector_UnregisterForbiddenTarget, g_pDirector, entity);
 
 	return 0;
+}
+
+/*
+bool InfoChangeLevel::IsEntitySaveable(CBaseEntity* pEntity)
+{
+	int objCap = pEntity->ObjectCaps();
+	if ( objCap >= 0 )
+	{
+		if ( pEntity && !pEntity->IsPlayer() )
+		{
+			CBaseEntity* pRootMoveParent = pEntity->GetRootMoveParent();
+			if ( pRootMoveParent && !pRootMoveParent->IsPlayer()
+				&& ( ( (objCap & FCAP_ACROSS_TRANSITION ) != 0) || (pEntity->m_iClassname && !pEntity->IsDormant()) ) )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+*/
+
+any Native_InfoChangeLevel_IsEntitySaveable(Handle plugin, int numParams) // Native "L4D_IsEntitySaveable"
+{
+	ValidateNatives(g_hSDK_InfoChangeLevel_IsEntitySaveable, "InfoChangeLevel::IsEntitySaveable");
+
+	int info_changelevel = INVALID_ENT_REFERENCE;
+	int entity = GetNativeCell(1);
+
+	if (!entity || entity > GetMaxEntities()) return 0;
+	if (!info_changelevel || info_changelevel > GetMaxEntities()) return 0;
+
+	info_changelevel = FindEntityByClassname(info_changelevel, "info_changelevel");
+	if (info_changelevel == INVALID_ENT_REFERENCE) return 0;
+
+	//PrintToServer("#### CALL g_hSDK_InfoChangeLevel_IsEntitySaveable");
+	return view_as<bool>(SDKCall(g_hSDK_InfoChangeLevel_IsEntitySaveable, info_changelevel, entity));
 }
 
 

@@ -173,6 +173,9 @@ GlobalForward g_hFWD_CGasCan_OnActionComplete;
 GlobalForward g_hFWD_CGasCan_OnActionComplete_Post;
 GlobalForward g_hFWD_CGasCan_OnActionComplete_PostHandled;
 GlobalForward g_hFWD_CServerGameDLL_ServerHibernationUpdate;
+GlobalForward g_hFWD_InfoChangeLevel_OnSavingEntities;
+GlobalForward g_hFWD_InfoChangeLevel_OnSavingEntities_Post;
+GlobalForward g_hFWD_InfoChangeLevel_OnSavingEntities_PostHandled;
 GlobalForward g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor;
 GlobalForward g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_Post;
 GlobalForward g_hFWD_CTerrorPlayer_OnPouncedOnSurvivor_PostHandled;
@@ -472,6 +475,19 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger_Post",						true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_CancelStagger,							DTR_CTerrorPlayer_CancelStagger_Post,						"L4DD::CTerrorPlayer::CancelStagger",								"L4D_OnCancelStagger_PostHandled",				true);
+
+	if ( !g_bLeft4Dead2 )
+	{
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities");
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
+	}
+	else
+	{
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities");
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
+	}
 
 	if( !g_bLeft4Dead2 )
 	{
@@ -4694,6 +4710,84 @@ MRESReturn DTR_CServerGameDLL_ServerHibernationUpdate(int pThis, DHookReturn hRe
 
 	Call_StartForward(g_hFWD_CServerGameDLL_ServerHibernationUpdate);
 	Call_PushCell(status);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_InfoChangeLevel_OnSavingEntities_L4D1;
+MRESReturn DTR_InfoChangeLevel_OnSavingEntities_L4D1(int pThis, DHookParam hParams) // Forward "L4D1_OnSavingEntities"
+{
+	//PrintToServer("##### DTR_InfoChangeLevel_OnSavingEntities_L4D1");
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	Address pKv = Address_Null;
+	if (!hParams.IsNull(1))
+		pKv = view_as<Address>(hParams.Get(1));
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_InfoChangeLevel_OnSavingEntities);
+	Call_PushCell(pThis);
+	Call_PushCell(pKv);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_InfoChangeLevel_OnSavingEntities_L4D1 = true;
+
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1(int pThis, DHookParam hParams) // Forward "L4D1_OnSavingEntities_Post" and "L4D1_OnSavingEntities_PostHandled"
+{
+	//PrintToServer("##### DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1");
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	Address pKv = Address_Null;
+	if (!hParams.IsNull(1))
+		pKv = view_as<Address>(hParams.Get(1));
+
+	Call_StartForward(g_bBlock_InfoChangeLevel_OnSavingEntities_L4D1 ? g_hFWD_InfoChangeLevel_OnSavingEntities_PostHandled : g_hFWD_InfoChangeLevel_OnSavingEntities_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(pKv);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_InfoChangeLevel_OnSavingEntities_L4D2;
+MRESReturn DTR_InfoChangeLevel_OnSavingEntities_L4D2(int pThis) // Forward "L4D2_OnSavingEntities"
+{
+	//PrintToServer("##### DTR_InfoChangeLevel_OnSavingEntities_L4D2");
+	g_bBlock_InfoChangeLevel_OnSavingEntities_L4D2 = false;
+
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_InfoChangeLevel_OnSavingEntities);
+	Call_PushCell(pThis);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_InfoChangeLevel_OnSavingEntities_L4D2 = true;
+
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2(int pThis) // Forward "L4D2_OnSavingEntities_Post" and "L4D2_OnSavingEntities_PostHandled"
+{
+	//PrintToServer("##### DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2");
+	if( !IsValidEntity(pThis) ) return MRES_Ignored;
+
+	Call_StartForward(g_bBlock_InfoChangeLevel_OnSavingEntities_L4D2 ? g_hFWD_InfoChangeLevel_OnSavingEntities_PostHandled : g_hFWD_InfoChangeLevel_OnSavingEntities_Post);
+	Call_PushCell(pThis);
 	Call_Finish();
 
 	return MRES_Ignored;

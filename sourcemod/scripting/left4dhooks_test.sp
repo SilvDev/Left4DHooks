@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.152"
+#define PLUGIN_VERSION		"1.156"
 
 /*=======================================================================================
 	Plugin Info:
@@ -2420,6 +2420,9 @@ Action sm_l4dd(int client, int args)
 	int car = GetClientAimTarget(client, false);
 	PrintToServer("L4D_RegisterForbiddenTarget %d",							L4D_RegisterForbiddenTarget(car));
 	PrintToServer("L4D_UnRegisterForbiddenTarget",							L4D_UnRegisterForbiddenTarget(car));
+
+	
+	PrintToServer("L4D_IsEntitySaveable %d",									L4D_IsEntitySaveable(client))
 
 
 
