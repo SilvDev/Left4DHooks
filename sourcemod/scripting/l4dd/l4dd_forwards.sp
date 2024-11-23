@@ -478,15 +478,15 @@ void SetupDetours(GameData hGameData = null)
 
 	if ( !g_bLeft4Dead2 )
 	{
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities");
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities");
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D1,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D1,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
 	}
 	else
 	{
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities");
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
-		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangeLevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities");
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities_Post",					true);
+		CreateDetour(hGameData,		DTR_InfoChangeLevel_OnSavingEntities_L4D2,					DTR_InfoChangeLevel_OnSavingEntities_Post_L4D2,				"L4DD::InfoChangelevel::SaveEntities",								"L4D2_OnSavingEntities_PostHandled",			true);
 	}
 
 	if( !g_bLeft4Dead2 )

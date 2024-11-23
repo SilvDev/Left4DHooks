@@ -1942,9 +1942,9 @@ void LoadGameData()
 	}
 
 	StartPrepSDKCall(SDKCall_Entity);
-	if ( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "InfoChangeLevel::IsEntitySaveable") == false )
+	if ( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "InfoChangelevel::IsEntitySaveable") == false )
 	{
-		LogError("Failed to find signature: \"InfoChangeLevel::IsEntitySaveable\" (%s)", g_sSystem);
+		LogError("Failed to find signature: \"InfoChangelevel::IsEntitySaveable\" (%s)", g_sSystem);
 	} else {
 		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
 		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);

@@ -5653,6 +5653,7 @@ int Native_CDirector_UnregisterForbiddenTarget(Handle plugin, int numParams) // 
 }
 
 /*
+- Should be something like this.
 bool InfoChangeLevel::IsEntitySaveable(CBaseEntity* pEntity)
 {
 	int objCap = pEntity->ObjectCaps();
@@ -5673,9 +5674,9 @@ bool InfoChangeLevel::IsEntitySaveable(CBaseEntity* pEntity)
 }
 */
 
-any Native_InfoChangeLevel_IsEntitySaveable(Handle plugin, int numParams) // Native "L4D_IsEntitySaveable"
+any Native_InfoChangelevel_IsEntitySaveable(Handle plugin, int numParams) // Native "L4D_IsEntitySaveable"
 {
-	ValidateNatives(g_hSDK_InfoChangeLevel_IsEntitySaveable, "InfoChangeLevel::IsEntitySaveable");
+	ValidateNatives(g_hSDK_InfoChangeLevel_IsEntitySaveable, "InfoChangelevel::IsEntitySaveable");
 
 	int info_changelevel = INVALID_ENT_REFERENCE;
 	int entity = GetNativeCell(1);
@@ -5689,10 +5690,6 @@ any Native_InfoChangeLevel_IsEntitySaveable(Handle plugin, int numParams) // Nat
 	//PrintToServer("#### CALL g_hSDK_InfoChangeLevel_IsEntitySaveable");
 	return view_as<bool>(SDKCall(g_hSDK_InfoChangeLevel_IsEntitySaveable, info_changelevel, entity));
 }
-
-
-
-
 
 // ====================================================================================================
 //										ANIMATION NATIVES

@@ -5665,6 +5665,45 @@ public void L4D_OnServerHibernationUpdate(bool hibernating)
 	}
 }
 
+public Action L4D2_OnSavingEntities(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities\" %d", info_changelevel);
+	}
+
+	// WORKS - items like gascan wont be saved to the next map.
+	// return Plugin_Handled;
+}
+
+public void L4D2_OnSavingEntities_Post(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_Post\" %d", info_changelevel);
+	}
+}
+
+public void L4D2_OnSavingEntities_PostHandled(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_PostHandled\" %d", info_changelevel);
+	}
+}
+
 public Action L4D2_OnClientDisableAddons(const char[] SteamID)
 {
 	static int called;

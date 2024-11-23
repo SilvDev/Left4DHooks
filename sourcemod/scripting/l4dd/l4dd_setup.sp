@@ -615,7 +615,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_State_Transition",							Native_CCSPlayer_State_Transition);
 	CreateNative("L4D_RegisterForbiddenTarget",						Native_CDirector_RegisterForbiddenTarget);
 	CreateNative("L4D_UnRegisterForbiddenTarget",					Native_CDirector_UnregisterForbiddenTarget);
-	CreateNative("L4D_IsEntitySaveable",							Native_InfoChangeLevel_IsEntitySaveable);
+	CreateNative("L4D_IsEntitySaveable",							Native_InfoChangelevel_IsEntitySaveable);
 
 	// L4D2 only:
 	CreateNative("L4D2_CTerrorPlayer_OnHitByVomitJar",				Native_CTerrorPlayer_OnHitByVomitJar);

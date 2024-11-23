@@ -4210,19 +4210,19 @@ forward void L4D_OnGameModeChange(int gamemode);
 forward void L4D_OnServerHibernationUpdate(bool hibernating);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
- * @brief Called when a map has been finished, and is about to save the entities in the saferoom.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
+ * @brief Called when a map has been finished, and is about to save the entities in the saferoom (usually props or items brought into the saferoom.).
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if CTerrorGameRules::HasPlayerControlledZombies() return true, which refers to the versus/scavenge related pvp gamemode.
  * 
  * @param info_changelevel	The entity index of 'info_changelevel'
  * 
- * @return					Plugin_Handled to prevent saving entities (USE THIS BEFORE YOU KNOW WHAT YOU ARE DOING), Plugin_Continue otherwise
+ * @return					Plugin_Handled to prevent saving entities, Plugin_Continue otherwise
 */
 forward Action L4D2_OnSavingEntities(int info_changelevel);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
  * @brief Called when a map has been finished, and the game has finished saving the entities in the saferoom.
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if CTerrorGameRules::HasPlayerControlledZombies() return true, which refers to the versus/scavenge related pvp gamemode.
@@ -4235,7 +4235,7 @@ forward Action L4D2_OnSavingEntities(int info_changelevel);
 forward void L4D2_OnSavingEntities_Post(int info_changelevel);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
  * @brief Called when a map has been finished, and the game has finished saving the entities in the saferoom.
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if CTerrorGameRules::HasPlayerControlledZombies() return true, which refers to the versus/scavenge related pvp gamemode.
@@ -4248,7 +4248,7 @@ forward void L4D2_OnSavingEntities_Post(int info_changelevel);
 forward void L4D2_OnSavingEntities_PostHandled(int info_changelevel);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
  * @brief Called when a map has been finished, and is about to save the entities in the saferoom.
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if Director::AreHumanZombiesAllowed() return true, which refers to the versus gamemode, or this entity name is 'info_solo_changelevel'
@@ -4256,13 +4256,13 @@ forward void L4D2_OnSavingEntities_PostHandled(int info_changelevel);
  * @param info_changelevel	The entity index of 'info_changelevel'
  * @param Kv				A KeyValue pointer Address. Null_Address will be returned if the pointer is null.
  * 
- * @return					Plugin_Handled to prevent saving entities (USE THIS BEFORE YOU KNOW WHAT YOU ARE DOING), Plugin_Continue otherwise
+ * @return					Plugin_Handled to prevent saving entities, Plugin_Continue otherwise
 */
 forward Action L4D1_OnSavingEntities(int info_changelevel, Address Kv);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
- * @brief Called when a map has been finished, and is about to save the entities in the saferoom.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
+ * @brief Called when a map has been finished, and is about to save the entities in the saferoom (usually props or items brought into the saferoom.).
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if CTerrorGameRules::HasPlayerControlledZombies() return true, which refers to the versus/scavenge related pvp gamemode.
  * 
@@ -4274,7 +4274,7 @@ forward Action L4D1_OnSavingEntities(int info_changelevel, Address Kv);
 forward void L4D1_OnSavingEntities_Post(int info_changelevel, Address Kv);
 
 /**
- * @brief Called whenever InfoChangeLevel::SaveEntities() is invoked.
+ * @brief Called whenever InfoChangelevel::SaveEntities() is invoked.
  * @brief Called when a map has been finished, and is about to save the entities in the saferoom.
  * @remarks Called before the event 'map_transition'.
  * @remarks Won't called if CTerrorGameRules::HasPlayerControlledZombies() return true, which refers to the versus/scavenge related pvp gamemode.
@@ -7510,7 +7510,7 @@ native void L4D_UnRegisterForbiddenTarget(int entity);
 
 /**
  * @brief To see if an entity is saveable to be transitioned to next map.
- * @remarks Calls InfoChangeLevel::IsSaveableEntity. Entities that are saveable follow the rules below:
+ * @remarks Calls InfoChangelevel::IsSaveableEntity. Entities that are saveable follow the rules below:
  * @remarks 1. Entity is not a player, and its root hierarchical parent entity is not a player either.
  * @remarks 2. Entity has a capability flag "FCAP_ACROSS_TRANSITION", or the entity has no flag "EFL_DORMANT".
  * 
