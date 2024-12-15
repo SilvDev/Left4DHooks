@@ -1,10 +1,9 @@
-1.154 (05-Nov-2024)
-	- Added forward "L4D_OnCreateRescuableSurvivors" to allow blocking specific players from respawning. Requested by "Kerouha".
-	- Added forward "L4D2_OnDominatedBySpecialInfected" to trigger when someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
-	- Added native "L4D2_GetSpecialInfectedDominatingMe" to chec if someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
-	- Added stocks "L4D1_GetZombieClassname" and "L4D2_GetZombieClassname" to prevent SM 1.12 warnings.
-	- Minor change to "left4dhooks_lux_library.inc" to prevent SM 1.12 warnings.
-	- Fixed warnings in SM 1.12. Thanks to "Sist" for reporting.
+1.156 (15-Dec-2024)
+	- Added forwards "L4D1_OnSavingEntities" and "L4D2_OnSavingEntities" to trigger when entities are being saved on level change. Thanks to "blueblur0730" for adding.
+	- Added native "L4D_IsEntitySaveable" to test if an entity is savable. Thanks to "blueblur0730" for adding.
+	- Fixed the "L4D_PipeBombProjectile_*" and "L4D_PipeBomb_Detonate*" forwards triggering for breakable props when only "L4D_CBreakableProp_Break" should trigger. Thanks to "blueblur0730" for reporting.
+	- Fixed forward "L4D_OnCreateRescuableSurvivors" not loading in L4D1 due to GameData file typo. Thanks to "Chenhupo" for reporting.
+	- Wildcarded the "CTerrorGameRules::RecomputeTeamScores" signature in L4D1 to avoid failing if detoured. Thanks to "Chenhupo" for reporting.
 
 	- Updated: Plugin and test plugin.
 	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
@@ -14,8 +13,18 @@
 	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
 	- Updated: "/scripting/include/left4dhooks.inc" include file.
-	- Updated: "/scripting/include/left4dhooks_lux_library.inc" include file.
-	- Updated: "/scripting/include/left4dhooks_stocks.inc" include file.
+
+1.155 (05-Nov-2024)
+	- Fixed incorrect GameData file in project archive. Thanks to "kayletid201" for reporting.
+	- Reverted changing "L4D1ZombieClassname" and "L4D2ZombieClassname" to "static" in the "left4dhooks_stocks.inc" file. Thanks to "ilham92-cc-sakura" for reporting.
+
+1.154 (05-Nov-2024)
+	- Added forward "L4D_OnCreateRescuableSurvivors" to allow blocking specific players from respawning. Requested by "Kerouha".
+	- Added forward "L4D2_OnDominatedBySpecialInfected" to trigger when someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
+	- Added native "L4D2_GetSpecialInfectedDominatingMe" to chec if someone is being dominated by Special Infected. Thanks to "blueblur0730" for adding.
+	- Added stocks "L4D1_GetZombieClassname" and "L4D2_GetZombieClassname" to prevent SM 1.12 warnings.
+	- Minor change to "left4dhooks_lux_library.inc" to prevent SM 1.12 warnings.
+	- Fixed warnings in SM 1.12. Thanks to "Sist" for reporting.
 
 1.153 (17-Sep-2024)
 	- Changed natives "L4D2Direct_SetVSCampaignScore" and "L4D2_SetVersusCampaignScores" to update the tab scoreboard and real scores. Thanks to "Pa4H" for reporting.

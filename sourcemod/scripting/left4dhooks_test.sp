@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.152"
+#define PLUGIN_VERSION		"1.156"
 
 /*=======================================================================================
 	Plugin Info:
@@ -54,7 +54,6 @@ bool g_bLibraryActive;
 bool g_bTestForwards =		true;	// To enable forwards testing
 int g_iForwardsMax;					// Total forwards we expect to see
 int g_iForwards;
-float g_fPipeBomb[2048];
 
 
 
@@ -348,6 +347,8 @@ stock Action TimerCancelStagger(Handle timer, int client)
 
 Action sm_l4dd(int client, int args)
 {
+
+	PrintToServer("L4D_IsEntitySaveable %d",								L4D_IsEntitySaveable(GetClientAimTarget(client,false)));
 	/*
 		NOTE:
 		Uncomment the things you want to test. All disabled by default.
@@ -2421,6 +2422,7 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_RegisterForbiddenTarget %d",							L4D_RegisterForbiddenTarget(car));
 	PrintToServer("L4D_UnRegisterForbiddenTarget",							L4D_UnRegisterForbiddenTarget(car));
 
+	PrintToServer("L4D_IsEntitySaveable %d",								L4D_IsEntitySaveable(client))
 
 
 	if( g_bLeft4Dead2 )
@@ -3586,14 +3588,27 @@ public Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1])
 {
 	bool block;
 
+	// Block players index 3 or less, for testing
+	/*
 	for( int i = 1; i <= MaxClients; i++ )
 	{
-		if( i <= 3 ) // Players index 3 or less, for testing
+		if( i <= 3 )
 		{
 			block = true;
 			players[i] = 1; // Block player from spawning in rescue closets
 		}
 	}
+	// */
+
+	// Block everyone
+	// /*
+	block = true;
+
+	for( int i = 1; i <= MaxClients; i++ )
+	{
+		players[i] = 1; // Block player from spawning in rescue closets
+	}
+	// */
 
 	// WORKS
 	if( block )
@@ -4394,8 +4409,6 @@ public void L4D_PipeBombProjectile_Post(int client, int projectile, const float 
 
 		ForwardCalled("\"L4D_PipeBombProjectile_Post\" %d (Grenade = %d) pos(%0.1f %0.1f %0.1f) ang(%0.1f %0.1f %0.1f) vel(%0.1f %0.1f %0.1f) rot(%0.1f %0.1f %0.1f)", client, projectile, vecPos[0], vecPos[1], vecPos[2], vecAng[0], vecAng[1], vecAng[2], vecVel[0], vecVel[1], vecVel[2], vecRot[0], vecRot[1], vecRot[2]);
 	}
-
-	g_fPipeBomb[projectile] = GetGameTime(); // Used to track if the forwards "L4D_PipeBomb_Detonate*" are triggered from an actual PipeBomb or from a breakable prop (propane tank, oxygen tank etc)
 }
 
 public void L4D_PipeBombProjectile_PostHandled(int client, int projectile, const float vecPos[3], const float vecAng[3], const float vecVel[3], const float vecRot[3])
@@ -4597,22 +4610,6 @@ public Action L4D_PipeBomb_Detonate(int entity, int client)
 
 
 
-	// Detect if a PipeBomb or breakable prop (propane tank, oxygen tank etc) has exploded
-	// /*
-	if( g_fPipeBomb[entity] + 0.1 >= GetGameTime() ) // Matching the time with == is probably fine, but in case of rare moments when detonation happens slightly later, we can do this with 0.1 seconds leeway
-	{
-		// Breakable prop detonating
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d) - Breakable Prop explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-	}
-	else
-	{
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate\" %d (%N) (Grenade = %d) - PipeBomb explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-		// Grenade detonating
-	}
-	// */
-
-
-
 	// WORKS - block grenade detonating
 	// return Plugin_Handled;
 
@@ -4629,24 +4626,6 @@ public void L4D_PipeBomb_Detonate_Post(int entity, int client)
 
 		ForwardCalled("\"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
-
-
-
-	// Detect if a PipeBomb or breakable prop (propane tank, oxygen tank etc) has exploded
-	// /*
-	if( g_fPipeBomb[entity] + 0.1 >= GetGameTime() ) // Matching the time with == is probably fine, but in case of rare moments when detonation happens slightly later, we can do this with 0.1 seconds leeway
-	{
-		// Breakable prop detonating
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d) - Breakable Prop explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-	}
-	else
-	{
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate_Post\" %d (%N) (Grenade = %d) - PipeBomb explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-		// Grenade detonating
-	}
-
-	g_fPipeBomb[entity] = 0.0;
-	// */
 }
 
 public void L4D_PipeBomb_Detonate_PostHandled(int entity, int client)
@@ -4659,24 +4638,6 @@ public void L4D_PipeBomb_Detonate_PostHandled(int entity, int client)
 
 		ForwardCalled("\"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
-
-
-
-	// Detect if a PipeBomb or breakable prop (propane tank, oxygen tank etc) has exploded
-	// /*
-	if( g_fPipeBomb[entity] + 0.1 >= GetGameTime() ) // Matching the time with == is probably fine, but in case of rare moments when detonation happens slightly later, we can do this with 0.1 seconds leeway
-	{
-		// Breakable prop detonating
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d) - Breakable Prop explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-	}
-	else
-	{
-		PrintToServer(" > L4DD: \"L4D_PipeBomb_Detonate_PostHandled\" %d (%N) (Grenade = %d) - PipeBomb explosion", client, client > 0 && client <= MaxClients ? client : 0, entity);
-		// Grenade detonating
-	}
-
-	g_fPipeBomb[entity] = 0.0;
-	// */
 }
 
 public Action L4D2_VomitJar_Detonate(int entity, int client)
@@ -5659,6 +5620,88 @@ public void L4D_OnServerHibernationUpdate(bool hibernating)
 		called++;
 
 		ForwardCalled("\"L4D_OnServerHibernationUpdate\" %d", hibernating);
+	}
+}
+
+public Action L4D2_OnSavingEntities(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities\" %d", info_changelevel);
+	}
+
+	// WORKS - items like gascan wont be saved to the next map.
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnSavingEntities_Post(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_Post\" %d", info_changelevel);
+	}
+}
+
+public void L4D2_OnSavingEntities_PostHandled(int info_changelevel)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_PostHandled\" %d", info_changelevel);
+	}
+}
+
+public Action L4D1_OnSavingEntities(int info_changelevel, Address Kv)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities\" %d (KV: %d)", info_changelevel, Kv);
+	}
+
+	// WORKS - items like gascan wont be saved to the next map.
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D1_OnSavingEntities_Post(int info_changelevel, Address Kv)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_Post\" %d (KV: %d)", info_changelevel, Kv);
+	}
+}
+
+public void L4D1_OnSavingEntities_PostHandled(int info_changelevel, Address Kv)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnSavingEntities_PostHandled\" %d (KV: %d)", info_changelevel, Kv);
 	}
 }
 

@@ -1941,6 +1941,18 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"CDirector::UnregisterForbiddenTarget\" (%s)", g_sSystem);
 	}
 
+	StartPrepSDKCall(SDKCall_Entity);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "InfoChangelevel::IsEntitySaveable") == false )
+	{
+		LogError("Failed to find signature: \"InfoChangelevel::IsEntitySaveable\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
+		PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
+		g_hSDK_InfoChangeLevel_IsEntitySaveable = EndPrepSDKCall();
+		if( g_hSDK_InfoChangeLevel_IsEntitySaveable == null )
+			LogError("Failed to create SDKCall: \"InfoChangeLevel::IsEntitySaveable\" (%s)", g_sSystem);
+	}
+
 	StartPrepSDKCall(SDKCall_Raw);
 	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirectorVersusMode::EndVersusModeRound") == false )
 	{

@@ -4,8 +4,8 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.155"
-			"Previous"	"1.154"
+			"Latest"	"1.156"
+			"Previous"	"1.155"
 		}
 
 		"Notes"	"Full changelog @ https://forums.alliedmods.net/showthread.php?t=321696"
@@ -26,9 +26,6 @@
 			"Source"	"Path_SM/scripting/left4dhooks.sp"
 			"Plugin"	"Path_SM/scripting/left4dhooks_test.sp"
 			"Plugin"	"Path_SM/scripting/include/left4dhooks.inc"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks_lux_library.inc"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks_silver.inc"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks_stocks.inc"
 		}
 
 		"Plugin"	"Path_SM/scripting/l4dd/left4dhooks_changelog.txt"

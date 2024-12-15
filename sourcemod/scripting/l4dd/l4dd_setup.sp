@@ -206,6 +206,19 @@ void SetupForwardsNatives()
 
 	if( g_bLeft4Dead2 )
 	{
+		g_hFWD_InfoChangelevel_SaveEntities									= new GlobalForward("L4D2_OnSavingEntities",							ET_Event, Param_Cell);
+		g_hFWD_InfoChangelevel_SaveEntities_Post							= new GlobalForward("L4D2_OnSavingEntities_Post",						ET_Event, Param_Cell);
+		g_hFWD_InfoChangelevel_SaveEntities_PostHandled						= new GlobalForward("L4D2_OnSavingEntities_PostHandled",				ET_Event, Param_Cell);
+	}
+	else
+	{
+		g_hFWD_InfoChangelevel_SaveEntities									= new GlobalForward("L4D1_OnSavingEntities",							ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_InfoChangelevel_SaveEntities_Post							= new GlobalForward("L4D1_OnSavingEntities_Post",						ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_InfoChangelevel_SaveEntities_PostHandled						= new GlobalForward("L4D1_OnSavingEntities_PostHandled",				ET_Event, Param_Cell, Param_Cell);
+	}
+
+	if( g_bLeft4Dead2 )
+	{
 		g_hFWD_CVomitJarProjectile_Create_Pre								= new GlobalForward("L4D2_VomitJarProjectile_Pre",						ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 		g_hFWD_CVomitJarProjectile_Create_Post								= new GlobalForward("L4D2_VomitJarProjectile_Post",						ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
 		g_hFWD_CVomitJarProjectile_Create_PostHandled						= new GlobalForward("L4D2_VomitJarProjectile_PostHandled",				ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Array);
@@ -603,6 +616,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_State_Transition",							Native_CCSPlayer_State_Transition);
 	CreateNative("L4D_RegisterForbiddenTarget",						Native_CDirector_RegisterForbiddenTarget);
 	CreateNative("L4D_UnRegisterForbiddenTarget",					Native_CDirector_UnregisterForbiddenTarget);
+	CreateNative("L4D_IsEntitySaveable",							Native_InfoChangelevel_IsEntitySaveable);
 
 	// L4D2 only:
 	CreateNative("L4D2_CTerrorPlayer_OnHitByVomitJar",				Native_CTerrorPlayer_OnHitByVomitJar);

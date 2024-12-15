@@ -1028,13 +1028,6 @@
 				}
 			}
 
-			"L4DD::CDirector::CreateRescuableSurvivors"
-			{
-				"signature"		"L4DD::CDirector::CreateRescuableSurvivors"
-				"callconv"		"thiscall"
-				"return"		"int"
-			}
-
 			"L4DD::CDirectorVersusMode::EndVersusModeRound"
 			{
 				"signature"		"CDirectorVersusMode::EndVersusModeRound"
@@ -1769,6 +1762,14 @@
 						"type"	"bool"
 					}
 				}
+			}
+
+			"L4DD::InfoChangelevel::SaveEntities"
+			{
+				"signature" 	"InfoChangelevel::SaveEntities"
+				"callconv" 		"thiscall"
+				"return" 		"void"
+				"this" 			"entity"
 			}
 
 			// Addons Disabler
@@ -2765,8 +2766,8 @@
 			{
 				"library"		"server"
 				"windows"		"\xD9\x05\x2A\x2A\x2A\x2A\x6A\x0E\x6A\x0A\x6A\x08\x2A\xD9\x2A\x2A\x68\x2A\x2A\x2A\x2A\x6A\x00\x6A\x00\x6A\x01\x68\x02\x00\x00\x80"
-								/* not actual function beginning, starts at the second call */
-								/* D9 05 ? ? ? ? 6A 0E 6A 0A 6A 08 ? D9 ? ? 68 ? ? ? ? 6A 00 6A 00 6A 01 68 02 00 00 80 */
+				/* not actual function beginning, starts at the second call */
+				/* D9 05 ? ? ? ? 6A 0E 6A 0A 6A 08 ? D9 ? ? 68 ? ? ? ? 6A 00 6A 00 6A 01 68 02 00 00 80 */
 			}
 
 			// =========================
@@ -3478,7 +3479,7 @@
 				"library"		"server"
 				"linux"			"@_ZN21CMultiPlayerAnimState17ResetMainActivityEv"
 				"windows"		"\x56\x8B\x2A\x8B\x2A\x8B\x2A\x2A\xC7\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xFF"
-								/* 56 8B ? 8B ? 8B ? ? C7 ? ? ? ? ? ? ? ? ? FF */
+				/* 56 8B ? 8B ? 8B ? ? C7 ? ? ? ? ? ? ? ? ? FF */
 			}
 
 
@@ -3985,7 +3986,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CTankClaw7DoSwingEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x56\x89\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x85"
-						/* ? ? ? ? ? ? 56 89 ? ? E8 ? ? ? ? 8B ? 85 */
+				/* ? ? ? ? ? ? 56 89 ? ? E8 ? ? ? ? 8B ? 85 */
 			}
 
 			/**
@@ -4003,7 +4004,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CTankClaw11GroundPoundEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x83\x2A\x2A\x55\x8B\x2A\x2A\x89\x2A\x2A\x2A\x8B\x2A\x81\xEC\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x56\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x89"
-						/* ? ? ? ? ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 81 EC ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? E8 ? ? ? ? 8B ? 89 */
+				/* ? ? ? ? ? ? 83 ? ? 83 ? ? 55 8B ? ? 89 ? ? ? 8B ? 81 EC ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 56 57 8B ? E8 ? ? ? ? 8B ? 89 */
 			}
 
 			/**
@@ -4025,7 +4026,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CTankClaw11OnPlayerHitEP13CTerrorPlayerb"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\x2A\x89\x2A\x2A\x53\x56\x8B\x2A\x2A\x57\x8B\x2A\x89\x2A\x2A\xE8"
-						/* ? ? ? ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 53 56 8B ? ? 57 8B ? 89 ? ? E8 */
+				/* ? ? ? ? ? ? ? ? ? A1 ? ? ? ? 33 ? 89 ? ? 53 56 8B ? ? 57 8B ? 89 ? ? E8 */
 			}
 
 			/**
@@ -4047,7 +4048,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CTankRock8DetonateEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x56\x8B\x2A\x80\xBE\x2A\x2A\x2A\x2A\x2A\x57\x0F\x84\x2A\x2A\x2A\x2A\xA1"
-						/* ? ? ? ? ? ? 53 56 8B ? 80 BE ? ? ? ? ? 57 0F 84 ? ? ? ? A1 */
+				/* ? ? ? ? ? ? 53 56 8B ? 80 BE ? ? ? ? ? 57 0F 84 ? ? ? ? A1 */
 			}
 
 			/**
@@ -4063,7 +4064,7 @@
 				"library"	"server"
 				"linux"		"@_ZN9CTankRock9OnReleaseERK6VectorRK6QAngleS2_S2_"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x57\xC6\x86\x2A\x2A\x2A\x2A\x2A\xC7"
-						/* ? ? ? ? ? ? 57 C6 86 ? ? ? ? ? C7 */
+				/* ? ? ? ? ? ? 57 C6 86 ? ? ? ? ? C7 */
 			}
 
 			/**
@@ -4519,6 +4520,21 @@
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x53\x56\x33\x2A\x8B\x2A\x88\x2A\x2A\x3A"
 				/* ? ? ? ? ? ? 83 ? ? 53 56 33 ? 8B ? 88 ? ? 3A */
 				/* Search: "%s_%s_%d%s" and xref to vtable, function is above this. */
+			}
+
+			/**
+			 * Windows sig:
+			 * search for "Would change level, but not going to!\n" or "map_transition" to find InfoChangelevel::StartChangeLevel
+			 * the call above "map_transition" is InfoChangelevel::SaveEntities
+			 */
+
+			/* InfoChangelevel::SaveEntities(InfoChangelevel *this) */
+			"InfoChangelevel::SaveEntities"
+			{
+				"library"	"server"
+				"linux"		"@_ZN15InfoChangelevel12SaveEntitiesEv"
+				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x53\x56\x8B\x2A\xB9\x2A\x2A\x2A\x2A\x89\x2A\x2A\xE8"
+				/* 55 8B ? 83 ? ? 53 56 8B ? B9 ? ? ? ? 89 ? ? E8 */
 			}
 
 
@@ -5294,6 +5310,23 @@
 				/* Search "triggered_car_alarm" for "CCarProp::InputSurvivorStandingOnCar". Called in here. */
 			}
 
+			/*
+			 * InfoChangelevel::IsEntitySaveable(CBaseEntity *)
+			 */
+
+			/**
+			 * Windows sig:
+			 * Find InfoChangelevel::SaveEntities (see signature description InfoChangelevel::SaveEntities),
+			 * At the top of the function, see a 'while' statement, the second condition call is InfoChangelevel::IsEntitySaveable.
+			 */
+			"InfoChangelevel::IsEntitySaveable"
+			{
+				"library"	"server"
+				"linux"		"@_ZN15InfoChangelevel16IsEntitySaveableEP11CBaseEntity"
+				"windows"	"\x55\x8B\x2A\x53\x56\x8B\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\x85\x2A\x78\x2A\x8B"
+				/* 55 8B ? 53 56 8B ? ? 8B ? 8B ? ? ? ? ? 8B ? FF ? 8B ? 85 ? 78 ? 8B */
+			}
+
 
 
 			// UNUSED / BROKEN
@@ -5515,7 +5548,7 @@
 			{
 				"library"	"server"
 				"windows"	"\x55\x8B\xEC\x81\xEC\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x14\x53\x8B\x5D\x08"
-					/* 55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 FC 8B 45 14 53 8B 5D 08 */
+				/* 55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 FC 8B 45 14 53 8B 5D 08 */
 			}
 
 			"nav_update_lighting"
@@ -5670,7 +5703,7 @@
 				"library"	"server"
 				"linux"		"@_ZNK18CServerGameClients15GetPlayerLimitsERiS0_S0_"
 				// "windows"	"\x8B\x44\x24\x04\x8B\x4C\x24\x08\xC7\x00\x2A\x2A\x2A\x2A\xC7\x01\x2A\x2A\x2A\x2A\x8B\x10"
-					/* 8B 44 24 04 8B 4C 24 08 C7 00 ? ? ? ? C7 01 ? ? ? ? 8B 10 */
+				/* 8B 44 24 04 8B 4C 24 08 C7 00 ? ? ? ? C7 01 ? ? ? ? 8B 10 */
 			}
 
 			/*
