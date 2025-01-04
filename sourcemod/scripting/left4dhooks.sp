@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2024 Silvers
+*	Copyright (C) 2025 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.156"
-#define PLUGIN_VERLONG		1156
+#define PLUGIN_VERSION		"1.157"
+#define PLUGIN_VERLONG		1157
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -294,6 +294,7 @@ int g_iOff_m_bFirstSurvivorLeftStartArea;
 int g_iOff_m_preIncapacitatedHealth;
 int g_iOff_m_preIncapacitatedHealthBuffer;
 int g_iOff_m_maxFlames;
+int g_iOff_Intensity;
 int g_iOff_m_flow;
 int g_iOff_m_PendingMobCount;
 int g_iOff_m_nFirstClassIndex;

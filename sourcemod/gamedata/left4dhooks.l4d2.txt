@@ -2404,6 +2404,11 @@
 				"linux"		"340"
 				// From "CTerrorPlayer::GetFlowDistance"
 			}
+			"m_intensity"
+			{
+				"windows"	"12020" // Search "IntensityThreshold" xref, jump into call above and call inside that
+				"linux"		"12000" // Can be found in "ForEachTerrorPlayer<FindMaxIntensity>"
+			}
 			"m_chapter"
 			{
 				"windows"	"1056"
@@ -4663,6 +4668,21 @@
 				/* 55 8B ? 8B ? 8B ? ? ? ? ? ? ? 85 ? 74 */
 				/* Search: "Director state change SUSTAIN_PEAK" few calls below */
 				/* Found by "SilverShot" */
+			}
+
+			/*
+			* Intensity::Reset(Intensity *this)
+			*/
+			"Intensity::Reset"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9Intensity5ResetEv"
+				"windows"	"\x55\x8B\x2A\x51\x0F\x2A\x2A\x56\x8D\x2A\x2A\xF3\x2A\x2A\x2A\xF3"
+				/* 55 8B ? 51 0F ? ? 56 8D ? ? F3 ? ? ? F3 */
+				/*
+				* 1. Search "ClientSettings" for "CTerrorPlayer::CTerrorPlayer" function
+				* 2. Match to Linux, target call is below a "memset" instruction
+				*/
 			}
 
 			/**

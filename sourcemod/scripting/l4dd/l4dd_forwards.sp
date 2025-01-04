@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2024 Silvers
+*	Copyright (C) 2025 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -5629,7 +5629,10 @@ MRESReturn DTR_CSquirrelVM_GetValue(DHookReturn hReturn, DHookParam hParams) // 
 	hParams.GetString(2, key, sizeof(key));
 
 	// Setup methodmap
-	ScriptVariant pVar = ScriptVariant(hParams.GetAddress(3));
+	Address ptr = hParams.GetAddress(3);
+	if( !ptr ) return MRES_Ignored;
+
+	ScriptVariant pVar = ScriptVariant(ptr);
 	fieldtype_t type = pVar.m_type;
 
 	// Forwards

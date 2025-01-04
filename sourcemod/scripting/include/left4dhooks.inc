@@ -18,7 +18,7 @@
  * Copyright (C) 2017 "Accelerator74"
  *
  * Left 4 DHooks Direct SourceMod plugin
- * Copyright (C) 2024 "SilverShot" / "Silvers"
+ * Copyright (C) 2025 "SilverShot" / "Silvers"
  *
  * =============================================================================
  *
@@ -5686,6 +5686,17 @@ native void L4D_GetLobbyReservation(char [] reservation, int maxlength);
  * @noreturn
  */
 native void L4D_SetLobbyReservation(char reservation[20]);
+
+/**
+ * Set player intensity
+ *
+ * Note: Its percentage. 0.0 - Player is calm, 1.0 - Player is stressed
+ *
+ * @param client		Client index
+ * @param intensity		Intensity (values 0.0 to 1.0 only)
+ * @noreturn
+ */
+native void L4D_SetPlayerIntensity(int client, float intensity);
 
 /**
  * @brief Get the current campaign scores stored in the Director

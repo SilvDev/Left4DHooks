@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2024 Silvers
+*	Copyright (C) 2025 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -374,6 +374,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_CanBecomeGhost",								Native_CTerrorPlayer_CanBecomeGhost);
 	CreateNative("L4D_SetBecomeGhostAt",							Native_CTerrorPlayer_SetBecomeGhostAt);
 	CreateNative("L4D_IsFinaleEscapeInProgress",					Native_CDirector_IsFinaleEscapeInProgress);
+	CreateNative("L4D_SetPlayerIntensity",							Native_SetPlayerIntensity);
 
 	// L4D2 only:
 	CreateNative("L4D2_AreWanderersAllowed",						Native_CDirector_AreWanderersAllowed);

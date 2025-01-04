@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2024 Silvers
+*	Copyright (C) 2025 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -123,6 +123,7 @@ Handle g_hSDK_CDirector_TryOfferingTankBot;
 Handle g_hSDK_CNavMesh_GetNavArea;
 Handle g_hSDK_CNavArea_IsConnected;
 Handle g_hSDK_CTerrorPlayer_GetFlowDistance;
+Handle g_hSDK_Intensity_Reset;
 Handle g_hSDK_CTerrorPlayer_SetShovePenalty;
 // Handle g_hSDK_CTerrorPlayer_SetNextShoveTime;
 Handle g_hSDK_CTerrorPlayer_DoAnimationEvent;
@@ -3014,6 +3015,34 @@ int HexStrToInt(const char[] sTemp)
 	return res;
 }
 
+int Native_SetPlayerIntensity(Handle plugin, int numParams) // Native "L4D_SetPlayerIntensity"
+{
+	ValidateNatives(g_hSDK_Intensity_Reset, "Intensity::Reset");
+
+	float value = GetNativeCell(2);
+	if( value < 0.0 || value > 1.0 )
+		ThrowNativeError(SP_ERROR_PARAM, "Invalid value: %f. Only allowed: 0.0 to 1.0.", value);
+
+	int client = GetNativeCell(1);
+
+	if( value == 0.0 )
+	{
+		SDKCall(g_hSDK_Intensity_Reset, GetEntityAddress(client) + view_as<Address>(g_iOff_Intensity));
+		SetEntProp(client, Prop_Send, "m_clientIntensity", 0); // the netprop isn't refreshed every frame. Manually setting it to reflect the reset immediately to other plugins potentially reading this
+	}
+	else
+	{
+		Address address = GetEntityAddress(client) + view_as<Address>(g_iOff_Intensity);
+		StoreToAddress(address, value, NumberType_Int32);
+		StoreToAddress(address + view_as<Address>(4), value, NumberType_Int32);
+		SetEntProp(client, Prop_Send, "m_clientIntensity", RoundToFloor(value * 100.0));
+	}
+
+	return 1;
+}
+
+
+
 //DEPRECATED
 // int Native_GetCampaignScores(Handle plugin, int numParams) // Native "L4D_GetCampaignScores"
 // {}
@@ -5678,7 +5707,7 @@ any Native_InfoChangelevel_IsEntitySaveable(Handle plugin, int numParams) // Nat
 	ValidateNatives(g_hSDK_InfoChangeLevel_IsEntitySaveable, "InfoChangelevel::IsEntitySaveable");
 
 	int entity = GetNativeCell(1);
-	if( !entity || entity > GetMaxEntities() ) return 0;
+	if( entity == -1 || entity == 0 || entity > GetMaxEntities() ) return 0;
 
 	static int info_changelevel = INVALID_ENT_REFERENCE;
 	if( EntRefToEntIndex(info_changelevel) == INVALID_ENT_REFERENCE )

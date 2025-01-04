@@ -1561,6 +1561,11 @@
 				"windows"	"340"
 				"linux"		"348"
 			}
+			"m_intensity"
+			{
+				"windows"	"7268" // Search "Tempo: PEAK_FADE (%3.2f)" jump into call above, jump into call inside that, call just below "!= 2" has value
+				"linux"		"7288" // Can be found in "ForEachTerrorPlayer<FindMaxIntensity>"
+			}
 			"m_chapter"
 			{
 				"windows"	"1652"
@@ -3201,6 +3206,21 @@
 				"linux"		"@_ZNK13CTerrorPlayer15GetFlowDistanceEN13TerrorNavArea8FlowTypeE"
 				"windows"	"\x8B\x01\x8B\x90\x2A\x2A\x2A\x2A\xFF\xD2\x85\xC0\x74\x0E\x8B\x4C\x24\x04\xD9\x84\x88\x2A\x2A\x2A\x2A\xC2\x04\x00\xD9\x05\x2A\x2A\x2A\x2A\xC2\x04\x00"
 				/* 8B 01 8B 90 ? ? ? ? FF D2 85 C0 74 0E 8B 4C 24 04 D9 84 88 ? ? ? ? C2 04 00 D9 05 ? ? ? ? C2 04 00 */
+			}
+
+			/*
+			* Intensity::Reset(Intensity *this)
+			*/
+			"Intensity::Reset"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9Intensity5ResetEv"
+				"windows"	"\x51\xD9\x2A\x56\xD9\x2A\x8D\x2A\x2A\xD9\x2A\x2A\x8B"
+				/* 51 D9 ? 56 D9 ? 8D ? ? D9 ? ? 8B */
+				/*
+				* 1. Search "ClientSettings" for "CTerrorPlayer::CTerrorPlayer" function
+				* 2. Match to Linux, target call is below a "memset" instruction
+				*/
 			}
 
 			/**
