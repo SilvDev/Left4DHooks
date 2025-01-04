@@ -1,5 +1,5 @@
 1.157 (04-Jan-2025)
-	- Plugin is now compiled with SourceMod version 1.10 again.
+	- Plugin is now compiled with SourceMod version 1.11 again.
 	- Changed the "L4D_SetPlayerIntensity" stock to a native, fixing the function from not working. Thanks to "Neburai" for providing the method.
 	- Added command "sm_l4dd_calls" to the test plugin, to increase the number of calls forwards are allowed to log by 1.
 	- Various small fixes.
