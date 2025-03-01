@@ -5549,7 +5549,7 @@ public Action L4D2_OnTransitionRestore(int client)
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D2_OnChangeFinaleStage\" client: %d", client);
+		ForwardCalled("\"L4D2_OnTransitionRestore\" client: %d", client);
 	}
 
 	// return Plugin_Handled;
