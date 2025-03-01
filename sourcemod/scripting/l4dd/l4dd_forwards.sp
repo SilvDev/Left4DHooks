@@ -260,6 +260,12 @@ GlobalForward g_hFWD_Tank_EnterStasis_Post;
 GlobalForward g_hFWD_Tank_LeaveStasis_Post;
 GlobalForward g_hFWD_CTerrorPlayer_DropWeapons;
 GlobalForward g_hFWD_AddonsDisabler;
+GlobalForward g_hFWD_CTerrorPlayer_TransitionRestore;
+GlobalForward g_hFWD_CTerrorPlayer_TransitionRestore_Post;
+GlobalForward g_hFWD_CTerrorPlayer_TransitionRestore_PostHandled;
+GlobalForward g_hFWD_RestoreTransitionedSurvivorBots;
+GlobalForward g_hFWD_RestoreTransitionedSurvivorBots_Post;
+GlobalForward g_hFWD_RestoreTransitionedSurvivorBots_PostHandled;
 // GlobalForward g_hFWD_GetRandomPZSpawnPos;
 // GlobalForward g_hFWD_InfectedShoved;
 // GlobalForward g_hFWD_OnWaterMove;
@@ -602,6 +608,14 @@ void SetupDetours(GameData hGameData = null)
 		CreateDetour(hGameData,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post,	"L4DD::CDirectorScriptedEventManager::ChangeFinaleStage",			"L4D2_OnChangeFinaleStage_Post",				true);
 		CreateDetour(hGameData,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage,		DTR_CDirectorScriptedEventManager_ChangeFinaleStage_Post,	"L4DD::CDirectorScriptedEventManager::ChangeFinaleStage",			"L4D2_OnChangeFinaleStage_PostHandled",			true);
 		CreateDetour(hGameData,		DTR_AddonsDisabler,											INVALID_FUNCTION,											"L4DD::CBaseServer::FillServerInfo",								"L4D2_OnClientDisableAddons",					false,				null,				Address_Null,		true); // Force detour to enable.
+
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_TransitionRestore,						DTR_CTerrorPlayer_TransitionRestore_Post,					"L4DD::CTerrorPlayer::TransitionRestore",							"L4D2_OnTransitionRestore", 					false);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_TransitionRestore,						DTR_CTerrorPlayer_TransitionRestore_Post,					"L4DD::CTerrorPlayer::TransitionRestore",							"L4D2_OnTransitionRestore_Post", 				true);
+		CreateDetour(hGameData,		DTR_CTerrorPlayer_TransitionRestore,						DTR_CTerrorPlayer_TransitionRestore_Post,					"L4DD::CTerrorPlayer::TransitionRestore",							"L4D2_OnTransitionRestore_PostHandled",			true);
+
+		CreateDetour(hGameData,		DTR_RestoreTransitionedSurvivorBots, 						DTR_RestoreTransitionedSurvivorBots_Post,					"L4DD::RestoreTransitionedSurvivorBots",							"L4D2_OnRestoreTransitionedSurvivorBots",		false);
+		CreateDetour(hGameData,		DTR_RestoreTransitionedSurvivorBots, 						DTR_RestoreTransitionedSurvivorBots_Post,					"L4DD::RestoreTransitionedSurvivorBots",							"L4D2_OnRestoreTransitionedSurvivorBots_Post",	true);
+		CreateDetour(hGameData,		DTR_RestoreTransitionedSurvivorBots, 						DTR_RestoreTransitionedSurvivorBots_Post,					"L4DD::RestoreTransitionedSurvivorBots",							"L4D2_OnRestoreTransitionedSurvivorBots_PostHandled",	true);
 	}
 
 	// Deprecated, unused or broken.
@@ -5212,7 +5226,69 @@ MRESReturn DTR_Infected_OnHitByVomitJar_Post(int client, DHookReturn hReturn, DH
 	return MRES_Ignored;
 }
 
+bool g_hBlock_CTerrorPlayer_TransitionRestore;
+MRESReturn DTR_CTerrorPlayer_TransitionRestore(int pThis, DHookReturn hReturn)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_TransitionRestore");
+	g_hBlock_CTerrorPlayer_TransitionRestore = false;
 
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_TransitionRestore);
+	Call_PushCell(pThis);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_hBlock_CTerrorPlayer_TransitionRestore = true;
+
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_TransitionRestore_Post(int pThis, DHookReturn hReturn)
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_TransitionRestore_Post");
+	Address iReturn = hReturn.Value;
+
+	Call_StartForward(g_hBlock_CTerrorPlayer_TransitionRestore ? g_hFWD_CTerrorPlayer_TransitionRestore_PostHandled : g_hFWD_CTerrorPlayer_TransitionRestore_Post);
+	Call_PushCell(pThis);
+	Call_PushCell(iReturn);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
+
+bool g_bBlock_RestoreTransitionedSurvivorBots;
+MRESReturn DTR_RestoreTransitionedSurvivorBots()
+{
+	//PrintToServer("##### DTR_RestoreTransitionedSurvivorBots");
+	g_bBlock_RestoreTransitionedSurvivorBots = false;
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_RestoreTransitionedSurvivorBots);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Handled )
+	{
+		g_bBlock_RestoreTransitionedSurvivorBots = true;
+		return MRES_Supercede;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_RestoreTransitionedSurvivorBots_Post()
+{
+	//PrintToServer("##### DTR_RestoreTransitionedSurvivorBots_Post");
+
+	Call_StartForward(g_bBlock_RestoreTransitionedSurvivorBots ? g_hFWD_RestoreTransitionedSurvivorBots_PostHandled : g_hFWD_RestoreTransitionedSurvivorBots_Post);
+	Call_Finish();
+
+	return MRES_Ignored;
+}
 
 /*
 // Removed because it spawns specials at 0,0,0 when modifying any value.
