@@ -2590,8 +2590,6 @@ forward void L4D2_OnTransitionRestore_PostHandled(int client, Address pkv);
  * @remarks Blocking this function will result the bot not being spawned after transitioned to next map.
  * @remarks For human players, See L4D2_OnTransitionRestore.
  * 
- * @param botIndex		Bot index
- * 
  * @return				Plugin_Handled to block bots from being created, others otherwise.
 */
 forward Action L4D2_OnRestoreTransitionedSurvivorBots();
