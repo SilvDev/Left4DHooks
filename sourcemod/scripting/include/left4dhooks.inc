@@ -2592,7 +2592,7 @@ forward void L4D2_OnTransitionRestore_PostHandled(int client, Address pkv);
  * 
  * @param botIndex		Bot index
  * 
- * @return				Plugin_Handled to block this bot from being created, others otherwise.
+ * @return				Plugin_Handled to block bots from being created, others otherwise.
 */
 forward Action L4D2_OnRestoreTransitionedSurvivorBots();
 
