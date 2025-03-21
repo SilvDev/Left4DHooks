@@ -4074,6 +4074,8 @@ int Direct_GetVSCampaignScore(Handle plugin, int numParams) // Native "L4D2Direc
 int Direct_SetVSCampaignScore(Handle plugin, int numParams) // Native "L4D2Direct_SetVSCampaignScore"
 {
 	ValidateAddress(g_pGameRules, "GameRulesPtr");
+	ValidateAddress(g_pVersusMode, "VersusModePtr");
+	ValidateAddress(g_iOff_m_iCampaignScores, "m_iCampaignScores");
 	ValidateAddress(g_iOff_m_iCampaignScores2, "m_iCampaignScores2");
 	ValidateNatives(g_hSDK_CTerrorGameRules_SetCampaignScores, "CTerrorGameRules::SetCampaignScores");
 
@@ -4088,6 +4090,11 @@ int Direct_SetVSCampaignScore(Handle plugin, int numParams) // Native "L4D2Direc
 	int vals[2];
 	vals[0] = LoadFromAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2), NumberType_Int32);
 	vals[1] = LoadFromAddress(g_pGameRules + view_as<Address>(g_iOff_m_iCampaignScores2 + 4), NumberType_Int32);
+
+	// Update real scores
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores), vals[0], NumberType_Int32, false);
+	StoreToAddress(view_as<Address>(g_pVersusMode + g_iOff_m_iCampaignScores + 4), vals[1], NumberType_Int32, false);
+
 	SDKCall(g_hSDK_CTerrorGameRules_SetCampaignScores, vals[0], vals[1]);
 
 	return 0;

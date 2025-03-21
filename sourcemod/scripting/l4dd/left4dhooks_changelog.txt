@@ -1,18 +1,19 @@
+1.158 (21-Mar-2025)
+	- Added forwards "L4D2_OnTransitionRestore*" and "L4D2_OnRestoreTransitionedSurvivorBots*" to trigger on clients and bots transitioning data restore. Thanks to "blueblur0730" for adding.
+	- Fixed native "L4D2Direct_SetVSCampaignScore" not updating the scores fully. Thanks to "nikita1824" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+	- Updated: "/scripting/include/left4dhooks.inc" include file.
+
 1.157 (04-Jan-2025)
 	- Plugin is now compiled with SourceMod version 1.11 again.
 	- Changed the "L4D_SetPlayerIntensity" stock to a native, fixing the function from not working. Thanks to "Neburai" for providing the method.
 	- Added command "sm_l4dd_calls" to the test plugin, to increase the number of calls forwards are allowed to log by 1.
 	- Various small fixes.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/scripting/include/left4dhooks.inc" include file.
-	- Updated: "/scripting/include/left4dhooks_stocks.inc" include file.
 
 1.156 (15-Dec-2024)
 	- Added forwards "L4D1_OnSavingEntities" and "L4D2_OnSavingEntities" to trigger when entities are being saved on level change. Thanks to "blueblur0730" for adding.
@@ -20,15 +21,6 @@
 	- Fixed the "L4D_PipeBombProjectile_*" and "L4D_PipeBomb_Detonate*" forwards triggering for breakable props when only "L4D_CBreakableProp_Break" should trigger. Thanks to "blueblur0730" for reporting.
 	- Fixed forward "L4D_OnCreateRescuableSurvivors" not loading in L4D1 due to GameData file typo. Thanks to "Chenhupo" for reporting.
 	- Wildcarded the "CTerrorGameRules::RecomputeTeamScores" signature in L4D1 to avoid failing if detoured. Thanks to "Chenhupo" for reporting.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/scripting/include/left4dhooks.inc" include file.
 
 1.155 (05-Nov-2024)
 	- Fixed incorrect GameData file in project archive. Thanks to "kayletid201" for reporting.

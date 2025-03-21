@@ -1772,6 +1772,22 @@
 				"this" 			"entity"
 			}
 
+			"L4DD::CTerrorPlayer::TransitionRestore"
+			{
+				"signature"		"CTerrorPlayer::TransitionRestore"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
+			"L4DD::RestoreTransitionedSurvivorBots"
+			{
+				"signature"		"RestoreTransitionedSurvivorBots"
+				"callconv"		"cdecl"
+				"return"		"void"
+				"this"			"ignore"
+			}
+
 			// Addons Disabler
 			"L4DD::CBaseServer::FillServerInfo"
 			{
@@ -1816,22 +1832,6 @@
 				"callconv"		"thiscall"
 				"return"		"int"
 				"this"			"entity"
-			}
-
-			"L4DD::CTerrorPlayer::TransitionRestore"
-			{
-				"signature"		"CTerrorPlayer::TransitionRestore"
-				"callconv"		"thiscall"
-				"return"		"int"
-				"this"			"entity"
-			}
-
-			"L4DD::RestoreTransitionedSurvivorBots"
-			{
-				"signature"		"RestoreTransitionedSurvivorBots"
-				"callconv"		"cdecl"
-				"return"		"void"
-				"this"			"ignore"
 			}
 		}
 
@@ -4558,6 +4558,24 @@
 				/* 55 8B ? 83 ? ? 53 56 8B ? B9 ? ? ? ? 89 ? ? E8 */
 			}
 
+			/* CTerrorPlayer::TransitionRestore(CTerrorPlayer *__hidden this) */
+			"CTerrorPlayer::TransitionRestore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer17TransitionRestoreEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x80\xBE\x2A\x2A\x2A\x2A\x2A\x75\x2A\x33\x2A\x5E\x8B\x2A\x5D\xC3"
+				/* ? ? ? ? ? ? ? 80 BE ? ? ? ? ? 75 ? 33 ? 5E 8B ? 5D C3 */
+			}
+
+			/* RestoreTransitionedSurvivorBots(void) */
+			"RestoreTransitionedSurvivorBots"
+			{
+				"library"	"server"
+				"linux"		"@_Z31RestoreTransitionedSurvivorBotsv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x85\x2A\x0F\x84\x2A\x2A\x2A\x2A\x53\x56\x57\x50\x68"
+				/* ? ? ? ? ? ? ? ? 83 ? ? 85 ? 0F 84 ? ? ? ? 53 56 57 50 68 */
+			}
+
 
 
 			// ====================================================================================================
@@ -5469,23 +5487,7 @@
 				/* Search: "NavAreaBuildPath". Should be first sub. */
 			}
 
-			/* CTerrorPlayer::TransitionRestore(CTerrorPlayer *__hidden this) */
-			"CTerrorPlayer::TransitionRestore"
-			{
-				"library"	"server"
-				"linux"		"@_ZN13CTerrorPlayer17TransitionRestoreEv"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x80\xBE\x2A\x2A\x2A\x2A\x2A\x75\x2A\x33\x2A\x5E\x8B\x2A\x5D\xC3"
-				/* ? ? ? ? ? ? ? 80 BE ? ? ? ? ? 75 ? 33 ? 5E 8B ? 5D C3 */
-			}
 
-			/* RestoreTransitionedSurvivorBots(void) */
-			"RestoreTransitionedSurvivorBots"
-			{
-				"library"	"server"
-				"linux"		"@_Z31RestoreTransitionedSurvivorBotsv"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x85\x2A\x0F\x84\x2A\x2A\x2A\x2A\x53\x56\x57\x50\x68"
-				/* ? ? ? ? ? ? ? ? 83 ? ? 85 ? 0F 84 ? ? ? ? 53 56 57 50 68 */
-			}
 
 			// ====================================================================================================
 			// POINTERS

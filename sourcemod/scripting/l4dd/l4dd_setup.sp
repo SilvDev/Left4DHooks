@@ -215,6 +215,13 @@ void SetupForwardsNatives()
 		g_hFWD_InfoChangelevel_SaveEntities									= new GlobalForward("L4D1_OnSavingEntities",							ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_InfoChangelevel_SaveEntities_Post							= new GlobalForward("L4D1_OnSavingEntities_Post",						ET_Event, Param_Cell, Param_Cell);
 		g_hFWD_InfoChangelevel_SaveEntities_PostHandled						= new GlobalForward("L4D1_OnSavingEntities_PostHandled",				ET_Event, Param_Cell, Param_Cell);
+
+		g_hFWD_CTerrorPlayer_TransitionRestore								= new GlobalForward("L4D2_OnTransitionRestore",							ET_Event, Param_Cell);
+		g_hFWD_CTerrorPlayer_TransitionRestore_Post							= new GlobalForward("L4D2_OnTransitionRestore_Post",					ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_CTerrorPlayer_TransitionRestore_PostHandled					= new GlobalForward("L4D2_OnTransitionRestore_PostHandled",				ET_Event, Param_Cell, Param_Cell);
+		g_hFWD_RestoreTransitionedSurvivorBots								= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots",			ET_Event);
+		g_hFWD_RestoreTransitionedSurvivorBots_Post							= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots_Post",		ET_Event);
+		g_hFWD_RestoreTransitionedSurvivorBots_PostHandled					= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots_PostHandled",	ET_Event);
 	}
 
 	if( g_bLeft4Dead2 )
@@ -286,12 +293,6 @@ void SetupForwardsNatives()
 		g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_Post			= new GlobalForward("L4D2_OnChangeFinaleStage_Post",					ET_Event, Param_Cell, Param_String);
 		g_hFWD_CDirectorScriptedEventManager_ChangeFinaleStage_PostPost		= new GlobalForward("L4D2_OnChangeFinaleStage_PostHandled",				ET_Event, Param_Cell, Param_String);
 		g_hFWD_AddonsDisabler												= new GlobalForward("L4D2_OnClientDisableAddons",						ET_Event, Param_String);
-		g_hFWD_CTerrorPlayer_TransitionRestore								= new GlobalForward("L4D2_OnTransitionRestore",							ET_Event, Param_Cell);
-		g_hFWD_CTerrorPlayer_TransitionRestore_Post							= new GlobalForward("L4D2_OnTransitionRestore_Post",					ET_Event, Param_Cell, Param_Cell);
-		g_hFWD_CTerrorPlayer_TransitionRestore_PostHandled					= new GlobalForward("L4D2_OnTransitionRestore_PostHandled",				ET_Event, Param_Cell, Param_Cell);
-		g_hFWD_RestoreTransitionedSurvivorBots								= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots",			ET_Event);
-		g_hFWD_RestoreTransitionedSurvivorBots_Post							= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots_Post",		ET_Event);
-		g_hFWD_RestoreTransitionedSurvivorBots_PostHandled					= new GlobalForward("L4D2_OnRestoreTransitionedSurvivorBots_PostHandled",	ET_Event);
 	}
 
 
