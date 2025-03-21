@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.157"
+#define PLUGIN_VERSION		"1.158"
 
 /*=======================================================================================
 	Plugin Info:
@@ -3240,7 +3240,8 @@ public Action L4D_TankClaw_OnPlayerHit_Pre(int tank, int claw, int player)
 
 		ForwardCalled("\"L4D_TankClaw_OnPlayerHit_Pre\" %d (Claw = %d) (Target = %d)", tank, claw, player);
 	}
- - Blocks target player being flung
+
+ 	// Blocks target player being flung
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4350,7 +4351,7 @@ public Action L4D_PipeBombProjectile_Pre(int client, float vecPos[3], float vecA
 	// return Plugin_Changed;
 
 
- - Blocks grenade creation
+ 	// Blocks grenade creation
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4392,7 +4393,7 @@ public Action L4D_MolotovProjectile_Pre(int client, float vecPos[3], float vecAn
 	}
 
 	// See the "L4D_PipeBombProjectile_Pre" forward for details on changing params.
- - Blocks grenade creation
+ 	// Blocks grenade creation
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4434,7 +4435,7 @@ public Action L4D2_VomitJarProjectile_Pre(int client, float vecPos[3], float vec
 	}
 
 	// See the "L4D_PipeBombProjectile_Pre" forward for details on changing params.
- - Blocks grenade creation
+ 	// Blocks grenade creation
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4476,10 +4477,12 @@ public Action L4D2_GrenadeLauncherProjectile_Pre(int client, float vecPos[3], fl
 	}
 
 	// See the "L4D_PipeBombProjectile_Pre" forward for details on changing params.
- - Adds incendiary ammo type to last
+
+ 	// Adds incendiary ammo type to last
 	// bIncendiary = true;
 	// return Plugin_Changed;
- - Blocks grenade creation
+
+ 	// Blocks grenade creation
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4519,7 +4522,7 @@ public Action L4D_Molotov_Detonate(int entity, int client)
 
 		ForwardCalled("\"L4D_Molotov_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
- - block grenade detonating
+ 	// block grenade detonating
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4561,7 +4564,7 @@ public Action L4D_PipeBomb_Detonate(int entity, int client)
 	}
 
 
- - block grenade detonating
+ 	// block grenade detonating
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4601,7 +4604,7 @@ public Action L4D2_VomitJar_Detonate(int entity, int client)
 
 		ForwardCalled("\"L4D2_VomitJar_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
- - block grenade detonating
+ 	// block grenade detonating
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4641,7 +4644,7 @@ public Action L4D2_GrenadeLauncher_Detonate(int entity, int client)
 
 		ForwardCalled("\"L4D2_GrenadeLauncher_Detonate\" %d (%N) (Grenade = %d)", client, client > 0 && client <= MaxClients ? client : 0, entity);
 	}
- - block grenade detonating
+ 	// block grenade detonating
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4681,7 +4684,7 @@ public Action L4D_PlayerExtinguish(int client)
 
 		ForwardCalled("\"L4D_PlayerExtinguish\" %d (%N)", client, client);
 	}
- - Block extinguish
+ 	// Block extinguish
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4720,7 +4723,7 @@ public Action L4D1_FirstAidKit_StartHealing(int client, int entity)
 
 		ForwardCalled("\"L4D1_FirstAidKit_StartHealing\" %d (%N) - MedKit = %d. Healing: %d (%N)", client, client, entity, target, target);
 	}
- - Block using
+ 	// Block using
 	// return Plugin_Handled;
 
 	// Modify healing duration:
@@ -4776,7 +4779,7 @@ public Action L4D2_OnStartUseAction(any action, int client, int target)
 
 		ForwardCalled("\"L4D2_OnStartUseAction\" %d (%N) - Target: %d. Action: %d", client, client, target, action);
 	}
- - Block action
+ 	// Block action
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -4882,7 +4885,7 @@ public Action L4D2_BackpackItem_StartAction(int client, int entity, any type)
 			}
 		}
 	}
- - Block using
+ 	// Block using
 	// return Plugin_Handled;
 
 	// Modify use duration:
@@ -4971,9 +4974,9 @@ public Action L4D2_CGasCan_EventKilled(int gascan, int &inflictor, int &attacker
 
 		ForwardCalled("\"L4D2_CGasCan_EventKilled\" %d (Inf=%d) (Att=%d)", gascan, inflictor, attacker);
 	}
- - Block detonating
+ 	// Block detonating
 	// return Plugin_Handled;
- - Change attacker
+ 	// Change attacker
 	/*
 	int bot = GetRandomSurvivor(1, 1);
 	inflictor = bot;
@@ -5191,7 +5194,7 @@ public Action L4D_OnGetScriptValueInt(const char[] key, int &retVal)
 
 		ForwardCalled("\"L4D_OnGetScriptValueInt\" \"%s\" %d", key, retVal);
 	}
- - green gascans on back from map c4m*
+ 	// green gascans on back from map c4m*
 	/*
 	if( strcmp(key, "GasCansOnBacks") == 0 )
 	{
@@ -5302,7 +5305,7 @@ public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, Var
 
 		ForwardCalled("\"L4D2_OnGetScriptValueVoid\" \"%s\" hScope = %d", key, hScope);
 	}
- - example setting temporary health decay rate:
+ 	// example setting temporary health decay rate:
 	/*
 	if( strcmp(key, "TempHealthDecayRate") == 0 )
 	{
@@ -5318,7 +5321,7 @@ public Action L4D2_OnGetScriptValueVoid(const char[] key, fieldtype_t &type, Var
 		return Plugin_Handled;
 	}
 	// */
- - green gascans on back from map c4m*
+ 	// green gascans on back from map c4m*
 	/*
 	if( strcmp(key, "GasCansOnBacks") == 0 )
 	{
@@ -5446,7 +5449,7 @@ public Action L4D_OnStartMeleeSwing(int client, bool boolean)
 
 		ForwardCalled("\"L4D_OnStartMeleeSwing\" %d. %d", client, boolean);
 	}
- - PREDICTION ISSUES - Hear and partially see swing in first person
+ 	// PREDICTION ISSUES - Hear and partially see swing in first person
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5538,6 +5541,86 @@ public void L4D2_OnChangeFinaleStage_PostHandled(int finaleType, const char[] ar
 	}
 }
 
+public Action L4D2_OnTransitionRestore(int client)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnTransitionRestore\" client: %d", client);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnTransitionRestore_Post(int client, Address pkv)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnTransitionRestore_Post\" client: %d, pkv: %d", client, pkv);
+	}
+}
+
+public void L4D2_OnTransitionRestore_PostHandled(int client, Address pkv)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnTransitionRestore_PostHandled\" client: %d, pkv: %d", client, pkv);
+	}
+}
+
+public Action L4D2_OnRestoreTransitionedSurvivorBots()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnRestoreTransitionedSurvivorBots\"");
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_OnRestoreTransitionedSurvivorBots_Post()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnRestoreTransitionedSurvivorBots_Post\"");
+	}
+}
+
+public void L4D2_OnRestoreTransitionedSurvivorBots_PostHandled()
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_OnRestoreTransitionedSurvivorBots_PostHandled\"");
+	}
+}
+
 public void L4D_OnServerHibernationUpdate(bool hibernating)
 {
 	static int called;
@@ -5560,7 +5643,7 @@ public Action L4D2_OnSavingEntities(int info_changelevel)
 
 		ForwardCalled("\"L4D2_OnSavingEntities\" %d", info_changelevel);
 	}
- - items like gascan wont be saved to the next map.
+ 	// items like gascan wont be saved to the next map.
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5600,7 +5683,7 @@ public Action L4D1_OnSavingEntities(int info_changelevel, Address Kv)
 
 		ForwardCalled("\"L4D2_OnSavingEntities\" %d (KV: %d)", info_changelevel, Kv);
 	}
- - items like gascan wont be saved to the next map.
+ 	// items like gascan wont be saved to the next map.
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5671,7 +5754,7 @@ public Action L4D_OnKnockedDown(int client, int reason)
 
 	// To stop player velocity use RequestFrame and set their velocity to 0,0,0 or restore to previous maybe?
 	// RequestFrame(OnFrameResetMove, GetClientUserId(client));
- - Block the flung animation, player velocity will still change (L4D2 only?)
+ 	// Block the flung animation, player velocity will still change (L4D2 only?)
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5758,7 +5841,7 @@ public Action L4D2_OnPummelVictim(int attacker, int victim)
 
 		ForwardCalled("\"L4D2_OnPummelVictim\" %d (%N) pummelled %d (%N)", attacker, attacker, victim, victim);
 	}
- - Block being pummelled
+ 	// Block being pummelled
 
 	// Note: when blocking pummel the Survivor will be stuck inside the Charger (eventually teleporting them) and AI chargers cannot move. To fix this uncomment and use the following 4 lines:
 	// DataPack dPack = new DataPack();
@@ -5850,7 +5933,7 @@ public Action L4D2_OnThrowImpactedSurvivor(int attacker, int victim)
 
 		ForwardCalled("\"L4D2_OnThrowImpactedSurvivor\" %d (%N) flung %d (%N)", attacker, attacker, victim, victim);
 	}
- - Block being flung
+ 	// Block being flung
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5930,7 +6013,7 @@ public Action L4D2_OnPlayerFling(int client, int attacker, float vecDir[3])
 
 		ForwardCalled("\"L4D2_OnPlayerFling\" %d (%N) flung %d (%N). vecDir: (%0.1f %0.1f %0.1f)", attacker, attacker, client, client, vecDir[0], vecDir[1], vecDir[2]);
 	}
- - Block being flung
+ 	// Block being flung
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -5987,7 +6070,7 @@ public Action L4D_OnFatalFalling(int client, int camera)
 
 		ForwardCalled("\"L4D_OnFatalFalling\" %d (%N) (cam: %d)", client, client, camera);
 	}
- - Block death fall camera
+ 	// Block death fall camera
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -6015,7 +6098,7 @@ public Action L4D_OnPlayerCough(int client, int attacker)
 
 		ForwardCalled("\"L4D_OnPlayerCough\" %d (%N). Caused by %d (%N)", client, client, attacker, attacker);
 	}
- - Block cough
+ 	// Block cough
 	// return Plugin_Handled;
 
 	return Plugin_Continue;
@@ -6055,7 +6138,7 @@ public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, flo
 
 		ForwardCalled("\"L4D_OnIncapacitated\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d", client, client, inflictor, attacker, damage, damagetype);
 	}
- - Block player being incapacitated
+ 	// Block player being incapacitated
 	// return Plugin_Handled;
 
 	return Plugin_Continue;

@@ -2536,6 +2536,87 @@ forward void L4D2_OnChangeFinaleStage_Post(int finaleType, const char[] arg);
 forward void L4D2_OnChangeFinaleStage_PostHandled(int finaleType, const char[] arg);
 
 /**
+ * Internally, game uses keyvalues structure to save survivors' data for the level-transitioning,
+ * and stores these keyvalues into an array.
+ * After we have transitioned to the next map, we restore the data from the keyvalues array.
+ * 
+ * To retrieve the keyvalues before these functions below calling,
+ * you may need to access the memory from the internal global array g_SavedPlayers or g_SavedSurvivorBots etc.
+ * 
+ * To see the keys and their values, see PlayerSaveData::PlayerSaveData().
+*/
+
+/**
+ * @brief Called whenever CTerrorPlayer::TransitionRestore is invoked.
+ * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
+ * @remarks This will be called for every survivors including bots once the level failed and restarted.
+ * 
+ * @param client		Client index
+ * 
+ * @return				Plugin_Handled to block this player from restoring his level-transitioned data, others otherwise.
+*/
+forward Action L4D2_OnTransitionRestore(int client);
+
+/**
+ * @brief Called after CTerrorPlayer::TransitionRestore is invoked.
+ * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
+ * @remarks This will be called for every survivors including bots once the level failed and restarted.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * 
+ * @param client		Client index
+ * @param pkv			Address of the keyvalues pointer.
+ * 
+ * @noreturn
+*/
+forward void L4D2_OnTransitionRestore_Post(int client, Address pkv);
+
+/**
+ * @brief Called after CTerrorPlayer::TransitionRestore is invoked.
+ * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
+ * @remarks This will be called for every survivors including bots once the level failed and restarted.
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * 
+ * @param client		Client index
+ * @param pkv			Address of the keyvalues pointer.
+ * 
+ * @noreturn
+*/
+forward void L4D2_OnTransitionRestore_PostHandled(int client, Address pkv);
+
+/**
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called BEFORE bots create.
+ * 
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
+ * @remarks Blocking this function will result the bot not being spawned after transitioned to next map.
+ * @remarks For human players, See L4D2_OnTransitionRestore.
+ * 
+ * @return				Plugin_Handled to block bots from being created, others otherwise.
+*/
+forward Action L4D2_OnRestoreTransitionedSurvivorBots();
+
+/**
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created.
+ * 
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
+ * @remarks For human players, See L4D2_OnTransitionRestore.
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * 
+ * @noreturn
+*/
+forward void L4D2_OnRestoreTransitionedSurvivorBots_Post();
+
+/**
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created.
+ * 
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
+ * @remarks For human players, See L4D2_OnTransitionRestore.
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * 
+ * @noreturn
+*/
+forward void L4D2_OnRestoreTransitionedSurvivorBots_PostHandled();
+
+/**
  * @brief Called whenever CDirectorVersusMode::EndVersusModeRound(bool) is invoked
  * @remarks Called before score calculations and the scoreboard display
  *
