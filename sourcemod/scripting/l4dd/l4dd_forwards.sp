@@ -3519,6 +3519,12 @@ MRESReturn DTR_CTerrorPlayer_DropWeapons(int pThis, DHookReturn hReturn) // Forw
 {
 	//PrintToServer("##### DTR_CTerrorPlayer_DropWeapons");
 
+	if (pThis <= 0 || pThis > MaxClients)
+		return MRES_Ignored;
+
+	if (!IsClientInGame(pThis))
+		return MRES_Ignored;
+
 	if( !IsPlayerAlive(pThis) ) return MRES_Ignored; // Triggered before round_start or so but players are dead at this point, should only trigger when still alive
 
 	// Get held object if non-weapon
