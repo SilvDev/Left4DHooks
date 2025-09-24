@@ -6107,9 +6107,10 @@ void Ammo_t_CreateNatives()
 any Native_Ammo_t_GetName(Handle plugin, int numParams)
 {
 	Address pThis = GetNativeCell(1);
+	Address pName = LoadFromAddress(pThis, NumberType_Int32);
 
 	char name[MAX_NAME_LENGTH];
-	L4D_ReadMemoryString(pThis, name, sizeof(name));
+	L4D_ReadMemoryString(pName, name, sizeof(name));
 
 	SetNativeString(2, name, GetNativeCell(3));
 	return 0;
