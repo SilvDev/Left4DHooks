@@ -94,6 +94,7 @@ Handle g_hSDK_Checkpoint_ContainsArea;
 Handle g_hSDK_CTerrorGameRules_GetNumChaptersForMissionAndMode;
 Handle g_hSDK_CDirector_GetGameModeBase;
 Handle g_hSDK_KeyValues_GetString;
+Handle g_hSDK_AmmoDef_MaxCarry;
 
 // left4downtown.inc
 Handle g_hSDK_CTerrorGameRules_GetTeamScore;
@@ -6107,9 +6108,10 @@ void Ammo_t_CreateNatives()
 any Native_Ammo_t_GetName(Handle plugin, int numParams)
 {
 	Address pThis = GetNativeCell(1);
+	Address pName = LoadFromAddress(pThis, NumberType_Int32);
 
 	char name[MAX_NAME_LENGTH];
-	L4D_ReadMemoryString(pThis, name, sizeof(name));
+	L4D_ReadMemoryString(pName, name, sizeof(name));
 
 	SetNativeString(2, name, GetNativeCell(3));
 	return 0;
@@ -6286,6 +6288,7 @@ void AmmoDef_CreateNatives()
 	CreateNative("AmmoDef.PlrDamage", Native_AmmoDef_PlrDamage);
 	CreateNative("AmmoDef.NPCDamage", Native_AmmoDef_NPCDamage);
 	CreateNative("AmmoDef.MaxCarry", Native_AmmoDef_MaxCarry);
+	CreateNative("AmmoDef.MaxCarry_Call", Native_AmmoDef_MaxCarry_Call);
 	CreateNative("AmmoDef.DamageType", Native_AmmoDef_DamageType);
 	CreateNative("AmmoDef.Flags", Native_AmmoDef_Flags);
 	CreateNative("AmmoDef.MinSplashSize", Native_AmmoDef_MinSplashSize);
@@ -6394,6 +6397,21 @@ any Native_AmmoDef_MaxCarry(Handle plugin, int numParams)
 	{
 		return AmmoDef_m_AmmoType(nAmmoIndex).pMaxCarry;
 	}
+}
+
+any Native_AmmoDef_MaxCarry_Call(Handle plugin, int numParams)
+{
+	ValidateAddress(g_pAmmoDef, "AmmoDef");
+
+	int nAmmoIndex = GetNativeCell(1);
+	int client = GetNativeCell(2);
+
+	// "nAmmoIndex" left unchecked because it's done in the called function
+	if (client <= 0 || client > MaxClients)
+		client = -1;
+	
+	//PrintToServer("#### CALL g_hSDK_AmmoDef_MaxCarry");
+	return SDKCall(g_hSDK_AmmoDef_MaxCarry, g_pAmmoDef, nAmmoIndex, client);
 }
 
 any Native_AmmoDef_DamageType(Handle plugin, int numParams)

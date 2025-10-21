@@ -1771,6 +1771,12 @@
 				*/
 				"linux" "68"
 			}
+
+			"CAmmoDef::MaxCarry"
+			{
+				"linux"		"0"
+				"windows"	"0"
+			}
 		}
 
 

@@ -1199,11 +1199,24 @@ methodmap AmmoDef
 
 	/**
 	 * @brief Retrieves the maximum ammo that a player can carry
+	 * @note Returns the value locally calculated using Ammo_t.
 	 *
 	 * @param nAmmoIndex	Ammo index
 	 * @return				Ammo count
 	 */
 	public static native int MaxCarry(int nAmmoIndex);
+
+	/**
+	 * @brief Retrieves the maximum ammo that a player can carry
+	 * @note Returns the value from the function call.
+	 * @note Recommended to use this one in order to get values modified by others plugins.
+	 *
+	 * @param nAmmoIndex	Ammo index
+	 * @param client		Client index to test.
+	 * 						Has no actual effect in function, but helps identify who is picking up ammo.
+	 * @return				Ammo count
+	 */
+	public static native int MaxCarry_Call(int nAmmoIndex, int client = -1);
 
 	public static native int PlrDamage(int nAmmoIndex);
 	public static native int NPCDamage(int nAmmoIndex);

@@ -361,6 +361,37 @@ Action sm_l4dd(int client, int args)
 	*/
 
 
+	/*
+	for (int i = AmmoDef.GetAmmoIndex()-1; i > 0; --i)
+	{
+		char name[64];
+		Ammo_t ammo = AmmoDef.GetAmmoOfIndex(i);
+		ammo.GetName(name, sizeof(name));
+		ReplyToCommand(client, "Ammo_t#%d (%s)", i, name);
+	}
+
+	if (client > 0)
+	{
+		int weapon = GetPlayerWeaponSlot(client, 0);
+		if (weapon != -1)
+		{
+			int index = GetEntProp(weapon, Prop_Send, "m_iPrimaryAmmoType");
+
+			char name[64];
+			Ammo_t ammo = AmmoDef.GetAmmoOfIndex(index);
+			ammo.GetName(name, sizeof(name));
+
+			ReplyToCommand(client, "primary ammotype (#%d) (%s)", index, name);
+
+			ReplyToCommand(client, "primary MaxCarry (%d)", AmmoDef.MaxCarry(index));
+			ReplyToCommand(client, "primary MaxCarry (%d)", AmmoDef.MaxCarry(index));
+
+			ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, -1));			// ok
+			ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, client));		// ok
+			// ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, 0););		// error, invalid client index 0 (thrown by SDKCall)
+		}
+	}
+	*/
 
 	/*
 	L4D_SetPlayerIntensity(client, 0.9);

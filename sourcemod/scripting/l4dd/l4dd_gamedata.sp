@@ -1196,6 +1196,19 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"KeyValues::GetString\" (%s)", g_sSystem);
 	}
 
+	StartPrepSDKCall(SDKCall_Raw);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Virtual, "CAmmoDef::MaxCarry") == false )
+	{
+		LogError("Failed to find signature: \"CAmmoDef::MaxCarry\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		PrepSDKCall_AddParameter(SDKType_CBasePlayer, SDKPass_Pointer, VDECODE_FLAG_ALLOWNULL);
+		PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+		g_hSDK_AmmoDef_MaxCarry = EndPrepSDKCall();
+		if( g_hSDK_AmmoDef_MaxCarry == null )
+			LogError("Failed to create SDKCall: \"CAmmoDef::MaxCarry\" (%s)", g_sSystem);
+	}
+
 	if( g_bLeft4Dead2 )
 	{
 		StartPrepSDKCall(SDKCall_GameRules);
