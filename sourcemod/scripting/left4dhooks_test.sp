@@ -719,7 +719,7 @@ Action sm_l4dd(int client, int args)
 	// PrintToChatAll("Old spawn time: %f", L4D_GetPlayerSpawnTime(client));
 	// L4D_SetPlayerSpawnTime(client, 25.0, false);
 	// PrintToChatAll("New spawn time: %f", L4D_GetPlayerSpawnTime(client));
-	// PrintToChatAll("Direct_GetSpawnTimer %f", CTimer_GetElapsedTime(L4D2Direct_GetSpawnTimer(client)));
+	// PrintToChatAll("Direct_GetSpawnTimer %f", L4D2Direct_GetSpawnTimer(client));
 
 
 
@@ -2172,7 +2172,6 @@ Action sm_l4dd(int client, int args)
 		PrintToServer("Direct_GetVSStartTimer address %d",					L4D2Direct_GetVSStartTimer());
 		PrintToServer("Direct_GetScavengeRoundSetupTimer address %d",		L4D2Direct_GetScavengeRoundSetupTimer());
 		PrintToServer("Direct_GetScavengeOvertimeGraceTimer address %d",	L4D2Direct_GetScavengeOvertimeGraceTimer());
-		PrintToServer("Direct_GetSpawnTimer address %d",					L4D2Direct_GetSpawnTimer(client));
 		PrintToServer("Direct_GetShovePenalty %d",							L4D2Direct_GetShovePenalty(client)); // Seems working
 		L4D2Direct_SetShovePenalty(client, 50);
 		PrintToServer("Direct_SetShovePenalty %d",							L4D2Direct_GetShovePenalty(client));
