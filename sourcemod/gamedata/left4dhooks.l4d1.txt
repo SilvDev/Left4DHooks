@@ -1077,6 +1077,30 @@
 				}
 			}
 
+			"L4DD::CTongue::ActivateAbility"
+			{
+				"signature"		"CTongue::ActivateAbility"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
+			"L4DD::CVomit::ActivateAbility"
+			{
+				"signature"		"CVomit::ActivateAbility"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
+			"L4DD::CLunge::ActivateAbility"
+			{
+				"signature"		"CLunge::ActivateAbility"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
+
 			"L4DD::CTerrorPlayer::MaterializeFromGhost"
 			{
 				"signature"		"CTerrorPlayer::MaterializeFromGhost"
@@ -1388,6 +1412,18 @@
 					"signature" "CTerrorPlayer::CanBecomeGhost"
 				}
 			}
+
+			"CTerrorPlayer::RoundRespawn::Address"
+			{
+				"windows"
+				{
+					"signature" "CTerrorPlayer::RoundRespawn"
+				}
+				"linux"
+				{
+					"signature" "CTerrorPlayer::RoundRespawn"
+				}
+			}
 		}
 
 
@@ -1456,6 +1492,13 @@
 				"windows"	"75"
 			}
 
+			// ? - Neburai
+			"EHandleOffset"
+			{
+				"windows"	"928"
+				"linux"		"948"
+			}
+
 			"m_rescueCheckTimer"
 			{
 				"windows"	"868"
@@ -1471,6 +1514,7 @@
 				"windows"	"652"
 				"linux"		"648"
 			}
+
 			"CTerrorPlayer::CanBecomeGhost::Offset"
 			{
 				"windows"	"1460"
@@ -1486,6 +1530,23 @@
 				"windows"	"11"
 				"linux"		"8"
 			}
+
+			"CTerrorPlayer::RoundRespawn::Offset"
+			{
+				"windows"	"8"
+				"linux"		"28"
+			}
+			"CTerrorPlayer::RoundRespawn::Bytes"
+			{
+				"windows"	"232" // 0xE8
+				"linux"		"232" // 0xE8
+			}
+			"CTerrorPlayer::RoundRespawn::Count"
+			{
+				"windows"	"16"
+				"linux"		"17"
+			}
+
 			"m_PendingMobCount"
 			{
 				"windows"	"364"
@@ -1743,6 +1804,11 @@
 				"linux"		"2396"
 			}
 
+			"CAmmoDef::MaxCarry"
+			{
+				"linux"		"0"
+				"windows"	"0"
+			}
 
 
 			// UNUSED
@@ -1770,12 +1836,6 @@
 					mov dword ptr [esi+70Ch], 0
 				*/
 				"linux" "68"
-			}
-
-			"CAmmoDef::MaxCarry"
-			{
-				"linux"		"0"
-				"windows"	"0"
 			}
 		}
 
@@ -3279,7 +3339,7 @@
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer12RoundRespawnEv"
 				"windows"	"\x56\x8B\xF1\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x84\xC0\x75"
-				/* 56 8B F1 E8 ? ? ? ? E8 ? ? ? ? 84 C0 75	*/
+				/* 56 8B F1 E8 ? ? ? ? E8 ? ? ? ? 84 C0 75 */
 				/* Previous function in vtable has a string */
 			}
 
@@ -3372,6 +3432,43 @@
 				"windows"		"\x2A\x2A\x2A\x2A\x2A\x2A\x57\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x74\x2A\xA1\x2A\x2A\x2A\x2A\x80"
 				/* ? ? ? ? ? ? 57 8B ? E8 ? ? ? ? 84 ? 74 ? A1 ? ? ? ? 80 */
 				/* Search "PlayerVomitInFace" */
+			}
+
+			/*
+			 * CTongue::ActivateAbility(CTongue *this)
+			 */
+			"CTongue::ActivateAbility"
+			{
+				"library"	"server"
+				"linux"		"@_ZN7CTongue15ActivateAbilityEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xFF\x2A\x84\x2A\x74\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x74\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? 8B ? ? ? ? ? FF ? 84 ? 74 ? 8B ? ? ? ? ? 83 ? ? 74 ? 8B ? ? ? ? ? 8B */
+				/* Search: "Tongue took %f damage (was %f/%f)." for "CTongue::OnTongueShot" and XRef to VTable and count up to find target function */
+			}
+
+			/*
+			 * CVomit::ActivateAbility(CVomit *this)
+			 */
+			"CVomit::ActivateAbility"
+			{
+				"library"	"server"
+				"linux"		"@_ZN6CVomit15ActivateAbilityEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\xFF\x2A\x84\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B\x87\x2A\x2A\x2A\x2A\x83\x2A\x2A\x0F\x84\x2A\x2A\x2A\x2A\x8B"
+				/* ? ? ? ? ? 8B ? ? ? ? ? FF ? 84 ? 0F 84 ? ? ? ? 8B 87 ? ? ? ? 83 ? ? 0F 84 ? ? ? ? 8B */
+				/* Search: "Vomit.Cancel" for "CVomit::OnStunned" and XRef to VTable and count up to find target function */
+				/* "Vomit.Use" */
+			}
+
+			/*
+			 * CLunge::ActivateAbility(CLunge *this)
+			 */
+			"CLunge::ActivateAbility"
+			{
+				"library"	"server"
+				"linux"		"@_ZN6CLunge15ActivateAbilityEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x53\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x56\x89\x2A\x2A\x2A\x75"
+				/* ? ? ? ? ? ? 53 8B ? 80 ? ? ? ? ? ? 56 89 ? ? ? 75 */
+				/* Search: "pounce_fail" for "CLunge::IsAbilityReadyToFire" and XRef to VTable, target function should be below */
 			}
 
 			/*

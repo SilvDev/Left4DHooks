@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2025 Silvers
+*	Copyright (C) 2026 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.159"
-#define PLUGIN_VERLONG		1159
+#define PLUGIN_VERSION		"1.160"
+#define PLUGIN_VERLONG		1160
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -131,7 +131,7 @@ float g_fProf;
 
 // NEW SOURCEMOD ONLY
 #if SOURCEMOD_V_MINOR < 11
- #error Plugin "Left 4 DHooks" only supports SourceMod version 1.11 and newer
+#error Plugin "Left 4 DHooks" only supports SourceMod version 1.11 and newer
 #endif
 
 
@@ -263,6 +263,7 @@ int g_iOff_VanillaModeOffset;
 Address g_pVanillaModeAddress;
 
 // Various offsets
+// int g_iOff_EHandle;
 int g_iOff_LobbyReservation;
 int g_iOff_VersusStartTimer;
 int g_iOff_m_rescueCheckTimer;
@@ -304,6 +305,11 @@ int g_iOff_m_bInIntro;
 int g_iOff_m_attributeFlags;
 int g_iOff_m_spawnAttributes;
 int g_iOff_NavAreaID;
+
+Address g_pCTerrorPlayer_RoundRespawn;
+int g_iOff_RespawnPlayer;
+int g_iSize_RespawnPlayer;
+int g_iByte_RespawnPlayer;
 // int g_iOff_m_iClrRender; // NULL PTR - METHOD (kept for demonstration)
 // int ClearTeamScore_A;
 // int ClearTeamScore_B;
@@ -522,6 +528,8 @@ public void Updater_OnPluginUpdated()
 // ====================================================================================================
 public void OnPluginStart()
 {
+	FormatEx(g_sSystem, sizeof(g_sSystem), "UNKNOWN/%d/%s", g_bLeft4Dead2 ? 2 : 1, PLUGIN_VERSION);
+
 	g_fLoadTime = GetEngineTime();
 
 	g_iClassTank = g_bLeft4Dead2 ? 8 : 5;
@@ -1573,7 +1581,7 @@ public void OnMapStart()
 		SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "WitchLimit",			1);
 		SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "CommonLimit",			1);
 
-		// Challenge mode required?
+		// Challenge mode, required?
 		SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "cm_MaxSpecials",		1);
 		SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "cm_BaseSpecialLimit",	1);
 		SDKCall(g_hSDK_CDirector_GetScriptValueInt, g_pDirector, "cm_SmokerLimit",		1);

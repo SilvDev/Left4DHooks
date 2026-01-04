@@ -18,7 +18,7 @@
  * Copyright (C) 2017 "Accelerator74"
  *
  * Left 4 DHooks Direct SourceMod plugin
- * Copyright (C) 2025 "SilverShot" / "Silvers"
+ * Copyright (C) 2026 "SilverShot" / "Silvers"
  *
  * =============================================================================
  *
@@ -864,6 +864,71 @@ stock const char g_sWeaponTypes[WeaponType][16] =
 	"upgradepack",
 	""
 };
+
+// Created by A1m` (Used for usermessage "PZDmgMsg")
+// L4D1 only:
+enum PZMsgType_t
+{
+	// Msg for all teams, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D1_KILLED							= 1,    // "#L4D_KILLED"
+	L4D1_INCAPACITATE					= 2,    // "#L4D_INCAPACITATE"
+	L4D1_KILLED2						= 3,    // "#L4D_KILLED" (for zombie bot? Example: Player killed the hunter?)
+
+	// Msg for zombie team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D1_HIT_ASSIST						= 4,    // "#L4D_HIT_ASSIST"
+	L4D1_HIT_ASSIST_ATTACK				= 5,    // "#L4D_HIT_ASSIST_ATTACK"
+	L4D1_HIT_ATTACK						= 6,    // "#L4D_HIT_ATTACK" (for friendly fire?)
+	L4D1_HIT_PUSH_ASSIST_ATTACK			= 7,    // "#L4D_HIT_PUSH_ASSIST_ATTACK"
+	L4D1_HIT_PUSH_ATTACK				= 8,    // "#L4D_HIT_PUSH_ATTACK"
+	L4D1_HIT_POUNCE_ATTACK				= 9,    // "#L4D_HIT_POUNCE_ATTACK"
+	L4D1_INCAPACITATE_ASSIST			= 10,   // "#L4D_INCAPACITATE_ASSIST"
+	L4D1_INCAPACITATE_2					= 11,   // "#L4D_INCAPACITATE"
+
+	// Msg for survivor team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D1_ON_AWARD_SAVED					= 12,   // "#L4D_OnAwardSaved" (support friend)
+	L4D1_ON_AWARD_SHARING				= 13,   // "#L4D_OnAwardSharing" (sharing item with friend)
+	L4D1_ON_AWARD_PROTECTOR				= 14,   // "#L4D_OnAwardProtector" (protecting friend)
+	L4D1_ON_AWARD_RESCUER				= 15,   // "#L4D_OnAwardRescuer"
+	L4D1_ON_AWARD_MEDIC					= 16,   // "#L4D_OnAwardMedic" (healing friend)
+	L4D1_BRONZE_MEDAL_EARNED			= 17,   // "#L4D_BronzeMedalEarned"
+	L4D1_SILVER_MEDAL_EARNED			= 18,   // "#L4D_SilverMedalEarned"
+	L4D1_GOLD_MEDAL_EARNED				= 19    // "#L4D_GoldMedalEarned"
+};
+
+// Created by A1m` (Used for usermessage "PZDmgMsg")
+// L4D2 only:
+enum
+{
+	// Msg for all teams, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D2_KILLED							= 1,	// "#L4D_KILLED"
+	L4D2_INCAPACITATE					= 2,	// "#L4D_INCAPACITATE"
+	L4D2_KILLED2						= 3,	// "#L4D_KILLED" (for zombie bot? Example: Player killed the hunter?)
+	L4D2_DEFIBRILLATOR_USED				= 4,	// "#L4D_DEFIBRILLATOR_USED"
+	L4D2_VS_REACHED_MARKER				= 5,	// "#L4D_VS_REACHED_MARKER"
+	L4D2_SCAVENGE_DESTROY_GASCAN		= 6,	// "#L4D_SCAVENGE_DESTROY_GASCAN"
+
+	// Msg for zombie team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D2_HIT_ASSIST						= 7,	// "#L4D_HIT_ASSIST"
+	L4D2_HIT_ASSIST_ATTACK				= 8,	// "#L4D_HIT_ASSIST_ATTACK"
+	L4D2_HIT_ATTACK						= 9,	// "#L4D_HIT_ATTACK"
+	L4D2_HIT_PUSH_ASSIST_ATTACK			= 10,	// "#L4D_HIT_PUSH_ASSIST_ATTACK"
+	L4D2_HIT_PUSH_ATTACK				= 11,	// "#L4D_HIT_PUSH_ATTACK"
+	L4D2_HIT_POUNCE_ATTACK				= 12,	// "#L4D_HIT_POUNCE_ATTACK"
+	L4D2_INCAPACITATE_ASSIST			= 13,	// "#L4D_INCAPACITATE_ASSIST"
+	L4D2_INCAPACITATE_2					= 14,	// "#L4D_INCAPACITATE"
+
+	// Msg for survivor team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
+	L4D2_ON_AWARD_SAVED					= 15,	// "#L4D_OnAwardSaved" (support friend)
+	L4D2_ON_AWARD_SHARING				= 16,	// "#L4D_OnAwardSharing" (sharing item with friend)
+	L4D2_ON_AWARD_SHARING_ADRENALINE	= 17,	// "#L4D_OnAwardSharingAdrenaline"
+	L4D2_ON_AWARD_PROTECTOR				= 18,	// "#L4D_OnAwardProtector" (protecting friend)
+	L4D2_ON_AWARD_RESCUER				= 19,	// "#L4D_OnAwardRescuer"
+	L4D2_ON_AWARD_MEDIC					= 20,	// "#L4D_OnAwardMedic" (healing friend)
+	L4D2_BRONZE_MEDAL_EARNED			= 21,	// "#L4D_BronzeMedalEarned"
+	L4D2_SILVER_MEDAL_EARNED			= 22,	// "#L4D_SilverMedalEarned"
+	L4D2_GOLD_MEDAL_EARNED				= 23	// "#L4D_GoldMedalEarned"
+};
+
 
 
 
@@ -2494,6 +2559,7 @@ forward void L4D_OnDoAnimationEvent_PostHandled(int client, int event, int varia
  * @return			Plugin_Handled to block, Plugin_Continue otherwise
  */
 // 2020 Left4DHooks update: Blocked on L4D1/L4D2 Linux to prevent crashes. Waiting for DHooks update to support object returns
+// 2026 Left4DHooks update 1.160: Blocked on L4D1 Linux to prevent crashes. Waiting for DHooks update to support object returns
 forward Action L4D2_OnSendInRescueVehicle();
 
 /**
@@ -3027,10 +3093,11 @@ forward void L4D_OnPlayerCough_PostHandled(int client, int attacker);
  * @param attacker		The attacker entity index
  * @param damage		Amount of damage being caused
  * @param damagetype	Type of damage being caused
+ * @param weapon		Weapon or entity (could be -1, seems to only show ranged weapons)
  *
  * @return				return Plugin_Handled to block, Plugin_Changed to modify values, Plugin_Continue otherwise
  **/
-forward Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, float &damage, int &damagetype);
+forward Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, float &damage, int &damagetype, int &weapon);
 
 /**
  * @brief Called when CTerrorPlayer::OnIncapacitatedAsSurvivor() is invoked
@@ -3042,10 +3109,11 @@ forward Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, fl
  * @param attacker		The attacker entity index
  * @param damage		Amount of damage being caused
  * @param damagetype	Type of damage being caused
+ * @param weapon		Weapon or entity (could be -1, seems to only show ranged weapons)
  *
  * @noreturn
  **/
-forward void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, float damage, int damagetype);
+forward void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, float damage, int damagetype, int weapon);
 
 /**
  * @brief Called when CTerrorPlayer::OnIncapacitatedAsSurvivor() is invoked
@@ -3057,10 +3125,11 @@ forward void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, f
  * @param attacker		The attacker entity index
  * @param damage		Amount of damage being caused
  * @param damagetype	Type of damage being caused
+ * @param weapon		Weapon or entity (could be -1, seems to only show ranged weapons)
  *
  * @noreturn
  **/
-forward void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attacker, float damage, int damagetype);
+forward void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attacker, float damage, int damagetype, int weapon);
 
 /**
  * @brief Called when CTerrorPlayer::DropWeapons() is invoked
@@ -3521,6 +3590,231 @@ forward void L4D2_Infected_HitByVomitJar_Post(int victim, int attacker);
  * @noreturn
  */
 forward void L4D2_Infected_HitByVomitJar_PostHandled(int victim, int attacker);
+
+/**
+ * @brief Called whenever CTongue::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+forward Action L4D_ActivateAbility_Smoker(int client, int ability);
+
+/**
+ * @brief Called whenever CTongue::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Smoker_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CTongue::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Smoker_PostHandled(int client, int ability);
+
+/**
+ * @brief Called whenever CVomit::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+forward Action L4D_ActivateAbility_Boomer(int client, int ability);
+
+/**
+ * @brief Called whenever CVomit::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Boomer_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CVomit::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Boomer_PostHandled(int client, int ability);
+
+/**
+ * @brief Called whenever CLunge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+forward Action L4D_ActivateAbility_Hunter(int client, int ability);
+
+/**
+ * @brief Called whenever CLunge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Hunter_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CLunge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+forward void L4D_ActivateAbility_Hunter_PostHandled(int client, int ability);
+
+/**
+ * @brief Called whenever CLeap::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+// L4D2 only
+forward Action L4D2_ActivateAbility_Jockey(int client, int ability);
+
+/**
+ * @brief Called whenever CLeap::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Jockey_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CLeap::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Jockey_PostHandled(int client, int ability);
+
+/**
+ * @brief Called whenever CSpitAbility::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+// L4D2 only
+forward Action L4D2_ActivateAbility_Spitter(int client, int ability);
+
+/**
+ * @brief Called whenever CSpitAbility::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Spitter_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CSpitAbility::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Spitter_PostHandled(int client, int ability);
+
+/**
+ * @brief Called whenever CCharge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @return					Plugin_Handled to block, Plugin_Continue otherwise
+ */
+// L4D2 only
+forward Action L4D2_ActivateAbility_Charger(int client, int ability);
+
+/**
+ * @brief Called whenever CCharge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Charger_Post(int client, int ability);
+
+/**
+ * @brief Called whenever CCharge::ActivateAbility is invoked
+ * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ *
+ * @param client			the special infected attempting to activate
+ * @param ability			the ability entity they are using
+ *
+ * @noreturn
+ */
+// L4D2 only
+forward void L4D2_ActivateAbility_Charger_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CMolotovProjectile::Create is invoked
@@ -5143,14 +5437,13 @@ native void L4D2_UseAdrenaline(int client, float fTime = 15.0, bool heal = true,
 
 /**
  * @brief Respawns a player from dead state
- * @remarks Resets players stats for kills etc
- * @remarks To preserve stats please view the code in "[L4D1 & L4D2] SM Respawn Improved" plugin by "Dragokas": https://forums.alliedmods.net/showthread.php?t=323220
  *
  * @param client	Client ID of the person to respawn
+ * @param reset		True = Reset player stats (kills etc, game default). False = Don't reset stats
  *
  * @noreturn
  */
-native void L4D_RespawnPlayer(int client);
+native void L4D_RespawnPlayer(int client, bool reset = true);
 
 /**
  * @brief To takeover a Survivor bot. First use "ChangeClientTeam" and change them to 0. Then call "L4D_SetHumanSpec" then call "L4D_TakeOverBot"

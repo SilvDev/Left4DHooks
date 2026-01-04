@@ -1,14 +1,34 @@
+1.160 (04-Jan-2026)
+	- Fixed native "L4D_SetLobbyReservation" from throwing errors. Thanks to "mr.raptor" for reporting.
+	- Changed native "L4D_GetEntityFromAddress" to work for all entities. Thanks to "Neburai", "blueblur" and "nosoop" for code.
+	- Changed native "L4D2Direct_GetSpawnTimer" inconsistency, requires code changes if used. Thanks to "A1m`" for fixing.
+	- Changed native "L4D_RespawnPlayer" to specify resetting player stats or not. Requested by "ball2hi".
+
+	- Added new forwards for when Special Infected attempt to activate their ability. Requested by "lzvs".
+		"L4D_ActivateAbility_Smoker", "L4D_ActivateAbility_Boomer", "L4D_ActivateAbility_Hunter", "L4D2_ActivateAbility_Jockey", "L4D2_ActivateAbility_Spitter", "L4D2_ActivateAbility_Charger".
+
+	- Changed forward "L4D2_OnSendInRescueVehicle" has been unblocked on Linux for L4D2. Thanks to "spumer" for reporting it works without crashes.
+	- Changed forward "L4D_OnIncapacitated*" to display the "weapon" entity. Thanks to "Xbye".
+
+	- Added "PZDmgMsg" enum for the "PZDmgMsg" usermessage. Thanks to "A1m`" for creating.
+
+	- Fixed "Ammo_t.GetName" methodmap and added "AmmoDef.MaxCarry_Call". Thanks to "jensewe" on GitHub.
+	- Fixed wrong comment info for "L4D_WarpToValidPositionIfStuck" in "l4dd_natives". Thanks to "Marttt" for reporting.
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+	- Updated: "/scripting/include/left4dhooks.inc" include file.
+
 1.159 (01-Jul-2025)
 	- Fixed forward "L4D_OnDeathDroppedWeapons" from throwing client not in game errors. Thanks to "Mystik Spiral" for reporting.
 	- Fixed forwards "L4D2_VomitJarProjectile_*" not working due to incorrect initialization. Thanks to "Drgon" and "ProjectSky" for reporting.
 	- Fixed gamedata signature for "CGrenadeLauncher_Projectile::Explode" forward on L4D2 Linux. Thanks to "xiaolinRM" for reporting.
 	- Clarification in the include file on how often the "L4D_OnSpawnTank*" forwards trigger. Thanks to "Marttt" for reporting.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/scripting/include/left4dhooks.inc" include file.
 
 1.158 (21-Mar-2025)
 	- Added forwards "L4D2_OnTransitionRestore*" and "L4D2_OnRestoreTransitionedSurvivorBots*" to trigger on clients and bots transitioning data restore. Thanks to "blueblur0730" for adding.

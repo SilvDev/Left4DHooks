@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct - TESTER
-*	Copyright (C) 2025 Silvers
+*	Copyright (C) 2026 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.159"
+#define PLUGIN_VERSION		"1.160"
 
 /*=======================================================================================
 	Plugin Info:
@@ -361,8 +361,40 @@ Action sm_l4dd(int client, int args)
 	*/
 
 
+	// /* Entity address test:
+	char classname[32];
+	Address addy;
+	int max, passed, failed;
+
+	for( int i = 0; i <= 4096; i++ )
+	{
+		if( IsValidEdict(i) || IsValidEntity(i) )
+		{
+			max++;
+
+			addy = GetEntityAddress(i);
+			if( i == L4D_GetEntityFromAddress(addy) )
+			{
+				GetEntityClassname(i, classname, sizeof(classname));
+				PrintToServer("%d [%s]", i, classname);
+				passed++;
+			}
+			else
+			{
+				failed++;
+			}
+		}
+	}
+
+	PrintToServer("Entity address test. Max entities: %d. Pass: %d. Fail: %d.", max, passed, failed);
+	// */
+
+
+
+
+
 	/*
-	for (int i = AmmoDef.GetAmmoIndex()-1; i > 0; --i)
+	for( int i = AmmoDef.GetAmmoIndex()-1; i > 0; --i )
 	{
 		char name[64];
 		Ammo_t ammo = AmmoDef.GetAmmoOfIndex(i);
@@ -370,28 +402,35 @@ Action sm_l4dd(int client, int args)
 		ReplyToCommand(client, "Ammo_t#%d (%s)", i, name);
 	}
 
-	if (client > 0)
+	if( client > 0 )
 	{
 		int weapon = GetPlayerWeaponSlot(client, 0);
-		if (weapon != -1)
+		if( weapon != -1 )
 		{
 			int index = GetEntProp(weapon, Prop_Send, "m_iPrimaryAmmoType");
-
 			char name[64];
 			Ammo_t ammo = AmmoDef.GetAmmoOfIndex(index);
 			ammo.GetName(name, sizeof(name));
-
 			ReplyToCommand(client, "primary ammotype (#%d) (%s)", index, name);
-
 			ReplyToCommand(client, "primary MaxCarry (%d)", AmmoDef.MaxCarry(index));
 			ReplyToCommand(client, "primary MaxCarry (%d)", AmmoDef.MaxCarry(index));
-
 			ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, -1));			// ok
 			ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, client));		// ok
 			// ReplyToCommand(client, "primary MaxCarry_Call (%d)", AmmoDef.MaxCarry_Call(index, 0););		// error, invalid client index 0 (thrown by SDKCall)
 		}
 	}
-	*/
+	// */
+
+
+
+	/*
+	PrintToChat(client, "L4D_RespawnPlayer Kills before: %d", GetEntProp(client, Prop_Send, "m_checkpointZombieKills"));
+	L4D_RespawnPlayer(client, false);
+	PrintToChat(client, "L4D_RespawnPlayer %N", client);
+	PrintToChat(client, "L4D_RespawnPlayer Kills after: %d", GetEntProp(client, Prop_Send, "m_checkpointZombieKills"));
+	// */
+
+
 
 	/*
 	L4D_SetPlayerIntensity(client, 0.9);
@@ -3592,7 +3631,7 @@ public Action L4D2_OnSendInRescueVehicle()
 
 public Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1])
 {
-	bool block;
+	// bool block;
 
 	// Block players index 3 or less, for testing
 	/*
@@ -3607,7 +3646,7 @@ public Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1])
 	// */
 
 	// Block everyone
-	// /*
+	/*
 	block = true;
 
 	for( int i = 1; i <= MaxClients; i++ )
@@ -3616,8 +3655,9 @@ public Action L4D_OnCreateRescuableSurvivors(int players[MAXPLAYERS+1])
 	}
 	// */
 
-	if( block )
-		return Plugin_Changed;
+	// if( block )
+		// return Plugin_Changed;
+
 	return Plugin_Continue;
 }
 
@@ -4256,6 +4296,246 @@ public void L4D2_OnHitByVomitJar_PostHandled(int victim, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_OnHitByVomitJar_PostHandled\" %d > %d", victim, attacker);
+	}
+}
+
+public Action L4D_ActivateAbility_Smoker(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Smoker\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_ActivateAbility_Smoker_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Smoker_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D_ActivateAbility_Smoker_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Smoker_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public Action L4D_ActivateAbility_Boomer(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Boomer\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_ActivateAbility_Boomer_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Boomer_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D_ActivateAbility_Boomer_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Boomer_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public Action L4D_ActivateAbility_Hunter(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Hunter\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D_ActivateAbility_Hunter_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Hunter_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D_ActivateAbility_Hunter_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_ActivateAbility_Hunter_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public Action L4D2_ActivateAbility_Jockey(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Jockey\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_ActivateAbility_Jockey_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Jockey_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D2_ActivateAbility_Jockey_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Jockey_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public Action L4D2_ActivateAbility_Spitter(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Spitter\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_ActivateAbility_Spitter_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Spitter_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D2_ActivateAbility_Spitter_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Spitter_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public Action L4D2_ActivateAbility_Charger(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Charger\" %d (%N) - Ability: %d", client, client, ability);
+	}
+
+	// return Plugin_Handled;
+
+	return Plugin_Continue;
+}
+
+public void L4D2_ActivateAbility_Charger_Post(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Charger_Post\" %d (%N) - Ability: %d", client, client, ability);
+	}
+}
+
+public void L4D2_ActivateAbility_Charger_PostHandled(int client, int ability)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D2_ActivateAbility_Charger_PostHandled\" %d (%N) - Ability: %d", client, client, ability);
 	}
 }
 
@@ -6171,7 +6451,7 @@ public void L4D_OnPlayerCough_PostHandled(int client, int attacker)
 	}
 }
 
-public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, float &damage, int &damagetype)
+public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, float &damage, int &damagetype, int &weapon)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -6179,7 +6459,7 @@ public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, flo
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d", client, client, inflictor, attacker, damage, damagetype);
+		ForwardCalled("\"L4D_OnIncapacitated\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
 	}
 
 	// Block player being incapacitated
@@ -6188,7 +6468,7 @@ public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, flo
 	return Plugin_Continue;
 }
 
-public void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, float damage, int damagetype)
+public void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, float damage, int damagetype, int weapon)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -6196,11 +6476,11 @@ public void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, fl
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated_Post\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d", client, client, inflictor, attacker, damage, damagetype);
+		ForwardCalled("\"L4D_OnIncapacitated_Post\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
 	}
 }
 
-public void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attacker, float damage, int damagetype)
+public void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attacker, float damage, int damagetype, int weapon)
 {
 	static int called;
 	if( called < MAX_CALLS )
@@ -6208,7 +6488,7 @@ public void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attac
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated_PostHandled\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d", client, client, inflictor, attacker, damage, damagetype);
+		ForwardCalled("\"L4D_OnIncapacitated_PostHandled\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype);
 	}
 }
 

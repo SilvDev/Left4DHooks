@@ -1,6 +1,6 @@
 /*
 *	Left 4 DHooks Direct
-*	Copyright (C) 2025 Silvers
+*	Copyright (C) 2026 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -358,6 +358,35 @@ int Native_HasMapStarted(Handle plugin, int numParams) // Native "L4D_HasMapStar
 // ==================================================
 // MEMORY HELPERS
 // ==================================================
+// Props to "nosoop"
+stock int GetEntityFromAddress(Address pEntity)
+{
+	if( pEntity == Address_Null )
+		return -1;
+
+	static int addy = -1;
+	if( addy == -1 )
+	{
+		addy = FindDataMapInfo(0, "m_angRotation") + 12;
+	}
+
+	return GetEntityFromHandle(Deref(pEntity + view_as<Address>(addy)));
+}
+
+stock int GetEntityFromHandle(any handle)
+{
+	int ent = handle & 0xFFF;
+	if( ent == 0xFFF )
+		ent = -1;
+	return ent;
+}
+
+stock any Deref(any addr, NumberType numt = NumberType_Int32)
+{
+	return LoadFromAddress(view_as<Address>(addr), numt);
+}  
+
+/* Old method
 int GetEntityFromAddress(int addr)
 {
 	int max = GetEntityCount();
@@ -365,8 +394,10 @@ int GetEntityFromAddress(int addr)
 		if( IsValidEdict(i) )
 			if( GetEntityAddress(i) == view_as<Address>(addr) )
 				return i;
+
 	return -1;
 }
+*/
 
 int GetClientFromAddress(int addr)
 {
@@ -1151,7 +1182,7 @@ int Native_TerrorNavArea_FindRandomSpot(Handle plugin, int numParams) // Native 
 	return 0;
 }
 
-int Native_CTerrorPlayer_WarpToValidPositionIfStuck(Handle plugin, int numParams) // Native "L4D_FindRandomSpot"
+int Native_CTerrorPlayer_WarpToValidPositionIfStuck(Handle plugin, int numParams) // Native "L4D_WarpToValidPositionIfStuck"
 {
 	ValidateNatives(g_hSDK_CTerrorPlayer_WarpToValidPositionIfStuck, "CTerrorPlayer::WarpToValidPositionIfStuck");
 
@@ -2986,9 +3017,9 @@ int Native_SetLobbyReservation(Handle plugin, int numParams) // Native "L4D_SetL
 	if( length > 8 )
 	{
 		val2 = HexStrToInt(sTemp[length - 8]);
+		sTemp[length - 8] = 0;
 	}
 
-	sTemp[length - 8] = 0;
 	val1 = HexStrToInt(sTemp);
 
 	StoreToAddress(g_pServer + view_as<Address>(g_iOff_LobbyReservation + 4), val1, NumberType_Int32, false);
@@ -4272,7 +4303,7 @@ any Direct_GetSpawnTimer(Handle plugin, int numParams) // Native "L4D2Direct_Get
 	if( client < 1 || client > MaxClients )
 		return -1.0;
 
-	return view_as<float>(GetEntDataFloat(client, g_iOff_m_flBecomeGhostAt));
+	return GetEntDataFloat(client, g_iOff_m_flBecomeGhostAt);
 }
 
 any Direct_GetInvulnerabilityTimer(Handle plugin, int numParams) // Native "L4D2Direct_GetInvulnerabilityTimer"
@@ -5285,9 +5316,39 @@ int Native_CTerrorPlayer_RespawnPlayer(Handle plugin, int numParams) // Native "
 	ValidateNatives(g_hSDK_CTerrorPlayer_RoundRespawn, "CTerrorPlayer::RoundRespawn");
 
 	int client = GetNativeCell(1);
+	bool reset = true;
+	if( numParams == 2 ) 
+		reset = GetNativeCell(2);
+
+	ArrayList aList = new ArrayList();
+	if( !reset )
+	{
+		int byte = LoadFromAddress(g_pCTerrorPlayer_RoundRespawn + view_as<Address>(g_iOff_RespawnPlayer), NumberType_Int8);
+		if( byte != g_iByte_RespawnPlayer )
+		{
+			reset = true;
+			LogError("CTerrorPlayer::RoundRespawn patch: byte mismatch. %X (%s).", byte, g_sSystem);
+		}
+
+		for( int i = 0; i < g_iSize_RespawnPlayer; i++ )
+		{
+			aList.Push(LoadFromAddress(g_pCTerrorPlayer_RoundRespawn + view_as<Address>(g_iOff_RespawnPlayer + i), NumberType_Int8));
+			StoreToAddress(g_pCTerrorPlayer_RoundRespawn + view_as<Address>(g_iOff_RespawnPlayer + i), 0x90, NumberType_Int8);
+		}
+	}
 
 	//PrintToServer("#### CALL g_hSDK_CTerrorPlayer_RoundRespawn");
 	SDKCall(g_hSDK_CTerrorPlayer_RoundRespawn, client);
+
+	if( !reset )
+	{
+		for( int i = 0; i < g_iSize_RespawnPlayer; i++ )
+		{
+			StoreToAddress(g_pCTerrorPlayer_RoundRespawn + view_as<Address>(g_iOff_RespawnPlayer + i), aList.Get(i), NumberType_Int8);
+		}
+	}
+
+	delete aList;
 
 	return 0;
 }
@@ -6403,9 +6464,9 @@ any Native_AmmoDef_MaxCarry_Call(Handle plugin, int numParams)
 	int client = GetNativeCell(2);
 
 	// "nAmmoIndex" left unchecked because it's done in the called function
-	if (client <= 0 || client > MaxClients)
+	if( client < 1 || client > MaxClients )
 		client = -1;
-	
+
 	//PrintToServer("#### CALL g_hSDK_AmmoDef_MaxCarry");
 	return SDKCall(g_hSDK_AmmoDef_MaxCarry, g_pAmmoDef, nAmmoIndex, client);
 }
