@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.160"
-#define PLUGIN_VERLONG		1160
+#define PLUGIN_VERSION		"1.161"
+#define PLUGIN_VERLONG		1161
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -528,8 +528,22 @@ public void Updater_OnPluginUpdated()
 // ====================================================================================================
 public void OnPluginStart()
 {
-	FormatEx(g_sSystem, sizeof(g_sSystem), "UNKNOWN/%d/%s", g_bLeft4Dead2 ? 2 : 1, PLUGIN_VERSION);
+	// Get server OS
+	char sPath[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, sPath, sizeof(sPath), "gamedata/%s.txt", g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
+	if( FileExists(sPath) == false ) SetFailState("\n==========\nMissing required file: \"%s\".\nRead installation instructions again.\n==========", sPath);
 
+	GameData hGameData = new GameData(g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
+	if( hGameData == null ) SetFailState("Failed to load \"%s.txt\" gamedata.", g_bLeft4Dead2 ? GAMEDATA_2 : GAMEDATA_1);
+
+	g_bLinuxOS = hGameData.GetOffset("OS") == 1;
+	FormatEx(g_sSystem, sizeof(g_sSystem), "%s/%d/%s", g_bLinuxOS ? "NIX" : "WIN", g_bLeft4Dead2 ? 2 : 1, PLUGIN_VERSION);
+
+	delete hGameData;
+
+
+
+	// Initialize
 	g_fLoadTime = GetEngineTime();
 
 	g_iClassTank = g_bLeft4Dead2 ? 8 : 5;
@@ -1100,10 +1114,13 @@ public void OnClientDisconnect(int client)
 
 public void OnNotifyPluginUnloaded(Handle plugin)
 {
-	for( int i = 1; i <= MaxClients; i++ )
+	if( plugin )
 	{
-		g_hAnimationCallbackPre[i].RemoveAllFunctions(plugin);
-		g_hAnimationCallbackPost[i].RemoveAllFunctions(plugin);
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			g_hAnimationCallbackPre[i].RemoveAllFunctions(plugin);
+			g_hAnimationCallbackPost[i].RemoveAllFunctions(plugin);
+		}
 	}
 }
 

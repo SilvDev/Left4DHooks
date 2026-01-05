@@ -65,9 +65,9 @@
 // L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 118 [silvers - mine!] + 4 [anim] = 273
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
-// Forwards: 230 (including 5 for L4D1 only)
-// L4D1 = 149
-// L4D2 = 225
+// Forwards: 248 (including 5 for L4D1 only)
+// L4D1 = 158
+// L4D2 = 243y
 
 // Stocks: 169 (L4D1 = 114, L4D2 = 167)
 // left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
