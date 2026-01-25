@@ -1279,6 +1279,8 @@ MRESReturn Spawn_TankWitch_Post(Handle hForward, Handle hForward2, DHookReturn h
 {
 	int entity = hReturn.Value;
 
+	if( entity == -1 && !g_bBlock_Spawn_TankWitch ) return MRES_Ignored;
+
 	float a1[3], a2[3];
 	hParams.GetVector(1, a1);
 	hParams.GetVector(2, a2);
@@ -2979,11 +2981,11 @@ MRESReturn DTR_CTerrorWeapon_OnHit(int weapon, DHookReturn hReturn, DHookParam h
 
 		// Thanks to "A1m`" for this solution to getting an entity index instead of looping clients/entities:
 		int target = hParams.GetObjectVar(1, 76, ObjectValueType_CBaseEntityPtr);
-		if( !target ) return MRES_Ignored;
+		if( target < 1 || target > MaxClients || !IsClientInGame(target) ) return MRES_Ignored;
 
 		// Verify client hitting
 		int client = GetEntPropEnt(weapon, Prop_Send, "m_hOwnerEntity");
-		if( client > 0 && client <= MaxClients )
+		if( client > 0 && client <= MaxClients && IsClientInGame(client) )
 		{
 			// Dead stop option - not always correct but should show if hunter was pouncing while punched
 			if( target > 0 && target <= MaxClients )
