@@ -485,7 +485,7 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_CPipeBombProjectile_Detonate_Pre,						DTR_CPipeBombProjectile_Detonate,							"L4DD::CPipeBombProjectile::Detonate",								"L4D_PipeBomb_Detonate_Post",					true);
 	CreateDetour(hGameData,			DTR_CPipeBombProjectile_Detonate_Pre,						DTR_CPipeBombProjectile_Detonate,							"L4DD::CPipeBombProjectile::Detonate",								"L4D_PipeBomb_Detonate_PostHandled",			true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_Extinguish,								INVALID_FUNCTION,											"L4DD::CTerrorPlayer::Extinguish",									"L4D_PlayerExtinguish");
-	CreateDetour(hGameData,			DTR_CBreakableProp_Break_Pre,								DTR_CBreakableProp_Break_Post,								"L4DD::CBreakableProp::Break",										"L4D_CBreakableProp_Break");
+	CreateDetour(hGameData,			DTR_CBreakableProp_Break_Pre,								DTR_CBreakableProp_Break_Post,								"L4DD::CBreakableProp::Break",										"L4D_CBreakableProp_Break",						true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							DTR_CTerrorPlayer_OnVomitedUpon_Post,						"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							DTR_CTerrorPlayer_OnVomitedUpon_Post,						"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon_Post",						true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_OnVomitedUpon,							DTR_CTerrorPlayer_OnVomitedUpon_Post,						"L4DD::CTerrorPlayer::OnVomitedUpon",								"L4D_OnVomitedUpon_PostHandled",				true);
