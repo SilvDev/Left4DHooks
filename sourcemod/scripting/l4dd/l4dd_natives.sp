@@ -3208,11 +3208,21 @@ any Native_GetFloatWeaponAttribute(Handle plugin, int numParams) // Native "L4D2
 	int ptr = GetWeaponPointer();
 	if( ptr != -1 )
 	{
-		attr = L4D2FloatWeapon_Offsets[attr]; // Offset
-		ptr = LoadFromAddress(view_as<Address>(ptr + attr), NumberType_Int32);
+		if( attr == view_as<int>(L4D2FWA_PenetrationNumLayers) )
+		{
+			attr = L4D2FloatWeapon_Offsets[attr]; // Offset
+			ptr = LoadFromAddress(view_as<Address>(ptr + attr), NumberType_Int32);
+			return float(ptr);
+		}
+		else
+		{
+			attr = L4D2FloatWeapon_Offsets[attr]; // Offset
+			ptr = LoadFromAddress(view_as<Address>(ptr + attr), NumberType_Int32);
+			return view_as<float>(ptr);
+		}
 	}
 
-	return view_as<float>(ptr);
+	return -1.0;
 }
 
 int Native_SetIntWeaponAttribute(Handle plugin, int numParams) // Native "L4D2_SetIntWeaponAttribute"
@@ -3227,16 +3237,8 @@ int Native_SetIntWeaponAttribute(Handle plugin, int numParams) // Native "L4D2_S
 	int ptr = GetWeaponPointer();
 	if( ptr != -1 )
 	{
-		if( !g_bLeft4Dead2 && attr == view_as<int>(L4D2FWA_PenetrationNumLayers) )
-		{
-			attr = L4D2IntWeapon_Offsets[attr]; // Offset
-			StoreToAddress(view_as<Address>(ptr + attr), RoundToCeil(GetNativeCell(3)), NumberType_Int32, false);
-		}
-		else
-		{
-			attr = L4D2IntWeapon_Offsets[attr]; // Offset
-			StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
-		}
+		attr = L4D2IntWeapon_Offsets[attr]; // Offset
+		StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
 	}
 
 	return ptr;
@@ -3251,8 +3253,16 @@ int Native_SetFloatWeaponAttribute(Handle plugin, int numParams) // Native "L4D2
 	int ptr = GetWeaponPointer();
 	if( ptr != -1 )
 	{
-		attr = L4D2FloatWeapon_Offsets[attr]; // Offset
-		StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
+		if( attr == view_as<int>(L4D2FWA_PenetrationNumLayers) )
+		{
+			attr = L4D2FloatWeapon_Offsets[attr]; // Offset
+			StoreToAddress(view_as<Address>(ptr + attr), RoundToFloor(GetNativeCell(3)), NumberType_Int32, false); // "RoundToFloor", classic float to int conversion
+		}
+		else
+		{
+			attr = L4D2FloatWeapon_Offsets[attr]; // Offset
+			StoreToAddress(view_as<Address>(ptr + attr), GetNativeCell(3), NumberType_Int32, false);
+		}
 	}
 
 	return ptr;
