@@ -1,3 +1,6 @@
+1.165 (14-Apr-2026)
+	- Fixed the "GetMeleePointer" SDKCall being accidentality removed. Thanks to "zuaLdakid05" for reporting.
+
 1.164 (14-Apr-2026)
 	- Fixed native "L4D2_IsVisibleToPlayer" crashing. Thanks to "morzlee" for reporting.
 

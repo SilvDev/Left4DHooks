@@ -2360,6 +2360,8 @@ int Native_NavAreaTravelDistance(Handle plugin, int numParams) // Native "L4D2_N
 int Native_NavAreaBuildPath(Handle plugin, int numParams) // Native "L4D2_NavAreaBuildPath"
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateNatives(g_hSDK_NavAreaBuildPath_ShortestPathCost, "NavAreaBuildPath::ShortestPathCost");
 	if( !g_bMapStarted ) return false;
 
 	// Params
@@ -2423,6 +2425,8 @@ int Native_RushVictim(Handle plugin, int numParams) // Native "L4D2_RushVictim"
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
 
+	ValidateNatives(g_hSDK_RushVictim, "NextBotManager::RushVictim");
+
 	int victim = GetNativeCell(1);
 	float range = GetNativeCell(2);
 
@@ -2434,6 +2438,8 @@ int Native_RushVictim(Handle plugin, int numParams) // Native "L4D2_RushVictim"
 int Native_StartAssault(Handle plugin, int numParams) // Native "L4D2_StartAssault"
 {
 	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateNatives(g_hSDK_StartAssault, "NextBotManager::StartAssault");
 
 	SDKCall(g_hSDK_StartAssault, g_pTheNextBots);
 
@@ -3789,6 +3795,8 @@ int Native_CNavArea_GetAdjacentAreas(Handle plugin, int numParams) // Native "L4
 
 int Native_CNavArea_IsConnected(Handle plugin, int numParams) // Native "L4D_NavArea_IsConnected"
 {
+	ValidateNatives(g_hSDK_CNavArea_IsConnected, "CNavArea::IsConnected");
+
 	Address area1 = GetNativeCell(1);
 	Address area2 = GetNativeCell(2);
 	int dir = GetNativeCell(3);
