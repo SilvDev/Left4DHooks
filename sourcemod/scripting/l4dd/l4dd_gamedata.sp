@@ -1400,6 +1400,17 @@ void LoadGameData()
 	}
 
 	StartPrepSDKCall(SDKCall_Raw);
+	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::AddSurvivorBot") == false )
+	{
+		LogError("Failed to find signature: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
+	} else {
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		g_hSDK_CDirector_AddSurvivorBot = EndPrepSDKCall();
+		if( g_hSDK_CDirector_AddSurvivorBot == null )
+			LogError("Failed to create SDKCall: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
+	}
+
+	StartPrepSDKCall(SDKCall_Raw);
 	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CNavMesh::GetNavArea") == false )
 	{
 		LogError("Failed to find signature: \"CNavMesh::GetNavArea\" (%s)", g_sSystem);

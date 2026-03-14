@@ -557,6 +557,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D2Direct_GetTerrorNavArea",						Direct_GetTerrorNavArea);
 	CreateNative("L4D2Direct_GetTerrorNavAreaFlow",					Direct_GetTerrorNavAreaFlow);
 	CreateNative("L4D2Direct_TryOfferingTankBot",					Direct_TryOfferingTankBot);
+	CreateNative("L4D2Direct_AddSurvivorBot",						Direct_AddSurvivorBot);
 	CreateNative("L4D2Direct_GetFlowDistance",						Direct_GetFlowDistance);
 	CreateNative("L4D2Direct_DoAnimationEvent",						Direct_DoAnimationEvent);
 	CreateNative("L4DDirect_GetSurvivorHealthBonus",				Direct_GetSurvivorHealthBonus);

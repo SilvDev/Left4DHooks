@@ -310,6 +310,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D2Direct_GetTerrorNavArea");
 	MarkNativeAsOptional("L4D2Direct_GetTerrorNavAreaFlow");
 	MarkNativeAsOptional("L4D2Direct_TryOfferingTankBot");
+	MarkNativeAsOptional("L4D2Direct_AddSurvivorBot");
 	MarkNativeAsOptional("L4D2Direct_GetFlowDistance");
 	MarkNativeAsOptional("L4D2Direct_DoAnimationEvent");
 	MarkNativeAsOptional("L4DDirect_GetSurvivorHealthBonus");
@@ -593,6 +594,24 @@ enum
 	FINALE_GAUNTLET_BOSS = 16,
 	FINALE_GAUNTLET_ESCAPE = 17,
 	FINALE_NONE = 18
+};
+
+// For the "L4D2Direct_AddSurvivorBot" native
+// Indices 0-3 map to different characters depending on the map's survivor set:
+//   L4D2 maps (set 2): 0=Nick, 1=Rochelle, 2=Coach, 3=Ellis
+//   L4D1 maps (set 1): 0=Bill, 1=Zoey, 2=Louis, 3=Francis
+// Indices 4-7 always refer to L4D1 characters regardless of the map.
+enum
+{
+	SurvivorCharacter_First = 0,		// Set-dependent: Nick (L4D2) or Bill (L4D1)
+	SurvivorCharacter_Second,			// Set-dependent: Rochelle (L4D2) or Zoey (L4D1)
+	SurvivorCharacter_Third,			// Set-dependent: Coach (L4D2) or Louis (L4D1)
+	SurvivorCharacter_Fourth,			// Set-dependent: Ellis (L4D2) or Francis (L4D1)
+	SurvivorCharacter_Bill = 4,			// Always Bill
+	SurvivorCharacter_Zoey,				// Always Zoey
+	SurvivorCharacter_Francis,			// Always Francis
+	SurvivorCharacter_Louis,			// Always Louis
+	SurvivorCharacter_Random			// Random from 0-3 (map's survivor set)
 };
 
 // Used as the "reason" by the "L4D_OnKnockedDown*" forwards
@@ -7257,6 +7276,23 @@ native float L4D2Direct_GetTerrorNavAreaFlow(Address pTerrorNavArea);
  * @return					False on error otherwise true
  */
 native bool L4D2Direct_TryOfferingTankBot(int client, int bEnterStasis);
+
+/**
+ * Adds a survivor bot to the game
+ *
+ * @param characterType			See SurvivorCharacter_* enum values:
+ *								0-3 = Map's survivor set characters (set-dependent, see enum)
+ *								4-7 = L4D1 characters (Bill, Zoey, Francis, Louis — always)
+ *								8   = Random (0-3, guaranteed to create)
+ *
+ * @remarks Indices 0-3 resolve to different characters depending on the map's survivor set
+ *          (L4D2 maps: Nick/Rochelle/Coach/Ellis, L4D1 maps: Bill/Zoey/Louis/Francis).
+ * @remarks Characters 4-7: engine checks for duplicates, silently does nothing if taken.
+ * @remarks Characters 0-3: engine does NOT check for duplicates, will create a second bot with same character.
+ *
+ * @return					0
+ */
+native int L4D2Direct_AddSurvivorBot(int characterType = 0);
 
 /**
  * Gets a player's distance in flow units

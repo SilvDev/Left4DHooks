@@ -901,6 +901,21 @@
 				}
 			}
 
+			"L4DD::CDirector::AddSurvivorBot"
+			{
+				"signature"		"CDirector::AddSurvivorBot"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"int"
+					}
+				}
+			}
+
 			"L4DD::CThrow::ActivateAbililty"
 			{
 				"signature"		"CThrow::ActivateAbililty"
@@ -4250,6 +4265,20 @@
 				"linux"		"@_ZN9CDirector18TryOfferingTankBotEP11CBaseEntityb"
 				"windows"	"\x55\x8B\xEC\x51\x83\x7D\x08\x00\x56\x8B\xF1\x89"
 				/* 55 8B EC 51 83 7D 08 00 56 8B F1 89 */
+			}
+
+			/*
+			 * CDirector::AddSurvivorBot(SurvivorCharacterType) const
+			 *
+			 * Windows: find string "sb_add" → xref to ConCommand registration →
+			 * handler calls AddSurvivorBot(char*) wrapper → wrapper tail-calls this function.
+			 */
+			"CDirector::AddSurvivorBot"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK9CDirector14AddSurvivorBotE21SurvivorCharacterType"
+				"windows"	"\x55\x8B\xEC\x8B\x89\x2A\x2A\x2A\x2A\x83\xEC\x2A\x56\x8D\x45\xFF"
+				/* 55 8B EC 8B 89 ? ? ? ? 83 EC ? 56 8D 45 FF */
 			}
 
 			/*

@@ -121,6 +121,7 @@ Handle g_hSDK_CMeleeWeaponInfoStore_GetMeleeWeaponInfo;
 Handle g_hSDK_CTerrorGameRules_GetMissionInfo;
 Handle g_hSDK_CMultiPlayerAnimState_ResetMainActivity;
 Handle g_hSDK_CDirector_TryOfferingTankBot;
+Handle g_hSDK_CDirector_AddSurvivorBot;
 Handle g_hSDK_CNavMesh_GetNavArea;
 Handle g_hSDK_CNavArea_IsConnected;
 Handle g_hSDK_CTerrorPlayer_GetFlowDistance;
@@ -4639,6 +4640,25 @@ int Direct_TryOfferingTankBot(Handle plugin, int numParams) // Native "L4D2Direc
 
 	//PrintToServer("#### CALL g_hSDK_CDirector_TryOfferingTankBot");
 	SDKCall(g_hSDK_CDirector_TryOfferingTankBot, g_pDirector, entity, bEnterStasis);
+
+	return 0;
+}
+
+int Direct_AddSurvivorBot(Handle plugin, int numParams) // Native "L4D2Direct_AddSurvivorBot"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	ValidateAddress(g_pDirector, "g_pDirector");
+	ValidateNatives(g_hSDK_CDirector_AddSurvivorBot, "CDirector::AddSurvivorBot");
+
+	int characterType = GetNativeCell(1);
+
+	// Don't pass 8 to the engine — its random only checks 0-3 and silently fails if all taken.
+	// Characters 0-3 always create a bot (no duplicate check), so randomize within that range.
+	if( characterType == 8 )
+		characterType = GetRandomInt(0, 3);
+
+	SDKCall(g_hSDK_CDirector_AddSurvivorBot, g_pDirector, characterType);
 
 	return 0;
 }
