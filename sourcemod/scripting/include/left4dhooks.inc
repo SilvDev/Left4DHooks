@@ -225,6 +225,8 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetNavAreaPos");
 	MarkNativeAsOptional("L4D_GetNavAreaCenter");
 	MarkNativeAsOptional("L4D_GetNavAreaSize");
+	MarkNativeAsOptional("L4D_NavArea_GetAdjacentCount");
+	MarkNativeAsOptional("L4D_NavArea_GetAdjacentAreas");
 	MarkNativeAsOptional("L4D_NavArea_IsConnected");
 	MarkNativeAsOptional("L4D_GetNavArea_SpawnAttributes");
 	MarkNativeAsOptional("L4D_SetNavArea_SpawnAttributes");
@@ -551,7 +553,8 @@ enum PointerType
 	POINTER_ITEMMANAGER		= 16,	// pItemManager (L4D2 Only)
 	POINTER_MUSICBANKS		= 17,	// pMusicBanks (L4D2 Only)
 	POINTER_SESSIONMANAGER	= 18,	// pSessionManager (L4D2 Only)
-	POINTER_CHALLENGEMODE	= 19	// pChallengeMode (L4D2 Only) (mutation modes)
+	POINTER_CHALLENGEMODE	= 19,	// pChallengeMode (L4D2 Only) (mutation modes)
+	POINTER_THENEXTBOTS		= 20	// TheNextBots pointer (L4D2 Only)
 };
 
 // Provided by "BHaType":
@@ -3648,7 +3651,7 @@ forward void L4D_ActivateAbility_Smoker_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CVomit::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Boomer is trying to activate their ability
  * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
  *
  * @param client			the special infected attempting to activate
@@ -3660,7 +3663,7 @@ forward Action L4D_ActivateAbility_Boomer(int client, int ability);
 
 /**
  * @brief Called whenever CVomit::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Boomer is trying to activate their ability
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3672,7 +3675,7 @@ forward void L4D_ActivateAbility_Boomer_Post(int client, int ability);
 
 /**
  * @brief Called whenever CVomit::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Boomer is trying to activate their ability
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3684,7 +3687,7 @@ forward void L4D_ActivateAbility_Boomer_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CLunge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Hunter is trying to activate their ability
  * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
  *
  * @param client			the special infected attempting to activate
@@ -3696,7 +3699,7 @@ forward Action L4D_ActivateAbility_Hunter(int client, int ability);
 
 /**
  * @brief Called whenever CLunge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Hunter is trying to activate their ability
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3708,7 +3711,7 @@ forward void L4D_ActivateAbility_Hunter_Post(int client, int ability);
 
 /**
  * @brief Called whenever CLunge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Hunter is trying to activate their ability
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3720,7 +3723,7 @@ forward void L4D_ActivateAbility_Hunter_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CLeap::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Jockey is trying to activate their ability
  * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
  *
  * @param client			the special infected attempting to activate
@@ -3733,7 +3736,7 @@ forward Action L4D2_ActivateAbility_Jockey(int client, int ability);
 
 /**
  * @brief Called whenever CLeap::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Jockey is trying to activate their ability
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3746,7 +3749,7 @@ forward void L4D2_ActivateAbility_Jockey_Post(int client, int ability);
 
 /**
  * @brief Called whenever CLeap::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Jockey is trying to activate their ability
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3759,7 +3762,7 @@ forward void L4D2_ActivateAbility_Jockey_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CSpitAbility::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Spitter is trying to activate their ability
  * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
  *
  * @param client			the special infected attempting to activate
@@ -3772,7 +3775,7 @@ forward Action L4D2_ActivateAbility_Spitter(int client, int ability);
 
 /**
  * @brief Called whenever CSpitAbility::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Spitter is trying to activate their ability
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3785,7 +3788,7 @@ forward void L4D2_ActivateAbility_Spitter_Post(int client, int ability);
 
 /**
  * @brief Called whenever CSpitAbility::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Spitter is trying to activate their ability
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3798,7 +3801,7 @@ forward void L4D2_ActivateAbility_Spitter_PostHandled(int client, int ability);
 
 /**
  * @brief Called whenever CCharge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Charger is trying to activate their ability
  * @remarks Blocking may cause client prediction to flicker as if the ability was about to activate
  *
  * @param client			the special infected attempting to activate
@@ -3811,7 +3814,7 @@ forward Action L4D2_ActivateAbility_Charger(int client, int ability);
 
 /**
  * @brief Called whenever CCharge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Charger is trying to activate their ability
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -3824,7 +3827,7 @@ forward void L4D2_ActivateAbility_Charger_Post(int client, int ability);
 
 /**
  * @brief Called whenever CCharge::ActivateAbility is invoked
- * @remarks Called when a Smoker is trying to activate their ability
+ * @remarks Called when a Charger is trying to activate their ability
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the special infected attempting to activate
@@ -5143,10 +5146,10 @@ native void L4D_FindRandomSpot(int NavArea, float vecPos[3]);
  * @brief Checks if a player is visible to a specified position. Should be slightly faster than using TR_TraceRayFilterEx
  *
  * @param client			Client to check visibility from
- * @param vecPos			The vector position of the target location
  * @param team				The team of the client, can possibly pass 0 to 3
  * @param team_target		Target point team, if it is 0, the client's angle will be considered
  * @param NavArea			NavArea of ​​the target, or 0 to automatically get with GetNearestNavArea
+ * @param vecPos			The vector position of the target location
  *
  * @return					True if visible, false otherwise
  */
@@ -5325,6 +5328,25 @@ enum BOT_CMD
  */
 // L4D2 only
 native bool L4D2_CommandABot(int entity, int target, BOT_CMD type, float vecPos[3] = NULL_VECTOR);
+
+/**
+ * @brief Make all common zombies in range rush the victim. (If client isn't set, a random survivor will be chosen.)
+ *
+ * @param client	Survivor ID to target or -1 to choose a random Survivor
+ * @param range		Maximum range of infected to trigger
+ *
+ * @noreturn
+ */
+// L4D2 only
+native void L4D2_RushVictim(int client, float range);
+
+/**
+ * @brief Tells all existing Special Infected (except Tank) to swap into assault mode and not hide/dither/loiter
+ *
+ * @noreturn
+ */
+// L4D2 only
+native void L4D2_StartAssault();
 
 /**
  * @brief Returns if players can control infected
@@ -6255,13 +6277,34 @@ native void L4D_GetNavAreaCenter(Address area, float vecPos[3]);
 native void L4D_GetNavAreaSize(Address area, float vecSize[3]);
 
 /**
- * @brief Returns true if this area is connected to other area in given direction. (If you set direction to -1 or 4, it will automatically check all directions for a connection)
+ * @brief Returns the number of adjacent areas in the given direction
+ *
+ *param area		The address of the NavArea
+ *param direction	The direction to check in (NAV_NORTH, NAV_EAST, NAV_SOUTH, NAV_WEST) - provide value 0 to 3 only
+ *
+ * @return			Number of adjacent areas
+ */
+native int L4D_NavArea_GetAdjacentCount(Address area, int direction);
+
+/**
+ * @brief Fills a passed ArrayList with all adjacent areas in the given direction
+ *
+ *param area		The address of the NavArea
+ *param direction	The direction to check in (NAV_NORTH, NAV_EAST, NAV_SOUTH, NAV_WEST) - provide value 0 to 3 only
+ *param list		The ArrayList handle to fill with adjacent areas, if they exist
+ *
+ * @return			Number of adjacent areas
+ */
+native int L4D_NavArea_GetAdjacentAreas(Address area, int direction, ArrayList list);
+
+/**
+ * @brief Returns true if this area is connected to other area in given direction. (If you set direction to 4, it will automatically check all directions for a connection)
  *
  *param area1		The address of the first NavArea
  *param are2a		The address of the second NavArea
- *param direction	The direction to check in (NAV_NORTH, NAV_EAST, NAV_SOUTH, NAV_WEST, NAV_ALL) - provide value 1 to 4 only
+ *param direction	The direction to check in (NAV_NORTH, NAV_EAST, NAV_SOUTH, NAV_WEST, NAV_ALL) - provide value 0 to 4 only
  *
- * @noreturn
+ * @return			Result of calculation, true or false
  */
 native bool L4D_NavArea_IsConnected(Address area1, Address area2, int direction);
 

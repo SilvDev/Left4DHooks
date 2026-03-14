@@ -3365,6 +3365,15 @@
 				/* Search: "unsticking %s from %.1f %.1f %.1f to %.1f %.1f %.1f\n" */
 			}
 
+			"CDirector::IsLocationFoggedToSurvivors"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK9CDirector27IsLocationFoggedToSurvivorsERK6Vector"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x83\x2A\x2A\x33\x2A\x85\x2A\x0F\x2A\x2A\x52\x68\x2A\x2A\x2A\x2A\xE8"
+				/* ? ? ? ? ? ? ? ? 8B ? ? 83 ? ? 33 ? 85 ? 0F ? ? 52 68 ? ? ? ? E8 */
+				/* Search: "ZombieSpawnInFog" */
+			}
+
 			/**
 			* CTerrorPlayer::GetSpecialInfectedDominatingMe(CTerrorPlayer *this)
 			*
@@ -4271,7 +4280,7 @@
 			 * CDirector::AddSurvivorBot(SurvivorCharacterType) const
 			 *
 			 * Windows: find string "sb_add" → xref to ConCommand registration →
-			 * handler calls AddSurvivorBot(char*) wrapper → wrapper tail-calls this function.
+			 * handler calls AddSurvivorBot(char*) wrapper → wrapper tail-calls this function
 			 */
 			"CDirector::AddSurvivorBot"
 			{
@@ -5794,6 +5803,36 @@
 				"library"	"server"
 				"windows"	"\x55\x8B\xEC\x81\xEC\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x14\x53\x8B\x5D\x08"
 				/* 55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 FC 8B 45 14 53 8B 5D 08 */
+			}
+
+			/* Search: "Frame %8d/tick %8d: frame out of budget (%.2fms > %.2fms)\n" - xref to this function is our target
+			 */
+			"TheNextBots"
+			{
+				"library"	"server"
+				"linux"		"@_Z11TheNextBotsv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x84\x05\x2A\x2A\x2A\x2A\x0F\x85\x2A\x2A\x2A\x2A\x09\x2A\x2A\x2A\x2A\x2A\x33\x2A\xB9\x2A\x2A\x2A\x2A\x33"
+				/* ? ? ? ? ? 84 05 ? ? ? ? 0F 85 ? ? ? ? 09 ? ? ? ? ? 33 ? B9 ? ? ? ? 33 */
+			}
+
+			/* Search: "Chainsaw.Die" - You will see "TheNextBots" above the call, and below is a sub call with "1.0" as param
+			 */
+			"NextBotManager::RushVictim"
+			{
+				"library"	"server"
+				"linux"		"@_ZN14NextBotManager10RushVictimEP13CTerrorPlayerf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\x0F\x2E\x2A\x2A\x2A\x2A\x2A\x9F\xF6\x2A\x2A\x7A\x2A\xA1\x2A\x2A\x2A\x2A\xF3"
+				/* ? ? ? ? ? ? ? ? 83 ? ? 0F 2E ? ? ? ? ? 9F F6 ? ? 7A ? A1 ? ? ? ? F3 */
+			}
+
+			/* Search: "Going into Old ClearNWait" - Below is a call, click into that and into the function it calls, this is the target
+			 */
+			"NextBotManager::StartAssault"
+			{
+				"library"	"server"
+				"linux"		"@_ZN14NextBotManager12StartAssaultEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x3D\x2A\x2A\x2A\x2A\x74\x2A\x56\x57\x0F\x2A\x2A\x8B\x2A\x2A\x03\x2A\x03\x2A\x03\x2A\x8B\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x8B\x2A\xFF\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x83"
+				/* ? ? ? ? ? ? ? 3D ? ? ? ? 74 ? 56 57 0F ? ? 8B ? ? 03 ? 03 ? 03 ? 8B ? ? 8B ? 8B ? ? ? ? ? 8B ? FF ? 8B ? E8 ? ? ? ? 83 */
 			}
 
 			"nav_update_lighting"

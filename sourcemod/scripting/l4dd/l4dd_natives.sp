@@ -130,6 +130,9 @@ Handle g_hSDK_CTerrorPlayer_SetShovePenalty;
 // Handle g_hSDK_CTerrorPlayer_SetNextShoveTime;
 Handle g_hSDK_CTerrorPlayer_DoAnimationEvent;
 Handle g_hSDK_CTerrorGameRules_RecomputeTeamScores;
+Handle g_hSDK_TheNextBots;
+Handle g_hSDK_RushVictim;
+Handle g_hSDK_StartAssault;
 Handle g_hSDK_CBaseServer_SetReservationCookie;
 // Handle g_hSDK_GetCampaignScores;
 // Handle g_hSDK_LobbyIsReserved;
@@ -295,6 +298,7 @@ any Native_GetPointer(Handle plugin, int numParams) // Native "L4D_GetPointer"
 		case POINTER_MUSICBANKS:		return g_pMusicBanks;
 		case POINTER_SESSIONMANAGER:	return g_pSessionManager;
 		case POINTER_CHALLENGEMODE:		return g_pChallengeMode;
+		case POINTER_THENEXTBOTS:		return g_pTheNextBots;
 	}
 
 	return 0;
@@ -385,7 +389,7 @@ stock int GetEntityFromHandle(any handle)
 stock any Deref(any addr, NumberType numt = NumberType_Int32)
 {
 	return LoadFromAddress(view_as<Address>(addr), numt);
-}  
+}
 
 /* Old method
 int GetEntityFromAddress(int addr)
@@ -616,7 +620,7 @@ int Native_DefibDeadBody(Handle plugin, int numParams) // Native "L4D2_DefibByDe
 		if( nopenalty )
 		{
 			GameRules_SetProp("m_iVersusDefibsUsed", quantity1, 4, 0);
-			GameRules_SetProp("m_iVersusDefibsUsed", quantity2, 4, 1); 
+			GameRules_SetProp("m_iVersusDefibsUsed", quantity2, 4, 1);
 		}
 	}
 
@@ -1992,7 +1996,7 @@ int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // N
 // Spitter acid projectile damage
 // ====================================================================================================
 bool g_bAcidWatch;
-int g_iAcidEntity[2048];
+int g_iAcidEntity[2048 + 1];
 
 // Sounds are based on "PlayerZombie.AttackHit" from "game_sounds_infected_special.txt"
 char g_sAcidSounds[6][] =
@@ -2411,6 +2415,27 @@ int Native_CommandABot(Handle plugin, int numParams) // Native "L4D2_CommandABot
 	// Execute
 	SetVariantString(sTemp);
 	AcceptEntityInput(entity, "RunScriptCode");
+
+	return 0;
+}
+
+int Native_RushVictim(Handle plugin, int numParams) // Native "L4D2_RushVictim"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	int victim = GetNativeCell(1);
+	float range = GetNativeCell(2);
+
+	SDKCall(g_hSDK_RushVictim, g_pTheNextBots, victim, range);
+
+	return 0;
+}
+
+int Native_StartAssault(Handle plugin, int numParams) // Native "L4D2_StartAssault"
+{
+	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
+
+	SDKCall(g_hSDK_StartAssault, g_pTheNextBots);
 
 	return 0;
 }
@@ -3730,13 +3755,45 @@ int Native_GetNavAreaSize(Handle plugin, int numParams) // Native "L4D_GetNavAre
 	return 0;
 }
 
+int Native_CNavArea_GetAdjacentCount(Handle plugin, int numParams) // Native "L4D_NavArea_GetAdjacentCount"
+{
+	Address area = GetNativeCell(1);
+	int dir = GetNativeCell(2);
+
+	// Hard-coding offset, unlikely to change. Found in "TerrorNavArea::ScriptGetAdjacentAreas"
+	Address ptr = view_as<Address>(LoadFromAddress(area + view_as<Address>(88) + view_as<Address>(4 * dir), NumberType_Int32));
+	int count = LoadFromAddress(ptr, NumberType_Int32);
+
+	return count;
+}
+
+int Native_CNavArea_GetAdjacentAreas(Handle plugin, int numParams) // Native "L4D_NavArea_GetAdjacentAreas"
+{
+	Address area = GetNativeCell(1);
+	int dir = GetNativeCell(2);
+	ArrayList list = GetNativeCell(3);
+
+	// Hard-coding offset, unlikely to change. Found in "TerrorNavArea::ScriptGetAdjacentAreas"
+	Address ptr = view_as<Address>(LoadFromAddress(area + view_as<Address>(88) + view_as<Address>(4 * dir), NumberType_Int32));
+	int count = LoadFromAddress(ptr, NumberType_Int32);
+	int adjacent;
+
+	for( int i = 0; i < count; i++ )
+	{
+		adjacent = LoadFromAddress(ptr + view_as<Address>(4 * (2 * i + 1)), NumberType_Int32);
+		list.Push(adjacent);
+	}
+
+	return count;
+}
+
 int Native_CNavArea_IsConnected(Handle plugin, int numParams) // Native "L4D_NavArea_IsConnected"
 {
 	Address area1 = GetNativeCell(1);
 	Address area2 = GetNativeCell(2);
 	int dir = GetNativeCell(3);
 
-	if( dir < 1 || dir > 4 ) ThrowError("Invalid direction specified: %d should be 1-4", dir);
+	if( dir < 0 || dir > 4 ) ThrowError("Invalid direction specified: %d should be 0-4", dir);
 
 	return SDKCall(g_hSDK_CNavArea_IsConnected, area1, area2, dir);
 }
@@ -4653,8 +4710,8 @@ int Direct_AddSurvivorBot(Handle plugin, int numParams) // Native "L4D2Direct_Ad
 
 	int characterType = GetNativeCell(1);
 
-	// Don't pass 8 to the engine — its random only checks 0-3 and silently fails if all taken.
-	// Characters 0-3 always create a bot (no duplicate check), so randomize within that range.
+	// Don't pass 8 to the engine — its random only checks 0-3 and silently fails if all taken
+	// Characters 0-3 always create a bot (no duplicate check), so randomize within that range
 	if( characterType == 8 )
 		characterType = GetRandomInt(0, 3);
 
@@ -5347,7 +5404,7 @@ int Native_CTerrorPlayer_RespawnPlayer(Handle plugin, int numParams) // Native "
 
 	int client = GetNativeCell(1);
 	bool reset = true;
-	if( numParams == 2 ) 
+	if( numParams == 2 )
 		reset = GetNativeCell(2);
 
 	ArrayList aList = new ArrayList();
@@ -6412,7 +6469,7 @@ any Native_AmmoDef_Index(Handle plugin, int numParams)
 	GetNativeString(1, psz, sizeof(psz));
 
 	char name[64];
-	for (int i = 1; i < AmmoDef_m_nAmmoIndex(); ++i)
+	for( int i = 1; i < AmmoDef_m_nAmmoIndex(); ++i )
 	{
 		AmmoDef_m_AmmoType(i).GetName(name, sizeof(name));
 

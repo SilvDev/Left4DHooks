@@ -429,6 +429,8 @@ void SetupForwardsNatives()
 	CreateNative("L4D2_NavAreaTravelDistance",		 				Native_NavAreaTravelDistance);
 	CreateNative("L4D2_NavAreaBuildPath",							Native_NavAreaBuildPath);
 	CreateNative("L4D2_CommandABot",								Native_CommandABot);
+	CreateNative("L4D2_RushVictim",									Native_RushVictim);
+	CreateNative("L4D2_StartAssault",								Native_StartAssault);
 
 	CreateNative("L4D2_VScriptWrapper_GetMapNumber",				Native_VS_GetMapNumber);
 	CreateNative("L4D2_VScriptWrapper_HasEverBeenInjured",			Native_VS_HasEverBeenInjured);
@@ -471,6 +473,8 @@ void SetupForwardsNatives()
 	CreateNative("L4D_GetNavAreaPos",								Native_GetNavAreaPos);
 	CreateNative("L4D_GetNavAreaCenter",							Native_GetNavAreaCenter);
 	CreateNative("L4D_GetNavAreaSize",								Native_GetNavAreaSize);
+	CreateNative("L4D_NavArea_GetAdjacentCount",					Native_CNavArea_GetAdjacentCount);
+	CreateNative("L4D_NavArea_GetAdjacentAreas",					Native_CNavArea_GetAdjacentAreas);
 	CreateNative("L4D_NavArea_IsConnected",							Native_CNavArea_IsConnected);
 	CreateNative("L4D_GetNavArea_SpawnAttributes",					Native_GetTerrorNavArea_Attributes);
 	CreateNative("L4D_SetNavArea_SpawnAttributes",					Native_SetTerrorNavArea_Attributes);

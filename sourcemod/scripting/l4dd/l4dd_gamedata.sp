@@ -332,8 +332,8 @@ void LoadGameData()
 			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
 			PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
 			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer);
-			PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Pointer);
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_AddParameter(SDKType_Bool, SDKPass_Plain);
 			PrepSDKCall_SetReturnInfo(SDKType_Bool, SDKPass_Plain);
 			g_hSDK_IsVisibleToPlayer = EndPrepSDKCall();
 			if( g_hSDK_IsVisibleToPlayer == null)
@@ -1015,7 +1015,7 @@ void LoadGameData()
 		PrepSDKCall_AddParameter(SDKType_CBasePlayer, SDKPass_Pointer);
 		PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer);
 		g_hSDK_CTDefibPlayer = EndPrepSDKCall();
-		
+
 		if( g_hSDK_CTDefibPlayer == null )
 		{
 			LogError("Failed to create SDKCall: \"CTerrorPlayer::OnRevivedByDefibrillator\" (%s)", g_sSystem);
@@ -1399,15 +1399,19 @@ void LoadGameData()
 			LogError("Failed to create SDKCall: \"CDirector::TryOfferingTankBot\" (%s)", g_sSystem);
 	}
 
-	StartPrepSDKCall(SDKCall_Raw);
-	if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::AddSurvivorBot") == false )
+	if( g_bLeft4Dead2 )
 	{
-		LogError("Failed to find signature: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
-	} else {
-		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
-		g_hSDK_CDirector_AddSurvivorBot = EndPrepSDKCall();
-		if( g_hSDK_CDirector_AddSurvivorBot == null )
-			LogError("Failed to create SDKCall: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
+		StartPrepSDKCall(SDKCall_Raw);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::AddSurvivorBot") == false )
+		{
+			LogError("Failed to find signature: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+			PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+			g_hSDK_CDirector_AddSurvivorBot = EndPrepSDKCall();
+			if( g_hSDK_CDirector_AddSurvivorBot == null )
+				LogError("Failed to create SDKCall: \"CDirector::AddSurvivorBot\" (%s)", g_sSystem);
+		}
 	}
 
 	StartPrepSDKCall(SDKCall_Raw);
@@ -1516,16 +1520,38 @@ void LoadGameData()
 
 	if( g_bLeft4Dead2 )
 	{
-		StartPrepSDKCall(SDKCall_Raw);
-		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CMeleeWeaponInfoStore::GetMeleeWeaponInfo") == false )
+		StartPrepSDKCall(SDKCall_Static);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "TheNextBots") == false )
 		{
-			LogError("Failed to find signature: \"CMeleeWeaponInfoStore::GetMeleeWeaponInfo\" (%s)", g_sSystem);
+			LogError("Failed to find signature: \"TheNextBots\" (%s)", g_sSystem);
 		} else {
-			PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
 			PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
-			g_hSDK_CMeleeWeaponInfoStore_GetMeleeWeaponInfo = EndPrepSDKCall();
-			if( g_hSDK_CMeleeWeaponInfoStore_GetMeleeWeaponInfo == null )
-				LogError("Failed to create SDKCall: \"CMeleeWeaponInfoStore::GetMeleeWeaponInfo\" (%s)", g_sSystem);
+			g_hSDK_TheNextBots = EndPrepSDKCall();
+			if( g_hSDK_TheNextBots == null )
+				LogError("Failed to create SDKCall: \"TheNextBots\" (%s)", g_sSystem);
+		}
+
+		StartPrepSDKCall(SDKCall_Raw);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NextBotManager::RushVictim") == false )
+		{
+			LogError("Failed to find signature: \"NextBotManager::RushVictim\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer, VDECODE_FLAG_ALLOWNULL);
+			PrepSDKCall_AddParameter(SDKType_Float, SDKPass_Plain);
+			g_hSDK_RushVictim = EndPrepSDKCall();
+			if( g_hSDK_RushVictim == null )
+				LogError("Failed to create SDKCall: \"NextBotManager::RushVictim\" (%s)", g_sSystem);
+		}
+
+		StartPrepSDKCall(SDKCall_Raw);
+		if( PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "NextBotManager::StartAssault") == false )
+		{
+			LogError("Failed to find signature: \"NextBotManager::StartAssault\" (%s)", g_sSystem);
+		} else {
+			PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+			g_hSDK_StartAssault = EndPrepSDKCall();
+			if( g_hSDK_StartAssault == null )
+				LogError("Failed to create SDKCall: \"NextBotManager::StartAssault\" (%s)", g_sSystem);
 		}
 
 		StartPrepSDKCall(SDKCall_Raw);
@@ -2210,6 +2236,8 @@ void LoadGameData()
 		g_pChallengeMode = hGameData.GetOffset("ChallengeModePtr");
 		ValidateOffset(g_pChallengeMode, "ChallengeModePtr");
 
+		g_pTheNextBots = SDKCall(g_hSDK_TheNextBots);
+
 
 
 		// DisableAddons
@@ -2341,6 +2369,7 @@ void LoadGameData()
 		PrintToServer("%12d == g_pMusicBanksPtr", g_pMusicBanks);
 		PrintToServer("%12d == g_pSessionManagerPtr", g_pSessionManager);
 		PrintToServer("%12d == g_pChallengeModePtr", g_pChallengeMode);
+		PrintToServer("%12d == g_pTheNextBots", g_pTheNextBots);
 	}
 	PrintToServer("");
 	#endif
