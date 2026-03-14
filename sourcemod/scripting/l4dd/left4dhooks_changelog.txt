@@ -1,4 +1,4 @@
-1.163 (15-Mar-2026)
+1.163 (14-Mar-2026)
 	- Added native "L4D2_StartAssault" to trigger Special Infected to attack. Requested by "gvazdas".
 	- Added native "L4D2_RushVictim" to trigger Common to attack a specific player. Requested by "gvazdas".
 	- Added native "L4D2Direct_AddSurvivorBot" to spawn Survivor bots. Thanks to "spumer" for adding.
