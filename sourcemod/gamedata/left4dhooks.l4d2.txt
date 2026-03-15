@@ -2028,6 +2028,20 @@
 				"read" "0"
 			}
 
+			"gEntList"
+			{
+				"windows"
+				{
+					"signature" "gEntList"
+					"read" "116"
+				}
+				"linux"
+				{
+					"signature" "gEntList"
+				}
+				"read" "0"
+			}
+
 			"L4DD::ScriptVM"
 			{
 				"windows"
@@ -3428,6 +3442,24 @@
 				// /* ? ? ? ? ? ? 8B ? ? 85 ? 74 ? 8B ? 8B ? ? FF ? 8B ? 89 ? ? EB ? C7 45 ? ? ? ? ? 8D ? ? 51 8D 8E ? ? ? ? E8 ? ? ? ? 33 */
 			}
 
+			"CGlobalEntityList::FindEntityByClassnameNearest"
+			{
+				"library"	"server"
+				"linux"		"@_ZN17CGlobalEntityList28FindEntityByClassnameNearestEPKcRK6Vectorf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x53\x33\x2A\xF3\x2A\x2A\x2A\x0F\x2E\x2A\x2A\x2A\x2A\x2A\x9F"
+				/* ? ? ? ? ? ? ? ? ? 53 33 ? F3 ? ? ? 0F 2E ? ? ? ? ? 9F */
+				/* Search: "CheckpointDoorClosed". Target is sub call with "info_changelevel" as param. */
+			}
+
+			"CGlobalEntityList::FindEntityByClassnameWithin"
+			{
+				"library"	"server"
+				"linux"		"@_ZN17CGlobalEntityList27FindEntityByClassnameWithinEP11CBaseEntityPKcRK6Vectorf"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x83\x2A\x2A\xF3\x2A\x2A\x2A\x0F\x2E\x2A\x2A\x2A\x2A\x2A\x9F\xF6\x2A\x2A\x7A\x2A\x8B"
+				/* ? ? ? ? ? ? ? ? 83 ? ? F3 ? ? ? 0F 2E ? ? ? ? ? 9F F6 ? ? 7A ? 8B */
+				/* Search: "info_ladder_dismount" and target calls twice with this param. */
+			}
+
 			/*
 			* CDirector::HasAnySurvivorLeftSafeArea(CDirector *this)
 			*/
@@ -4818,6 +4850,18 @@
 			}
 
 			/*
+			 * CNavArea::IsBlocked(CNavArea *this, int, bool)
+			 */
+			"CNavArea::IsBlocked"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK8CNavArea9IsBlockedEib"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\x8B\x2A\x2A\x85\x2A\x79\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x83"
+				/* ? ? ? ? ? ? ? 74 ? 8B ? ? 85 ? 79 ? 8B ? ? ? ? ? 83 */
+				/* Search: "Flow Error: Goal area is blocked!\n", target function is call above with "-1" */
+			}
+
+			/*
 			 * CTerrorPlayer::GetFlowDistance(TerrorNavArea::FlowType)
 			 */
 			"CTerrorPlayer::GetFlowDistance"
@@ -5746,6 +5790,17 @@
 			{
 				"library"	"server"
 				"linux"		"@g_pGameRules"
+			}
+
+			/* Used on Windows to resolve the "gEntList" pointer */
+			/* ResolveFollowupTargetToEntity(char *) */
+			"gEntList"
+			{
+				"library"	"server"
+				"linux"		"@gEntList"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x57\x8B\x2A\x68\x2A\x2A\x2A\x2A\x57\xE8\x2A\x2A\x2A\x2A\x83"
+				/* ? ? ? ? ? 8B ? ? 57 8B ? 68 ? ? ? ? 57 E8 ? ? ? ? 83 */
+				/* Search: "Couldn't resolve response target %s\n". Call with "0, v3, 0, 0, 0, 0" as params has target ptr. */
 			}
 
 			/* This signature sometimes has multiple matches, but this

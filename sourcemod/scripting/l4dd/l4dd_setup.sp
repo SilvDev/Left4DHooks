@@ -375,6 +375,9 @@ void SetupForwardsNatives()
 	CreateNative("L4D_GetNearestNavArea",		 					Native_CNavMesh_GetNearestNavArea);
 	CreateNative("L4D_GetLastKnownArea",		 					Native_CTerrorPlayer_GetLastKnownArea);
 	CreateNative("L4D_IsTouchingTrigger",		 					Native_CBaseTrigger_IsTouching);
+	CreateNative("L4D_FindEntityByClassnameNearest",		 		Native_CGlobalEntityList_FindEntityByClassnameNearest);
+	CreateNative("L4D_FindEntityByClassnameWithin",		 			Native_CGlobalEntityList_FindEntityByClassnameWithin);
+	CreateNative("L4D_FindByClassnameTargetname",		 			Native_FindByClassnameTargetname);
 	CreateNative("L4D_HasAnySurvivorLeftSafeArea",		 			Native_CDirector_HasAnySurvivorLeftSafeArea);
 	CreateNative("L4D_IsAnySurvivorInStartArea",		 			Native_CDirector_IsAnySurvivorInStartArea);
 	CreateNative("L4D_IsAnySurvivorInCheckpoint",		 			Native_CDirector_IsAnySurvivorInCheckpoint);
@@ -476,6 +479,7 @@ void SetupForwardsNatives()
 	CreateNative("L4D_NavArea_GetAdjacentCount",					Native_CNavArea_GetAdjacentCount);
 	CreateNative("L4D_NavArea_GetAdjacentAreas",					Native_CNavArea_GetAdjacentAreas);
 	CreateNative("L4D_NavArea_IsConnected",							Native_CNavArea_IsConnected);
+	CreateNative("L4D_NavArea_IsBlocked",							Native_CNavArea_IsBlocked);
 	CreateNative("L4D_GetNavArea_SpawnAttributes",					Native_GetTerrorNavArea_Attributes);
 	CreateNative("L4D_SetNavArea_SpawnAttributes",					Native_SetTerrorNavArea_Attributes);
 	CreateNative("L4D_GetNavArea_AttributeFlags",					Native_GetCNavArea_AttributeFlags);

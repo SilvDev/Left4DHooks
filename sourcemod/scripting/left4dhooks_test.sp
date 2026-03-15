@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.163"
+#define PLUGIN_VERSION		"1.166"
 
 /*=======================================================================================
 	Plugin Info:
@@ -362,14 +362,54 @@ Action sm_l4dd(int client, int args)
 
 
 
+
+
 	/*
-	PrintToServer("POINTER_THENEXTBOTS = %d",		L4D_GetPointer(POINTER_THENEXTBOTS));
+	PrintToChatAll("L4D_IsInIntro %d", L4D_IsInIntro());
 
-	L4D2_StartAssault();
+	if( g_bLeft4Dead2 )
+	{
+		int entity;
 
-	int target = GetRandomSurvivor(1, -1);
-	if( target )
-		L4D2_RushVictim(target, 5000.0);
+		char sMap[20];
+		GetCurrentMap(sMap, sizeof(sMap));
+
+		if( strcmp(sMap, "c3m1_plankcountry") == 0 )
+		{
+			entity = L4D_FindByClassnameTargetname("logic_relay", "relay_intro_start");
+		}
+
+		PrintToServer("L4D_FindByClassnameTargetname \"logic_relay\" target: \"relay_intro_start\" == %d", entity);
+	}
+	// */
+
+
+
+
+
+	// Get TheNavAreas - check for blocked areas
+	/*
+	ArrayList aList = new ArrayList();
+	L4D_GetAllNavAreas(aList);
+
+	int size = aList.Length;
+	int total;
+	Address area;
+
+	// Check against all addresses:
+	for( int i = 0; i < size; i++ )
+	{
+		area = aList.Get(i);
+		if( L4D_NavArea_IsBlocked(area, -1, false) )
+		// if( L4D_NavArea_IsBlocked(area, 2, false) )
+		// if( L4D_NavArea_IsBlocked(area, 3, false) )
+		{
+			total++;
+			PrintToServer("NavArea %d blocked", area);
+		}
+	}
+
+	PrintToServer("Total %d of %d blocked", total, size);
 	// */
 
 
@@ -377,34 +417,86 @@ Action sm_l4dd(int client, int args)
 
 
 	/*
-	// SurvivorCharacter_First = 0,		// Set-dependent: Nick (L4D2) or Bill (L4D1)
-	// SurvivorCharacter_Second,		// Set-dependent: Rochelle (L4D2) or Zoey (L4D1)
-	// SurvivorCharacter_Third,			// Set-dependent: Coach (L4D2) or Louis (L4D1)
-	// SurvivorCharacter_Fourth,		// Set-dependent: Ellis (L4D2) or Francis (L4D1)
-	// SurvivorCharacter_Bill = 4,		// Always Bill
-	// SurvivorCharacter_Zoey,			// Always Zoey
-	// SurvivorCharacter_Francis,		// Always Francis
-	// SurvivorCharacter_Louis,			// Always Louis
-	// SurvivorCharacter_Random			// Random from 0-3 (map's survivor set)
+	float vecPos[3];
+	int survivor = GetRandomSurvivor(-1, -1);
+	GetClientEyePosition(survivor, vecPos);
 
-	L4D2Direct_AddSurvivorBot(SurvivorCharacter_Bill);
+	int entity = L4D_FindEntityByClassnameNearest("prop_physics", vecPos, 2000.0);
+	if( entity != INVALID_ENT_REFERENCE )
+		L4D2_SetEntityGlow(entity, L4D2Glow_Constant, 1000, 1, {255, 0, 0}, true);
+	PrintToServer("L4D_FindEntityByClassnameNearest %d", entity);
+	// */
 
-	// To get the Survivor bot client index we can do something like this:
-	int clients[MAXPLAYERS+1];
-	for( int i = 1; i <= MaxClients; i++ )
+
+
+
+
+	/*
+	float vecPos[3];
+	int survivor = GetRandomSurvivor(-1, -1);
+	GetClientEyePosition(survivor, vecPos);
+
+	int entity = INVALID_ENT_REFERENCE;
+	while( (entity = L4D_FindEntityByClassnameWithin(entity, "prop_physics", vecPos, 2000.0)) != INVALID_ENT_REFERENCE )
 	{
-		if( IsClientInGame(i) )
-			clients[i] = i;
+		L4D2_SetEntityGlow(entity, L4D2Glow_Constant, 1000, 1, {255, 0, 0}, true);
+		PrintToServer("L4D_FindEntityByClassnameWithin %d", entity);
 	}
+	// */
 
-	L4D2Direct_AddSurvivorBot(SurvivorCharacter_First);
 
-	// After it's spawned we can find the client index:
-	for( int i = 1; i <= MaxClients; i++ )
+
+
+
+	/*
+	if( g_bLeft4Dead2 )
 	{
-		if( clients[i] == 0 && IsClientInGame(i) && GetClientTeam(i) == 2 )
+		PrintToServer("POINTER_THENEXTBOTS = %d",		L4D_GetPointer(POINTER_THENEXTBOTS));
+
+		L4D2_StartAssault();
+
+		int target = GetRandomSurvivor(1, -1);
+		if( target )
+			L4D2_RushVictim(target, 5000.0);
+	}
+	// */
+
+
+
+
+
+	/*
+	if( g_bLeft4Dead2 )
+	{
+		// SurvivorCharacter_First = 0,		// Set-dependent: Nick (L4D2) or Bill (L4D1)
+		// SurvivorCharacter_Second,		// Set-dependent: Rochelle (L4D2) or Zoey (L4D1)
+		// SurvivorCharacter_Third,			// Set-dependent: Coach (L4D2) or Louis (L4D1)
+		// SurvivorCharacter_Fourth,		// Set-dependent: Ellis (L4D2) or Francis (L4D1)
+		// SurvivorCharacter_Bill = 4,		// Always Bill
+		// SurvivorCharacter_Zoey,			// Always Zoey
+		// SurvivorCharacter_Francis,		// Always Francis
+		// SurvivorCharacter_Louis,			// Always Louis
+		// SurvivorCharacter_Random			// Random from 0-3 (map's survivor set)
+
+		L4D2Direct_AddSurvivorBot(SurvivorCharacter_Bill);
+
+		// To get the Survivor bot client index we can do something like this:
+		int clients[MAXPLAYERS+1];
+		for( int i = 1; i <= MaxClients; i++ )
 		{
-			PrintToChatAll("SPAWNED %d", i);
+			if( IsClientInGame(i) )
+				clients[i] = i;
+		}
+
+		L4D2Direct_AddSurvivorBot(SurvivorCharacter_First);
+
+		// After it's spawned we can find the client index:
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( clients[i] == 0 && IsClientInGame(i) && GetClientTeam(i) == 2 )
+			{
+				PrintToChatAll("SPAWNED %d", i);
+			}
 		}
 	}
 	// */
@@ -1195,7 +1287,8 @@ Action sm_l4dd(int client, int args)
 		TR_GetEndPosition(vPos, trace);
 		TR_GetPlaneNormal(trace, vAng);
 		delete trace;
-// "inferno", "insect_swarm", "fire_cracker_blast"
+
+		// "inferno", "insect_swarm", "fire_cracker_blast"
 		int entity = CreateEntityByName("insect_swarm");
 		if( entity != -1 )
 		{

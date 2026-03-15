@@ -60,14 +60,14 @@
 
 
 
-// Natives: 274 (including 3 for L4D1 only)
-// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 73 [silvers - mine!] + 4 [anim] = 172
-// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 118 [silvers - mine!] + 4 [anim] = 273
+// Natives: 283 (including 3 for L4D1 only)
+// L4D1 = 31 [left4downtown] + 47 [l4d_direct] + 16 [l4d2addresses] + 79 [silvers - mine!] + 4 [anim] = 178
+// L4D2 = 61 [left4downtown] + 59 [l4d_direct] + 31 [l4d2addresses] + 127 [silvers - mine!] + 4 [anim] = 282
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
 // Forwards: 248 (including 5 for L4D1 only)
 // L4D1 = 158
-// L4D2 = 243y
+// L4D2 = 243
 
 // Stocks: 169 (L4D1 = 114, L4D2 = 167)
 // left4dhooks_silver			46 stocks	(L4D1 = 39,		L4D2 = 53)
@@ -116,6 +116,9 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_GetNearestNavArea");
 	MarkNativeAsOptional("L4D_GetLastKnownArea");
 	MarkNativeAsOptional("L4D_IsTouchingTrigger");
+	MarkNativeAsOptional("L4D_FindEntityByClassnameNearest");
+	MarkNativeAsOptional("L4D_FindEntityByClassnameWithin");
+	MarkNativeAsOptional("L4D_FindByClassnameTargetname");
 	MarkNativeAsOptional("L4D2_GetFurthestSurvivorFlow");
 	MarkNativeAsOptional("L4D2_GetFirstSpawnClass");
 	MarkNativeAsOptional("L4D2_SetFirstSpawnClass");
@@ -228,6 +231,7 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("L4D_NavArea_GetAdjacentCount");
 	MarkNativeAsOptional("L4D_NavArea_GetAdjacentAreas");
 	MarkNativeAsOptional("L4D_NavArea_IsConnected");
+	MarkNativeAsOptional("L4D_NavArea_IsBlocked");
 	MarkNativeAsOptional("L4D_GetNavArea_SpawnAttributes");
 	MarkNativeAsOptional("L4D_SetNavArea_SpawnAttributes");
 	MarkNativeAsOptional("L4D_GetNavArea_AttributeFlags");
@@ -603,7 +607,7 @@ enum
 // Indices 0-3 map to different characters depending on the map's survivor set:
 //   L4D2 maps (set 2): 0=Nick, 1=Rochelle, 2=Coach, 3=Ellis
 //   L4D1 maps (set 1): 0=Bill, 1=Zoey, 2=Louis, 3=Francis
-// Indices 4-7 always refer to L4D1 characters regardless of the map.
+// Indices 4-7 always refer to L4D1 characters regardless of the map
 enum
 {
 	SurvivorCharacter_First = 0,		// Set-dependent: Nick (L4D2) or Bill (L4D1)
@@ -1286,7 +1290,7 @@ methodmap AmmoDef
 
 	/**
 	 * @brief Retrieves the maximum ammo that a player can carry
-	 * @note Returns the value locally calculated using Ammo_t.
+	 * @note Returns the value locally calculated using Ammo_t
 	 *
 	 * @param nAmmoIndex	Ammo index
 	 * @return				Ammo count
@@ -1295,12 +1299,12 @@ methodmap AmmoDef
 
 	/**
 	 * @brief Retrieves the maximum ammo that a player can carry
-	 * @note Returns the value from the function call.
-	 * @note Recommended to use this one in order to get values modified by others plugins.
+	 * @note Returns the value from the function call
+	 * @note Recommended to use this one in order to get values modified by others plugins
 	 *
 	 * @param nAmmoIndex	Ammo index
-	 * @param client		Client index to test.
-	 * 						Has no actual effect in function, but helps identify who is picking up ammo.
+	 * @param client		Client index to test
+	 * 						Has no actual effect in function, but helps identify who is picking up ammo
 	 * @return				Ammo count
 	 */
 	public static native int MaxCarry_Call(int nAmmoIndex, int client = -1);
@@ -3496,7 +3500,7 @@ forward void L4D2_OnPummelVictim_PostHandled(int attacker, int victim);
  * @remarks Dominators are: Hunter, Smoker, Jockey, and Charger
  * @remarks This forward is called in frames, but instantly tells you when any domination happened. Recommend not to put too much logic in here
  * @remarks For Chargers, this forward is called when being carried or being pummelled. Queue pummelling will not trigger this forward
- * 
+ *
  * @param victim		Client index of the victim
  * @param dominator		Client index of the dominator
  *
@@ -4546,10 +4550,10 @@ forward void L4D_OnServerHibernationUpdate(bool hibernating);
  * @brief Called when a map has been finished, and is about to save the entities in the saferoom
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if Director::AreHumanZombiesAllowed() returns true, which refers to the versus gamemode, or this entity name is "info_solo_changelevel"
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
  * @param Kv				A KeyValue pointer Address. Null_Address will be returned if the pointer is null
- * 
+ *
  * @return					Plugin_Handled to prevent saving entities, Plugin_Continue otherwise
 */
 // L4D1 only
@@ -4561,10 +4565,10 @@ forward Action L4D1_OnSavingEntities(int info_changelevel, Address Kv);
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if CTerrorGameRules::HasPlayerControlledZombies() returns true, which refers to the versus/scavenge related pvp gamemode
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
  * @param Kv				A KeyValue pointer Address. Null_Address will be returned if the pointer is null
- * 
+ *
  * @noreturn
 */
 // L4D1 only
@@ -4576,10 +4580,10 @@ forward void L4D1_OnSavingEntities_Post(int info_changelevel, Address Kv);
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if CTerrorGameRules::HasPlayerControlledZombies() returns true, which refers to the versus/scavenge related pvp gamemode
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
  * @param Kv				A KeyValue pointer Address. Null_Address will be returned if the pointer is null
- * 
+ *
  * @noreturn
 */
 // L4D1 only
@@ -4590,9 +4594,9 @@ forward void L4D1_OnSavingEntities_PostHandled(int info_changelevel, Address Kv)
  * @brief Called when a map has been finished, and is about to save the entities in the saferoom (usually props or items brought into the saferoom.)
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if CTerrorGameRules::HasPlayerControlledZombies() returns true, which refers to the versus/scavenge related pvp gamemode
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
- * 
+ *
  * @return					Plugin_Handled to prevent saving entities, Plugin_Continue otherwise
 */
 // L4D2 only
@@ -4604,9 +4608,9 @@ forward Action L4D2_OnSavingEntities(int info_changelevel);
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if CTerrorGameRules::HasPlayerControlledZombies() returns true, which refers to the versus/scavenge related pvp gamemode
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
- * 
+ *
  * @noreturn
 */
 // L4D2 only
@@ -4618,9 +4622,9 @@ forward void L4D2_OnSavingEntities_Post(int info_changelevel);
  * @remarks Called before the event "map_transition"
  * @remarks Won't be called if CTerrorGameRules::HasPlayerControlledZombies() returns true, which refers to the versus/scavenge related pvp gamemode
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param info_changelevel	The entity index of "info_changelevel"
- * 
+ *
  * @noreturn
 */
 // L4D2 only
@@ -4628,88 +4632,88 @@ forward void L4D2_OnSavingEntities_PostHandled(int info_changelevel);
 
 /**
  * Internally, game uses keyvalues structure to save survivors' data for the level-transitioning,
- * and stores these keyvalues into an array.
- * After we have transitioned to the next map, we restore the data from the keyvalues array.
- * 
+ * and stores these keyvalues into an array
+ * After we have transitioned to the next map, we restore the data from the keyvalues array
+ *
  * To retrieve the keyvalues before these functions below calling,
- * you may need to access the memory from the internal global array g_SavedPlayers or g_SavedSurvivorBots etc.
- * 
- * To see the keys and their values, see PlayerSaveData::PlayerSaveData().
+ * you may need to access the memory from the internal global array g_SavedPlayers or g_SavedSurvivorBots etc
+ *
+ * To see the keys and their values, see PlayerSaveData::PlayerSaveData()
 */
 
 /**
- * @brief Called whenever CTerrorPlayer::TransitionRestore is invoked.
+ * @brief Called whenever CTerrorPlayer::TransitionRestore is invoked
  * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
- * @remarks This will be called for every survivors including bots once the level failed and restarted.
- * 
+ * @remarks This will be called for every survivors including bots once the level failed and restarted
+ *
  * @param client		Client index
- * 
- * @return				Plugin_Handled to block this player from restoring their level-transitioned data, others otherwise.
+ *
+ * @return				Plugin_Handled to block this player from restoring their level-transitioned data, others otherwise
 */
 // L4D2 only
 forward Action L4D2_OnTransitionRestore(int client);
 
 /**
- * @brief Called after CTerrorPlayer::TransitionRestore is invoked.
- * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
- * @remarks This will be called for every survivors including bots once the level failed and restarted.
+ * @brief Called after CTerrorPlayer::TransitionRestore is invoked
+ * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots
+ * @remarks This will be called for every survivors including bots once the level failed and restarted
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param client		Client index
- * @param pkv			Address of the keyvalues pointer.
- * 
+ * @param pkv			Address of the keyvalues pointer
+ *
  * @noreturn
 */
 // L4D2 only
 forward void L4D2_OnTransitionRestore_Post(int client, Address pkv);
 
 /**
- * @brief Called after CTerrorPlayer::TransitionRestore is invoked.
- * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots.
- * @remarks This will be called for every survivors including bots once the level failed and restarted.
+ * @brief Called after CTerrorPlayer::TransitionRestore is invoked
+ * @remarks This will only be called for human players after the level-transitioning. For bots, See L4D2_OnRestoreTransitionedSurvivorBots
+ * @remarks This will be called for every survivors including bots once the level failed and restarted
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @param client		Client index
- * @param pkv			Address of the keyvalues pointer.
- * 
+ * @param pkv			Address of the keyvalues pointer
+ *
  * @noreturn
 */
 // L4D2 only
 forward void L4D2_OnTransitionRestore_PostHandled(int client, Address pkv);
 
 /**
- * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called BEFORE bots create.
- * 
- * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
- * @remarks Blocking this function will result the bot not being spawned after transitioned to next map.
- * @remarks For human players, See L4D2_OnTransitionRestore.
- * 
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called BEFORE bots create
+ *
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed
+ * @remarks Blocking this function will result the bot not being spawned after transitioned to next map
+ * @remarks For human players, See L4D2_OnTransitionRestore
+ *
  * @param botIndex		Bot index
- * 
- * @return				Plugin_Handled to block this bot from being created, others otherwise.
+ *
+ * @return				Plugin_Handled to block this bot from being created, others otherwise
 */
 // L4D2 only
 forward Action L4D2_OnRestoreTransitionedSurvivorBots();
 
 /**
- * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created.
- * 
- * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
- * @remarks For human players, See L4D2_OnTransitionRestore.
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created
+ *
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed
+ * @remarks For human players, See L4D2_OnTransitionRestore
  * @remarks This forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @noreturn
 */
 // L4D2 only
 forward void L4D2_OnRestoreTransitionedSurvivorBots_Post();
 
 /**
- * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created.
- * 
- * @remarks This will only be called once after the level-transitioning and will not be called once the level failed.
- * @remarks For human players, See L4D2_OnTransitionRestore.
+ * @brief Called after RestoreTransitionedSurvivorBots is invoked. Called AFTER bots have created
+ *
+ * @remarks This will only be called once after the level-transitioning and will not be called once the level failed
+ * @remarks For human players, See L4D2_OnTransitionRestore
  * @remarks This forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
- * 
+ *
  * @noreturn
 */
 // L4D2 only
@@ -5106,6 +5110,43 @@ native any L4D_GetLastKnownArea(int client);
 native bool L4D_IsTouchingTrigger(int trigger, int entity);
 
 /**
+ * @brief Find the entity with the given class name nearest to the specified point
+ * @remarks This native is over 3x faster than looping entities and working out distance in SourceMod
+ *
+ * @param classname			Classname of entity to find
+ * @param entity			The entity to test whether it's inside the trigger area
+ * @param vecPos			Vector position to search around
+ * @param radius			Radius from position to search
+ *
+ * @return					Entity index or -1 if not found
+ */
+native int L4D_FindEntityByClassnameNearest(char[] classname, float vecPos[3], float radius);
+
+/**
+ * @brief Find entities by class name within a radius, while within a set radius
+ * @remarks This can be used like FindEntityByClassname() with looping through entities
+ * @remarks This native is over 2x faster than looping entities and working out distance in SourceMod
+ *
+ * @param entity			The entity index after which to begin searching from. Use -1 to start from the first entity
+ * @param classname			Classname of entity to find
+ * @param vecPos			Vector position to search around
+ * @param radius			Radius from position to search
+ *
+ * @return					Entity index or -1 if not found
+ */
+native int L4D_FindEntityByClassnameWithin(int entity, char[] classname, float vecPos[3], float radius);
+
+/**
+ * @brief Find an entity by class name and target name
+ *
+ * @param classname			Classname of entity to find
+ * @param targetname		Targetname of entity to find
+ *
+ * @return					Entity index or -1 if not found
+ */
+native int L4D_FindByClassnameTargetname(char[] classname, char[] targetname);
+
+/**
  * @brief Gets the first Special Infected type the Director will spawn. Value set on map start
  * @remarks zombieClass: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
  *
@@ -5159,9 +5200,9 @@ native bool L4D2_IsVisibleToPlayer(int client, int team, int team_target, int Na
  * @brief Given a victim client index, returns the client index of the Special Infected that is dominating the victim
  * @remarks Returns -1 if victim index is invalid, or not a survivor, or not being dominated by a Special Infected
  * @remarks You can see this native as the SDKCall version of L4D2_GetInfectedAttacker()
- * 
+ *
  * @param victim			The client index of the victim to check
- * 
+ *
  * @return 					The client index of the Special Infected that is dominating the victim
  */
 // L4D2 Only
@@ -6301,12 +6342,23 @@ native int L4D_NavArea_GetAdjacentAreas(Address area, int direction, ArrayList l
  * @brief Returns true if this area is connected to other area in given direction. (If you set direction to 4, it will automatically check all directions for a connection)
  *
  *param area1		The address of the first NavArea
- *param are2a		The address of the second NavArea
+ *param area2		The address of the second NavArea
  *param direction	The direction to check in (NAV_NORTH, NAV_EAST, NAV_SOUTH, NAV_WEST, NAV_ALL) - provide value 0 to 4 only
  *
  * @return			Result of calculation, true or false
  */
 native bool L4D_NavArea_IsConnected(Address area1, Address area2, int direction);
+
+/**
+ * @brief Return true if team is blocked in this area
+ *
+ *param area		The address of the NavArea to check
+ *param team		The team to test or -1 (possibly checks for all teams)
+ *param affectsFlow	Does this blocked area affect the flow
+ *
+ * @return			Result of calculation, true or false
+ */
+native bool L4D_NavArea_IsBlocked(Address area, int team, bool affectsFlow);
 
 /**
  * @brief Returns the nav area attribute flags
@@ -7329,12 +7381,13 @@ native bool L4D2Direct_TryOfferingTankBot(int client, int bEnterStasis);
  *								8   = Random (0-3, guaranteed to create)
  *
  * @remarks Indices 0-3 resolve to different characters depending on the map's survivor set
- *          (L4D2 maps: Nick/Rochelle/Coach/Ellis, L4D1 maps: Bill/Zoey/Louis/Francis).
- * @remarks Characters 4-7: engine checks for duplicates, silently does nothing if taken.
- * @remarks Characters 0-3: engine does NOT check for duplicates, will create a second bot with same character.
+ *          (L4D2 maps: Nick/Rochelle/Coach/Ellis, L4D1 maps: Bill/Zoey/Louis/Francis)
+ * @remarks Characters 4-7: engine checks for duplicates, silently does nothing if taken
+ * @remarks Characters 0-3: engine does NOT check for duplicates, will create a second bot with same character
  *
  * @return					0
  */
+// L4D2 only
 native int L4D2Direct_AddSurvivorBot(int characterType = 0);
 
 /**
@@ -8009,9 +8062,9 @@ native void L4D_UnRegisterForbiddenTarget(int entity);
  * @remarks Calls InfoChangelevel::IsSaveableEntity. Entities that are saveable follow the rules below:
  * @remarks 1. Entity is not a player, and its root hierarchical parent entity is not a player either
  * @remarks 2. Entity has a capability flag "FCAP_ACROSS_TRANSITION", or the entity has no flag "EFL_DORMANT"
- * 
+ *
  * @param entity		Entity to check, usaully a prop, should not be a brush, etc
- * 
+ *
  * @return 				True if entity is saveable, false otherwise
  */
 native void L4D_IsEntitySaveable(int entity);

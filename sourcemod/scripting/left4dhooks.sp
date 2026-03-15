@@ -18,14 +18,17 @@
 
 
 
-#define PLUGIN_VERSION		"1.165"
-#define PLUGIN_VERLONG		1165
+#define PLUGIN_VERSION		"1.166"
+#define PLUGIN_VERLONG		1166
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
 
 #define DETOUR_ALL			0	// Only enable required detours, for public release.
 // #define DETOUR_ALL		1	// Enable all detours, for testing.
+
+#define VERIFY_SDKCALL		0
+// #define VERIFY_SDKCALL	1	// 1=Double check SDKCalls in case of accidental deletion (happened several times already -_-)
 
 #define KILL_VSCRIPT		0	// 0=Keep VScript entity after using for "GetVScriptOutput". 1=Kill the entity after use (more resourceful to keep recreating, use if you're maxing out entities and reaching the limit regularly).
 
@@ -346,6 +349,7 @@ Address g_pTheNavAreas;
 Address g_pTheNavAreas_List;
 Address g_pTheNavAreas_Size;
 Address g_pNavMesh;
+Address g_pEntList;
 Address g_pZombieManager;
 Address g_pMeleeWeaponInfoStore;
 Address g_pWeaponInfoDatabase;
@@ -743,7 +747,7 @@ public void OnPluginStart()
 	// ====================================================================================================
 	//									EVENTS
 	// ====================================================================================================
-	HookEvent("round_start",					Event_RoundStart);
+	HookEvent("round_start",						Event_RoundStart);
 
 	if( !g_bLeft4Dead2 )
 	{
@@ -762,6 +766,23 @@ public void OnPluginStart()
 void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 {
 	g_bRoundEnded = false;
+
+	// Modify broken maps to fix "L4D_IsInIntro" not reporting as true, and probably other bugs:
+	if( g_bLeft4Dead2 )
+	{
+		static char sMap[20];
+		GetCurrentMap(sMap, sizeof(sMap));
+
+		if( strcmp(sMap, "c3m1_plankcountry") == 0 || strcmp(sMap, "c7m1_docks") == 0 )
+		{
+			int entity = FindByClassTargetName("logic_relay", "relay_intro_start");
+			if( entity != -1 )
+			{
+				SetVariantString("OnTrigger director:StartIntro::0:-1");
+				AcceptEntityInput(entity, "AddOutput");
+			}
+		}
+	}
 }
 
 void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
@@ -821,6 +842,34 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = event.GetInt("userid");
 	g_iClientDeathModel[GetClientOfUserId(client)] = g_iDeathModel;
+}
+
+public void OnEntityCreated(int entity, const char[] classname)
+{
+	// Used by "L4D_TankRockPrj" native
+	// Watch for this plugins native creating the "tank_rock" to return it's entity index and set owner if applicable
+	if( g_iTankRockOwner && strcmp(classname, "tank_rock") == 0 )
+	{
+		g_iTankRockEntity = entity;
+
+		// Must set owner on next frame after it's spawned
+		if( g_iTankRockOwner != -1 )
+		{
+			DataPack dPack = new DataPack();
+			dPack.WriteCell(EntIndexToEntRef(entity));
+			dPack.WriteCell(GetClientUserId(g_iTankRockOwner));
+			RequestFrame(OnFrameTankRock, dPack);
+		}
+
+		// Make the tank rock fully visible, otherwise it's semi-transparent (during pickup animation of Tank Rock).
+		SetEntityRenderColor(entity, 255, 255, 255, 255);
+	}
+
+	// Used by "L4D2_DefibByDeadBody" native
+	else if( g_bLeft4Dead2 && strcmp(classname, "survivor_death_model") == 0 )
+	{
+		g_iDeathModel = EntIndexToEntRef(entity);
+	}
 }
 
 

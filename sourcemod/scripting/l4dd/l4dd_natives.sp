@@ -83,6 +83,8 @@ Handle g_hSDK_IsVisibleToPlayer;
 Handle g_hSDK_CTerrorPlayer_GetSpecialInfectedDominatingMe;
 Handle g_hSDK_CDirector_HasAnySurvivorLeftSafeArea;
 Handle g_hSDK_CBaseTrigger_IsTouching;
+Handle g_hSDK_CGlobalEntityList_FindEntityByClassnameNearest;
+Handle g_hSDK_CGlobalEntityList_FindEntityByClassnameWithin;
 // Handle g_hSDK_CDirector_IsAnySurvivorInExitCheckpoint;
 Handle g_hSDK_CDirector_AreAllSurvivorsInFinaleArea;
 Handle g_hSDK_TerrorNavMesh_GetInitialCheckpoint;
@@ -124,6 +126,7 @@ Handle g_hSDK_CDirector_TryOfferingTankBot;
 Handle g_hSDK_CDirector_AddSurvivorBot;
 Handle g_hSDK_CNavMesh_GetNavArea;
 Handle g_hSDK_CNavArea_IsConnected;
+Handle g_hSDK_CNavArea_IsBlocked;
 Handle g_hSDK_CTerrorPlayer_GetFlowDistance;
 Handle g_hSDK_Intensity_Reset;
 Handle g_hSDK_CTerrorPlayer_SetShovePenalty;
@@ -215,6 +218,16 @@ void ValidateOffset(int test, const char[] name, bool check = true)
 		else			ThrowNativeError(SP_ERROR_INVALID_ADDRESS, "%s not available (%s).", name, g_sSystem);
 	}
 }
+
+#if VERIFY_SDKCALL
+void ValidateSDKCall(Handle test, const char[] name)
+{
+	if( test == null )
+	{
+		LogError("\n==========\nSDKCall \"%s\" is NULL\n==========\n", name);
+	}
+}
+#endif
 
 
 
@@ -1247,6 +1260,76 @@ int Native_CBaseTrigger_IsTouching(Handle plugin, int numParams) // Native "L4D_
 	return SDKCall(g_hSDK_CBaseTrigger_IsTouching, trigger, entity);
 }
 
+int Native_CGlobalEntityList_FindEntityByClassnameNearest(Handle plugin, int numParams) // Native "L4D_FindEntityByClassnameNearest"
+{
+	ValidateNatives(g_hSDK_CGlobalEntityList_FindEntityByClassnameNearest, "CGlobalEntityList::FindEntityByClassnameNearest");
+
+	int maxlength;
+	GetNativeStringLength(1, maxlength);
+	maxlength += 1;
+	char[] classname = new char[maxlength];
+	GetNativeString(1, classname, maxlength);
+
+	float vPos[3];
+	GetNativeArray(2, vPos, sizeof(vPos));
+
+	float radius = GetNativeCell(3);
+
+	//PrintToServer("#### CALL g_hSDK_CGlobalEntityList_FindEntityByClassnameNearest");
+	return SDKCall(g_hSDK_CGlobalEntityList_FindEntityByClassnameNearest, g_pEntList, classname, vPos, radius);
+}
+
+int Native_CGlobalEntityList_FindEntityByClassnameWithin(Handle plugin, int numParams) // Native "L4D_FindEntityByClassnameNearest"
+{
+	ValidateNatives(g_hSDK_CGlobalEntityList_FindEntityByClassnameWithin, "CGlobalEntityList::FindEntityByClassnameWithin");
+
+	int entity = GetNativeCell(1);
+
+	int maxlength;
+	GetNativeStringLength(2, maxlength);
+	maxlength += 1;
+	char[] classname = new char[maxlength];
+	GetNativeString(2, classname, maxlength);
+
+	float vPos[3];
+	GetNativeArray(3, vPos, sizeof(vPos));
+
+	float radius = GetNativeCell(4);
+
+	//PrintToServer("#### CALL g_hSDK_CGlobalEntityList_FindEntityByClassnameWithin");
+	return SDKCall(g_hSDK_CGlobalEntityList_FindEntityByClassnameWithin, g_pEntList, entity, classname, vPos, radius);
+}
+
+int Native_FindByClassnameTargetname(Handle plugin, int numParams) // Native "L4D_FindByClassnameTargetname"
+{
+	int maxlength;
+	GetNativeStringLength(1, maxlength);
+	maxlength += 1;
+	char[] classname = new char[maxlength];
+	GetNativeString(1, classname, maxlength);
+
+	GetNativeStringLength(2, maxlength);
+	maxlength += 1;
+	char[] targetname = new char[maxlength];
+	GetNativeString(2, targetname, maxlength);
+
+	return FindByClassTargetName(classname, targetname);
+}
+
+int FindByClassTargetName(const char[] sClass, const char[] sTarget)
+{
+	static char sName[64];
+	int entity = -1;
+
+	while( (entity = FindEntityByClassname(entity, sClass)) != INVALID_ENT_REFERENCE )
+	{
+		GetEntPropString(entity, Prop_Data, "m_iName", sName, sizeof(sName));
+		if( strcmp(sTarget, sName) == 0 ) return entity;
+	}
+
+	return -1;
+}
+
 int Native_CDirector_IsAnySurvivorInStartArea(Handle plugin, int numParams) // Native "L4D_IsAnySurvivorInStartArea"
 {
 	if( g_bLeft4Dead2 )
@@ -1793,31 +1876,6 @@ int Native_CTankRock_Create(Handle plugin, int numParams) // Native "L4D_TankRoc
 	}
 
 	return entity;
-}
-
-public void OnEntityCreated(int entity, const char[] classname)
-{
-	// Watch for this plugins native creating the "tank_rock" to return it's entity index and set owner if applicable
-	if( g_iTankRockOwner && strcmp(classname, "tank_rock") == 0 )
-	{
-		g_iTankRockEntity = entity;
-
-		// Must set owner on next frame after it's spawned
-		if( g_iTankRockOwner != -1 )
-		{
-			DataPack dPack = new DataPack();
-			dPack.WriteCell(EntIndexToEntRef(entity));
-			dPack.WriteCell(GetClientUserId(g_iTankRockOwner));
-			RequestFrame(OnFrameTankRock, dPack);
-		}
-
-		// Make the tank rock fully visible, otherwise it's semi-transparent (during pickup animation of Tank Rock).
-		SetEntityRenderColor(entity, 255, 255, 255, 255);
-	}
-	else if( g_bLeft4Dead2 && strcmp(classname, "survivor_death_model") == 0 )
-	{
-		g_iDeathModel = EntIndexToEntRef(entity);
-	}
 }
 
 void OnFrameTankRock(DataPack dPack)
@@ -3804,6 +3862,17 @@ int Native_CNavArea_IsConnected(Handle plugin, int numParams) // Native "L4D_Nav
 	if( dir < 0 || dir > 4 ) ThrowError("Invalid direction specified: %d should be 0-4", dir);
 
 	return SDKCall(g_hSDK_CNavArea_IsConnected, area1, area2, dir);
+}
+
+int Native_CNavArea_IsBlocked(Handle plugin, int numParams) // Native "L4D_NavArea_IsBlocked"
+{
+	ValidateNatives(g_hSDK_CNavArea_IsBlocked, "CNavArea::IsBlocked");
+
+	Address area = GetNativeCell(1);
+	int team = GetNativeCell(2);
+	bool flow = GetNativeCell(3);
+
+	return SDKCall(g_hSDK_CNavArea_IsBlocked, area, team, flow);
 }
 
 int Native_GetTerrorNavArea_Attributes(Handle plugin, int numParams) // Native "L4D_GetNavArea_SpawnAttributes"

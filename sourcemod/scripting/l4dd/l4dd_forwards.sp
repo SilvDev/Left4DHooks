@@ -3008,7 +3008,7 @@ MRESReturn DTR_CTerrorWeapon_OnHit(int weapon, DHookReturn hReturn, DHookParam h
 
 		// Thanks to "A1m`" for this solution to getting an entity index instead of looping clients/entities:
 		int target = hParams.GetObjectVar(1, 76, ObjectValueType_CBaseEntityPtr);
-		if( target < 1 || target > MaxClients || !IsClientInGame(target) ) return MRES_Ignored;
+		if( !target || !IsValidEntity(target) ) return MRES_Ignored;
 
 		// Verify client hitting
 		int client = GetEntPropEnt(weapon, Prop_Send, "m_hOwnerEntity");
