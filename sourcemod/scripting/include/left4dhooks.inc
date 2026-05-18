@@ -4302,7 +4302,7 @@ forward void L4D1_FirstAidKit_StartHealing_PostHandled(int client, int entity);
  * @return					Plugin_Handled to block action, Plugin_Continue otherwise
  */
 // L4D2 only
-forward Action L4D2_OnStartUseAction(any action, int client, int target);
+forward Action L4D2_OnStartUseAction(L4D2UseAction action, int client, int target);
 
 /**
  * @brief Called whenever CTerrorPlayer::StartUseAction() is invoked
@@ -4317,7 +4317,7 @@ forward Action L4D2_OnStartUseAction(any action, int client, int target);
  * @noreturn
  */
 // L4D2 only
-forward void L4D2_OnStartUseAction_Post(any action, int client, int target);
+forward void L4D2_OnStartUseAction_Post(L4D2UseAction action, int client, int target);
 
 /**
  * @brief Called whenever CTerrorPlayer::StartUseAction() is invoked
@@ -4331,7 +4331,7 @@ forward void L4D2_OnStartUseAction_Post(any action, int client, int target);
  * @noreturn
  */
 // L4D2 only
-forward void L4D2_OnStartUseAction_PostHandled(any action, int client, int target);
+forward void L4D2_OnStartUseAction_PostHandled(L4D2UseAction action, int client, int target);
 
 /**
  * @brief Called whenever CBaseBackpackItem::StartAction() is invoked
