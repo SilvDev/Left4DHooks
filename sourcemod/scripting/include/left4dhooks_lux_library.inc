@@ -29,7 +29,7 @@
 #tryinclude <left4dhooks_silver>
 #tryinclude <left4dhooks_stocks>
 
-#define LUX_LIBRARY_VERSION "0.5.9"
+#define LUX_LIBRARY_VERSION 0.5.9
 
 #define GIMMEDATA "lux_library"
 
