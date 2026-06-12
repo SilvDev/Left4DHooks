@@ -1552,7 +1552,7 @@ stock void EmitMixedAmbientSound_FallBack(int client, const char[] sample,
 	EmitSoundToClient(client, sample, entity, sndChannel, level + DistLevelBoost, _, _, newPitch, _, origin);
 }
 
-stock ShakeClientScreenAll(float origin[3], float shakeRange, float shakeAmplitude=5.0, float shakeFrequency=40.0, float shakeDuration=1.0)
+stock void ShakeClientScreenAll(float origin[3], float shakeRange, float shakeAmplitude=5.0, float shakeFrequency=40.0, float shakeDuration=1.0)
 {
 	for(int i = 1; i <= MaxClients; ++i)
 	{
@@ -1572,7 +1572,36 @@ stock void ShakeClientScreen(int client, float origin[3], float shakeRange, floa
 	if(flDistPercent <= 0.001)
 		return;
 	
-	Client_Shake(client, _, (shakeAmplitude / flDistPercent), shakeFrequency, shakeDuration);
+	__Client_Shake(client, (shakeAmplitude / flDistPercent), shakeFrequency, shakeDuration);
+}
+
+//credit to smlib https://github.com/bcserv/smlib/blob/transitional_syntax/scripting/include/smlib/clients.inc#L2134-L2178
+static stock bool __Client_Shake(int client, float amplitude=50.0, float frequency=150.0, float duration=3.0)
+{
+	Handle userMessage = StartMessageOne("Shake", client);
+	
+	if (userMessage == INVALID_HANDLE) {
+		return false;
+	}
+	
+	if (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available
+		&& GetUserMessageType() == UM_Protobuf) {
+		
+		PbSetInt(userMessage,   "command",         0);
+		PbSetFloat(userMessage, "local_amplitude", amplitude);
+		PbSetFloat(userMessage, "frequency",       frequency);
+		PbSetFloat(userMessage, "duration",        duration);
+	}
+	else {
+		BfWriteByte(userMessage,	0);	// Shake Command
+		BfWriteFloat(userMessage,	amplitude);	// shake magnitude/amplitude
+		BfWriteFloat(userMessage,	frequency);	// shake noise frequency
+		BfWriteFloat(userMessage,	duration);	// shake lasts this long
+	}
+	
+	EndMessage();
+	
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
