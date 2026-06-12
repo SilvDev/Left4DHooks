@@ -1314,6 +1314,21 @@
 				}
 			}
 
+			"EngineAddr"
+			{
+				"linux"
+				{
+					"signature"	"EngineAddr"
+					"read"		"0"
+				}
+				"windows"
+				{
+					"signature"	"EngineAddr"
+					"read"		"22"
+					"read"		"0"
+				}
+			}
+
 			/* Offset into CreateGameRulesObject */
 			"GameRules"
 			{
@@ -1494,6 +1509,35 @@
 			{
 				"windows"	"147"
 				"linux"		"148"
+			}
+
+			"IPhysicsObject::GetMass"
+			{
+				"linux"		"30"
+				"windows"	"29"
+			}
+
+			"IPhysicsObject::SetMass"
+			{
+				"linux"		"29"
+				"windows"	"28"
+			}
+
+            // IVEngineServer PVS functions
+			"IVEngineServer::GetClusterForOrigin"
+			{
+				"linux"		"11"
+				"windows"	"11"
+			}
+			"IVEngineServer::GetPVSForCluster"
+			{
+				"linux"		"12"
+				"windows"	"12"
+			}
+			"IVEngineServer::CheckOriginInPVS"
+			{
+				"linux"		"13"
+				"windows"	"13"
 			}
 
 
@@ -2185,6 +2229,54 @@
 				"windows"	"\x55\x8B\x2A\x83\x2A\x2A\x81\x2A\x2A\x2A\x2A\x2A\x53\x55\x56\x8B\x2A\x80\x2A\x2A\x2A\x2A\x2A\x2A\x57"
 				/* 55 8B ? 83 ? ? 81 ? ? ? ? ? 53 55 56 8B ? 80 ? ? ? ? ? ? 57 */
 				/* Search: "unsticking %s from %.1f %.1f %.1f to %.1f %.1f %.1f\n" */
+			}
+
+			/*
+			* TerrorNavArea::IsPotentiallyVisibleToTeam(int team) -> bool
+			*/
+			"TerrorNavArea::IsPotentiallyVisibleToTeam"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavArea26IsPotentiallyVisibleToTeamEi"
+				"windows"	""
+				/*  */
+				/* Cannot find on Windows because it's not being called from anywhere */
+			}
+
+			/*
+			* TerrorNavArea::IsPotentiallyVisible(const TerrorNavArea* other, bool checkAttributes) -> bool
+			*/
+			"TerrorNavArea::IsPotentiallyVisible"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavArea20IsPotentiallyVisibleEPKS_"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x56\x8B\x2A\x75\x2A\x5E\x32\x2A\x5B\x83\x2A\x2A\xC2\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x33"
+				/* ? ? ? ? ? ? ? ? 85 ? 56 8B ? 75 ? 5E 32 ? 5B 83 ? ? C2 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 33 */
+				/* Search: "%3.2f: %s: NOT FIRING because we might hit the car alarm\n" - call is 2nd above */
+			}
+
+			/*
+			* TerrorNavArea::IsCompletelyVisibleToTeam(int team) -> bool
+			*/
+			"TerrorNavArea::IsCompletelyVisibleToTeam"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavArea25IsCompletelyVisibleToTeamEi"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x6A\x2A\x68\x2A\x2A\x2A\x2A\x6A\x2A\x8B\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xFF\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x50\xE8"
+				/* ? ? ? ? ? 6A ? 68 ? ? ? ? 6A ? 8B ? 8B ? ? ? ? ? 68 ? ? ? ? FF ? ? ? ? ? 8B ? ? ? 50 E8 */
+				/* Search "TerrorNavArea::IsCompletelyVisibleToTeam" */
+			}
+
+			/*
+			* TerrorNavArea::IsCompletelyVisible(const TerrorNavArea* other) -> bool
+			*/
+			"TerrorNavArea::IsCompletelyVisible"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK13TerrorNavArea19IsCompletelyVisibleEPKS_"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x85\x2A\x56\x8B\x2A\x75\x2A\x5E\x32\x2A\x5B\x83\x2A\x2A\xC2\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8A"
+				/* ? ? ? ? ? ? ? ? 85 ? 56 8B ? 75 ? 5E 32 ? 5B 83 ? ? C2 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 8A */
+				/* Called from inside "TerrorNavArea::IsCompletelyVisibleToTeam" */
 			}
 
 			/**
@@ -3285,6 +3377,18 @@
 			}
 
 			/*
+			 * CNavArea::ConnectTo(CNavArea *, CNavArea *, int)
+			 */
+			"CNavArea::ConnectTo"
+			{
+				"library"	"server"
+				"linux"		"@_ZN8CNavArea9ConnectToEPS_10NavDirType"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x83\x2A\x2A\x53\x8B\x2A\x3B\x2A\x56\x57"
+				/* ? ? ? ? ? ? 8B ? ? 83 ? ? 53 8B ? 3B ? 56 57 */
+				/* Search: "Connecting navigation areas...\n" - Xref - plenty of calls to target in this function */
+			}
+
+			/*
 			 * CNavArea::IsConnected(CNavArea const*, NavDirType)const
 			 */
 			"CNavArea::IsConnected"
@@ -3306,6 +3410,18 @@
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x74\x2A\xF7\x2A\x2A\x2A\x2A\x2A\x2A\x74\x2A\x32\x2A\xC2\x2A\x2A\x8B\x2A\x2A\x2A\x83"
 				/* ? ? ? ? ? 74 ? F7 ? ? ? ? ? ? 74 ? 32 ? C2 ? ? 8B ? ? ? 83 */
 				/* Search: "Computing Flow Distances:  %s from %d to %d\n", target function is below "2, 1" as params */
+			}
+
+			/*
+			 * CNavArea::GetZ(CNavArea *__hidden this, float, float)
+			 */
+			"CNavArea::GetZ"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK8CNavArea4GetZEff"
+				"windows"	"\xD9\x2A\xD8\x2A\x2A\xDF\x2A\xF6\x2A\x2A\x0F\x8B\x2A\x2A\x2A\x2A\xD8\x2A\x2A\xDF\x2A\xF6\x2A\x2A\x0F\x8B\x2A\x2A\x2A\x2A\xD9\x2A\x2A\x2A\xD8"
+				/* D9 ? D8 ? ? DF ? F6 ? ? 0F 8B ? ? ? ? D8 ? ? DF ? F6 ? ? 0F 8B ? ? ? ? D9 ? ? ? D8 */
+				/* Search: "Checkpoint::GetSpawnPosition: Selected NULL area" call is a few lines below */
 			}
 
 			/*
@@ -3828,6 +3944,15 @@
 				"linux"		"@_ZN15InfoChangelevel16StartChangeLevelEPK10Checkpoint"
 				"windows"	"\x8B\x0D\x2A\x2A\x2A\x2A\x85\x2A\x74\x2A\x8B\x2A\x8B\x2A\x6A\x01\xFF\x2A\xA1"
 				/* 8B 0D ? ? ? ? 85 ? 74 ? 8B ? 8B ? 6A 01 FF ? A1 */
+			}
+
+			// IVEngineServer* pointer in server library
+			"EngineAddr"
+			{
+				"library"	"server"
+				"linux"		"@engine"
+				"windows"	"\xE8\x2A\x2A\x2A\x2A\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x2A\x2A\x83\xC4\x08\x85\x2A\xA3\x2A\x2A\x2A\x2A\x74\x2A\x6A\x00\x68\x2A\x2A\x2A\x2A\xFF\x2A\x2A\x2A\x83\xC4\x08"
+				/* E8 ? ? ? ? 6A 00 68 ? ? ? ? FF ? ? ? 83 C4 08 85 ? A3 ? ? ? ? 74 ? 6A 00 68 ? ? ? ? FF ? ? ? 83 C4 08 */
 			}
 
 			"g_pGameRules"

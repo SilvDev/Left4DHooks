@@ -326,7 +326,7 @@ stock void Terror_SetPendingDspEffect(int iClient, float flDelay, int dspEffectT
 	static EngineVersion IsEngine;
 	if(IsEngine == Engine_Unknown)
 		IsEngine = GetEngineVersion();
-	
+
 	// Get CountdownTimer address
 	static int timerAddress = -1;
 	if(timerAddress == -1)
@@ -336,7 +336,7 @@ stock void Terror_SetPendingDspEffect(int iClient, float flDelay, int dspEffectT
 		else
 			timerAddress = FindSendPropInfo("CTerrorPlayer", "m_bloodyHandsPercent") + 4;
 	}
-	
+
 	//timerAddress + 4 = Duration
 	//timerAddress + 8 = TimeStamp
 	SetEntDataFloat(iClient, timerAddress + 4, flDelay);
@@ -352,6 +352,7 @@ stock void Terror_SetPendingDspEffect(int iClient, float flDelay, int dspEffectT
  *
  * @error			Invalid client index.
  **/
+// L4D2 only.
 stock void Terror_SetAdrenalineTime(int iClient, float flDuration)
 {
 	// Get CountdownTimer address
@@ -376,6 +377,7 @@ stock void Terror_SetAdrenalineTime(int iClient, float flDuration)
  * @return 			Remaining duration or -1.0 if there's no effect.
  * @error			Invalid client index.
  **/
+// L4D2 only.
 stock float Terror_GetAdrenalineTime(int iClient)
 {
 	// Get CountdownTimer address
@@ -498,6 +500,7 @@ stock void PhysicsExplode(float vecOrigin[3], int iMagnitude, float flRadius, bo
  *
  * @error			Invalid effect index.
  **/
+// L4D2 only.
 stock void TE_SetupExplodeForce(float vecOrigin[3], float flRadius, float flMagnitude)
 {
 	static int iEffectIndex = INVALID_STRING_INDEX;
@@ -551,6 +554,7 @@ stock void TE_SetupPhysicsProp(float vecModelOrigin[3],
 	TE_WriteNum("r", RGB[0]);
 	TE_WriteNum("g", RGB[1]);
 	TE_WriteNum("b", RGB[2]);
+	if( iSkin ) iSkin += 1; // Fix "symbol is never used" in SM 1.12
 }
 
 /**
@@ -774,6 +778,7 @@ stock void TE_SetupParticleFollowEntity(int iParticleIndex, int iEntIndex, float
  *
  * @error			Invalid effect index.
  **/
+// L4D2 only.
 stock void TE_SetupParticleFollowEntity_MaintainOffset(int iParticleIndex, int iEntIndex, float vecParticleStartPos[3], float vecParticleAngles[3]={0.0, 0.0, 0.0})
 {
 	static float vecDummy[3]={0.0, 0.0, 0.0};
