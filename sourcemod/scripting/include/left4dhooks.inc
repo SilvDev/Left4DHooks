@@ -6818,6 +6818,7 @@ enum L4D2IntWeaponAttributes
 	L4D2IWA_Tier, // L4D2 only
 	L4D2IWA_DefaultSize, // Default weapon clip size
 	L4D2IWA_WeaponType, // Can use with the "WeaponType" enum
+	L4D2IWA_AmmoType,
 	MAX_SIZE_L4D2IntWeaponAttributes
 };
 
