@@ -362,6 +362,11 @@ Action sm_l4dd(int client, int args)
 
 
 
+	// L4D2IWA_AmmoType
+	/*
+	int ammotype = L4D2_GetIntWeaponAttribute("weapon_pistol", L4D2IWA_AmmoType);
+	PrintToServer("[%s] L4D2IWA_AmmoType (%d) ", "weapon_pistol", ammotype);
+	*/
 
 	/*
 	float vPos[3], vLoc[3];

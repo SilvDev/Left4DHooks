@@ -341,7 +341,7 @@ int L4D2CountdownTimer_Offsets[10];
 int L4D2IntervalTimer_Offsets[6];
 
 // l4d2weapons.inc
-int L4D2IntWeapon_Offsets[7];
+int L4D2IntWeapon_Offsets[8];
 int L4D2FloatWeapon_Offsets[21];
 int L4D2BoolMeleeWeapon_Offsets[1];
 int L4D2IntMeleeWeapon_Offsets[2];

@@ -3057,6 +3057,7 @@ void LoadGameData()
 	L4D2IntWeapon_Offsets[4] = hGameData.GetOffset("L4D2IntWeapon_Tier");
 	L4D2IntWeapon_Offsets[5] = hGameData.GetOffset("L4D2IntWeapon_DefaultSize");
 	L4D2IntWeapon_Offsets[6] = hGameData.GetOffset("L4D2IntWeapon_Type");
+	L4D2IntWeapon_Offsets[7] = hGameData.GetOffset("L4D2IntWeapon_AmmoType");
 	L4D2FloatWeapon_Offsets[0] = hGameData.GetOffset("L4D2FloatWeapon_MaxPlayerSpeed");
 	L4D2FloatWeapon_Offsets[1] = hGameData.GetOffset("L4D2FloatWeapon_SpreadPerShot");
 	L4D2FloatWeapon_Offsets[2] = hGameData.GetOffset("L4D2FloatWeapon_MaxSpread");
