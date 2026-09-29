@@ -2750,6 +2750,11 @@
 				"windows"	"2196"
 				"linux"		"2196"
 			}
+			"L4D2IntWeapon_AmmoType"
+			{
+				"windows"	"2128"
+				"linux"		"2128"
+			}
 
 			// L4D2FloatWeapon
 			"L4D2FloatWeapon_MaxPlayerSpeed"
