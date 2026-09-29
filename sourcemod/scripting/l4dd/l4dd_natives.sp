@@ -4088,7 +4088,7 @@ int Native_CNavArea_ConnectTo(Handle plugin, int numParams) // Native "L4D_NavAr
 	Address area2 = GetNativeCell(2);
 	int dir = GetNativeCell(3);
 
-	if( dir < -1 || dir > 3 ) ThrowError("Invalid direction specified: %d should be 0-3 or -1 to automatically apply", dir);
+	if( dir != -1 && (dir < 1 || dir > 4) ) ThrowError("Invalid direction specified: %d should be 1-4 or -1 to automatically apply", dir);
 
 	return SDKCall(g_hSDK_CNavArea_ConnectTo, area1, area2, dir);
 }
@@ -4117,14 +4117,18 @@ int Native_CNavArea_IsBlocked(Handle plugin, int numParams) // Native "L4D_NavAr
 	return SDKCall(g_hSDK_CNavArea_IsBlocked, area, team, flow);
 }
 
-int Native_CNavArea_GetElevator(Handle plugin, int numParams) // Native "L4D_GetNavArea_GetElevator"
+int Native_CNavArea_GetElevator(Handle plugin, int numParams) // Native "L4D_NavArea_GetElevator"
 {
 	Address area = GetNativeCell(1);
 
 	if( L4D_GetNavArea_AttributeFlags(area) & 0x40000000 )
 	{
-		Address elevator = LoadFromAddress(area + view_as<Address>(0x84), NumberType_Int32);
-		return L4D_GetEntityFromAddress(elevator);
+		int elevator = LoadFromAddress(area + view_as<Address>(0x84), NumberType_Int32);
+		elevator = GetEntityFromAddress(view_as<Address>(elevator));
+
+		static char sTemp[16];
+		GetEdictClassname(elevator, sTemp, sizeof(sTemp));
+		if( strcmp(sTemp, "func_elevator") == 0 ) return elevator;
 	}
 
 	return -1;
@@ -5633,8 +5637,8 @@ int Native_CTerrorPlayer_OnPummelEnded(Handle plugin, int numParams) // Native "
 	SetWeaponAttack(client, true, 0.5);
 	SetWeaponAttack(client, false, 0.6);
 
-	SetEntPropEnt(client, Prop_Send, "m_carryVictim", -1);
-	SetEntPropEnt(target, Prop_Send, "m_carryAttacker", -1);
+	SetEntPropEnt(target, Prop_Send, "m_carryVictim", -1);
+	SetEntPropEnt(client, Prop_Send, "m_carryAttacker", -1);
 
 	float vPos[3];
 	vPos[0] = GetEntProp(target, Prop_Send, "m_isIncapacitated") == 1 ? 20.0 : 50.0;

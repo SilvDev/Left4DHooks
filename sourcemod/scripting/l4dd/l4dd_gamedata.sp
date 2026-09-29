@@ -56,7 +56,7 @@ void LoadGameDataRules(GameData hGameData)
 
 		g_iOff_NavAreaID = 140; // Hard-coding offset here, unlikely to ever change
 		g_iOff_NavAreaLadderBase = 0x60; // Offset found in "TerrorNavArea::ScriptGetLadders" function
-		g_iOff_NavAreaLadderEntity = 0x52; // Offset found by searching memory from base ptr for valid entity
+		g_iOff_NavAreaLadderEntity = 0x38; // Offset found by searching memory from base ptr for valid entity
 	}
 	else
 	{

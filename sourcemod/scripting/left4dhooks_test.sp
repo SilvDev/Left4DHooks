@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.167"
+#define PLUGIN_VERSION		"1.169"
 
 /*=======================================================================================
 	Plugin Info:
@@ -52,7 +52,7 @@ bool g_bLeft4Dead2;
 bool g_bLibraryActive;
 bool g_bTestForwards =		true;	// To enable forwards testing
 int g_iForwardsMax;					// Total forwards we expect to see
-int g_iForwards;
+int g_iForwards;						// Total forwards triggered
 int MAX_CALLS =				1;		// How many times to print each forward
 
 
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 199;
+		g_iForwardsMax = 248;
 	else
-		g_iForwardsMax = 139;
+		g_iForwardsMax = 177;
 
 	return APLRes_Success;
 }
@@ -362,11 +362,14 @@ Action sm_l4dd(int client, int args)
 
 
 
+
 	// L4D2IWA_AmmoType
 	/*
 	int ammotype = L4D2_GetIntWeaponAttribute("weapon_pistol", L4D2IWA_AmmoType);
 	PrintToServer("[%s] L4D2IWA_AmmoType (%d) ", "weapon_pistol", ammotype);
 	*/
+
+
 
 	/*
 	float vPos[3], vLoc[3];
@@ -831,6 +834,21 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_GetTeamScore A Camp: %d",				L4D_GetTeamScore(1, true)); //WORKING
 	PrintToServer("L4D_GetTeamScore B Camp: %d",				L4D_GetTeamScore(2, true)); //WORKING
 
+	int scoreA, scoreB;
+	L4D_GetCampaignScores(scoreA, scoreB);
+	PrintToServer("L4D_GetCampaignScores before %d %d", scoreA, scoreB);
+
+	L4D_SetCampaignScores(123, 456)
+	PrintToServer("L4D_SetCampaignScores");
+
+	PrintToServer("L4D_SetCampaignScores A Map: %d",			L4D_GetTeamScore(1, false));
+	PrintToServer("L4D_SetCampaignScores B Map: %d",			L4D_GetTeamScore(2, false));
+	PrintToServer("L4D_SetCampaignScores A Camp: %d",			L4D_GetTeamScore(1, true));
+	PrintToServer("L4D_SetCampaignScores B Camp: %d",			L4D_GetTeamScore(2, true));
+
+	L4D_GetCampaignScores(scoreA, scoreB);
+	PrintToServer("L4D_GetCampaignScores after %d %d", scoreA, scoreB);
+
 
 
 	int scores[2];
@@ -869,6 +887,15 @@ Action sm_l4dd(int client, int args)
 
 
 	// PrintToServer("L4D_IsPlayerStaggering %d", L4D_IsPlayerStaggering(client));
+
+
+
+	/*
+	if( !g_bLeft4Dead2 )
+	{
+		PrintToServer("L4D1_GetMainActivity %d", L4D1_GetMainActivity(client));
+	}
+	// */
 
 
 
@@ -928,11 +955,23 @@ Action sm_l4dd(int client, int args)
 			ammo.pMaxCarryCVar.GetSMHandle().IntValue = 727;
 			PrintToServer("MAX AMMO AFTER CVAR: (%s) %d %d", sClass, AmmoDef.MaxCarry(ammoType), ammo.pMaxCarry);
 
+			PrintToServer("PlrDamage: (%s) %d", sClass, AmmoDef.PlrDamage(ammoType));
+
+			PrintToServer("NPCDamage: (%s) %d", sClass, AmmoDef.NPCDamage(ammoType));
+
 			// Change weapon damage type to fire bullets
 			PrintToServer("DamageType Before: (%s) %d", sClass, AmmoDef.DamageType(ammoType));
 
 			ammo.nDamageType = 8;
 			PrintToServer("DamageType After: (%s) %d", sClass, AmmoDef.DamageType(ammoType));
+
+			PrintToServer("MinSplashSize: (%s) %d", sClass, AmmoDef.MinSplashSize(ammoType));
+
+			PrintToServer("MaxSplashSize: (%s) %d", sClass, AmmoDef.MaxSplashSize(ammoType));
+
+			PrintToServer("TracerType: (%s) %d", sClass, AmmoDef.TracerType(ammoType));
+
+			PrintToServer("TracerType: (%s) %f", sClass, AmmoDef.DamageForce(ammoType));
 		}
 	}
 	// */
@@ -1064,12 +1103,16 @@ Action sm_l4dd(int client, int args)
 	// PrintToServer("L4D2_GetSurvivalStartTime A %d", L4D2_GetSurvivalStartTime());
 	// L4D2_GetSurvivalStartTime(30);
 	// PrintToServer("L4D2_GetSurvivalStartTime B %d", L4D2_GetSurvivalStartTime());
+	// PrintToServer("L4D2_SetSurvivalStartTime", L4D2_SetSurvivalStartTime(0));
 
-
+	// L4D_ForceVersusStart();
+	// L4D_ForceSurvivalStart();
+	// L4D2_ForceScavengeStart();
 
 	/*
 	int victim, attacker;
 	victim = GetRandomSurvivor(1, -1);
+	attacker = GetRandomClient(3, -1);
 	attacker = GetRandomInfected(1, -1);
 
 	if( L4D2_GetPlayerZombieClass(attacker) == L4D2ZombieClass_Hunter )
@@ -1172,6 +1215,7 @@ Action sm_l4dd(int client, int args)
 
 
 
+	// PrintToServer("L4D2_GetSpecialInfectedDominatingMe %N %d", L4D2_GetSpecialInfectedDominatingMe(client));
 	// L4D_WarpToValidPositionIfStuck(client);
 
 
@@ -1221,16 +1265,6 @@ Action sm_l4dd(int client, int args)
 
 
 	// PrintToChatAll("ANY_CHECK %d ANY_START %d FIRST %d LAST %d", L4D_IsAnySurvivorInCheckpoint(), L4D_IsAnySurvivorInStartArea(), L4D_IsInFirstCheckpoint(client), L4D_IsInLastCheckpoint(client));
-
-
-
-	/*
-	float vPos[3];
-	GetClientAbsOrigin(client, vPos);
-
-	PrintToServer("L4D_IsPositionInFirstCheckpoint %N == %d", client, L4D_IsPositionInFirstCheckpoint(vPos));
-	PrintToServer("L4D_IsPositionInLastCheckpoint %N == %d", client, L4D_IsPositionInLastCheckpoint(vPos));
-	*/
 
 
 
@@ -1292,16 +1326,15 @@ Action sm_l4dd(int client, int args)
 		if( charger )
 		{
 			PrintToServer("L4D2_GetQueuedPummelStartTime %d", L4D2_GetQueuedPummelStartTime(charger));
+			PrintToServer("L4D2_SetQueuedPummelStartTime", L4D2_SetQueuedPummelStartTime(charger, GetGameTime()));
 			PrintToServer("L4D2_IsInQueuedPummel %d", L4D2_IsInQueuedPummel(charger));
+			PrintToServer("L4D2_SetQueuedPummelAttacker", L4D2_SetQueuedPummelAttacker(client, target));
 			PrintToServer("L4D2_GetQueuedPummelAttacker %d", L4D2_GetQueuedPummelAttacker(charger));
 			PrintToServer("L4D2_GetQueuedPummelVictim %d", L4D2_GetQueuedPummelVictim(charger));
+			PrintToServer("L4D2_SetQueuedPummelVictim", L4D2_SetQueuedPummelVictim(client, charger));
 		}
 	}
 	// */
-
-
-
-	// PrintToServer("L4D_AreAllSurvivorsInFinaleArea %d", L4D_AreAllSurvivorsInFinaleArea());
 
 
 
@@ -1363,7 +1396,10 @@ Action sm_l4dd(int client, int args)
 	GetClientAbsOrigin(client, vPos);
 	Address navarea = L4D_GetNearestNavArea(vPos, 100.0);
 	PrintToServer("L4D_GetNavArea_AttributeFlags %d", L4D_GetNavArea_AttributeFlags(navarea));
+	L4D_SetNavArea_AttributeFlags(navarea, L4D_GetNavArea_AttributeFlags(navarea));
+
 	PrintToServer("L4D_GetNavArea_SpawnAttributes %d", L4D_GetNavArea_SpawnAttributes(navarea));
+	L4D_SetNavArea_SpawnAttributes(navarea, L4D_SetNavArea_SpawnAttributes(navarea));
 	*/
 
 
@@ -1464,7 +1500,7 @@ Action sm_l4dd(int client, int args)
 
 		for( int i = 1; i <= MaxClients; i++ )
 		{
-			if( IsClientInGame(i) && GetClientTeam(i) == 3 && L4D2_GetPlayerZombieClass(i) == L4D2_ZOMBIE_CLASS_JOCKEY )
+			if( IsClientInGame(i) && GetClientTeam(i) == 3 && L4D2_GetPlayerZombieClass(i) == L4D2ZombieClass_Jockey )
 			{
 				jockey = i;
 				break;
@@ -1502,6 +1538,11 @@ Action sm_l4dd(int client, int args)
 			L4D2_Charger_ThrowImpactedSurvivor(survivor, charger);
 		}
 	}
+	// */
+
+	/*
+	float vPos[3];
+	GetClientAbsOrigin(client, vPos);
 
 	PrintToServer("L4D_GetCheckpointFirst = %d", L4D_GetCheckpointFirst());
 	PrintToServer("L4D_GetCheckpointLast = %d", L4D_GetCheckpointLast());
@@ -1521,6 +1562,12 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_IsEngineLeft4Dead %d",				L4D_IsEngineLeft4Dead());
 	PrintToServer("L4D_IsEngineLeft4Dead1 %d",				L4D_IsEngineLeft4Dead1());
 	PrintToServer("L4D_IsEngineLeft4Dead2 %d",				L4D_IsEngineLeft4Dead2());
+	PrintToServer("L4D_GetFlowFromPoint %f",				L4D_GetFlowFromPoint(vPos));
+	PrintToServer("L4D_IsEnoughFlow %d",					L4D_IsEnoughFlow(client, 50.0));
+	PrintToServer("IsUsingMinigun %d",						IsUsingMinigun(client));
+	PrintToServer("StopUsingMinigun",						StopUsingMinigun(client));
+	PrintToServer("L4D_IsPlayerOnFire %d",					L4D_IsPlayerOnFire(client));
+	PrintToServer("L4D_IsPlayerBurning %d",					L4D_IsPlayerBurning(client));
 	PrintToServer("L4D_GetCommonsCount %d",					L4D_GetCommonsCount());
 	PrintToServer("L4D_GetPlayerCurrentWeapon %d",			L4D_GetPlayerCurrentWeapon(client));
 	PrintToServer("L4D_GetPlayerCustomAbility %d",			L4D_GetPlayerCustomAbility(client));
@@ -1536,8 +1583,10 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_GetAttackerCarry %d",				L4D_GetAttackerCarry(client));
 	PrintToServer("L4D_GetAttackerJockey %d",				L4D_GetAttackerJockey(client));
 	PrintToServer("L4D_GetPinnedInfected %d",				L4D_GetPinnedInfected(client));
-	PrintToServer("L4D_HasReachedSmoker %d",				L4D_HasReachedSmoker(client));
+	PrintToServer("L4D_GetPinnedSurvivor %d",				L4D_GetPinnedSurvivor(client));
+	PrintToServer("L4D2_IsMultiCharged %d",					L4D2_IsMultiCharged(client));
 	PrintToServer("L4D_IsPlayerPinned %d",					L4D_IsPlayerPinned(client));
+	PrintToServer("L4D_HasReachedSmoker %d",				L4D_HasReachedSmoker(client));
 	PrintToServer("L4D_IsPlayerHangingFromLedge %d",		L4D_IsPlayerHangingFromLedge(client));
 	PrintToServer("L4D_CanPlayerLedgeHang %d"		,		L4D_CanPlayerLedgeHang(client));
 	PrintToServer("L4D_GetPlayerReviveTarget %d",			L4D_GetPlayerReviveTarget(client));
@@ -1551,7 +1600,6 @@ Action sm_l4dd(int client, int args)
 	L4D_SetPlayerIncapped(client, false);
 	L4D_ForcePanicEvent();
 
-	float vPos[3];
 	GetClientAbsOrigin(client, vPos);
 	vPos[1] += 50.0;
 	L4D_SpawnCommonInfected(vPos);
@@ -1589,11 +1637,23 @@ Action sm_l4dd(int client, int args)
 
 	Terror_SetAdrenalineTime(client, 25.0);
 	PrintToServer("Terror_GetAdrenalineTime %f", Terror_GetAdrenalineTime(client));
+
+	SetEntityHealth(client, -1); // Works for test? Untested
+	int dead = FindEntityByClassname(-1, "survivor_death_model");
+	if( dead != -1 )
+	{
+		Terror_ReviveDeathModel(client, client, dead);
+	}
+
 	PhysicsExplode(vPos, 64, 500.0, false);
 	TE_SetupExplodeForce(vPos, 500.0, 64.0);
 	TE_SendToAll();
 
 	TE_SetupPhysicsProp(vPos, PrecacheModel("models/props_junk/propanecanister001a.mdl"));
+	TE_SendToAll();
+
+	int iPrecacheModel = PrecacheModel("models/props_industrial/barrel_fuel.mdl");
+	TE_SetupBreakModel(vPos, _, _, iPrecacheModel, GetRandomInt(100, 500));
 	TE_SendToAll();
 
 	PrintToServer("TE_SetupDynamicLight %d", TE_SetupDynamicLight(vPos, {255, 0, 0}, 512.0, 10.0, 0.0, 5));
@@ -1656,6 +1716,14 @@ Action sm_l4dd(int client, int args)
 	// PrintToServer("__PrecacheParticleSystem %d", __PrecacheParticleSystem(const char[] particleSystem));
 	// PrintToServer("Precache_Particle_System %d", Precache_Particle_System(const char[] particleSystem));
 
+	EmitMixedAmbientSoundToAll("ambient/alarms/klaxon1.wav", _, _, _, _, _, 0.0);
+	EmitMixedAmbientSoundToAll_FallBack("ambient/alarms/perimeter_alarm.wav", _, _, _, _, _, 0.0, _, _, _, "ambient/alarms/perimeter_alarm.wav");
+	EmitMixedAmbientSound(client, "ambient/alarms/train_crossing_bell_loop1.wav", _, _, _, _, _, 0.0);
+	EmitMixedAmbientSound_FallBack(client, "ambient/alarms/alarm1.wav", _, _, _, _, _, 0.0, _, _, _, "ambient/alarms/alarm1.wav");
+
+	ShakeClientScreenAll(vPos, 1000.0);
+	ShakeClientScreen(client, vPos, 1000.0);
+
 	OS_Type OS = GetOSType();
 	PrintToServer("GetOSType = %s", OS == OS_windows ? "Windows" : OS == OS_linux ? "Linux" : "Other");
 	// */
@@ -1675,10 +1743,25 @@ Action sm_l4dd(int client, int args)
 
 
 
+	L4DTeam team = L4D_GetClientTeam(client);
+	switch( team )
+	{
+		case L4DTeam_Unassigned: PrintToServer("L4D_GetClientTeam %d (%N) == %s", client, client, "L4DTeam_Unassigned");
+		case L4DTeam_Spectator: PrintToServer("L4D_GetClientTeam %d (%N) == %s", client, client, "L4DTeam_Spectator:");
+		case L4DTeam_Survivor: PrintToServer("L4D_GetClientTeam %d (%N) == %s", client, client, "L4DTeam_Survivor:");
+		case L4DTeam_Infected: PrintToServer("L4D_GetClientTeam %d (%N) == %s", client, client, "L4DTeam_Infected:");
+	}
+	L4D_ChangeClientTeam(client, L4DTeam_Infected);
 	PrintToServer("L4D1_GetPlayerZombieClass %d", L4D1_GetPlayerZombieClass(client));
 	L4D1_SetPlayerZombieClass(client, L4D1ZombieClass_Smoker);
 	PrintToServer("L4D2_GetPlayerZombieClass %d", L4D2_GetPlayerZombieClass(client));
 	L4D2_SetPlayerZombieClass(client, L4D2ZombieClass_Smoker);
+	char sTemp[64];
+	sTemp = L4D1_GetZombieClassname(L4D1ZombieClass_Boomer);
+	PrintToServer("L4D1_GetZombieClassname %d == %s", L4D1ZombieClass_Boomer, sTemp);
+	sTemp = L4D2_GetZombieClassname(L4D2ZombieClass_Boomer);
+	PrintToServer("L4D2_GetZombieClassname %d == %s", L4D2ZombieClass_Boomer, sTemp);
+
 	PrintToServer("L4D_IsPlayerGhost %d", L4D_IsPlayerGhost(client));
 	L4D_SetPlayerGhostState(client, true);
 	PrintToServer("L4D_GetPlayerGhostSpawnState %d", L4D_GetPlayerGhostSpawnState(client));
@@ -1694,12 +1777,13 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_IsPlayerIdle %d", L4D_IsPlayerIdle(client));
 	PrintToServer("L4D_GetBotOfIdlePlayer %d", L4D_GetBotOfIdlePlayer(client));
 	PrintToServer("L4D_GetIdlePlayerOfBot %d", L4D_GetIdlePlayerOfBot(bot));
+	PrintToServer("L4D_GetResourceEntity %d", L4D_GetResourceEntity());
 	PrintToServer("L4D_GetPlayerResourceData %d", L4D_GetPlayerResourceData(client, L4DResource_MaxHealth));
 	L4D_SetPlayerResourceData(client, L4DResource_MaxHealth, 150);
 	L4D_RemoveWeaponSlot(client, L4DWeaponSlot_Secondary);
 	L4D_RemoveAllWeapons(client);
 	PrintToServer("L4D_IsFinaleActive %d", L4D_IsFinaleActive());
-	PrintToServer("L4D_HasAnySurvivorLeftSafeArea %d", L4D_HasAnySurvivorLeftSafeArea());
+	PrintToServer("L4D_HasAnySurvivorLeftSafeAreaStock %d", L4D_HasAnySurvivorLeftSafeAreaStock());
 	PrintToServer("L4D_GetPendingTankPlayer %d", L4D_GetPendingTankPlayer());
 	L4D2_SetEntityGlow(entity, L4D2Glow_Constant, 1000, 1, {255, 0, 0}, true);
 	L4D2_SetEntityGlow_Type(entity, L4D2Glow_Constant);
@@ -1863,6 +1947,10 @@ Action sm_l4dd(int client, int args)
 		L4D_ReadMemoryString(addy + offs, temp, sizeof(temp));
 
 		PrintToServer("L4D_ReadMemoryString %N == [%s]", target, temp);
+
+		L4D_WriteMemoryString(addy + offs, "WriteMemoryString");
+		PrintToServer("L4D_WriteMemoryString %N == [%s]", target, temp);
+		L4D_WriteMemoryString(addy + offs, "#Cstrike_Name_Change");
 	}
 	// */
 
@@ -1911,6 +1999,12 @@ Action sm_l4dd(int client, int args)
 	PrintToServer("L4D_CanBecomeGhost %d",							L4D_CanBecomeGhost(client));
 
 	PrintToServer("L4D_IsFinaleEscapeInProgress %d",				L4D_IsFinaleEscapeInProgress());
+
+	int trigger = FindEntityByClassname(-1, "trigger_multiple");
+	if( trigger != -1 )
+	{
+		PrintToServer("L4D_IsTouchingTrigger (%d <> %d): %d", trigger, client, L4D_IsTouchingTrigger(trigger, client);
+	}
 	// */
 
 
@@ -1954,6 +2048,9 @@ Action sm_l4dd(int client, int args)
 
 			FormatEx(code, sizeof(code), "GetPlayerFromUserID(%d).UseAdrenaline(%f);", GetClientUserId(client), 20.0);
 			L4D2_ExecVScriptCode(code);
+
+			L4D2_GetScriptScope("L4D2_GetVScriptEntity %d", L4D2_GetVScriptEntity());
+			L4D2_GetScriptScope("L4D2_GetScriptScope %d", L4D2_GetScriptScope(client));
 		}
 
 		int bot;
@@ -2197,7 +2294,13 @@ Action sm_l4dd(int client, int args)
 
 	PrintToServer("L4D_IsInLastCheckpoint %d",							L4D_IsInLastCheckpoint(client));
 
+	PrintToServer("L4D_AreAllSurvivorsInFinaleArea %d",					L4D_AreAllSurvivorsInFinaleArea());
+
 	PrintToServer("L4D_HasPlayerControlledZombies %d",					L4D_HasPlayerControlledZombies());
+
+
+	PrintToServer("L4D_IsPositionInFirstCheckpoint %N == %d", client, L4D_IsPositionInFirstCheckpoint(vPos));
+	PrintToServer("L4D_IsPositionInLastCheckpoint %N == %d", client, L4D_IsPositionInLastCheckpoint(vPos));
 
 
 	// L4D2_UseAdrenaline(client, 15.0, false);
