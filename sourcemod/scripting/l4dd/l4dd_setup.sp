@@ -37,7 +37,7 @@ void SetupForwardsNatives()
 	// ====================================================================================================
 	// FORWARDS
 	// List should match the CreateDetour list of forwards.
-	g_hFWD_OnMapStartPost													= new GlobalForward("L4D_OnMapStart_Left4DHooks",						ET_Event);
+	g_hFWD_OnMapStartPost													= new GlobalForward("L4D_OnLeft4DHooks_OnMapStart",						ET_Event);
 	g_hFWD_GameModeChange													= new GlobalForward("L4D_OnGameModeChange",								ET_Event, Param_Cell);
 	g_hFWD_ZombieManager_SpawnSpecial										= new GlobalForward("L4D_OnSpawnSpecial",								ET_Event, Param_CellByRef, Param_Array, Param_Array);
 	g_hFWD_ZombieManager_SpawnSpecial_Post									= new GlobalForward("L4D_OnSpawnSpecial_Post",							ET_Event, Param_Cell, Param_Cell, Param_Array, Param_Array);
