@@ -2721,6 +2721,9 @@ void LoadGameData()
 	g_iOff_LobbyReservation = hGameData.GetOffset("LobbyReservationOffset");
 	ValidateOffset(g_iOff_LobbyReservation, "LobbyReservationOffset");
 
+	g_iOff_AcceptInput = hGameData.GetOffset("CBaseEntity::AcceptInput");
+	ValidateOffset(g_iOff_AcceptInput, "CBaseEntity::AcceptInput");
+
 	g_pAmmoDef = hGameData.GetAddress("ammoDef");
 	ValidateAddress(g_pAmmoDef, "AmmoDef", true);
 

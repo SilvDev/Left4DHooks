@@ -918,6 +918,268 @@ bool GetVScriptOutput(char[] code, char[] ret, int maxlength)
 
 
 // ==================================================
+// ENTITY INPUT/OUTPUT HOOK
+// ==================================================
+void DetourEntityInput()
+{
+	g_CBaseEntity_AcceptInput = DHookCreate(g_iOff_AcceptInput, HookType_Entity, ReturnType_Bool, ThisPointer_CBaseEntity);
+	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_CharPtr);
+	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_CBaseEntity);
+	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_CBaseEntity);
+	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_Object, 20, DHookPass_ByVal|DHookPass_ODTOR|DHookPass_OCTOR|DHookPass_OASSIGNOP); //varaint_t is a union of 12 (float[3]) plus two int type params 12 + 8 = 20
+	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_Int);
+
+	for( int i = 1; i < MAX_EDICTS; i++ )
+	{
+		g_hInputCallback_Pre[i]			= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_String, Param_Array);
+		g_hInputCallback_Post[i]		= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_String, Param_Array);
+	}
+
+	CreateNative("L4D_HookEntityInput", Native_HookEntityInput);
+	CreateNative("L4D_UnhookEntityInput", Native_UnhookEntityInput);
+}
+
+int Native_HookEntityInput(Handle plugin, int numParams) // Native "L4D_HookEntityInput"
+{
+	int entity = GetNativeCell(1);
+
+	// Check if already hooked
+	if( EntIndexToEntRef(entity) == g_iHookEntity[entity] )
+	{
+		g_iHookCount[entity]++;
+	}
+	else
+	{
+		g_hInputPlugins_Pre[entity] = new ArrayList();
+		g_hInputPlugins_Post[entity] = new ArrayList();
+
+		g_iHookCount[entity] = 1;
+		g_iHookEntity[entity] = EntIndexToEntRef(entity);
+		g_iHookID_Pre[entity] = DHookEntity(g_CBaseEntity_AcceptInput, false, entity, removalcb, CBaseEntity_AcceptInput_Pre);
+		g_iHookID_Post[entity] = DHookEntity(g_CBaseEntity_AcceptInput, true, entity, removalcb, CBaseEntity_AcceptInput_Post);
+	}
+
+	int rtn;
+
+	// Prevent double hooking entities
+	if( GetNativeFunction(2) != INVALID_FUNCTION )
+	{
+		if( g_hInputPlugins_Pre[entity].FindValue(plugin) == -1 )
+		{
+			g_hInputPlugins_Pre[entity].Push(plugin);
+			g_hInputCallback_Pre[entity].AddFunction(plugin, GetNativeFunction(2));
+			rtn = 1;
+		}
+	}
+
+	if( GetNativeFunction(3) != INVALID_FUNCTION )
+	{
+		if( g_hInputPlugins_Post[entity].FindValue(plugin) == -1 )
+		{
+			g_hInputPlugins_Post[entity].Push(plugin);
+			g_hInputCallback_Post[entity].AddFunction(plugin, GetNativeFunction(3));
+			rtn = 1;
+		}
+	}
+
+	return rtn;
+}
+
+void removalcb(int hookid)
+{
+	// Unused
+}
+
+int Native_UnhookEntityInput(Handle plugin, int numParams) // Native "L4D_UnhookEntityInput"
+{
+	int entity = GetNativeCell(1);
+
+	g_iHookCount[entity]--;
+
+	if( g_iHookCount[entity] == 0 )
+	{
+		g_iHookEntity[entity] = 0;
+
+		DHookRemoveHookID(g_iHookID_Pre[entity]);
+		DHookRemoveHookID(g_iHookID_Post[entity]);
+
+		delete g_hInputPlugins_Pre[entity];
+		delete g_hInputPlugins_Post[entity];
+	}
+
+	int rtn;
+	bool success;
+
+	if( g_hInputCallback_Pre[entity] && GetNativeFunction(2) != INVALID_FUNCTION )
+	{
+		success = g_hInputCallback_Pre[entity].RemoveFunction(plugin, GetNativeFunction(2));
+		if( success ) rtn = 1;
+	}
+
+	if( g_hInputCallback_Post[entity] && GetNativeFunction(3) != INVALID_FUNCTION )
+	{
+		success = g_hInputCallback_Post[entity].RemoveFunction(plugin, GetNativeFunction(3));
+		if( success ) rtn = 1;
+	}
+
+	return rtn;
+}
+
+MRESReturn CBaseEntity_AcceptInput_Pre(int pThis, DHookReturn hReturn, DHookParam hParams)
+{
+	return CBaseEntity_AcceptInput_Detour(pThis, hReturn, hParams, false);
+}
+
+MRESReturn CBaseEntity_AcceptInput_Post(int pThis, DHookReturn hReturn, DHookParam hParams)
+{
+	return CBaseEntity_AcceptInput_Detour(pThis, hReturn, hParams, true);
+}
+
+MRESReturn CBaseEntity_AcceptInput_Detour(int pThis, DHookReturn hReturn, DHookParam hParams, bool post)
+{
+	if( !post && !g_hInputCallback_Pre[pThis] ) return MRES_Ignored;
+	if( post && !g_hInputCallback_Post[pThis] ) return MRES_Ignored;
+
+	// Get input command
+	static char command[128];
+	DHookGetParamString(hParams, 1, command, sizeof(command));
+
+	// Get input params data
+	variant_t params;
+	params.fieldType = view_as<fieldtype_t>(DHookGetParamObjectPtrVar(hParams, 4, 16, ObjectValueType_Int));
+
+	switch( params.fieldType )
+	{
+		case FIELD_FLOAT:
+		{
+			params.flValue = DHookGetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Float);
+		}
+
+		case FIELD_STRING:
+		{
+			DHookGetParamObjectPtrString(hParams, 4, 0, ObjectValueType_String, params.iszValue, sizeof(params.iszValue));
+		}
+
+		case FIELD_VECTOR, FIELD_POSITION_VECTOR:
+		{
+			DHookGetParamObjectPtrVarVector(hParams, 4, 0, ObjectValueType_Vector, params.vecValue);
+		}
+
+		case FIELD_INTEGER, FIELD_SHORT, FIELD_CHARACTER:
+		{
+			params.iValue = DHookGetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Int);
+		}
+
+		case FIELD_BOOLEAN:
+		{
+			params.bValue = DHookGetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Bool);
+		}
+
+		case FIELD_COLOR32:
+		{
+			int color = DHookGetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Int);
+			params.rgbaValue[0] = color & 0xFF;
+			params.rgbaValue[1] = (color >> 8) & 0xFF;
+			params.rgbaValue[2] = (color >> 16) & 0xFF;
+			params.rgbaValue[3] = (color >> 24) & 0xFF;
+		}
+
+		case FIELD_CLASSPTR, FIELD_EHANDLE:
+		{
+			params.iValue = DHookGetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Ehandle);
+		}
+	}
+
+	// Fire the forward
+	if( pThis < 0 )
+		pThis = EntRefToEntIndex(pThis);
+
+	int activator = -1;
+	if( !hParams.IsNull(2) )
+		activator = hParams.Get(2);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(post ? g_hInputCallback_Post[pThis] : g_hInputCallback_Pre[pThis]);
+	Call_PushCell(pThis);
+	Call_PushCellRef(activator);
+	Call_PushString(command);
+	Call_PushArrayEx(params, sizeof(params), SM_PARAM_COPYBACK);
+	Call_Finish(aResult);
+
+	// Block input
+	if( aResult == Plugin_Handled )
+	{
+		hReturn.Value = 0;
+		return MRES_Supercede;
+	}
+
+	// Change input params
+	if( aResult == Plugin_Changed )
+	{
+		// Changing currently disabled, see test plugin example for details
+		// hParams.Set(2, activator);
+
+		// Set input params data
+		switch (params.fieldType)
+		{
+			case FIELD_FLOAT:
+			{
+				DHookSetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Float, params.flValue);
+			}
+
+			/* From SourcePawn: "No setter for object strings yet. Open an issue if you really need it."
+			case FIELD_STRING:
+			{
+				Address addy = hParams.GetAddress(4);
+				for( int i = 0; i < sizeof(params.iszValue); i++ )
+				{
+					StoreToAddress(addy + view_as<Address>(i), params.iszValue[i], NumberType_Int8);
+					if( !params.iszValue[i] ) break;
+				}
+			}
+			*/
+
+			case FIELD_VECTOR, FIELD_POSITION_VECTOR:
+			{
+				DHookSetParamObjectPtrVarVector(hParams, 4, 0, ObjectValueType_Vector, params.vecValue);
+			}
+
+			case FIELD_INTEGER, FIELD_SHORT, FIELD_CHARACTER:
+			{
+				DHookSetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Int, params.iValue);
+			}
+
+			case FIELD_BOOLEAN:
+			{
+				DHookSetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Bool, params.bValue);
+			}
+
+			case FIELD_COLOR32:
+			{
+				int color =
+				(params.rgbaValue[0] & 0xFF) |
+				((params.rgbaValue[1] & 0xFF) << 8) |
+				((params.rgbaValue[2] & 0xFF) << 16) |
+				((params.rgbaValue[3] & 0xFF) << 24);
+
+				DHookSetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Int, color);
+			}
+
+			case FIELD_CLASSPTR, FIELD_EHANDLE:
+			{
+				DHookSetParamObjectPtrVar(hParams, 4, 0, ObjectValueType_Ehandle, params.iValue);
+			}
+		}
+
+		return MRES_ChangedHandled;
+	}
+
+	return MRES_Ignored;
+}
+
+
+
+// ==================================================
 // VARIOUS NATIVES
 // ==================================================
 int Native_CTerrorGameRules_HasConfigurableDifficultySetting(Handle plugin, int numParams) // Native "L4D2_HasConfigurableDifficultySetting"
@@ -2229,7 +2491,7 @@ int Native_CGrenadeLauncher_Projectile_Create(Handle plugin, int numParams) // N
 // Spitter acid projectile damage
 // ====================================================================================================
 bool g_bAcidWatch;
-int g_iAcidEntity[2048 + 1];
+int g_iAcidEntity[MAX_ENTITES + 1];
 
 // Sounds are based on "PlayerZombie.AttackHit" from "game_sounds_infected_special.txt"
 char g_sAcidSounds[6][] =

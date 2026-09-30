@@ -1,5 +1,18 @@
+1.171 (30-Sep-2026)
+	- Added forwards "L4D_OnSetClass" and "L4D_OnSetClass_Post" to trigger when a Special Infected's class is being set. Requested by "gvazdas".
+	- Added natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" to hook entity input/output and modify/block. Requested by "gvazdas".
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
+	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+
 1.170 (30-Sep-2026)
-	- Fixed forward "L4D_OnLeft4DHooks_OnMapStart" firing before setting a bool, preventing natives from truely taking advantage of the forward. Thanks to "little_froy" for reporting.
+	- Fixed forward "L4D_OnLeft4DHooks_OnMapStart" firing before setting a bool, preventing natives from truly taking advantage of the forward. Thanks to "little_froy" for reporting.
 	- Updated: Plugin only.
 
 1.169 (29-Sep-2026)
@@ -13,15 +26,6 @@
 	- Fixed stock "L4D1_GetZombieClassname" from the "left4dhooks_stocks" using the wrong classname list.
 	- Consolidated the "*_Post" and "*_PostHandled" forwards in the include file to remove unnecessary extra lines. Thanks to "blueblur0730" for the suggestion.
 	- Added missing stocks to the test plugin, from various include files. Every forward/native/stock should now be listed with an example.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
-	- Updated: "/scripting/include/left4dhooks_stocks.inc" Include file.
 
 1.168 (18-Jun-2026)
 	- Fixed forwards "L4D_OnSetCampaignScores*" from crashing with "Invalid parameter or parameter type" error. Thanks to "Marttt" for reporting.

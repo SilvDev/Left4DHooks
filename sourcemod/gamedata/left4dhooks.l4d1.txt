@@ -1101,6 +1101,21 @@
 				"this"			"entity"
 			}
 
+			"L4DD::CTerrorPlayer::SetClass"
+			{
+				"signature"		"CTerrorPlayer::SetClass"
+				"callconv"		"thiscall"
+				"return"		"void"
+				"this"			"entity"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"int"
+					}
+				}
+			}
+
 			"L4DD::CTerrorPlayer::MaterializeFromGhost"
 			{
 				"signature"		"CTerrorPlayer::MaterializeFromGhost"
@@ -1482,6 +1497,15 @@
 			{
 				"windows"	"323"
 				"linux"		"324"
+			}
+
+			/*
+			* CBaseEntity::AcceptInput(char const*, CBaseEntity*, CBaseEntity*, variant_t, int)
+			*/
+			"CBaseEntity::AcceptInput"
+			{
+				"windows"	"37"
+				"linux"		"38"
 			}
 
 			/*

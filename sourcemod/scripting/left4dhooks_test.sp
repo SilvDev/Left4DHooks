@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.169"
+#define PLUGIN_VERSION		"1.171"
 
 /*=======================================================================================
 	Plugin Info:
@@ -81,9 +81,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	}
 
 	if( g_bLeft4Dead2 )
-		g_iForwardsMax = 248;
+		g_iForwardsMax = 250;
 	else
-		g_iForwardsMax = 177;
+		g_iForwardsMax = 179;
 
 	return APLRes_Success;
 }
@@ -326,6 +326,122 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 
 
 // ====================================================================================================
+// Entity input/output hooks
+// ====================================================================================================
+void InputHook_Print(variant_t params, bool post)
+{	char result[256];
+	char type[32];
+	switch( params.fieldType )
+	{
+		case FIELD_FLOAT:
+		{
+			Format(result, sizeof(result), "FIELD_FLOAT: [%f]", params.flValue);
+		}
+
+		case FIELD_STRING:
+		{
+			Format(result, sizeof(result), "FIELD_STRING: [%s]", params.iszValue);
+		}
+
+		case FIELD_VECTOR, FIELD_POSITION_VECTOR:
+		{
+			switch( params.fieldType )
+			{
+				case FIELD_VECTOR: type = "FIELD_VECTOR";
+				case FIELD_POSITION_VECTOR: type = "FIELD_POSITION_VECTOR";
+			}
+
+			Format(result, sizeof(result), "%s: [%f, %f, %f]", type, params.vecValue[0], params.vecValue[1], params.vecValue[2]);
+		}
+
+		case FIELD_INTEGER, FIELD_SHORT, FIELD_CHARACTER:
+		{
+			switch( params.fieldType )
+			{
+				case FIELD_INTEGER: type = "FIELD_INTEGER";
+				case FIELD_SHORT: type = "FIELD_SHORT";
+				case FIELD_CHARACTER: type = "FIELD_CHARACTER";
+			}
+
+			Format(result, sizeof(result), "%s: [%d]", type, params.iValue);
+		}
+
+		case FIELD_BOOLEAN:
+		{
+			Format(result, sizeof(result), "FIELD_BOOLEAN: [%d]", params.bValue);
+		}
+
+		case FIELD_COLOR32:
+		{
+			Format(result, sizeof(result), "FIELD_COLOR32: [%d %d %d %d]", params.rgbaValue[0], params.rgbaValue[1], params.rgbaValue[2], params.rgbaValue[3]);
+		}
+
+		case FIELD_CLASSPTR, FIELD_EHANDLE:
+		{
+			switch( params.fieldType )
+			{
+				case FIELD_CLASSPTR: type = "FIELD_CLASSPTR";
+				case FIELD_EHANDLE: type = "FIELD_EHANDLE";
+			}
+
+			Format(result, sizeof(result), "%s: [%d]", type, params.iValue);
+		}
+
+		default:
+		{
+			Format(result, sizeof(result), "Unknown param type: [%d]", params.iValue);
+		}
+	}
+
+	PrintToServer("%s params result: %s", post ? "POST" : "PRE", result);
+}
+
+Action InputHook_Pre(int entity, int &activator, char command[128], variant_t params)
+{
+	PrintToServer("InputHook_Pre: Entity = [%d]. Act = [%d]. Command = [%s]", entity, activator, command);
+
+	InputHook_Print(params, false);
+
+	/* From SourcePawn: "No setter for object strings yet. Open an issue if you really need it."
+	// This cannot work until DHooks is updated to support object strings
+	if( params.fieldType == FIELD_STRING && strcmp(params.iszValue, "255 0 0") == 0 )
+	{
+		params.iszValue = "0 0 255";
+		return Plugin_Changed;
+	}
+	// */
+
+	if( params.fieldType == FIELD_FLOAT && params.flValue == 5000.0 )
+	{
+		params.flValue = 300.0;
+		PrintToServer("Input prevented from changing light to 5000.0, changed to 300.0");
+		return Plugin_Changed;
+	}
+
+	if( strcmp(command, "ForcePanicEvent") == 0 )
+	{
+		// activator = 0; // Currently disabled due to throwing "Invalid entity" errors
+		// Likely only when game hasn't started, don't have time to investigate and fix
+		return Plugin_Handled;
+	}
+
+	return Plugin_Continue;
+}
+
+Action InputHook_Post(int entity, int &activator, char command[128], variant_t params)
+{
+	PrintToServer("InputHook_Post: Entity = [%d]. Act = [%d]. Command = [%s]", entity, activator, command);
+
+	InputHook_Print(params, true);
+
+	return Plugin_Continue;
+}
+
+
+
+
+
+// ====================================================================================================
 // COMMAND TEST
 // ====================================================================================================
 Action sm_calls(int client, int args)
@@ -360,6 +476,41 @@ Action sm_l4dd(int client, int args)
 	*/
 
 
+	// Input to modify light
+	// /*
+	int light = FindEntityByClassname(-1, "light_dynamic");
+	if( light != -1 )
+	{
+		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(light, InputHook_Pre, InputHook_Post));
+
+		// Modifying this cannot work until DHooks is updated to support object strings
+		// SetVariantString("255 0 0");
+		// AcceptEntityInput(light, "color");
+
+		SetVariantFloat(5000.0);
+		AcceptEntityInput(light, "distance");
+
+		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(light, InputHook_Pre, InputHook_Post));
+	}
+	// */
+
+	// /*
+	int director = FindEntityByClassname(-1, "info_director");
+	if( director != -1 )
+	{
+		// Test double hook
+		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(director, InputHook_Pre, InputHook_Post));
+		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(director, InputHook_Pre, InputHook_Post));
+
+		AcceptEntityInput(director, "ForcePanicEvent", -1);
+
+		// Test double unhook
+		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(director, InputHook_Pre, InputHook_Post));
+		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(director, InputHook_Pre, InputHook_Post));
+
+		AcceptEntityInput(director, "ForcePanicEvent", -1);
+	}
+	// */
 
 
 
@@ -723,7 +874,7 @@ Action sm_l4dd(int client, int args)
 	Address addy;
 	int max, passed, failed;
 
-	for( int i = 0; i <= 4096; i++ )
+	for( int i = 0; i <= MAX_EDICTS; i++ )
 	{
 		if( IsValidEdict(i) || IsValidEntity(i) )
 		{
@@ -5038,6 +5189,40 @@ public void L4D2_Infected_HitByVomitJar_PostHandled(int victim, int attacker)
 		called++;
 
 		ForwardCalled("\"L4D2_Infected_HitByVomitJar_PostHandled\" %d > %d", victim, attacker);
+	}
+}
+
+public Action L4D_OnSetClass(int client, int &class)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnSetClass\" %d (%N) - Set to %d", client, client, class);
+	}
+
+	/*
+	if( class != 2 ) // Change all types of Special Infected to "Boomer"
+	{
+		class = 2;
+		return Plugin_Changed;
+	}
+	// */
+
+	return Plugin_Continue;
+}
+
+public void L4D_OnSetClass_Post(int client, int class)
+{
+	static int called;
+	if( called < MAX_CALLS )
+	{
+		if( called == 0 ) g_iForwards++;
+		called++;
+
+		ForwardCalled("\"L4D_OnSetClass_Post\" %d (%N) - Set to %d", client, client, class);
 	}
 }
 

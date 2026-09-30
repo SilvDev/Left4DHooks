@@ -142,6 +142,8 @@ GlobalForward g_hFWD_SurvivorBot_UseHealingItems;
 GlobalForward g_hFWD_SurvivorBot_FindScavengeItem_Post;
 GlobalForward g_hFWD_BossZombiePlayerBot_ChooseVictim_Pre;
 GlobalForward g_hFWD_BossZombiePlayerBot_ChooseVictim_Post;
+GlobalForward g_hFWD_CTerrorPlayer_SetClass;
+GlobalForward g_hFWD_CTerrorPlayer_SetClass_Post;
 GlobalForward g_hFWD_CTerrorPlayer_MaterializeFromGhost_Pre;
 GlobalForward g_hFWD_CTerrorPlayer_MaterializeFromGhost_Post;
 GlobalForward g_hFWD_CTerrorPlayer_MaterializeFromGhost_PostHandled;
@@ -460,6 +462,8 @@ void SetupDetours(GameData hGameData = null)
 	CreateDetour(hGameData,			DTR_SurvivorBot_FindScavengeItem_Pre,						DTR_SurvivorBot_FindScavengeItem_Post,						"L4DD::SurvivorBot::FindScavengeItem",								"L4D2_OnFindScavengeItem");
 	CreateDetour(hGameData,			DTR_BossZombiePlayerBot_ChooseVictim_Pre,					DTR_BossZombiePlayerBot_ChooseVictim_Post,					"L4DD::BossZombiePlayerBot::ChooseVictim",							"L4D2_OnChooseVictim_Pre");
 	CreateDetour(hGameData,			DTR_BossZombiePlayerBot_ChooseVictim_Pre,					DTR_BossZombiePlayerBot_ChooseVictim_Post,					"L4DD::BossZombiePlayerBot::ChooseVictim",							"L4D2_OnChooseVictim",							true);
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_SetClass,									DTR_CTerrorPlayer_SetClass_Post,							"L4DD::CTerrorPlayer::SetClass",									"L4D_OnSetClass");
+	CreateDetour(hGameData,			DTR_CTerrorPlayer_SetClass,									DTR_CTerrorPlayer_SetClass_Post,							"L4DD::CTerrorPlayer::SetClass",									"L4D_OnSetClass_Post",							true);
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_MaterializeFromGhost_Pre,					DTR_CTerrorPlayer_MaterializeFromGhost_Post,				"L4DD::CTerrorPlayer::MaterializeFromGhost",						"L4D_OnMaterializeFromGhostPre");
 	CreateDetour(hGameData,			DTR_CTerrorPlayer_MaterializeFromGhost_Pre,					DTR_CTerrorPlayer_MaterializeFromGhost_Post,				"L4DD::CTerrorPlayer::MaterializeFromGhost",						"L4D_OnMaterializeFromGhost",					true);
 	iPipebombPrjIndex = g_iSmallIndex;
@@ -3852,6 +3856,43 @@ MRESReturn DTR_BossZombiePlayerBot_ChooseVictim_Post(int client, DHookReturn hRe
 		hReturn.Value = a1;
 		return MRES_Supercede;
 	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_SetClass(int client, DHookParam hParams) // Forward "L4D_OnSetClass"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_SetClass");
+	if( client == -1 ) return MRES_Ignored;
+
+	int class = hParams.Get(1);
+
+	Action aResult = Plugin_Continue;
+	Call_StartForward(g_hFWD_CTerrorPlayer_SetClass);
+	Call_PushCell(client);
+	Call_PushCellRef(class);
+	Call_Finish(aResult);
+
+	if( aResult == Plugin_Changed )
+	{
+		hParams.Set(1, class);
+		return MRES_ChangedHandled;
+	}
+
+	return MRES_Ignored;
+}
+
+MRESReturn DTR_CTerrorPlayer_SetClass_Post(int client, DHookParam hParams) // Forward "L4D_OnSetClass_Post"
+{
+	//PrintToServer("##### DTR_CTerrorPlayer_SetClass_Post");
+	if( client == -1 ) return MRES_Ignored;
+
+	int class = hParams.Get(1);
+
+	Call_StartForward(g_hFWD_CTerrorPlayer_SetClass_Post);
+	Call_PushCell(client);
+	Call_PushCell(class);
+	Call_Finish();
 
 	return MRES_Ignored;
 }

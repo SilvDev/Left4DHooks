@@ -172,6 +172,8 @@ void SetupForwardsNatives()
 	// g_hFWD_BossZombiePlayerBot_ChooseVictim_Pre								= new GlobalForward("L4D2_OnChooseVictim_Pre",							ET_Event, Param_Cell, Param_CellByRef, Param_CellByRef, Param_CellByRef, Param_CellByRef); // For a future update
 	g_hFWD_BossZombiePlayerBot_ChooseVictim_Pre								= new GlobalForward("L4D2_OnChooseVictim_Pre",							ET_Event, Param_Cell, Param_CellByRef);
 	g_hFWD_BossZombiePlayerBot_ChooseVictim_Post							= new GlobalForward("L4D2_OnChooseVictim",								ET_Event, Param_Cell, Param_CellByRef);
+	g_hFWD_CTerrorPlayer_SetClass											= new GlobalForward("L4D_OnSetClass",									ET_Event, Param_Cell, Param_CellByRef);
+	g_hFWD_CTerrorPlayer_SetClass_Post										= new GlobalForward("L4D_OnSetClass_Post",								ET_Event, Param_Cell, Param_Cell);
 	g_hFWD_CTerrorPlayer_MaterializeFromGhost_Pre							= new GlobalForward("L4D_OnMaterializeFromGhostPre",					ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_MaterializeFromGhost_Post							= new GlobalForward("L4D_OnMaterializeFromGhost",						ET_Event, Param_Cell);
 	g_hFWD_CTerrorPlayer_MaterializeFromGhost_PostHandled					= new GlobalForward("L4D_OnMaterializeFromGhost_PostHandled",			ET_Event, Param_Cell);

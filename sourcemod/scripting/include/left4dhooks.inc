@@ -66,14 +66,14 @@
 
 
 
-// Natives: 301 (including 3 for L4D1 only)
-// L4D1 = 198
-// L4D2 = 298
+// Natives: 303 (including 3 for L4D1 only)
+// L4D1 = 200
+// L4D2 = 300
 // Methods and Natives by "Forgetest": 53 [PlayerAnimState] + 22 [Ammo_t] + 15 [AmmoDef] = 90
 
-// Forwards: 256 (including 8 for L4D1 only)
-// L4D1 = 177
-// L4D2 = 248
+// Forwards: 258 (including 8 for L4D1 only)
+// L4D1 = 179
+// L4D2 = 250
 
 // Stocks: 187 (L4D1 = 127, L4D2 = 181)		(including 6 for L4D1 only)
 // left4dhooks_silver			58 stocks	(L4D1 = 43,		L4D2 = 57)		(including 1 for L4D1 only)
@@ -105,6 +105,8 @@ public void __pl_l4dh_SetNTVOptional()
 	MarkNativeAsOptional("AnimHookDisable");
 	MarkNativeAsOptional("AnimGetActivity");
 	MarkNativeAsOptional("AnimGetFromActivity");
+	MarkNativeAsOptional("L4D_HookEntityInput");
+	MarkNativeAsOptional("L4D_UnhookEntityInput");
 	MarkNativeAsOptional("L4D_GetGameModeType");
 	MarkNativeAsOptional("L4D_Deafen");
 	MarkNativeAsOptional("L4D_GetTempHealth");
@@ -1421,6 +1423,91 @@ native int AnimGetFromActivity(char[] activity);
 
 
 // ====================================================================================================
+// ENTITY INPUT/OUTPUT HOOK
+// ====================================================================================================
+// These are used for the "L4D_HookEntityInput" forward callback, "L4D2_OnGetScriptValueVoid" forward, and internally for the other "L4D2_OnGetScriptValue*" forwards:
+enum fieldtype_t
+{
+	FIELD_VOID = 0,				// No type or value
+	FIELD_FLOAT = 1,			// Any floating point value
+	FIELD_STRING = 2,
+	FIELD_VECTOR = 3,			// Any vector, QAngle, or AngularImpulse
+	FIELD_INTEGER = 5,			// Any integer or enum
+	FIELD_BOOLEAN = 6,			// boolean, implemented as an int, I may use this as a hint for compression
+	FIELD_SHORT = 7,
+	FIELD_CHARACTER = 8,		// a byte
+	FIELD_COLOR32 = 9,
+	FIELD_CLASSPTR = 12,
+	FIELD_EHANDLE = 13,
+	FIELD_POSITION_VECTOR = 15,
+	FIELD_CSTRING = 31,
+	FIELD_UNSIGNED = 38,
+	FIELD_QANGLE = 40
+};
+
+enum struct VariantBuffer
+{
+	int m_int;
+	float m_float;
+	char m_string[256];
+	float m_vector[3];
+}
+
+enum struct variant_t
+{
+	bool bValue;
+	int iValue;
+	float flValue;
+	char iszValue[256];
+	int rgbaValue[4];
+	float vecValue[3];
+	fieldtype_t fieldType;
+}
+
+typeset InputHookCallback
+{
+	/**
+	 * @brief Callback called whenever an entity input/output is invoked (CBaseEntity::AcceptInput)
+	 *
+	 * @param entity		The entity that was hooked
+	 * @param activator		The activator entity calling the input/output (changing currently disabled, see test plugin example for details)
+	 * @param command		The input/output command being used
+	 * @param params		The params data, see the "variant_t" struct and "left4dhooks_test.sp" test plugin for details
+	 *
+	 * @return				Plugin_Changed to change the params data, Plugin_Handled to block (pre-hook only), Plugin_Continue otherwise
+	 */
+	function Action(int entity, int &activator, char command[128], variant_t params);
+}
+
+/**
+ * @brief Hooks an entities input/output system
+ * @remarks All hooks are removed on map change
+ *
+ * @param entity			The entity to hook
+ * @param callback			Callback function for your pre-hook INVALID_FUNCTION to not use
+ * @param callbackPost		Callback function for your post-hook or INVALID_FUNCTION to not use
+ *
+ * @return					True on success, false if already hooked
+ */
+native bool L4D_HookEntityInput(int entity, InputHookCallback callback, InputHookCallback callbackPost = INVALID_FUNCTION);
+
+/**
+ * @brief Unhooks an entities input/output system
+ * @remarks All hooks are removed on map change
+ *
+ * @param entity			The entity to hook
+ * @param callback			Callback function for your pre-hook INVALID_FUNCTION to not use
+ * @param callbackPost		Callback function for your post-hook or INVALID_FUNCTION to not use
+ *
+ * @return					True on success, false if entity invalid or already unhooked
+ */
+native bool L4D_UnhookEntityInput(int entity, InputHookCallback callback, InputHookCallback callbackPost = INVALID_FUNCTION);
+
+
+
+
+
+// ====================================================================================================
 // FORWARDS - left4downtown.inc (and new ones by Silvers)
 // ====================================================================================================
 /**
@@ -1584,6 +1671,7 @@ forward void L4D_OnEnterGhostState_PostHandled(int client);
  * @remarks `*_PostHandled` forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
  * @param client			the client that is looking to take over a bot
+ * @param success			true of succeeded, false otherwise
  *
  * @return					Plugin_Handled to block, Plugin_Continue otherwise
  */
@@ -1592,12 +1680,24 @@ forward void L4D_OnTakeOverBot_Post(int client, bool success);
 forward void L4D_OnTakeOverBot_PostHandled(int client, bool success);
 
 /**
+ * @brief Called whenever CTerrorPlayer::SetClass is invoked
+ * @remarks Called when setting a Special Infected zombieClass
+ *
+ * @param client			the client who spawned
+ * @param class				the Special Infected class: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
+ *
+ * @return					Plugin_Changed to modify class, Plugin_Continue otherwise
+ */
+forward Action L4D_OnSetClass(int client, int &class);
+forward void L4D_OnSetClass_Post(int client, int class);
+
+/**
  * @brief Called whenever CTerrorPlayer::MaterializeFromGhost is invoked
  * @remarks Called when a Special Infected spawns out of ghost mode
  * @remarks `L4D_OnMaterializeFromGhost` forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  * @remarks `*_PostHandled` forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  *
- * @param victim			the client who spawned
+ * @param client			the client who spawned
  *
  * @return					Plugin_Handled to block, Plugin_Continue otherwise
  */
@@ -1820,28 +1920,6 @@ forward Action L4D_OnGetScriptValueFloat(const char[] key, float &retVal);
  */
 // L4D2 only
 forward Action L4D_OnGetScriptValueString(const char[] key, const char[] defaultVal, char retVal[128]);
-
-// These are used for the "L4D2_OnGetScriptValueVoid" forward, and interally for the other "L4D2_OnGetScriptValue*" forwards:
-enum fieldtype_t
-{
-	FIELD_VOID = 0,				// No type or value
-	FIELD_FLOAT = 1,			// Any floating point value
-	FIELD_VECTOR = 3,			// Any vector, QAngle, or AngularImpulse
-	FIELD_INTEGER = 5,			// Any integer or enum
-	FIELD_BOOLEAN = 6,			// boolean, implemented as an int, I may use this as a hint for compression
-	FIELD_CHARACTER = 8,		// a byte
-	FIELD_CSTRING = 31,
-	FIELD_UNSIGNED = 38,
-	FIELD_QANGLE = 40
-};
-
-enum struct VariantBuffer
-{
-	int m_int;
-	float m_float;
-	char m_string[256];
-	float m_vector[3];
-}
 
 /**
  * @brief Called whenever CSquirrelVM::GetValue() is invoked
@@ -6606,7 +6684,7 @@ native void L4D_CleanupPlayerState(int client);
  * @remarks Valid values L4D1: 1-3. L4D2: 1-6
  * @remarks zombieClass: 1=Smoker, 2=Boomer, 3=Hunter, 4=Spitter, 5=Jockey, 6=Charger
  *
- * @param client			Client ID of the player to kill. Not common infected
+ * @param client			Client ID of the player to change. Not common infected
  * @param zombieClass		Zombie class number to change to
  *
  * @noreturn

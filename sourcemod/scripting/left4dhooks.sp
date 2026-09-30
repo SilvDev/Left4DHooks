@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.169"
-#define PLUGIN_VERLONG		1169
+#define PLUGIN_VERSION		"1.171"
+#define PLUGIN_VERLONG		1171
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -197,6 +197,10 @@ float g_fProf;
 
 
 
+// Entities
+#define MAX_ENTITES				2048
+#define MAX_EDICTS				4096
+
 // Dissolver
 #define SPRITE_GLOW							"sprites/blueglow1.vmt"
 
@@ -256,6 +260,19 @@ int g_iCvar_AddonsEclipse, g_iCvar_RescueDeadTime;
 
 
 
+// Entity Input/Output Hooks
+int g_iHookCount[MAX_EDICTS];		// Track number of hooks to this entity, only really unhook when no longer used by any plugin
+int g_iHookEntity[MAX_EDICTS];		// Entity reference to validate same entity
+int g_iHookID_Pre[MAX_EDICTS];		// Hook ID used to unhook the detour
+int g_iHookID_Post[MAX_EDICTS];		// Hook ID used to unhook the detour
+Handle g_CBaseEntity_AcceptInput;
+ArrayList g_hInputPlugins_Pre[MAX_EDICTS];
+ArrayList g_hInputPlugins_Post[MAX_EDICTS];
+PrivateForward g_hInputCallback_Pre[MAX_EDICTS];
+PrivateForward g_hInputCallback_Post[MAX_EDICTS];
+
+
+
 // Animation Hook
 int g_iAnimationDetourIndex;
 bool g_bAnimationRemoveHook;
@@ -283,6 +300,7 @@ Address g_pVanillaModeAddress;
 
 // Various offsets
 // int g_iOff_EHandle;
+int g_iOff_AcceptInput;
 int g_iOff_LobbyReservation;
 int g_iOff_VersusStartTimer;
 int g_iOff_m_rescueCheckTimer;
@@ -602,6 +620,13 @@ public void OnPluginStart()
 	// TARGET FILTERS
 	// =========================
 	LoadTargetFilters();
+
+
+
+	// =========================
+	// ENTITY INPUT/OUTPUT HOOKS
+	// =========================
+	DetourEntityInput();
 
 
 
@@ -1094,6 +1119,8 @@ public void OnMapEnd()
 	g_iAnimationHookedClients = new ArrayList();
 	g_iAnimationHookedPlugins = new ArrayList(2);
 
+
+
 	// Remove all hooked functions from private forward
 	Handle hIterator = GetPluginIterator();
 	Handle hPlugin;
@@ -1109,11 +1136,26 @@ public void OnMapEnd()
 			{
 				if( g_hAnimationCallbackPre[i] ) g_hAnimationCallbackPre[i].RemoveAllFunctions(hPlugin);
 				if( g_hAnimationCallbackPost[i] ) g_hAnimationCallbackPost[i].RemoveAllFunctions(hPlugin);
+
+				if( g_hInputCallback_Pre[i] ) g_hInputCallback_Pre[i].RemoveAllFunctions(hPlugin);
+				if( g_hInputCallback_Post[i] ) g_hInputCallback_Post[i].RemoveAllFunctions(hPlugin);
 			}
 		}
 	}
 
 	delete hIterator;
+
+	// Entity input/output hooks
+	for( int i = 0; i < MAX_EDICTS; i++ )
+	{
+		g_iHookCount[i] = 0;
+		g_iHookEntity[i] = 0;
+		g_iHookID_Pre[i] = 0;
+		g_iHookID_Post[i] = 0;
+
+		delete g_hInputPlugins_Pre[i];
+		delete g_hInputPlugins_Post[i];
+	}
 }
 
 public void OnClientDisconnect(int client)
@@ -1647,7 +1689,7 @@ public void OnMapStart()
 		for( int i = 0; i < sizeof(g_sAcidSounds); i++ )
 			PrecacheSound(g_sAcidSounds[i]);
 
-		for( int i = 0; i <= 2048; i++ )
+		for( int i = 0; i <= MAX_ENTITES; i++ )
 			g_iAcidEntity[i] = 0;
 	}
 
