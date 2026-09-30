@@ -1746,10 +1746,11 @@ public void OnMapStart()
 	}
 
 
-	Call_StartForward(g_hFWD_OnMapStartPost);
-	Call_Finish();
 
 	g_bMapStarted = true;
+
+	Call_StartForward(g_hFWD_OnMapStartPost);
+	Call_Finish();
 }
 
 

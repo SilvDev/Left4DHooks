@@ -1,3 +1,7 @@
+1.170 (30-Sep-2026)
+	- Fixed forward "L4D_OnLeft4DHooks_OnMapStart" firing before setting a bool, preventing natives from truely taking advantage of the forward. Thanks to "little_froy" for reporting.
+	- Updated: Plugin only.
+
 1.169 (29-Sep-2026)
 	- Added "AmmoType" int weapon attribute. Thanks to "Forgetest" for adding.
 	- Fixed forward "L4D_OnLeft4DHooks_OnMapStart" not triggering because it was wrongly named. Thanks to "little_froy" and "blueblur0730" for reporting.
