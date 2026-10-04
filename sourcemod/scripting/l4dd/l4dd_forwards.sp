@@ -5262,7 +5262,7 @@ MRESReturn DTR_CTerrorPlayer_OnVomitedUpon(int client, DHookReturn hReturn, DHoo
 	if( !hParams.IsNull(1) )
 		a1 = hParams.Get(1);
 
-	int a2 = hParams.Get(2);
+	int a2 = g_bLeft4Dead2 ? hParams.Get(2) : hParams.Get(3);
 
 	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CTerrorPlayer_OnVomitedUpon);
@@ -5282,7 +5282,7 @@ MRESReturn DTR_CTerrorPlayer_OnVomitedUpon(int client, DHookReturn hReturn, DHoo
 	if( aResult == Plugin_Changed )
 	{
 		hParams.Set(1, a1);
-		hParams.Set(2, a2);
+		g_bLeft4Dead2 ? hParams.Set(2, a2) : hParams.Set(3, a2);
 		return MRES_ChangedHandled;
 	}
 
@@ -5297,7 +5297,7 @@ MRESReturn DTR_CTerrorPlayer_OnVomitedUpon_Post(int client, DHookReturn hReturn,
 	if( !hParams.IsNull(1) )
 		a1 = hParams.Get(1);
 
-	int a2 = hParams.Get(2);
+	int a2 = g_bLeft4Dead2 ? hParams.Get(2) : hParams.Get(3);
 
 	Call_StartForward(g_bBlock_CTerrorPlayer_OnVomitedUpon ? g_hFWD_CTerrorPlayer_OnVomitedUpon_PostHandled : g_hFWD_CTerrorPlayer_OnVomitedUpon_Post);
 	Call_PushCell(client);
