@@ -1,15 +1,19 @@
-1.171 (30-Sep-2026)
-	- Added forwards "L4D_OnSetClass" and "L4D_OnSetClass_Post" to trigger when a Special Infected's class is being set. Requested by "gvazdas".
-	- Added natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" to hook entity input/output and modify/block. Requested by "gvazdas".
+1.172 (05-Oct-2026)
+	- Fixed forwards "L4D_OnVomitedUpon*" always returning "true" for "boomerExplosion" in L4D1. Thanks to "HarryPotter" for fixing.
+	- Fixed natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" to allow multiple hooks of the same entity, and fixed clashing with multiple plugins hooking the same entity.
+	- Fixed natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" throwing native not found errors in plugins on server start.
+	- Added the "caller" entity to the "InputHookCallback" callback.
+	- Changing "activator" or "caller" will only work in DHooks version "1.13.0.7356" or newer.
 
 	- Updated: Plugin and test plugin.
 	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/gamedata/left4dhooks.l4d1.txt" GameData file.
-	- Updated: "/gamedata/left4dhooks.l4d2.txt" GameData file.
 	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+
+1.171 (30-Sep-2026)
+	- Added forwards "L4D_OnSetClass" and "L4D_OnSetClass_Post" to trigger when a Special Infected's class is being set. Requested by "gvazdas".
+	- Added natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" to hook entity input/output and modify/block. Requested by "gvazdas".
 
 1.170 (30-Sep-2026)
 	- Fixed forward "L4D_OnLeft4DHooks_OnMapStart" firing before setting a bool, preventing natives from truly taking advantage of the forward. Thanks to "little_froy" for reporting.

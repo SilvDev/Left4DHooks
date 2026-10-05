@@ -928,58 +928,39 @@ void DetourEntityInput()
 	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_CBaseEntity);
 	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_Object, 20, DHookPass_ByVal|DHookPass_ODTOR|DHookPass_OCTOR|DHookPass_OASSIGNOP); //varaint_t is a union of 12 (float[3]) plus two int type params 12 + 8 = 20
 	DHookAddParam(g_CBaseEntity_AcceptInput, HookParamType_Int);
-
-	for( int i = 1; i < MAX_EDICTS; i++ )
-	{
-		g_hInputCallback_Pre[i]			= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_String, Param_Array);
-		g_hInputCallback_Post[i]		= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_String, Param_Array);
-	}
-
-	CreateNative("L4D_HookEntityInput", Native_HookEntityInput);
-	CreateNative("L4D_UnhookEntityInput", Native_UnhookEntityInput);
 }
 
 int Native_HookEntityInput(Handle plugin, int numParams) // Native "L4D_HookEntityInput"
 {
 	int entity = GetNativeCell(1);
+	if( entity < 0 ) entity = EntRefToEntIndex(entity);
 
-	// Check if already hooked
-	if( EntIndexToEntRef(entity) == g_iHookEntity[entity] )
+	// Detour entity and create forward if not already hooked
+	if( entity != g_iHookEntity[entity] )
 	{
-		g_iHookCount[entity]++;
-	}
-	else
-	{
-		g_hInputPlugins_Pre[entity] = new ArrayList();
-		g_hInputPlugins_Post[entity] = new ArrayList();
-
-		g_iHookCount[entity] = 1;
 		g_iHookEntity[entity] = EntIndexToEntRef(entity);
+
+		delete g_hInputCallback_Pre[entity];
+		delete g_hInputCallback_Post[entity];
+
 		g_iHookID_Pre[entity] = DHookEntity(g_CBaseEntity_AcceptInput, false, entity, removalcb, CBaseEntity_AcceptInput_Pre);
 		g_iHookID_Post[entity] = DHookEntity(g_CBaseEntity_AcceptInput, true, entity, removalcb, CBaseEntity_AcceptInput_Post);
+
+		g_hInputCallback_Pre[entity]		= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_CellByRef, Param_String, Param_Array);
+		g_hInputCallback_Post[entity]		= new PrivateForward(ET_Event, Param_Cell, Param_CellByRef, Param_CellByRef, Param_String, Param_Array);
 	}
 
 	int rtn;
 
-	// Prevent double hooking entities
-	if( GetNativeFunction(2) != INVALID_FUNCTION )
+	// Add private forwards
+	if( GetNativeFunction(2) != INVALID_FUNCTION && g_hInputCallback_Pre[entity].AddFunction(plugin, GetNativeFunction(2)) )
 	{
-		if( g_hInputPlugins_Pre[entity].FindValue(plugin) == -1 )
-		{
-			g_hInputPlugins_Pre[entity].Push(plugin);
-			g_hInputCallback_Pre[entity].AddFunction(plugin, GetNativeFunction(2));
-			rtn = 1;
-		}
+		rtn = 1;
 	}
 
-	if( GetNativeFunction(3) != INVALID_FUNCTION )
+	if( GetNativeFunction(3) != INVALID_FUNCTION && g_hInputCallback_Post[entity].AddFunction(plugin, GetNativeFunction(3)) )
 	{
-		if( g_hInputPlugins_Post[entity].FindValue(plugin) == -1 )
-		{
-			g_hInputPlugins_Post[entity].Push(plugin);
-			g_hInputCallback_Post[entity].AddFunction(plugin, GetNativeFunction(3));
-			rtn = 1;
-		}
+		rtn = 1;
 	}
 
 	return rtn;
@@ -993,36 +974,54 @@ void removalcb(int hookid)
 int Native_UnhookEntityInput(Handle plugin, int numParams) // Native "L4D_UnhookEntityInput"
 {
 	int entity = GetNativeCell(1);
-
-	g_iHookCount[entity]--;
-
-	if( g_iHookCount[entity] == 0 )
-	{
-		g_iHookEntity[entity] = 0;
-
-		DHookRemoveHookID(g_iHookID_Pre[entity]);
-		DHookRemoveHookID(g_iHookID_Post[entity]);
-
-		delete g_hInputPlugins_Pre[entity];
-		delete g_hInputPlugins_Post[entity];
-	}
+	if( entity < 0 ) entity = EntRefToEntIndex(entity);
 
 	int rtn;
-	bool success;
 
-	if( g_hInputCallback_Pre[entity] && GetNativeFunction(2) != INVALID_FUNCTION )
+	if( g_hInputCallback_Pre[entity] && GetNativeFunction(2) != INVALID_FUNCTION && g_hInputCallback_Pre[entity].RemoveFunction(plugin, GetNativeFunction(2)) )
 	{
-		success = g_hInputCallback_Pre[entity].RemoveFunction(plugin, GetNativeFunction(2));
-		if( success ) rtn = 1;
+		rtn = 1;
 	}
 
-	if( g_hInputCallback_Post[entity] && GetNativeFunction(3) != INVALID_FUNCTION )
+	if( g_hInputCallback_Post[entity] && GetNativeFunction(3) != INVALID_FUNCTION && g_hInputCallback_Post[entity].RemoveFunction(plugin, GetNativeFunction(3)) )
 	{
-		success = g_hInputCallback_Post[entity].RemoveFunction(plugin, GetNativeFunction(3));
-		if( success ) rtn = 1;
+		rtn = 1;
 	}
+
+	RemoveAcceptInputDetour(entity);
 
 	return rtn;
+}
+
+// Checks the detour is not being used by any other plugin and removes the detour and forward
+void RemoveAcceptInputDetour(int entity)
+{
+	int count_pre;
+	int count_post;
+
+	if( g_hInputCallback_Pre[entity] ) count_pre = g_hInputCallback_Pre[entity].FunctionCount;
+	if( g_hInputCallback_Post[entity] )	count_post = g_hInputCallback_Post[entity].FunctionCount;
+
+	if( count_pre == 0 && g_iHookID_Pre[entity] )
+	{
+		delete g_hInputCallback_Pre[entity];
+
+		DHookRemoveHookID(g_iHookID_Pre[entity]);
+		g_iHookID_Pre[entity] = 0;
+	}
+
+	if( count_pre == 0 && g_iHookID_Post[entity] )
+	{
+		delete g_hInputCallback_Post[entity];
+
+		DHookRemoveHookID(g_iHookID_Post[entity]);
+		g_iHookID_Post[entity] = 0;
+	}
+
+	if( count_pre == 0 && count_post == 0 )
+	{
+		g_iHookEntity[entity] = 0;
+	}
 }
 
 MRESReturn CBaseEntity_AcceptInput_Pre(int pThis, DHookReturn hReturn, DHookParam hParams)
@@ -1037,6 +1036,8 @@ MRESReturn CBaseEntity_AcceptInput_Post(int pThis, DHookReturn hReturn, DHookPar
 
 MRESReturn CBaseEntity_AcceptInput_Detour(int pThis, DHookReturn hReturn, DHookParam hParams, bool post)
 {
+	if( pThis < 0 ) pThis = EntRefToEntIndex(pThis);
+
 	if( !post && !g_hInputCallback_Pre[pThis] ) return MRES_Ignored;
 	if( post && !g_hInputCallback_Post[pThis] ) return MRES_Ignored;
 
@@ -1098,10 +1099,15 @@ MRESReturn CBaseEntity_AcceptInput_Detour(int pThis, DHookReturn hReturn, DHookP
 	if( !hParams.IsNull(2) )
 		activator = hParams.Get(2);
 
+	int caller = -1;
+	if( !hParams.IsNull(3) )
+		caller = hParams.Get(3);
+
 	Action aResult = Plugin_Continue;
 	Call_StartForward(post ? g_hInputCallback_Post[pThis] : g_hInputCallback_Pre[pThis]);
 	Call_PushCell(pThis);
 	Call_PushCellRef(activator);
+	Call_PushCellRef(caller);
 	Call_PushString(command);
 	Call_PushArrayEx(params, sizeof(params), SM_PARAM_COPYBACK);
 	Call_Finish(aResult);
@@ -1109,15 +1115,19 @@ MRESReturn CBaseEntity_AcceptInput_Detour(int pThis, DHookReturn hReturn, DHookP
 	// Block input
 	if( aResult == Plugin_Handled )
 	{
-		hReturn.Value = 0;
+		hReturn.Value = false;
 		return MRES_Supercede;
 	}
 
 	// Change input params
 	if( aResult == Plugin_Changed )
 	{
-		// Changing currently disabled, see test plugin example for details
-		// hParams.Set(2, activator);
+		// Changing "activator" or "caller" currently disabled, due to a bug in DHooks
+		if( g_bDHooksFixedVersion )
+		{
+			hParams.Set(2, activator);
+			hParams.Set(3, caller);
+		}
 
 		// Set input params data
 		switch (params.fieldType)
@@ -4265,30 +4275,30 @@ int Native_NavArea_GetCorner(Handle plugin, int numParams) // Native "L4D_NavAre
 
 	switch (corner)
 	{
-        case 0:
-        {
-            vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x04), NumberType_Int32));
-            vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x08), NumberType_Int32));
-            vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x0C), NumberType_Int32));
-        }
-        case 1:
-        {
-            vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x10), NumberType_Int32));
-            vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x08), NumberType_Int32));
-            vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x24), NumberType_Int32));
-        }
-        case 2:
-        {
-            vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x10), NumberType_Int32));
-            vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x14), NumberType_Int32));
-            vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x18), NumberType_Int32));
-        }
-        case 3:
-        {
-            vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x04), NumberType_Int32));
-            vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x14), NumberType_Int32));
-            vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x28), NumberType_Int32));
-        }
+			case 0:
+		{
+			vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x04), NumberType_Int32));
+			vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x08), NumberType_Int32));
+			vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x0C), NumberType_Int32));
+		}
+		case 1:
+		{
+			vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x10), NumberType_Int32));
+			vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x08), NumberType_Int32));
+			vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x24), NumberType_Int32));
+		}
+		case 2:
+		{
+			vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x10), NumberType_Int32));
+			vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x14), NumberType_Int32));
+			vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x18), NumberType_Int32));
+		}
+		case 3:
+		{
+			vPos[0] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x04), NumberType_Int32));
+			vPos[1] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x14), NumberType_Int32));
+			vPos[2] = view_as<float>(LoadFromAddress(area + view_as<Address>(0x28), NumberType_Int32));
+		}
 	}
 
 	SetNativeArray(3, vPos, sizeof(vPos));

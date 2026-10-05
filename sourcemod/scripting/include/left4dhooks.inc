@@ -926,29 +926,29 @@ stock const char g_sWeaponTypes[WeaponType][16] =
 enum PZMsgType_t
 {
 	// Msg for all teams, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
-	L4D1_KILLED							= 1,    // "#L4D_KILLED"
-	L4D1_INCAPACITATE					= 2,    // "#L4D_INCAPACITATE"
-	L4D1_KILLED2						= 3,    // "#L4D_KILLED" (for zombie bot? Example: Player killed the hunter?)
+	L4D1_KILLED							= 1,	// "#L4D_KILLED"
+	L4D1_INCAPACITATE					= 2,	// "#L4D_INCAPACITATE"
+	L4D1_KILLED2						= 3,	// "#L4D_KILLED" (for zombie bot? Example: Player killed the hunter?)
 
 	// Msg for zombie team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
-	L4D1_HIT_ASSIST						= 4,    // "#L4D_HIT_ASSIST"
-	L4D1_HIT_ASSIST_ATTACK				= 5,    // "#L4D_HIT_ASSIST_ATTACK"
-	L4D1_HIT_ATTACK						= 6,    // "#L4D_HIT_ATTACK" (for friendly fire?)
-	L4D1_HIT_PUSH_ASSIST_ATTACK			= 7,    // "#L4D_HIT_PUSH_ASSIST_ATTACK"
-	L4D1_HIT_PUSH_ATTACK				= 8,    // "#L4D_HIT_PUSH_ATTACK"
-	L4D1_HIT_POUNCE_ATTACK				= 9,    // "#L4D_HIT_POUNCE_ATTACK"
-	L4D1_INCAPACITATE_ASSIST			= 10,   // "#L4D_INCAPACITATE_ASSIST"
-	L4D1_INCAPACITATE_2					= 11,   // "#L4D_INCAPACITATE"
+	L4D1_HIT_ASSIST						= 4,	// "#L4D_HIT_ASSIST"
+	L4D1_HIT_ASSIST_ATTACK				= 5,	// "#L4D_HIT_ASSIST_ATTACK"
+	L4D1_HIT_ATTACK						= 6,	// "#L4D_HIT_ATTACK" (for friendly fire?)
+	L4D1_HIT_PUSH_ASSIST_ATTACK			= 7,	// "#L4D_HIT_PUSH_ASSIST_ATTACK"
+	L4D1_HIT_PUSH_ATTACK				= 8,	// "#L4D_HIT_PUSH_ATTACK"
+	L4D1_HIT_POUNCE_ATTACK				= 9,	// "#L4D_HIT_POUNCE_ATTACK"
+	L4D1_INCAPACITATE_ASSIST			= 10,	// "#L4D_INCAPACITATE_ASSIST"
+	L4D1_INCAPACITATE_2					= 11,	// "#L4D_INCAPACITATE"
 
 	// Msg for survivor team only, if bool 'HitAnnouncement::m_bIgnoreTeamCheck' (this + 20) is set to false
-	L4D1_ON_AWARD_SAVED					= 12,   // "#L4D_OnAwardSaved" (support friend)
-	L4D1_ON_AWARD_SHARING				= 13,   // "#L4D_OnAwardSharing" (sharing item with friend)
-	L4D1_ON_AWARD_PROTECTOR				= 14,   // "#L4D_OnAwardProtector" (protecting friend)
-	L4D1_ON_AWARD_RESCUER				= 15,   // "#L4D_OnAwardRescuer"
-	L4D1_ON_AWARD_MEDIC					= 16,   // "#L4D_OnAwardMedic" (healing friend)
-	L4D1_BRONZE_MEDAL_EARNED			= 17,   // "#L4D_BronzeMedalEarned"
-	L4D1_SILVER_MEDAL_EARNED			= 18,   // "#L4D_SilverMedalEarned"
-	L4D1_GOLD_MEDAL_EARNED				= 19    // "#L4D_GoldMedalEarned"
+	L4D1_ON_AWARD_SAVED					= 12,	// "#L4D_OnAwardSaved" (support friend)
+	L4D1_ON_AWARD_SHARING				= 13,	// "#L4D_OnAwardSharing" (sharing item with friend)
+	L4D1_ON_AWARD_PROTECTOR				= 14,	// "#L4D_OnAwardProtector" (protecting friend)
+	L4D1_ON_AWARD_RESCUER				= 15,	// "#L4D_OnAwardRescuer"
+	L4D1_ON_AWARD_MEDIC					= 16,	// "#L4D_OnAwardMedic" (healing friend)
+	L4D1_BRONZE_MEDAL_EARNED			= 17,	// "#L4D_BronzeMedalEarned"
+	L4D1_SILVER_MEDAL_EARNED			= 18,	// "#L4D_SilverMedalEarned"
+	L4D1_GOLD_MEDAL_EARNED				= 19	// "#L4D_GoldMedalEarned"
 };
 
 // Created by A1m` (Used for usermessage "PZDmgMsg")
@@ -1425,7 +1425,7 @@ native int AnimGetFromActivity(char[] activity);
 // ====================================================================================================
 // ENTITY INPUT/OUTPUT HOOK
 // ====================================================================================================
-// These are used for the "L4D_HookEntityInput" forward callback, "L4D2_OnGetScriptValueVoid" forward, and internally for the other "L4D2_OnGetScriptValue*" forwards:
+// These are used for the "L4D_HookEntityInput" native callback, "L4D2_OnGetScriptValueVoid" forward, and internally for the other "L4D2_OnGetScriptValue*" forwards:
 enum fieldtype_t
 {
 	FIELD_VOID = 0,				// No type or value
@@ -1470,13 +1470,14 @@ typeset InputHookCallback
 	 * @brief Callback called whenever an entity input/output is invoked (CBaseEntity::AcceptInput)
 	 *
 	 * @param entity		The entity that was hooked
-	 * @param activator		The activator entity calling the input/output (changing currently disabled, see test plugin example for details)
+	 * @param activator		The activator entity calling the input/output (can only in DHooks is version "1.13.0.7356" or newer)
+	 * @param caller		The caller entity calling the input/output (can only in DHooks is version "1.13.0.7356" or newer)
 	 * @param command		The input/output command being used
 	 * @param params		The params data, see the "variant_t" struct and "left4dhooks_test.sp" test plugin for details
 	 *
 	 * @return				Plugin_Changed to change the params data, Plugin_Handled to block (pre-hook only), Plugin_Continue otherwise
 	 */
-	function Action(int entity, int &activator, char command[128], variant_t params);
+	function Action(int entity, int &activator, int &caller, char command[128], variant_t params);
 }
 
 /**
@@ -1487,9 +1488,9 @@ typeset InputHookCallback
  * @param callback			Callback function for your pre-hook INVALID_FUNCTION to not use
  * @param callbackPost		Callback function for your post-hook or INVALID_FUNCTION to not use
  *
- * @return					True on success, false if already hooked
+ * @return					True on success, false if error
  */
-native bool L4D_HookEntityInput(int entity, InputHookCallback callback, InputHookCallback callbackPost = INVALID_FUNCTION);
+native bool L4D_HookEntityInput(int entity, InputHookCallback callback = INVALID_FUNCTION, InputHookCallback callbackPost = INVALID_FUNCTION);
 
 /**
  * @brief Unhooks an entities input/output system
@@ -1501,7 +1502,7 @@ native bool L4D_HookEntityInput(int entity, InputHookCallback callback, InputHoo
  *
  * @return					True on success, false if entity invalid or already unhooked
  */
-native bool L4D_UnhookEntityInput(int entity, InputHookCallback callback, InputHookCallback callbackPost = INVALID_FUNCTION);
+native bool L4D_UnhookEntityInput(int entity, InputHookCallback callback = INVALID_FUNCTION, InputHookCallback callbackPost = INVALID_FUNCTION);
 
 
 
@@ -6136,7 +6137,7 @@ native bool L4D2Direct_TryOfferingTankBot(int client, int bEnterStasis);
  *								8   = Random (0-3, guaranteed to create)
  *
  * @remarks Indices 0-3 resolve to different characters depending on the map's survivor set
- *          (L4D2 maps: Nick/Rochelle/Coach/Ellis, L4D1 maps: Bill/Zoey/Louis/Francis)
+ * @remarks (L4D2 maps: Nick/Rochelle/Coach/Ellis, L4D1 maps: Bill/Zoey/Louis/Francis)
  * @remarks Characters 4-7: engine checks for duplicates, silently does nothing if taken
  * @remarks Characters 0-3: engine does NOT check for duplicates, will create a second bot with same character
  *

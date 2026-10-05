@@ -42,9 +42,7 @@
 
 #include <sourcemod>
 #include <sdktools>
-#undef REQUIRE_PLUGIN
 #include <left4dhooks>
-#define REQUIRE_PLUGIN
 
 #define DEMO_ANIM			0		// Demonstrate "Incapped Crawling" animation hooks
 
@@ -329,7 +327,8 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 // Entity input/output hooks
 // ====================================================================================================
 void InputHook_Print(variant_t params, bool post)
-{	char result[256];
+{
+	char result[256];
 	char type[32];
 	switch( params.fieldType )
 	{
@@ -396,9 +395,9 @@ void InputHook_Print(variant_t params, bool post)
 	PrintToServer("%s params result: %s", post ? "POST" : "PRE", result);
 }
 
-Action InputHook_Pre(int entity, int &activator, char command[128], variant_t params)
+stock Action InputHook_Pre(int entity, int &activator, int &caller, char command[128], variant_t params)
 {
-	PrintToServer("InputHook_Pre: Entity = [%d]. Act = [%d]. Command = [%s]", entity, activator, command);
+	PrintToServer("InputHook_Pre: Entity = [%d]. Act = [%d]. Call = [%d]. Command = [%s]", entity, activator, caller, command);
 
 	InputHook_Print(params, false);
 
@@ -411,26 +410,63 @@ Action InputHook_Pre(int entity, int &activator, char command[128], variant_t pa
 	}
 	// */
 
+
+
+	// Prevent light from changing
 	if( params.fieldType == FIELD_FLOAT && params.flValue == 5000.0 )
 	{
+		// Changing "activator" or "caller" will not work unless DHooks is version "1.13.0.7356" or newer
+		activator = entity;
+		caller = entity;
+
 		params.flValue = 300.0;
 		PrintToServer("Input prevented from changing light to 5000.0, changed to 300.0");
 		return Plugin_Changed;
 	}
 
-	if( strcmp(command, "ForcePanicEvent") == 0 )
+
+
+	// Block the panic event
+	if( strcmp(command, "ForcePanicEvent") == 0 || strcmp(command, "PanicEvent") == 0 )
 	{
-		// activator = 0; // Currently disabled due to throwing "Invalid entity" errors
-		// Likely only when game hasn't started, don't have time to investigate and fix
-		return Plugin_Handled;
+		// L4D1 Survival: blocking "ForcePanicEvent" breaks the game's random zombie spawn positions including RandomPZ for the remainder of the round
+		// Thanks to "gvazdas" for reporting
+		if( !g_bLeft4Dead2 )
+		{
+			// Timer in director that shows it's too early for the next panic event
+			// This could be converted into a Get/Set native. Please request if required
+			Address director = L4D_GetPointer(POINTER_DIRECTOR);
+			if( director != Address_Null )
+			{
+				// Panic timer offset found in "Director::StartPanicEvent" by "%3.2f: Director::StartPanicEvent( %d ): ERROR: It is too soon to restart a PanicEvent.\n"
+				#define PANIC_TIMER_NIX 0x68C
+				#define PANIC_TIMER_WIN 0x690
+				Address offset = view_as<Address>(L4D_GetServerOS() ? PANIC_TIMER_NIX : PANIC_TIMER_WIN);
+	
+				float time = view_as<float>(LoadFromAddress(director + offset, NumberType_Int32));
+				float now = GetGameTime();
+
+				if( time < now )
+				{
+					StoreToAddress(director + offset, view_as<int>(now + 0.5), NumberType_Int32);
+				}
+			}
+
+			return Plugin_Continue;
+		}
+		else
+		{
+			// L4D2 does not have this bug and can be blocked here
+			return Plugin_Handled;
+		}
 	}
 
 	return Plugin_Continue;
 }
 
-Action InputHook_Post(int entity, int &activator, char command[128], variant_t params)
+stock Action InputHook_Post(int entity, int &activator, int &caller, char command[128], variant_t params)
 {
-	PrintToServer("InputHook_Post: Entity = [%d]. Act = [%d]. Command = [%s]", entity, activator, command);
+	PrintToServer("InputHook_Post: Entity = [%d]. Act = [%d]. Call = [%d]. Command = [%s]", entity, activator, caller, command);
 
 	InputHook_Print(params, true);
 
@@ -476,12 +512,22 @@ Action sm_l4dd(int client, int args)
 	*/
 
 
-	// Input to modify light
-	// /*
-	int light = FindEntityByClassname(-1, "light_dynamic");
+
+	// AcceptInput to modify light
+	/*
+	int light;
+	float vPos[3];
+	if( client )
+	{
+		GetClientAbsOrigin(client, vPos);
+		light = L4D_FindEntityByClassnameNearest("light_dynamic", vPos, 500.0);
+	} else {
+		light = FindEntityByClassname(-1, "light_dynamic");
+	}
+
 	if( light != -1 )
 	{
-		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(light, InputHook_Pre, InputHook_Post));
+		PrintToServer("L4D_HookEntityInput %d (Entity = %d)", L4D_HookEntityInput(light, InputHook_Pre, InputHook_Post), light);
 
 		// Modifying this cannot work until DHooks is updated to support object strings
 		// SetVariantString("255 0 0");
@@ -490,25 +536,26 @@ Action sm_l4dd(int client, int args)
 		SetVariantFloat(5000.0);
 		AcceptEntityInput(light, "distance");
 
-		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(light, InputHook_Pre, InputHook_Post));
+		PrintToServer("L4D_UnhookEntityInput %d (Entity = %d)", L4D_UnhookEntityInput(light, InputHook_Pre, InputHook_Post), light);
 	}
 	// */
 
-	// /*
+
+
+	// AcceptEntityInput to trigger directors ForcePanicEvent
+	/*
 	int director = FindEntityByClassname(-1, "info_director");
 	if( director != -1 )
 	{
-		// Test double hook
-		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(director, InputHook_Pre, InputHook_Post));
-		PrintToServer("L4D_HookEntityInput %d", L4D_HookEntityInput(director, InputHook_Pre, InputHook_Post));
+		// Test hook
+		PrintToServer("L4D_HookEntityInput %d (Entity = %d)", L4D_HookEntityInput(director, InputHook_Pre, InputHook_Post), director);
 
-		AcceptEntityInput(director, "ForcePanicEvent", -1);
+		AcceptEntityInput(director, g_bLeft4Dead2 ? "ForcePanicEvent" : "PanicEvent");
 
-		// Test double unhook
-		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(director, InputHook_Pre, InputHook_Post));
-		PrintToServer("L4D_UnhookEntityInput %d", L4D_UnhookEntityInput(director, InputHook_Pre, InputHook_Post));
+		// Test unhook
+		PrintToServer("L4D_UnhookEntityInput %d (Entity = %d)", L4D_UnhookEntityInput(director, InputHook_Pre, InputHook_Post), director);
 
-		AcceptEntityInput(director, "ForcePanicEvent", -1);
+		AcceptEntityInput(director, "ForcePanicEvent");
 	}
 	// */
 

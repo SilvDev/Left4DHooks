@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.171"
-#define PLUGIN_VERLONG		1171
+#define PLUGIN_VERSION		"1.172"
+#define PLUGIN_VERLONG		1172
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -260,7 +260,8 @@ int g_iCvar_AddonsEclipse, g_iCvar_RescueDeadTime;
 
 
 
-// Entity Input/Output Hooks
+// Entity input/output Hooks
+bool g_bDHooksFixedVersion;			// Build "1.13.0.7356" fixed "DHooks: Fix setting CBaseEntity* params (#2465)"
 int g_iHookCount[MAX_EDICTS];		// Track number of hooks to this entity, only really unhook when no longer used by any plugin
 int g_iHookEntity[MAX_EDICTS];		// Entity reference to validate same entity
 int g_iHookID_Pre[MAX_EDICTS];		// Hook ID used to unhook the detour
@@ -594,6 +595,21 @@ public void OnPluginStart()
 
 	g_iOffsetAmmo = FindSendPropInfo("CTerrorPlayer", "m_iAmmo");
 	g_iPrimaryAmmoType = FindSendPropInfo("CBaseCombatWeapon", "m_iPrimaryAmmoType");
+
+
+
+	// Verify SM build version that fixed DHooks bug "DHooks: Fix setting CBaseEntity* params (#2465)"
+	// Used for the "L4D_HookEntityInput" natives "InputHookCallback" callback
+	ConVar cvar = FindConVar("sourcemod_version");
+
+	char version[16];
+	cvar.GetString(version, sizeof(version));
+
+	int pos = FindCharInString(version, '.', true);
+	if( pos != -1 )
+	{
+		g_bDHooksFixedVersion = StringToInt(version[pos + 1]) > 7356;
+	}
 
 
 
@@ -1153,6 +1169,8 @@ public void OnMapEnd()
 		g_iHookID_Pre[i] = 0;
 		g_iHookID_Post[i] = 0;
 
+		delete g_hInputCallback_Pre[i];
+		delete g_hInputCallback_Post[i];
 		delete g_hInputPlugins_Pre[i];
 		delete g_hInputPlugins_Post[i];
 	}
@@ -1232,11 +1250,24 @@ public void OnNotifyPluginUnloaded(Handle plugin)
 {
 	if( plugin )
 	{
+		// Remove animation callbacks for plugin (probably not required and automatic...
 		for( int i = 1; i <= MaxClients; i++ )
 		{
 			if( g_hAnimationCallbackPre[i] ) g_hAnimationCallbackPre[i].RemoveAllFunctions(plugin);
 			if( g_hAnimationCallbackPost[i] ) g_hAnimationCallbackPost[i].RemoveAllFunctions(plugin);
 		}
+
+		// Remove AcceptInput callbacks for plugin and unhook detour if not being used
+		// Must be 1 frame later or the unloading plugin is counted
+		RequestFrame(OnFrame_OnNotifyPluginUnloaded);
+	}
+}
+
+void OnFrame_OnNotifyPluginUnloaded()
+{
+	for( int i = 0; i < MAX_EDICTS; i++ )
+	{
+		RemoveAcceptInputDetour(i);
 	}
 }
 

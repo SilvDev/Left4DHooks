@@ -333,6 +333,10 @@ void SetupForwardsNatives()
 	CreateNative("AnimGetActivity",		 							Native_AnimGetActivity);
 	CreateNative("AnimGetFromActivity",		 						Native_AnimGetFromActivity);
 
+	// ENTITY INPUT/OUTPUT HOOK
+	CreateNative("L4D_HookEntityInput",								Native_HookEntityInput);
+	CreateNative("L4D_UnhookEntityInput",							Native_UnhookEntityInput);
+
 
 
 	// =========================
