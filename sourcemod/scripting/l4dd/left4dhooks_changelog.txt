@@ -1,11 +1,15 @@
-1.173 (11-Oct-2026)
-	- Changed native "L4D_HookEntityInput" to allow modifying the "activator" and "caller" from SM version "1.12.0.7232" and newer. Thanks to "Forgetest" for reporting.
-	- Fixed native "L4D_NavArea_GetElevator" throwing invalid entity errors. Thanks to "TBK Duy" for reporting.
+1.174 (11-Oct-2026)
+	- Posted 1.173 with the wrong edits...
 	- Fixed forwards "L4D_TankClaw_DoSwing*" throwing property not found errors. Thanks to "Drgon" for reporting.
 
 	- Updated: Plugin.
 	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
 	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+
+1.173 (11-Oct-2026)
+	- Changed native "L4D_HookEntityInput" to allow modifying the "activator" and "caller" from SM version "1.12.0.7232" and newer. Thanks to "Forgetest" for reporting.
+	- Fixed native "L4D_NavArea_GetElevator" throwing invalid entity errors. Thanks to "TBK Duy" for reporting.
+	- Fixed forwards "L4D_TankClaw_DoSwing*" throwing property not found errors. Thanks to "Drgon" for reporting.
 
 1.172 (05-Oct-2026)
 	- Fixed forwards "L4D_OnVomitedUpon*" always returning "true" for "boomerExplosion" in L4D1. Thanks to "HarryPotter" for fixing.

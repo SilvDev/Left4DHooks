@@ -2009,8 +2009,9 @@ MRESReturn DTR_ZombieManager_ReplaceTank(DHookReturn hReturn, DHookParam hParams
 MRESReturn DTR_CTankClaw_DoSwing_Pre(int pThis) // Forward "L4D_TankClaw_DoSwing_Pre"
 {
 	//PrintToServer("##### DTR_CTankClaw_DoSwing_Pre");
-	if( pThis < 1 || pThis > MaxClients ) return MRES_Ignored;
-	if( GetEntProp(pThis, Prop_Send, "m_zombieClass") != g_iClassTank ) return MRES_Ignored;
+	static char sTemp[32];
+	GetEdictClassname(pThis, sTemp, sizeof(sTemp));
+	if( strcmp(sTemp, "weapon_tank_claw") != 0 ) return MRES_Ignored;
 
 	int tank = GetEntPropEnt(pThis, Prop_Data, "m_hOwner");
 
@@ -2025,8 +2026,9 @@ MRESReturn DTR_CTankClaw_DoSwing_Pre(int pThis) // Forward "L4D_TankClaw_DoSwing
 MRESReturn DTR_CTankClaw_DoSwing_Post(int pThis) // Forward "L4D_TankClaw_DoSwing_Post"
 {
 	//PrintToServer("##### DTR_CTankClaw_DoSwing_Post");
-	if( pThis < 1 || pThis > MaxClients ) return MRES_Ignored;
-	if( GetEntProp(pThis, Prop_Send, "m_zombieClass") != g_iClassTank ) return MRES_Ignored;
+	static char sTemp[32];
+	GetEdictClassname(pThis, sTemp, sizeof(sTemp));
+	if( strcmp(sTemp, "weapon_tank_claw") != 0 ) return MRES_Ignored;
 
 	int tank = GetEntPropEnt(pThis, Prop_Data, "m_hOwner");
 
