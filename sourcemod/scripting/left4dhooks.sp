@@ -18,8 +18,8 @@
 
 
 
-#define PLUGIN_VERSION		"1.172"
-#define PLUGIN_VERLONG		1172
+#define PLUGIN_VERSION		"1.173"
+#define PLUGIN_VERLONG		1173
 
 #define DEBUG				0
 // #define DEBUG			1	// Prints addresses + detour info (only use for debugging, slows server down).
@@ -261,7 +261,7 @@ int g_iCvar_AddonsEclipse, g_iCvar_RescueDeadTime;
 
 
 // Entity input/output Hooks
-bool g_bDHooksFixedVersion;			// Build "1.13.0.7356" fixed "DHooks: Fix setting CBaseEntity* params (#2465)"
+bool g_bDHooksFixedVersion;			// Build "1.12.0.7232" fixed "DHooks: Fix setting CBaseEntity* params (#2465)"
 int g_iHookCount[MAX_EDICTS];		// Track number of hooks to this entity, only really unhook when no longer used by any plugin
 int g_iHookEntity[MAX_EDICTS];		// Entity reference to validate same entity
 int g_iHookID_Pre[MAX_EDICTS];		// Hook ID used to unhook the detour
@@ -608,7 +608,7 @@ public void OnPluginStart()
 	int pos = FindCharInString(version, '.', true);
 	if( pos != -1 )
 	{
-		g_bDHooksFixedVersion = StringToInt(version[pos + 1]) > 7356;
+		g_bDHooksFixedVersion = StringToInt(version[pos + 1]) > 7232;
 	}
 
 

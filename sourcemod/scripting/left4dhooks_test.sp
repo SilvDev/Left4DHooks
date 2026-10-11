@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.171"
+#define PLUGIN_VERSION		"1.173"
 
 /*=======================================================================================
 	Plugin Info:
@@ -249,14 +249,11 @@ void round_end(Event event, const char[] name, bool dontBroadcast)
 // Uses "Activity" numbers, which means 1 animation number is the same for all Survivors.
 Action OnAnimPre(int client, int &anim)
 {
-	// /*
 	if( g_bCrawling )
 	{
-		// anim = g_bLeft4Dead2 ? 696 : 1197;
 		anim = g_bLeft4Dead2 ? L4D2_ACT_TERROR_INCAP_CRAWL : L4D1_ACT_TERROR_INCAP_CRAWL; // Include file now has *_ACT_* constants from version 1.52
 		return Plugin_Changed;
 	}
-	// */
 
 	return Plugin_Continue;
 }
@@ -483,6 +480,7 @@ stock Action InputHook_Post(int entity, int &activator, int &caller, char comman
 Action sm_calls(int client, int args)
 {
 	MAX_CALLS += 1;
+	ReplyToCommand(client, "[Left4DHooks] Forwards MAX_CALLS increased to %d", MAX_CALLS);
 	return Plugin_Handled;
 }
 
@@ -490,17 +488,6 @@ Action sm_l4df(int client, int args)
 {
 	ReplyToCommand(client, "[Left4DHooks] Forwards triggered %d/%d", g_iForwards, g_iForwardsMax);
 	return Plugin_Handled;
-}
-
-stock Action TimerCancelStagger(Handle timer, int client)
-{
-	client = GetClientOfUserId(client);
-	if( client )
-	{
-		L4D_CancelStagger(client);
-	}
-
-	return Plugin_Continue;
 }
 
 Action sm_l4dd(int client, int args)
@@ -3183,6 +3170,17 @@ Action sm_l4dd(int client, int args)
 	// */
 
 	return Plugin_Handled;
+}
+
+stock Action TimerCancelStagger(Handle timer, int client)
+{
+	client = GetClientOfUserId(client);
+	if( client )
+	{
+		L4D_CancelStagger(client);
+	}
+
+	return Plugin_Continue;
 }
 
 stock Action TimerDetonate(Handle timer, int entity)

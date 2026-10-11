@@ -4,8 +4,8 @@
 	{
 		"Version"
 		{
-			"Latest"	"1.172"
-			"Previous"	"1.171"
+			"Latest"	"1.173"
+			"Previous"	"1.172"
 		}
 
 		"Notes"	"Full changelog @ https://forums.alliedmods.net/showthread.php?t=321696"
@@ -20,8 +20,6 @@
 			"Plugin"	"Path_SM/scripting/left4dhooks_test.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_forwards.sp"
 			"Plugin"	"Path_SM/scripting/l4dd/l4dd_natives.sp"
-			"Plugin"	"Path_SM/scripting/l4dd/l4dd_setup.sp"
-			"Plugin"	"Path_SM/scripting/include/left4dhooks.inc"
 			"Source"	"Path_SM/scripting/left4dhooks.sp"
 		}
 

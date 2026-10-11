@@ -1,15 +1,18 @@
+1.173 (11-Oct-2026)
+	- Changed native "L4D_HookEntityInput" to allow modifying the "activator" and "caller" from SM version "1.12.0.7232" and newer. Thanks to "Forgetest" for reporting.
+	- Fixed native "L4D_NavArea_GetElevator" throwing invalid entity errors. Thanks to "TBK Duy" for reporting.
+	- Fixed forwards "L4D_TankClaw_DoSwing*" throwing property not found errors. Thanks to "Drgon" for reporting.
+
+	- Updated: Plugin.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+
 1.172 (05-Oct-2026)
 	- Fixed forwards "L4D_OnVomitedUpon*" always returning "true" for "boomerExplosion" in L4D1. Thanks to "HarryPotter" for fixing.
 	- Fixed natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" to allow multiple hooks of the same entity, and fixed clashing with multiple plugins hooking the same entity.
 	- Fixed natives "L4D_HookEntityInput" and "L4D_UnhookEntityInput" throwing native not found errors in plugins on server start.
 	- Added the "caller" entity to the "InputHookCallback" callback.
 	- Changing "activator" or "caller" will only work in DHooks version "1.13.0.7356" or newer.
-
-	- Updated: Plugin and test plugin.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_setup.sp" project file.
-	- Updated: "/scripting/include/left4dhooks.inc" Include file.
 
 1.171 (30-Sep-2026)
 	- Added forwards "L4D_OnSetClass" and "L4D_OnSetClass_Post" to trigger when a Special Infected's class is being set. Requested by "gvazdas".
