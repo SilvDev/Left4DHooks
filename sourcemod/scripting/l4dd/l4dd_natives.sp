@@ -3074,8 +3074,6 @@ int Native_CDirector_ResetMobTimer(Handle plugin, int numParams) // Native "L4D_
 
 any Native_GetPlayerSpawnTime(Handle plugin, int numParams) // Native "L4D_GetPlayerSpawnTime"
 {
-	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
-
 	ValidateAddress(g_iOff_m_flBecomeGhostAt, "CTerrorPlayer::m_flBecomeGhostAt");
 
 	float fBecomeGhostAt = GetEntDataFloat(GetNativeCell(1), g_iOff_m_flBecomeGhostAt);
@@ -3084,8 +3082,6 @@ any Native_GetPlayerSpawnTime(Handle plugin, int numParams) // Native "L4D_GetPl
 
 int Native_SetPlayerSpawnTime(Handle plugin, int numParams) // Native "L4D_SetPlayerSpawnTime"
 {
-	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
-
 	ValidateAddress(g_iOff_m_flBecomeGhostAt, "CTerrorPlayer::m_flBecomeGhostAt");
 
 	int client = GetNativeCell(1);
@@ -5007,8 +5003,6 @@ any Direct_GetMapMaxFlowDistance(Handle plugin, int numParams) // Native "L4D2Di
 
 any Direct_GetSpawnTimer(Handle plugin, int numParams) // Native "L4D2Direct_GetSpawnTimer"
 {
-	if( !g_bLeft4Dead2 ) ThrowNativeError(SP_ERROR_NOT_RUNNABLE, NATIVE_UNSUPPORTED2);
-
 	ValidateAddress(g_iOff_m_flBecomeGhostAt, "m_flBecomeGhostAt");
 
 	int client = GetNativeCell(1);
