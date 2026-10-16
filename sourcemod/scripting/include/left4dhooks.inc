@@ -4655,7 +4655,6 @@ native void L4D_ResetMobTimer();
  *
  * @return			Time (seconds) until the SI will spawn
  */
-// L4D2 only
 native float L4D_GetPlayerSpawnTime(int player);
 
 /**
@@ -4668,7 +4667,6 @@ native float L4D_GetPlayerSpawnTime(int player);
  *
  * @noreturn
  */
-// L4D2 only
 native void L4D_SetPlayerSpawnTime(int player, float time, bool bReportToPlayer = true);
 
 /**
@@ -5938,7 +5936,6 @@ native float L4D2Direct_GetMapMaxFlowDistance();
  * @return				Time (seconds) until the SI will spawn, or -1.0 in case of error
  * @error				Invalid client
  */
-// L4D2 only
 native float L4D2Direct_GetSpawnTimer(int client);
 
 /**
