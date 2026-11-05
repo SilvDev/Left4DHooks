@@ -3545,11 +3545,36 @@ MRESReturn DTR_CTerrorPlayer_OnIncapacitatedAsSurvivor(int pThis, DHookReturn hR
 	//PrintToServer("##### DTR_CTerrorPlayer_OnIncapacitatedAsSurvivor");
 	g_bBlock_CTerrorPlayer_OnIncapacitatedAsSurvivor = false;
 
-	int inflictor = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
-	int attacker = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
-	int weapon = hParams.GetObjectVar(1, 56, ObjectValueType_Ehandle);
-	float damage = hParams.GetObjectVar(1, 60, ObjectValueType_Float);
-	int damagetype = hParams.GetObjectVar(1, 72, ObjectValueType_Int);
+	int inflictor;
+	int attacker;
+	int weapon;
+	float damage;
+	int damagetype;
+
+	if( g_bLeft4Dead2 )
+	{
+		inflictor = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
+		attacker = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
+		weapon = hParams.GetObjectVar(1, 56, ObjectValueType_Ehandle);
+		damage = hParams.GetObjectVar(1, 60, ObjectValueType_Float);
+		damagetype = hParams.GetObjectVar(1, 72, ObjectValueType_Int);
+	}
+	else
+	{
+		inflictor = hParams.GetObjectVar(1, 36, ObjectValueType_EhandlePtr);
+		attacker = hParams.GetObjectVar(1, 40, ObjectValueType_EhandlePtr);
+		damage = hParams.GetObjectVar(1, 44, ObjectValueType_Float);
+		damagetype = hParams.GetObjectVar(1, 56, ObjectValueType_Int);
+
+		if( attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) )
+		{
+			weapon = GetEntPropEnt(attacker, Prop_Send, "m_hActiveWeapon");
+		}
+		else
+		{
+			weapon = -1;
+		}
+	}
 
 	Action aResult = Plugin_Continue;
 	Call_StartForward(g_hFWD_CTerrorPlayer_OnIncapacitatedAsSurvivor);
@@ -3571,11 +3596,22 @@ MRESReturn DTR_CTerrorPlayer_OnIncapacitatedAsSurvivor(int pThis, DHookReturn hR
 
 	if( aResult == Plugin_Changed )
 	{
-		hParams.SetObjectVar(1, 48, ObjectValueType_EhandlePtr, inflictor);
-		hParams.SetObjectVar(1, 52, ObjectValueType_EhandlePtr, attacker);
-		hParams.SetObjectVar(1, 56, ObjectValueType_Ehandle, weapon);
-		hParams.SetObjectVar(1, 60, ObjectValueType_Float, damage);
-		hParams.SetObjectVar(1, 72, ObjectValueType_Int, damagetype);
+		if( g_bLeft4Dead2 )
+		{
+			hParams.SetObjectVar(1, 48, ObjectValueType_EhandlePtr, inflictor);
+			hParams.SetObjectVar(1, 52, ObjectValueType_EhandlePtr, attacker);
+			hParams.SetObjectVar(1, 56, ObjectValueType_Ehandle, weapon);
+			hParams.SetObjectVar(1, 60, ObjectValueType_Float, damage);
+			hParams.SetObjectVar(1, 72, ObjectValueType_Int, damagetype);
+		}
+		else
+		{
+			hParams.SetObjectVar(1, 36, ObjectValueType_EhandlePtr, inflictor);
+			hParams.SetObjectVar(1, 40, ObjectValueType_EhandlePtr, attacker);
+			hParams.SetObjectVar(1, 44, ObjectValueType_Float, damage);
+			hParams.SetObjectVar(1, 56, ObjectValueType_Int, damagetype);
+		}
+
 		return MRES_ChangedHandled;
 	}
 
@@ -3584,11 +3620,36 @@ MRESReturn DTR_CTerrorPlayer_OnIncapacitatedAsSurvivor(int pThis, DHookReturn hR
 
 MRESReturn DTR_CTerrorPlayer_OnIncapacitatedAsSurvivor_Post(int pThis, DHookReturn hReturn, DHookParam hParams) // Forward "L4D_OnIncapacitated_Post" abd "L4D_OnIncapacitated_PostHandled"
 {
-	int inflictor = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
-	int attacker = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
-	int weapon = hParams.GetObjectVar(1, 56, ObjectValueType_Ehandle);
-	float damage = hParams.GetObjectVar(1, 60, ObjectValueType_Float);
-	int damagetype = hParams.GetObjectVar(1, 72, ObjectValueType_Int);
+	int inflictor;
+	int attacker;
+	int weapon;
+	float damage;
+	int damagetype;
+
+	if( g_bLeft4Dead2 )
+	{
+		inflictor = hParams.GetObjectVar(1, 48, ObjectValueType_EhandlePtr);
+		attacker = hParams.GetObjectVar(1, 52, ObjectValueType_EhandlePtr);
+		weapon = hParams.GetObjectVar(1, 56, ObjectValueType_Ehandle);
+		damage = hParams.GetObjectVar(1, 60, ObjectValueType_Float);
+		damagetype = hParams.GetObjectVar(1, 72, ObjectValueType_Int);
+	}
+	else
+	{
+		inflictor = hParams.GetObjectVar(1, 36, ObjectValueType_EhandlePtr);
+		attacker = hParams.GetObjectVar(1, 40, ObjectValueType_EhandlePtr);
+		damage = hParams.GetObjectVar(1, 44, ObjectValueType_Float);
+		damagetype = hParams.GetObjectVar(1, 56, ObjectValueType_Int);
+
+		if( attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) )
+		{
+			weapon = GetEntPropEnt(attacker, Prop_Send, "m_hActiveWeapon");
+		}
+		else
+		{
+			weapon = -1;
+		}
+	}
 
 	Call_StartForward(g_bBlock_CTerrorPlayer_OnIncapacitatedAsSurvivor ? g_hFWD_CTerrorPlayer_OnIncapacitatedAsSurvivor_PostHandled : g_hFWD_CTerrorPlayer_OnIncapacitatedAsSurvivor_Post);
 	Call_PushCell(pThis);

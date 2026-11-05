@@ -2371,14 +2371,6 @@
 				"linux"		"36"
 			}
 
-			// Can be found in "CTerrorPlayer::SetBecomeGhostAt": *((float *)this + 2816) = s2;
-			// 2816 * 4
-			"CTerrorPlayer::m_flBecomeGhostAt"
-			{
-				"windows"	"11284"
-				"linux"		"11264"
-			}
-
 			// Can be found in "CDirector::GetScriptScope(CDirector::ScriptLevels_t)"
 			"m_iszScriptId"
 			{
@@ -2391,6 +2383,14 @@
 			{
 				"windows"	"928"
 				"linux"		"948"
+			}
+
+			// Can be found in "CTerrorPlayer::SetBecomeGhostAt": *((float *)this + 2816) = s2;
+			// 2816 * 4
+			"CTerrorPlayer::m_flBecomeGhostAt"
+			{
+				"windows"	"11284"
+				"linux"		"11264"
 			}
 
 			"m_rescueCheckTimer"

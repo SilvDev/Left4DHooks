@@ -1882,7 +1882,9 @@ bool IsInFirstCheckpoint(int client)
 			{
 				//PrintToServer("#### CALL g_hSDK_Checkpoint_ContainsArea");
 				if( SDKCall(g_hSDK_Checkpoint_ContainsArea, nav1, nav) )
+				{
 					return true;
+				}
 			}
 
 			//PrintToServer("#### CALL g_hSDK_TerrorNavMesh_IsInInitialCheckpoint_NoLandmark");

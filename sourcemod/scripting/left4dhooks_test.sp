@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION		"1.173"
+#define PLUGIN_VERSION		"1.175"
 
 /*=======================================================================================
 	Plugin Info:
@@ -3025,13 +3025,14 @@ Action sm_l4dd(int client, int args)
 
 
 	/*
-	float vPos[3];
-	float vAng[3];
-
 	PrintToServer("L4D_GetPlayerSpawnTime %f",							L4D_GetPlayerSpawnTime(client));// WORKS
 	PrintToServer("");
 	PrintToServer("");
 
+
+
+	float vPos[3];
+	float vAng[3];
 
 	vPos[0] = GetRandomFloat(50.0, 250.0);
 	vPos[1] = GetRandomFloat(50.0, 250.0);
@@ -7155,7 +7156,7 @@ public Action L4D_OnIncapacitated(int client, int &inflictor, int &attacker, flo
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
+		ForwardCalled("\"L4D_OnIncapacitated\" %d (%N). Inf=%d. Att=%d. Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
 	}
 
 	// Block player being incapacitated
@@ -7172,7 +7173,7 @@ public void L4D_OnIncapacitated_Post(int client, int inflictor, int attacker, fl
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated_Post\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
+		ForwardCalled("\"L4D_OnIncapacitated_Post\" %d (%N). Inf=%d. Att=%d. Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype, weapon);
 	}
 }
 
@@ -7184,7 +7185,7 @@ public void L4D_OnIncapacitated_PostHandled(int client, int inflictor, int attac
 		if( called == 0 ) g_iForwards++;
 		called++;
 
-		ForwardCalled("\"L4D_OnIncapacitated_PostHandled\" %d (%N). Inflictor: (Inf=%d) (Att=%d). Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype);
+		ForwardCalled("\"L4D_OnIncapacitated_PostHandled\" %d (%N). Inf=%d. Att=%d. Dmg: %f. DmgType: %d. Weapon: %d", client, client, inflictor, attacker, damage, damagetype);
 	}
 }
 

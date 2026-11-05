@@ -1,10 +1,23 @@
+1.175 (05-Nov-2026)
+	- Changed natives "L4D_GetPlayerSpawnTime", "L4D_SetPlayerSpawnTime" and "L4D2Direct_GetSpawnTimer" to support L4D1. Thanks to "HarryPotter" for making the changes.
+	- Fixed stock "GetRandom*" returning the same player when called multiple times within the same frame. Thanks to "gvazdas" for reporting.
+	- Fixed target filters that select a random client to correctly choose a different random client in the same frame, same bug as above.
+
+	- Fixed forward "L4D_OnIncapacitated*" in L4D1 using the wrong offsets for CTakeDamageInfo. Thanks to "little_froy" for reporting.
+	- Note for "L4D_OnIncapacitated*": L4D1 does not have a "weapon" field, will attempt to retrieve the weapon entity index but cannot set one
+
+	- Updated: Plugin and test plugin.
+	- Updated: "/scripting/include/left4dhooks.inc" Include file.
+	- Updated: "/scripting/include/left4dhooks_silver.inc" Include file.
+	- Updated: "/scripting/gamedata/left4dhooks.l4d1.txt" GameData file.
+	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_gamedata.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
+	- Updated: "/scripting/l4dd/l4dd_targetfilters.sp" project file.
+
 1.174 (11-Oct-2026)
 	- Posted 1.173 with the wrong edits...
 	- Fixed forwards "L4D_TankClaw_DoSwing*" throwing property not found errors. Thanks to "Drgon" for reporting.
-
-	- Updated: Plugin.
-	- Updated: "/scripting/l4dd/l4dd_forwards.sp" project file.
-	- Updated: "/scripting/l4dd/l4dd_natives.sp" project file.
 
 1.173 (11-Oct-2026)
 	- Changed native "L4D_HookEntityInput" to allow modifying the "activator" and "caller" from SM version "1.12.0.7232" and newer. Thanks to "Forgetest" for reporting.

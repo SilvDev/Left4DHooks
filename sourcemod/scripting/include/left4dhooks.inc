@@ -2574,7 +2574,7 @@ forward void L4D_OnPlayerCough_PostHandled(int client, int attacker);
  * @param attacker		The attacker entity index
  * @param damage		Amount of damage being caused
  * @param damagetype	Type of damage being caused
- * @param weapon		Weapon or entity (could be -1, seems to only show ranged weapons)
+ * @param weapon		Weapon or entity (could be -1). Note: L4D1 does not have a "weapon" field, will attempt to retrieve the weapon entity index but cannot set one
  *
  * @return				return Plugin_Handled to block, Plugin_Changed to modify values, Plugin_Continue otherwise
  **/
