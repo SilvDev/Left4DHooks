@@ -3028,13 +3028,9 @@ Action sm_l4dd(int client, int args)
 	float vPos[3];
 	float vAng[3];
 
-	if( g_bLeft4Dead2 )
-	{
-		PrintToServer("L4D_GetPlayerSpawnTime %f",							L4D_GetPlayerSpawnTime(client));// WORKS
-		PrintToServer("");
-		PrintToServer("");
-	}
-
+	PrintToServer("L4D_GetPlayerSpawnTime %f",							L4D_GetPlayerSpawnTime(client));// WORKS
+	PrintToServer("");
+	PrintToServer("");
 
 
 	vPos[0] = GetRandomFloat(50.0, 250.0);

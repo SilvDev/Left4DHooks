@@ -3042,6 +3042,9 @@ void LoadGameData()
 		L4D2FloatMeleeWeapon_Offsets[1] = hGameData.GetOffset("L4D2FloatMeleeWeapon_RefireDelay");
 		L4D2FloatMeleeWeapon_Offsets[2] = hGameData.GetOffset("L4D2FloatMeleeWeapon_WeaponIdleTime");
 	} else {
+		g_iOff_m_flBecomeGhostAt = hGameData.GetOffset("CTerrorPlayer::m_flBecomeGhostAt");
+		ValidateOffset(g_iOff_m_flBecomeGhostAt, "CTerrorPlayer::m_flBecomeGhostAt");
+		
 		g_iOff_VersusStartTimer = hGameData.GetOffset("VersusStartTimer");
 		ValidateOffset(g_iOff_VersusStartTimer, "VersusStartTimer");
 
@@ -3138,6 +3141,7 @@ void LoadGameData()
 	}
 	else
 	{
+		PrintToServer("m_flBecomeGhostAt = %d", g_iOff_m_flBecomeGhostAt);
 		PrintToServer("m_bInIntro = %d", g_iOff_m_bInIntro);
 	}
 	#endif
