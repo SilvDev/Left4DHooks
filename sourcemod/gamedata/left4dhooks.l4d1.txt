@@ -336,6 +336,25 @@
 						"type"	"vectorptr"
 					}
 				}
+			}			
+			
+			"L4DD::ZombieManager::SpawnTank_Area"
+			{
+				"signature"		"ZombieManager::SpawnTank_Area"
+				"callconv"		"thiscall"
+				"return"		"cbaseentity"
+				"this"			"ignore"
+				"arguments"
+				{
+					"a1"
+					{
+						"type"	"cbaseentity"
+					}
+					"a2"
+					{
+						"type"	"vectorptr"
+					}
+				}
 			}
 
 			"L4DD::ZombieManager::SpawnWitch"
@@ -2749,6 +2768,13 @@
 				"linux"		"@_ZN13ZombieManager9SpawnTankERK6VectorRK6QAngle"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x83\x2A\x2A\x85\x2A\x75\x2A\x5E\xC2\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x6A\x2A\x6A\x2A\x6A\x2A\x8B\x2A\xFF\x2A\x6A\x2A\x8B\x2A\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x05"
 				/* ? ? ? ? ? ? E8 ? ? ? ? 8B ? 83 ? ? 85 ? 75 ? 5E C2 ? ? 8B ? ? ? ? ? ? ? 6A ? 6A ? 6A ? 8B ? FF ? 6A ? 8B ? E8 ? ? ? ? 8B ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 05 */
+			}
+			
+			// ZombieManager::SpawnTank(TerrorNavArea const*, QAngle const&)
+			"ZombieManager::SpawnTank_Area"
+			{
+				"library"		"server"
+				"linux"			"@_ZN13ZombieManager9SpawnTankEPK13TerrorNavAreaRK6QAngle"
 			}
 
 			/*

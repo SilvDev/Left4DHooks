@@ -1535,6 +1535,7 @@ forward void L4D_OnSpawnSpecial_PostHandled(int client, int zombieClass, const f
  * @remarks This sometimes triggers every frame or so, in L4D2 "c7m3_port" map on Windows, after leaving the saferoom in Versus
  * @remarks `*_Post` forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  * @remarks `*_PostHandled` forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * @remarks `*_Pre` forward: Vector is null in l4d1 linux
  *
  * @param vecPos		Vector coordinate where tank is spawned
  * @param vecAng		QAngle where tank will be facing
@@ -1550,6 +1551,7 @@ forward void L4D_OnSpawnTank_PostHandled(int client, const float vecPos[3], cons
  * @brief Called when a Witch spawns
  * @remarks `*_Post` forward will not trigger if the relative pre-hook forward has been blocked with Plugin_Handled
  * @remarks `*_PostHandled` forward will ONLY trigger if the relative pre-hook forward has been blocked with Plugin_Handled
+ * @remarks `*_Pre` forward: Vector is null in l4d1 linux
  *
  * @param vecPos		Vector coordinate where witch is spawned
  * @param vecAng		QAngle where witch will be facing
